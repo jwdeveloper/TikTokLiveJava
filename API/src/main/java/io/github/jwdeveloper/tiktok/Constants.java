@@ -108,14 +108,14 @@ public class Constants {
     public static Map<String,String> DefaultRequestHeaders() {
         var headers = new HashMap<String,String>();
 
-       // headers.put("Connection", "keep-alive");
+        headers.put("Connection", "keep-alive");
         headers.put("Cache-Control", "max-age=0");
         headers.put("Accept", "text/html,application/json,application/protobuf");
         headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36");
         headers.put("Referer", "https://www.tiktok.com/");
         headers.put("Origin", "https://www.tiktok.com");
         headers.put("Accept-Language", "en-US,en; q=0.9");
-       // headers.put("Accept-Encoding", "gzip, deflate");
+        headers.put("Accept-Encoding", "gzip, deflate");
         return headers;
     }
 }

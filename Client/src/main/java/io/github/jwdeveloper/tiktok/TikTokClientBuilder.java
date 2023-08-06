@@ -1,6 +1,7 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
+import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpApiClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
@@ -85,10 +86,11 @@ public class TikTokClientBuilder {
         meta.setUserName(userName);
 
 
-        var requestFactory = new TikTokHttpRequestFactory();
-        var apiClient = new TikTokHttpApiClient(clientSettings, requestFactory);
+        var cookieJar = new TikTokCookieJar();
+        var requestFactory = new TikTokHttpRequestFactory(cookieJar);
+        var apiClient = new TikTokHttpApiClient(cookieJar,clientSettings, requestFactory);
         var apiService = new TikTokApiService(apiClient, logger,clientParameters);
-        var webSocketClient = new TikTokWebsocketClient(logger,clientParameters, clientSettings);
+        var webSocketClient = new TikTokWebsocketClient(logger, cookieJar,clientParameters, requestFactory,clientSettings);
         var giftManager =new TikTokGiftManager(logger, apiService, clientSettings);
         return new TikTokLiveClient(meta,apiService, webSocketClient, giftManager, logger);
     }

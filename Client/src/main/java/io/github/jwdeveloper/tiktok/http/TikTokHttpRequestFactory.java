@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.WebSocket;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
@@ -29,14 +30,22 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest
     private Boolean sent;
     private Map<String, String> defaultHeaders;
 
-    public TikTokHttpRequestFactory() {
+    private TikTokCookieJar tikTokCookieJar;
+
+    public TikTokHttpRequestFactory(TikTokCookieJar tikTokCookieJar) {
 
         cookieManager = new CookieManager();
+        this.tikTokCookieJar = tikTokCookieJar;
         defaultHeaders = Constants.DefaultRequestHeaders();
         client = HttpClient.newBuilder()
                 .cookieHandler(cookieManager)
                 .connectTimeout(Duration.ofSeconds(2))
                 .build();
+    }
+
+    public WebSocket.Builder  openSocket()
+    {
+        return client.newWebSocketBuilder();
     }
 
     @SneakyThrows
@@ -124,8 +133,14 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest
         {
             var split = cookie.split(";")[0].split("=");
             var uri = request.uri();
+
+
+            var key = split[0];
+            var value = split[1];
+            tikTokCookieJar.set(key, value);
+
             var map = new HashMap<String,List<String>>();
-            map.put(split[0],List.of(split[1]));
+            map.put(key,List.of(value));
             cookieManager.put(uri,map);
 
         }

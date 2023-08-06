@@ -11,17 +11,21 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class TikTokHttpApiClient {
     private final ClientSettings clientSettings;
     private final TikTokHttpRequestFactory requestFactory;
+    private final TikTokCookieJar tikTokCookieJar;
 
-    public TikTokHttpApiClient(ClientSettings clientSettings, TikTokHttpRequestFactory requestFactory) {
+
+    public TikTokHttpApiClient(TikTokCookieJar tikTokCookieJar, ClientSettings clientSettings, TikTokHttpRequestFactory requestFactory) {
         this.clientSettings = clientSettings;
         this.requestFactory = requestFactory;
+        this.tikTokCookieJar = tikTokCookieJar;
     }
 
 
@@ -68,6 +72,18 @@ public class TikTokHttpApiClient {
                     .build();
             var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
+            var cookies = response.headers().allValues("Set-Cookie");
+            for(var cookie : cookies)
+            {
+                var split = cookie.split(";")[0].split("=");
+
+
+                var key = split[0];
+                var value = split[1];
+                tikTokCookieJar.set(key, value);
+                var i =0;
+            }
+
             return response.body();
         }
         catch (Exception e)
@@ -80,7 +96,7 @@ public class TikTokHttpApiClient {
     private String GetSignedUrl(String url, Map<String, Object> parameters) {
 
         var fullUrl = HttpUtils.parseParameters(url,parameters);
-        var singHeaders = new HashMap<String, Object>();
+        var singHeaders = new TreeMap<String,Object>();
         singHeaders.put("client", "ttlive-net");
         singHeaders.put("uuc", 1);
         singHeaders.put("url", fullUrl);
@@ -95,7 +111,6 @@ public class TikTokHttpApiClient {
             var signedUrl = jsonObject.get("signedUrl").getAsString();
             var userAgent = jsonObject.get("User-Agent").getAsString();
 
-            //requestFactory.setHeader()
             requestFactory.setAgent(userAgent);
             return signedUrl;
         } catch (Exception e) {

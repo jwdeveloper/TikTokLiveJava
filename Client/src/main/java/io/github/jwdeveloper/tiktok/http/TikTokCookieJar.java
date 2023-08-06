@@ -5,18 +5,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class TikTokCookieJar {
-    /// <summary>
-    /// Cookies in Jar
-    /// </summary>
     private final Map<String, String> cookies;
-
-    /// <summary>
-    /// Create a TikTok cookie jar instance.
-    /// </summary>
     public TikTokCookieJar() {
         cookies = new HashMap<>();
     }
-
 
     public String get(String key) {
         return cookies.get(key);
@@ -26,19 +18,17 @@ public class TikTokCookieJar {
         cookies.put(key, value);
     }
 
-    /// <summary>
-    /// Enumerates Cookies
-    /// </summary>
     public Set<Map.Entry<String, String>> GetEnumerator() {
         return cookies.entrySet();
     }
 
-  /*  /// <summary>
-    /// Enumerates Cookies
-    /// </summary>
-    public IEnumerator<string> GetEnumerator()
+    public String parseCookies()
     {
-        foreach (var cookie in cookies)
-        yield return $"{cookie.Key}={cookie.Value};";
-    }*/
+        var sb = new StringBuilder();
+        for(var entry : cookies.entrySet())
+        {
+            sb.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
+        }
+        return sb.toString();
+    }
 }
