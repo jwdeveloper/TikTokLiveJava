@@ -79,12 +79,14 @@ public class TikTokWebsocketClient {
     public void startWS(String url) {
         try {
             var cookie = tikTokCookieJar.parseCookies();
-            logger.info("WssIP: " + url);
-            logger.info("Cookie: " + cookie);
+            System.out.println("WssIP: " + url);
+            System.out.println("Cookie: " + cookie);
 
             var map = new HashMap<String, String>();
             map.put("Cookie", cookie);
 
+
+           // System.in.read();
             //var cluent2 = new Client2(URI.create(url), map);
             var builder = HttpClient.newHttpClient().newWebSocketBuilder();
             var ws = builder
@@ -95,12 +97,11 @@ public class TikTokWebsocketClient {
 
 
 
-            var i =0;
             while (true) {
                 byte[] message = new byte[]{58, 2, 104, 98};
                 ByteBuffer buffer = ByteBuffer.wrap(message);
                 while (buffer.hasRemaining()) {
-                    ws.sendPing(buffer);
+                    ws.sendPing(buffer).get();
                 }
                 buffer.clear();
                 Thread.sleep(10);
