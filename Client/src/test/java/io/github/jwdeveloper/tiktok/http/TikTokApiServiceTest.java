@@ -1,8 +1,7 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.JsonParser;
-import io.github.jwdeveloper.tiktok.live.models.gift.TikTokGift;
-import org.java_websocket.WebSocket;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

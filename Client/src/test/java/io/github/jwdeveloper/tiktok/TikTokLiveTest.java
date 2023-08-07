@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class TikTokLiveTest
 {
-    public static String TEST_USER_SUBJECT = "erwin_winki";
+    public static String TEST_USER_SUBJECT = "live_interactive_";
 
 
     @Test

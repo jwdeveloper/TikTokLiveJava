@@ -1,5 +1,6 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
+import com.google.protobuf.ByteString;
 import io.github.jwdeveloper.generated.WebcastMessageEvent;
 import io.github.jwdeveloper.generated.WebcastResponse;
 import io.github.jwdeveloper.generated.WebcastWebsocketAck;
@@ -9,6 +10,7 @@ import io.github.jwdeveloper.tiktok.TikTokLiveException;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -21,7 +23,7 @@ public class TikTokWebSocketListener implements java.net.http.WebSocket.Listener
 
     @Override
     public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
-       System.out.println("Received onBinary: " + data + " " + last);
+        System.out.println("Received onBinary: " + data + " " + last);
         parts.add(data);
         webSocket.request(1);
         if (last) {
@@ -50,15 +52,17 @@ public class TikTokWebSocketListener implements java.net.http.WebSocket.Listener
 
     private void handleBinary(WebSocket webSocket, ByteBuffer buffer) {
         try {
-            WebcastWebsocketMessage websocketMessage = WebcastWebsocketMessage.parseFrom(buffer);
+         //   buffer= Base64.getEncoder().encode(buffer);
+            ByteString byteString = ByteString.copyFrom(buffer);
+            WebcastWebsocketMessage websocketMessage = WebcastWebsocketMessage.parseFrom(byteString);
 
             if(websocketMessage.getBinary().isEmpty())
             {
                 return;
             }
-           // System.out.println(websocketMessage.getBinary());
             try {
                 var response = WebcastResponse.parseFrom(websocketMessage.getBinary());
+
                 var serverInfo = WebcastWebsocketAck
                         .newBuilder()
                         .setType("ack")
@@ -69,13 +73,14 @@ public class TikTokWebSocketListener implements java.net.http.WebSocket.Listener
                 System.out.println("Works");
               //  handleResponse(response);
             } catch (Exception e) {
-               // throw new TikTokLiveException("Unabel to read WebcastResponse");
-              System.out.println("Unable to read WebcastResponse");
+               throw new TikTokLiveException("Unabel to read WebcastResponse",e);
+        //     System.out.println("Unable to read WebcastResponse");
             }
         } catch (Exception e) {
 
-            System.out.println("Unable to read WebcastWebsocketMessage");
-            //throw new TikTokLiveException("Unabel to read WebcastWebsocketMessage");
+          //  System.out.println("Unable to read WebcastWebsocketMessage");
+            e.printStackTrace();
+            throw new TikTokLiveException("Unabel to read WebcastWebsocketMessage",e);
         }
     }
 

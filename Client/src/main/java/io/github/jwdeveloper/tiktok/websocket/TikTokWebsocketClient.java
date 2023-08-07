@@ -85,11 +85,7 @@ public class TikTokWebsocketClient {
             var map = new HashMap<String, String>();
             map.put("Cookie", cookie);
 
-
-           // System.in.read();
-            //var cluent2 = new Client2(URI.create(url), map);
-            var builder = HttpClient.newHttpClient().newWebSocketBuilder();
-            var ws = builder
+            var ws =  factory.openSocket()
                     .subprotocols("echo-protocol")
                     .connectTimeout(Duration.ofSeconds(15))
                     .header("Cookie", cookie)
@@ -101,7 +97,7 @@ public class TikTokWebsocketClient {
                 byte[] message = new byte[]{58, 2, 104, 98};
                 ByteBuffer buffer = ByteBuffer.wrap(message);
                 while (buffer.hasRemaining()) {
-                    ws.sendPing(buffer).get();
+                    ws.sendPing(buffer);
                 }
                 buffer.clear();
                 Thread.sleep(10);
