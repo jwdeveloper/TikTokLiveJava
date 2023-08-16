@@ -28,7 +28,7 @@ public class Main {
                 .buildAndRun();
 
 
-        var viewers = client.getMeta().getViewersCount();
+        var viewers = client.getRoomInfo().getViewersCount();
         System.in.read();
     }
 

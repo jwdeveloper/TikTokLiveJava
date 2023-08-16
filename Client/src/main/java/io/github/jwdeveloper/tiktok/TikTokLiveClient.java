@@ -5,14 +5,14 @@ import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.live.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.LiveMeta;
-import io.github.jwdeveloper.tiktok.live.TikTokLiveMeta;
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.live.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebsocketClient;
 
 import java.util.logging.Logger;
 
 public class TikTokLiveClient implements LiveClient {
-    private final TikTokLiveMeta meta;
+    private final TikTokRoomInfo meta;
     private final TikTokGiftManager giftManager;
     private final TikTokApiService apiClient;
     private final TikTokWebsocketClient webSocketClient;
@@ -21,7 +21,7 @@ public class TikTokLiveClient implements LiveClient {
     private final Logger logger;
 
 
-    public TikTokLiveClient(TikTokLiveMeta tikTokLiveMeta,
+    public TikTokLiveClient(TikTokRoomInfo tikTokLiveMeta,
                             TikTokApiService tikTokApiService,
                             TikTokWebsocketClient webSocketClient,
                             TikTokGiftManager tikTokGiftManager,
@@ -38,28 +38,25 @@ public class TikTokLiveClient implements LiveClient {
 
 
 
-    public void run() {
-        tryConnect();
-    }
-
-    public void stop() {
-        if (!meta.hasConnectionState(ConnectionState.CONNECTED)) {
-            return;
-        }
-        disconnect();
-        setState(ConnectionState.DISCONNECTED);
-    }
-
-    public void tryConnect() {
+    public void connect() {
         try {
-            connect();
+            tryConnect();
         } catch (Exception e) {
             e.printStackTrace();
             setState(ConnectionState.DISCONNECTED);
         }
     }
 
-    public void connect() {
+    public void disconnect() {
+        if (!meta.hasConnectionState(ConnectionState.CONNECTED)) {
+            return;
+        }
+        webSocketClient.stop();
+        setState(ConnectionState.DISCONNECTED);
+    }
+
+
+    public void tryConnect() {
         if (meta.hasConnectionState(ConnectionState.CONNECTED))
             throw new RuntimeException("Already connected");
         if (meta.hasConnectionState(ConnectionState.CONNECTING))
@@ -82,13 +79,10 @@ public class TikTokLiveClient implements LiveClient {
         setState(ConnectionState.CONNECTED);
     }
 
-    public void disconnect()
-    {
-        webSocketClient.stop();
-    }
 
 
-    public LiveMeta getMeta() {
+
+    public LiveRoomInfo getRoomInfo() {
         return meta;
     }
 

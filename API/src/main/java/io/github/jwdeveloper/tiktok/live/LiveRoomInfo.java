@@ -1,9 +1,9 @@
 package io.github.jwdeveloper.tiktok.live;
 
-import lombok.Data;
-
-@Data
-public class LiveRoomInfo
+public interface LiveRoomInfo
 {
-   private int status;
+     int getViewersCount();
+
+     String getRoomId();
+     String getUserName();
 }

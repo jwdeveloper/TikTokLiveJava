@@ -3,7 +3,7 @@ package io.github.jwdeveloper.tiktok.live;
 import lombok.Data;
 
 @Data
-public class TikTokLiveMeta implements LiveMeta
+public class TikTokRoomInfo implements LiveRoomInfo
 {
     private int viewersCount;
 

@@ -10,9 +10,8 @@ import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpApiClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.TikTokLiveMeta;
+import io.github.jwdeveloper.tiktok.live.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebsocketClient;
-import io.github.jwdeveloper.tiktok.handlers.WebResponseHandlerBase;
 
 import java.time.Duration;
 import java.util.Map;
@@ -23,8 +22,8 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
     private String userName;
     private final ClientSettings clientSettings;
     private Map<String, Object> clientParameters;
-    private Logger logger;
-    private TikTokEventHandler tikTokEventHandler;
+    private final Logger logger;
+    private final TikTokEventHandler tikTokEventHandler;
 
     public TikTokLiveClientBuilder(String userName) {
         this.tikTokEventHandler = new TikTokEventHandler();
@@ -92,7 +91,7 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         validate();
 
 
-        var meta = new TikTokLiveMeta();
+        var meta = new TikTokRoomInfo();
         meta.setUserName(userName);
 
 
@@ -115,7 +114,7 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
 
     public LiveClient buildAndRun() {
         var client = build();
-        client.run();
+        client.connect();
         return client;
     }
 

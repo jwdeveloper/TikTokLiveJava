@@ -2,7 +2,7 @@ package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.Gson;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.models.gifts.TikTokGift;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
@@ -57,22 +57,22 @@ public class TikTokApiService {
     }
 
 
-    public LiveRoomInfo fetchRoomInfo() {
+    public LiveRoomMeta fetchRoomInfo() {
         logger.info("Fetch RoomInfo");
         try {
             var response = apiClient.GetJObjectFromWebcastAPI("room/info/", clientParams);
             if (!response.has("data")) {
-                return new LiveRoomInfo();
+                return new LiveRoomMeta();
             }
 
             var data = response.getAsJsonObject("data");
             if (!data.has("status")) {
-                return new LiveRoomInfo();
+                return new LiveRoomMeta();
             }
 
             var status = data.get("status");
 
-            var info = new LiveRoomInfo();
+            var info = new LiveRoomMeta();
             info.setStatus(status.getAsInt());
 
             logger.info("RoomInfo status -> "+info.getStatus());

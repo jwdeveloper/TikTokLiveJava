@@ -2,9 +2,9 @@ package io.github.jwdeveloper.tiktok.live;
 
 public interface LiveClient {
 
-    void run();
+    void connect();
 
-    void stop();
+    void disconnect();
 
-    LiveMeta getMeta();
+    LiveRoomInfo getRoomInfo();
 }
