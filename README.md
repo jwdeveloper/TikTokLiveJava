@@ -112,13 +112,7 @@ Events:
 -  [TikTokEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokEvent.java)
 
 
-Process finished with exit code 0
-
-
-Process finished with exit code 0
-
-
 <br><br>
 
 ## Contributing
-Your improvements are welcome! Feel free to open an <a href="https://github.com/zerodytrash/TikTok-Live-Connector/issues">issue</a> or <a href="https://github.com/zerodytrash/TikTok-Live-Connector/pulls">pull request</a>.
+Your improvements are welcome! Feel free to open an <a href="https://github.com/jwdeveloper/TikTok-Live-Java/issues">issue</a> or <a href="https://github.com/jwdeveloper/TikTok-Live-Java/pulls">pull request</a>.
