@@ -18,10 +18,6 @@ public class TikTokCookieJar {
         cookies.put(key, value);
     }
 
-    public Set<Map.Entry<String, String>> GetEnumerator() {
-        return cookies.entrySet();
-    }
-
     public String parseCookies()
     {
         var sb = new StringBuilder();

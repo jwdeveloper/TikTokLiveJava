@@ -1,11 +1,10 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import io.github.jwdeveloper.generated.WebcastResponse;
-import io.github.jwdeveloper.tiktok.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
-import io.github.jwdeveloper.tiktok.live.models.gift.TikTokGift;
+import io.github.jwdeveloper.tiktok.models.gifts.TikTokGift;
+import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +88,7 @@ public class TikTokApiService {
         try {
             var response = apiClient.GetDeserializedMessage("im/fetch/", clientParams);
             clientParams.put("cursor",response.getCursor());
-            clientParams.put("internal_ext", response.getInternalExt());
+            clientParams.put("internal_ext", response.getAckIds());
             return response;
         }
         catch (Exception e)

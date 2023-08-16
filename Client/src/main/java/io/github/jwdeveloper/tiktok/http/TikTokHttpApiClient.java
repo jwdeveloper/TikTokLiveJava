@@ -2,17 +2,16 @@ package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.github.jwdeveloper.generated.WebcastResponse;
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.Constants;
-import io.github.jwdeveloper.tiktok.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -81,7 +80,6 @@ public class TikTokHttpApiClient {
                 var key = split[0];
                 var value = split[1];
                 tikTokCookieJar.set(key, value);
-                var i =0;
             }
 
             return response.body();

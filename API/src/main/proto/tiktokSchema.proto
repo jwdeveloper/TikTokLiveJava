@@ -1,0 +1,1345 @@
+syntax = "proto3";
+package TikTok;
+
+/**
+
+This Proto-Schema has been hand-written from
+the current C#-Classes in TikTokLiveSharp.
+
+These objects are reverse-engineered from the Server-Messages and are only partially understood:
+- Many of the values are simply called Data{X} as their value is unknown.
+- There are many Timestamps labeled Timestamp{X} as it's unsure which time-value they reflect.
+    These are all UNIX-timestamps close to present time.
+- For each (int-)value a relevant size has been picked based on read values
+    Some of the uint32-values could potentially be interpreted as boolean types or enums
+
+If you have any data to add or contexts/names you can fill
+please add an issue to the Github: https://github.com/frankvHoof93/TikTokLiveSharp
+
+*/
+
+option java_package = "io.github.jwdeveloper.tiktok.messages";
+option java_multiple_files = true;
+
+/**
+
+-=-=-=-=-=-=-=-=-=-=-=
+   GENERIC MESSAGES
+-=-=-=-=-=-=-=-=-=-=-=
+
+*/
+
+// Acknowledgement-Message for Websocket-Connection
+message WebcastWebsocketAck {
+  uint64 id = 2;
+  string type = 7;
+}
+
+// Websocket-Message as sent by TikTok-Server (outer structure)
+message WebcastWebsocketMessage {
+  uint32 data1 = 1;
+  uint64 id = 2;
+  uint32 data2 = 3;
+  uint32 data3 = 4;
+  repeated MessageData connectiondata = 5; // CompressionType, ServerTime, etc
+  WebsocketMessageDetails data4 = 6; // Unknown additional details
+  string type = 7; // "hb" for heartbeat, "msg" for messages
+  bytes binary = 8; // Response
+
+  message MessageData {
+    string datatype = 1;
+    string value = 2;
+  }
+
+  message WebsocketMessageDetails {
+     uint32 data1 = 14;
+  }
+}
+
+// Response from TikTokServer. Container for Messages
+message WebcastResponse {
+  repeated Message messages = 1;
+  string cursor = 2;
+  int32 fetchInterval = 3;
+  uint64 serverTimestamp = 4;
+  string ackIds = 5;
+  int32 fetchType = 6; // 1 = websocket, 2 = long-polling
+  repeated WebsocketRouteParam socketParams = 7;
+  int32 heartbeatDuration = 8;
+  bool needsAck = 9;
+  string socketUrl = 10;
+
+  // Server-Message. Binary will deserialize into specific message
+  message Message {
+    string type =1 ; // Message(Class)Name
+    bytes binary = 2; // Data for Message
+  }
+
+  message WebsocketRouteParam {
+    string name = 1;
+    string value = 2;
+  }
+}
+
+
+/**
+
+-=-=-=-=-=-=-=-=-=-=-=
+    TikTok-Objects
+-=-=-=-=-=-=-=-=-=-=-=
+
+*/
+
+// Container for uint-Data
+message DataContainer {
+  uint64 data1 = 1;
+  uint32 data2 = 2;
+  uint32 data3 = 3;
+  uint32 data4 = 4;
+  uint32 data5 = 5;
+  uint32 data6 = 6;
+  uint32 data7 = 7;
+  uint32 data8 = 8;
+  uint32 data9 = 9;
+}
+
+// Links 2 Ids
+message IdContainer {
+  uint64 id1 = 1;
+  uint64 id2 = 2;
+}
+
+// Links IDs & data
+message IdData
+{
+  string data1 = 1;
+  string id1 = 2;
+  string data2 = 3;
+  string id2 = 4;
+}
+
+// Container for Strings
+message StringData {
+  string data1 = 1;
+  string data2 = 2;
+}
+
+// Links Data & Timestamp
+message TimeData {
+  uint32 data = 1;
+  uint64 timeStamp = 2;
+  uint64 timeStamp2 = 3;
+}
+
+// Container for multiple Timestamps
+message TimeStampContainer {
+  uint64 timestamp1 = 1;
+  uint64 timestamp2 = 2;
+  uint64 timestamp3 = 3;
+}
+
+// Type & Value
+message TypeValue {
+  string type = 1;
+  uint32 data = 2;
+}
+
+message UserContainer {
+  User user = 1;
+  uint32 data1 = 2;
+}
+
+message ValueLabel {
+  uint32 data = 1;
+  string label = 2;
+  string label2 = 3;
+  string label3 = 11;
+}
+
+
+// Badges earned by Users
+message Badge {
+  uint32 data1 = 1;
+  uint32 data2 = 2;
+  uint32 data3 = 3;
+  uint32 data4 = 4;
+  string shortUrl = 10;
+  uint32 data5 = 11;
+  IdData badgeId = 12;
+  /*
+   Typically either 20, 21 or 23 is populated.
+   More than one is not populated at once.
+  */
+  repeated BadgeImage imageBadges = 20; // Seems to hold images (top gifter, sub) with no extra data
+  repeated BadgeText textBadges = 21; // Holds badge info (moderator)
+  BadgeComplex complexBadge = 23; // Seems to hold image badges but with data (Level badge, sub level w/ name, etc)
+
+  message BadgeText {
+    string type = 2;
+    string name = 3;
+  }
+
+  message BadgeImage {
+    uint32 displayType = 1; // Is an Enum
+    Picture image = 2;
+  }
+
+  message BadgeComplex {
+    uint32 data1 = 1;
+    string imageUrl = 2;
+    string data = 4;
+    DataContainer detail1 = 5;
+    string data2 = 6;
+    BadgeText detail2 = 11;
+    BadgeText detail3 = 12;
+    uint32 data3 = 15;
+    uint32 data4 = 16;
+  }
+}
+
+// Details about a Gift
+message Gift {
+  Picture image = 1;
+  string description = 2;
+  int32 data1 = 4;
+  uint64 id = 5; // Gift-Id
+  int32 data2 = 7;
+  int32 data3 = 10;
+  uint32 giftType = 11; // SHOULD BE AN ENUM?
+  uint32 coinCount = 12; // Value of Gift
+  int32 data4 = 13;
+  uint32 data5 = 14;
+  Picture picture = 15; // Additional
+  string name = 16; // Name for Gift
+  Picture coloredImage = 21; // Same as image, but with different color
+  uint32 data7 = 38;
+  uint32 data8 = 42;
+  uint32 data9 = 51;
+  repeated GiftDetails details = 102;
+  GiftMasks masks = 104;
+  uint32 data10 = 105;
+  string data11 = 106;
+
+  message GiftDetails {
+    uint32 data1 = 1;
+    string name = 2;
+    repeated string colors = 3;
+    Picture image = 4;
+    Picture icon = 5;
+    uint32 data2 = 6;
+    uint32 data3 = 7;
+  }
+
+  message GiftMasks {
+    GiftMask mask1 = 3;
+    GiftMask mask2 = 4;
+
+    message GiftMask {
+      uint32 mask = 13; // BitMask (EnumFlags?)
+    }
+  }
+}
+
+message GiftDetailsData {
+  uint32 data1 = 1;
+  TikTokColor color = 2;
+  string data2 = 11;
+  UserContainer user = 21;
+  GiftDataDetailed details = 22;
+}
+
+message GiftDataDetailed {
+  uint32 data1 = 1;
+  StringData strings = 2;
+  uint32 data2 = 3;
+  int32 data3 = 4;
+}
+
+// Receipt for sending a Gift. Names are mostly taken from JSON
+message GiftReceipt {
+  uint64 anchorId = 1;
+  uint64 profitApiStartTimeStamp = 3; // send_gift_profit_api_start_ms
+  uint64 profitCoreStartTimeStamp = 4; // send_gift_profit_core_start_ms
+  uint64 sendGiftRequestTimeStamp = 5; // send_gift_req_start_ms
+  uint64 timeStamp = 6; // send_gift_send_message_success_ms
+  uint64 profitApiDuration = 7; // send_profitapi_dur
+  uint64 receiverUserId = 8; // UserId for receiver
+  uint64 timeStamp1 = 9; // Unknown timestamp. Earliest in message (Possibly Request-Start?)
+  string operatingSystem = 10;
+  string data1 = 11; // 270504 (Id?)
+}
+
+message GoalUpdateData {
+  uint64 id = 1;
+  uint32 data1 = 2;
+  uint32 data2 = 3;
+  GoalUpdateDetails details = 4;
+  string label = 5;
+  uint32 data3 = 6;
+  uint32 data4 = 7;
+  uint64 timeStamp2 = 8;
+  uint64 timeStamp3 = 9;
+  repeated GoalUpdateUser users = 11;
+  uint32 data5 = 12;
+  string idString = 13;
+  string label2 = 14; // same as label?
+}
+
+message GoalUpdateDetails {
+  uint32 data1 = 1;
+  uint32 data2 = 2;
+  uint32 data3 = 3;
+  uint32 data4 = 4;
+  GoalUpdateGiftData data5 = 5;
+  string data6 = 6;
+
+  message GoalUpdateGiftData {
+    string name = 1;
+    Picture picture = 2;
+    uint32 data1 = 3;
+    uint32 data2 = 4;
+  }
+}
+
+message GoalUpdateUser {
+  uint64 id = 1;
+  Picture profilePicture = 2;
+  string nickname = 3;
+  uint64 timeStamp = 4;
+  string idString = 5;
+  uint32 data1 = 6;
+  uint32 data2 = 7;
+  GoalUpdateUserDetails details = 10;
+
+  message GoalUpdateUserDetails {
+    uint32 data1 = 1;
+    uint32 data2 = 2;
+    uint32 data3 = 3;
+    GoalUserPictureContainer links = 10;
+
+    message GoalUserPictureContainer {
+      uint32 data1 = 1;
+      Picture links = 2;
+    }
+  }
+}
+
+message LikeData {
+  string type = 1;
+  string label = 2;
+  TikTokColor color = 3;
+  LikeUserContainer user = 4;
+
+  message LikeUserContainer {
+    uint64 data1 = 1;
+    UserContainer user = 21;
+  }
+}
+
+message LinkMicArmiesItems {
+  uint64 hostUserId = 1;
+  repeated LinkMicArmiesGroup battleGroups = 2;
+
+  message LinkMicArmiesGroup {
+    repeated User users = 1;
+    uint32 points = 2;
+  }
+}
+
+message MessageDetails {
+  uint32 data1 = 1;
+  TikTokColor color = 2;
+  string category = 11;
+  UserContainer user = 21;
+}
+
+message MemberMessageData {
+  string type = 1;
+  string label = 2;
+  TikTokColor color = 3;
+  repeated MessageDetails details = 4; // UserContainer-Data is empty
+}
+
+message SocialMessageData {
+  string type = 1;
+  string label = 2;
+  TikTokColor color = 3;
+  repeated MessageDetails details = 4; // UserContainer-Data is sometimes empty
+}
+
+message RankTextMessage {
+  string type = 1;
+  string label = 2;
+  TikTokColor color = 3;
+  repeated MessageDetails details = 4;
+}
+
+// Links to Image-Files on the TikTok CDN
+message Picture {
+  repeated string urls = 1; // Usually has 3 different urls with different sizes/extensions
+  string prefix = 2; // uri
+  uint32 data1 = 3;
+  uint32 data2 = 4;
+  string color = 5;
+  uint32 data3 = 6;
+  string additionalUrl = 7;
+  string data4 = 8;
+}
+
+message Ranking {
+  string type = 1;
+  string label = 2;
+  TikTokColor color = 3;
+  repeated ValueLabel details = 4;
+}
+
+message TikTokColor {
+  string color = 1;
+  uint64 id = 4;
+  uint32 data1 = 6;
+}
+
+message TopViewer {
+  uint32 coinsGiven = 1; // Coins given to Room
+  User user = 2; //
+  uint32 rank = 3; // Index in list
+}
+
+// TikTok-User
+message User {
+  uint64 userId = 1;
+  uint32 data1 = 2;
+  string nickname = 3; // Name set in Profile
+  string description = 5; // User-Description
+  Picture profilePicture = 9; // Avatar
+  Picture picture720 = 10; // 720p
+  Picture picture1080 = 11; // 1080p
+  uint32 data2 = 15;
+  uint64 data3 = 16;
+  repeated Picture additionalPictures = 21;
+  FollowerData followerData = 22;
+  string userString1 = 23;
+  UserRanking userRank1 = 25;
+  string userString2 = 32;
+  uint64 data4 = 37;
+  string uniqueId = 38; // @-ID for user
+  string data5 = 46;
+  UserRanking userRank2 = 61;
+  repeated Badge badges = 64;
+  string userIdString = 1028;
+
+  // Data about Follower-Counts
+  message FollowerData {
+    uint32 following = 1; // Amount this user Follows
+    uint32 followers = 2; // Amount following this user
+    uint32 followsHost = 3; // Relative Role of this User to the Host. IS AN ENUM
+  }
+
+  message UserRanking {
+    Picture img1 = 1;
+    string eventType = 3;
+    Picture img2 = 4;
+    IdData id1 = 5;
+    IdData id2 = 6;
+  }
+}
+
+// Is part of WebcastGiftBroadcastMessage. Thus far not seen sent seperately
+message WebcastRoomNotifyMessage {
+  string type = 1;
+  uint64 id1 = 2;
+  uint64 id2 = 3;
+  uint64 timeStamp = 4;
+  uint32 data1 = 6;
+  NotifyData data = 8;
+
+  message NotifyData {
+    string type = 1;
+    string label = 2;
+    TikTokColor color = 3;
+    repeated GiftDetailsData data = 4;
+  }
+}
+
+/**
+
+-=-=-=-=-=-=-=-=-=-=-=
+   Server-Messages
+-=-=-=-=-=-=-=-=-=-=-=
+
+*/
+
+// Separate from WebcastLinkMicMethod. This contains RTC-Data
+message LinkMicMethod {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  uint64 rtcChannelId = 8;
+  uint32 data2 = 9; // Either data2 or data3 is probably RTC_Vendor
+  uint32 data3 = 10;
+  uint32 data4 = 11;
+  uint64 data5 = 13;
+  uint64 id1 = 24;
+  uint64 data6 = 28;
+  uint64 data7 = 29; // Either data7 or data9 is probably RTC_MixType
+  string data8 = 31;
+  string json = 32; // RTC-Data in JSON-Format
+  string rtcUserId = 37;
+  uint32 data9 = 43;
+  uint32 data10 = 51;
+}
+
+message RoomMessage {
+  MessageHeader header = 1;
+  string message = 2;
+  uint32 data1 = 7;
+}
+
+message SystemMessage {
+  MessageHeader header = 1;
+  string message = 2;
+}
+
+message WebcastBarrageMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 3;
+  Picture picture = 4;
+  BarrageMessage message = 5;
+  uint32 data3 = 6;
+  Picture picture2 = 7;
+  Picture picture3 = 8;
+  BarrageUser userData = 100;
+
+  message BarrageMessage {
+    string eventType = 1;
+    string label = 2;
+    TikTokColor color = 3;
+    repeated BarrageData data1 = 4;
+
+    message BarrageData {
+      uint64 data1 = 1;
+      string data2 = 11;
+      UserContainer user = 21;
+    }
+  }
+
+  message BarrageUser {
+    uint32 data1 = 1;
+    uint32 data2 = 2;
+    string userId = 3;
+    User user = 4;
+  }
+}
+
+// Closed Captioning for Video
+message WebcastCaptionMessage {
+  MessageHeader header = 1;
+  uint64 timeStamp = 2;
+  uint32 data1 = 3;
+  CaptionData captionData = 4;
+
+  message CaptionData {
+    string ISOLanguage = 1;
+    string Text = 2;
+  }
+}
+
+// Variety of Meta-Data about a (Chat-)Message
+message ModerationData {
+  string type = 1;
+  uint64 value = 2;
+}
+
+// Comment sent by User
+message WebcastChatMessage {
+  MessageHeader header = 1;
+  User sender = 2; // User who sent message
+  string comment = 3; // Text for Chat-Message
+  uint64 data1 = 11;
+  repeated User mentionedUsers = 12; // Users mentioned in comment
+  repeated ChatImage images = 13;
+  string language = 14; // Language for sender
+  DataContainer chatData = 18;
+  repeated ModerationData moderationData = 19;
+
+  message ChatImage {
+    uint64 data1 = 1;
+    Picture picture = 2;
+  }
+}
+
+// System-Control Message from Room (e.g. Host ended Stream)
+message WebcastControlMessage {
+  enum ControlAction {
+    UNKNOWN = 0;
+    STREAM_PAUSED = 1; // Stream Paused by Host
+    STREAM_ENDED = 3; // Stream Ended by Host
+  }
+
+  MessageHeader header = 1;
+  ControlAction action = 2;
+  ControlDetails details = 4;
+
+  message ControlDetails {
+    string type = 8;
+  }
+}
+
+// Emote sent by user
+message WebcastEmoteChatMessage {
+  MessageHeader header = 1;
+  User sender = 2;
+  EmoteDetails details = 3;
+
+  message EmoteDetails {
+    string id = 1;
+    EmoteImage image = 2;
+
+    message EmoteImage {
+      string url = 1;
+    }
+  }
+}
+
+// Envelope
+message WebcastEnvelopeMessage {
+  MessageHeader header = 1;
+  EnvelopeUser user = 2;
+  uint32 data1 = 3;
+
+  message EnvelopeUser {
+    string id = 1;
+    uint32 data1 = 2;
+    string username = 3;
+    string id2 = 4;
+    uint32 data2 = 5;
+    uint32 data3 = 6;
+    uint64 timestamp1 = 7;
+    string id1string = 8;
+    Picture picture = 9;
+    string timestamp2string = 10;
+    string id2string = 11;
+    uint32 data4 = 12;
+  }
+}
+
+// Gift Broadcast (Unsure of exact event)
+message WebcastGiftBroadcastMessage {
+  GiftMessageHeader header = 1;
+  uint64 data1 = 2;
+  Picture picture = 3;
+  GiftBroadcastData data = 4;
+
+  message GiftBroadcastData {
+    WebcastRoomNotifyMessage roomNotifyMessage = 1;
+    string uri = 2;
+    uint32 data1 = 3;
+    GiftBroadCastImageDataContainer imageData = 6;
+    string notifyType = 9;
+    uint64 data2 = 10;
+    StringData data3 = 11;
+
+    message GiftBroadCastImageDataContainer {
+      uint32 data1 = 1;
+      GiftBroadcastImageData image = 2;
+
+      message GiftBroadcastImageData {
+        uint32 data1 = 1;
+        uint32 data2 = 2;
+        repeated string urls = 3;
+        string uri = 4;
+      }
+    }
+  }
+}
+
+// Gift sent by user
+message WebcastGiftMessage {
+  GiftMessageHeader header = 1;
+  uint64 giftId = 2; // Gift-ID
+  int32 data1 = 3;
+  int32 data2 = 4;
+  uint32 repeatCount = 5; // Index of Message in Streak
+  uint32 amount = 6; // Number of Gifts sent (in Streak)
+  User sender = 7; // User who sent the gift
+  User user2 = 8; // Receiver? Found with text "live_gift_send_message_to_anyuser" (Host sent a gift to a viewer?)
+  bool repeatEnd = 9; // Whether this is the final message in the GiftStreak
+  uint64 serverTime = 11;
+  int32 data3 = 13;
+  GiftData1 data4 = 14;
+  Gift giftDetails = 15; // Details for Gift that was sent
+  string logId = 16; // "202301050654360101042172152C002035"
+  int32 data5 = 17;
+  string data6 = 19;
+  string receiptJson = 22; // Same a GiftReceipt
+  GiftReceipt receipt = 23; // Same as JSON, but deserialized
+  int32 data7 = 24;
+  uint32 data8 = 25;
+  GiftDetails1 firstGift1 = 26;
+  GiftDetails1 firstGift2 = 27;
+  GiftDetails2 data9 = 31;
+  DataContainer data10 = 32;
+  uint32 data11 = 34;
+
+  message GiftData1 {
+    string data1 = 1;
+    uint32 data2 = 2;
+    uint32 data3 = 3;
+  }
+
+  message GiftDetails1 {
+    string eventType = 1;
+    string label = 2;
+    TikTokColor color = 3;
+    GiftDetailsData data = 4;
+  }
+
+  message GiftDetails2 {
+    uint32 data1 = 1;
+    uint32 data2 = 3;
+    repeated string data3 = 4;
+  }
+}
+
+message WebcastGoalUpdateMessage {
+  MessageHeader header = 1;
+  TypeValue data = 2;
+  GoalUpdateData updateData = 3;
+  uint64 id = 4;
+  Picture picture = 5;
+  string userId = 6;
+  GoalUpdateDetails details = 7;
+  uint32 data2 = 9;
+  uint32 data3 = 10;
+  uint32 data4 = 11;
+  string idString = 12;
+  TimeData timeData = 15;
+}
+
+message WebcastHourlyRankMessage {
+  MessageHeader header = 1;
+  RankContainer data = 2;
+  uint32 data2 = 3;
+
+  message RankContainer {
+    uint32 data1 = 1;
+    RankingData rankingdata = 2;
+    uint32 data2 = 3;
+    Ranking rankings = 4;
+    RankingData2 rankingdata2 = 5;
+    uint32 data3 = 6;
+    uint32 data4 = 7;
+
+    message RankingData {
+      uint32 data1 = 1;
+      Ranking rankdata = 2;
+      string data2 = 3;
+    }
+
+    message RankingData2 {
+      uint32 data1 = 1;
+      uint32 data2 = 2;
+      Ranking rankdata = 3;
+      string data3 = 4;
+      uint32 data4 = 5;
+      uint32 data5 = 6;
+    }
+  }
+}
+
+// Message related to Chat-moderation?
+message WebcastImDeleteMessage {
+  MessageHeader header = 1;
+  string data1 = 2;
+  string data2 = 3;
+}
+
+message WebcastInRoomBannerMessage {
+  MessageHeader header = 1;
+  string json = 2; // Json-Data for BannerMessage
+}
+
+// User sent one or multiple likes to Stream. Maxes at 15 likes per message
+message WebcastLikeMessage {
+  LikeMessageHeader header = 1;
+  uint32 count = 2; // Number of Likes for this message. Maxes at 15
+  uint64 totalLikes = 3;
+  User sender = 5; // Sender of Like(s)
+  LikeDataContainer likeData = 8; // Not always filled. The one in Header IS filled.
+  uint32 data1 = 9;
+
+  message LikeDataContainer {
+    uint64 data1 = 1;
+    LikeData likeData = 2;
+  }
+}
+
+message WebcastLinkLayerMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  uint64 id = 3;
+  uint32 data2 = 4;
+  LinkLayerDetails details = 100;
+  LinkLayerData dataContainer = 102;
+  LinkLayerIdContainer idContainer1 = 110;
+  LinkLayerIdContainer idContainer2 = 111;
+
+  message LinkLayerDetails {
+    IdContainer ids = 1;
+    string idString = 2;
+    StringData data = 3; // Only data2 is filled
+    uint64 id2 = 4;
+    string data2 = 5;
+  }
+
+  message LinkLayerData {
+    uint32 data1 = 1;
+    LinkLayerDetailsContainer details = 2;
+
+    message LinkLayerDetailsContainer {
+      LinkLayerDetails data1 = 2;
+      repeated LinkLayerDetails data2 = 3;
+    }
+  }
+
+  message LinkLayerIdContainer {
+    IdContainer ids = 1;
+    uint32 data1 = 2;
+  }
+}
+
+message WebcastLinkMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  uint64 data2 = 3;
+  uint32 data3 = 4;
+  LinkMessageData data = 18;
+  LinkMessageUserContainer user = 20;
+  string token = 200;
+
+  message LinkMessageData {
+    DataContainer data = 1; // index 1 is an Id
+  }
+
+  message LinkMessageUserContainer {
+    LinkMessageUser user = 1;
+    repeated LinkMessageUser otherUsers = 2;
+
+    message LinkMessageUser {
+      User user = 1;
+      uint64 timeStamp = 2;
+      uint32 data1 = 4;
+      string idString = 5;
+      uint32 data2 = 7;
+    }
+  }
+}
+
+message WebcastLinkMicArmies {
+  MessageHeader header = 1;
+  uint64 id = 2;
+  repeated LinkMicArmiesItems battleItems = 3;
+  uint64 id2 = 4;
+  uint64 timeStamp1 = 5;
+  uint64 timeStamp2 = 6;
+  int32 battleStatus = 7; // SHOULD BE AN ENUM
+  uint64 data1 = 8;
+  uint64 data2 = 9;
+  uint32 data3 = 10;
+  Picture picture = 11;
+  uint32 data4 = 12;
+  uint32 data5 = 13;
+}
+
+// Battle Start?
+message WebcastLinkMicBattle {
+  MessageHeader header = 1;
+  uint64 id = 2;
+  LinkMicBattleConfig battleConfig = 3;
+  uint32 data2 = 4;
+  repeated LinkMicBattleDetails details = 5;
+  repeated LinkMicBattleTeam teams1 = 9;
+  repeated LinkMicBattleTeam teams2 = 10;
+  repeated LinkMicBattleTeamData teamData = 13;
+
+  message LinkMicBattleConfig {
+    uint64 id1 = 1;
+    uint64 timestamp = 2;
+    uint32 data1 = 3;
+    uint64 id2 = 4;
+    uint32 data2 = 5;
+  }
+
+  message LinkMicBattleData {
+    uint64 id = 1;
+    uint32 data1 = 2;
+    uint32 data2 = 3;
+    uint32 data3 = 5;
+    string url = 6;
+  }
+
+  message LinkMicBattleDetails {
+    uint64 id = 1;
+    LinkMicBattleData details = 2;
+  }
+
+  message LinkMicBattleTeam {
+    uint64 id = 1;
+    repeated User users = 2;
+  }
+
+  message LinkMicBattleTeamData {
+    uint64 teamId = 1;
+    LinkMicBattleData data = 2;
+  }
+}
+
+message WebcastLinkMicFanTicketMethod {
+  MessageHeader header = 1;
+  FanTicketDataContainer data = 2;
+
+  message FanTicketDataContainer {
+    FanTicketData details = 1;
+    uint32 data1 = 2;
+    string icon = 5;
+
+    message FanTicketData {
+      uint64 id = 1;
+      uint32 data = 2;
+    }
+  }
+}
+
+message WebcastLinkMicMethod {
+  MessageHeader header = 1;
+  uint64 data1 = 2;
+  uint64 id1 = 5;
+  uint32 data2 = 6;
+  uint32 data3 = 7;
+  uint64 id2 = 8;
+  uint32 data4 = 9;
+  uint64 data5 = 10;
+  uint64 id3 = 38;
+  uint32 data6 = 39;
+  string data7 = 40; // Combines data6 & id
+  uint32 data8 = 43;
+}
+
+message WebcastLiveIntroMessage {
+  MessageHeader header = 1;
+  uint64 roomId = 2;
+  uint64 data1 = 3;
+  string description = 4;
+  User host = 5;
+  uint32 data2 = 6;
+  IntroData messageData = 7;
+  string language = 8; // ISO-language of Host
+
+  message IntroData {
+    uint32 data1 = 1;
+    ValueLabel details = 21;
+  }
+}
+
+// Sent for a variety of events, including Join & Subscribe
+message WebcastMemberMessage {
+  enum MemberMessageAction {
+    UNKNOWN = 0;
+    JOINED = 1; // User Joined the Stream
+    SUBSCRIBED = 3; // User Subscribed to the Host
+    //?? = 26
+    //?? = 27
+    //?? = 50 (share?)
+  }
+
+  MemberMessageHeader header = 1;
+  User user = 2;
+  uint64 totalViewers = 3; // Available in Join-Message
+  User user2 = 4;
+  MemberMessageAction action = 10;
+  MemberMessageData eventDetails = 18; // Identical to details in Header
+  string data1 = 19; // "unknown"/"homepage_hot-live_cell"
+  string data2 = 20; // "click"
+  string data3 = 21; // "rec"
+  string data4 = 23; // "other"
+  uint32 data5 = 24;
+}
+
+message WebcastMsgDetectMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  DataContainer data2 = 3; // Only uses index 1, 2 & 4
+  TimeStampContainer timestamps = 4;
+  string language = 6;
+}
+
+message WebcastOecLiveShoppingMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  LiveShoppingData shopData = 4;
+  TimeStampContainer shopTimings = 5; // Uses index 1, 2 & 3
+  LiveShoppingDetails details = 9;
+
+  message LiveShoppingData {
+    string title = 1;
+    string priceString = 2; // $55.99
+    string imageUrl = 3;
+    string shopUrl = 4;
+    uint64 data1 = 6;
+    string shopName = 7; // "Shopify"
+    uint64 data2 = 8;
+    string shopUrl2 = 9;
+    uint64 data3 = 10;
+    uint64 data4 = 11;
+  }
+
+  message LiveShoppingDetails {
+    string id1 = 1;
+    string data1 = 3;
+    uint32 data2 = 4;
+    uint64 timestamp = 5;
+    ValueLabel data = 6;
+  }
+}
+
+message WebcastPollMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  uint64 id = 3;
+  PollMessageData pollData = 4;
+  PollMessageOptionsContainer options1 = 5;
+  PollMessageOptionsContainer options2 = 6;
+
+  message PollMessageOptionsContainer {
+    repeated PollMessageOption Options = 2;
+    User user = 3;
+  }
+
+  message PollMessageOption {
+    uint32 currentTotal = 1;
+    string label = 2;
+    uint32 data1 = 3;
+  }
+
+  message PollMessageData {
+    uint64 timeStamp1 = 1;
+    uint64 timeStamp2 = 2;
+    repeated PollMessageOption options = 3;
+    User user = 5;
+  }
+}
+
+message WebcastQuestionNewMessage {
+  MessageHeader header = 1;
+  QuestionDetails details = 2;
+
+  message QuestionDetails {
+    uint64 id = 1;
+    string text = 2;
+    uint64 timeStamp = 4;
+    User user = 5;
+    uint32 data1 = 20;
+  }
+}
+
+message WebcastRankTextMessage {
+  //WebcastRankTextMessageHeader header = 1;
+  uint32 data1 = 2;
+  uint32 data2 = 3;
+  uint32 data3 = 4;
+  RankTextMessageSummary detailsSmall = 5;
+  RankTextMessage details = 6;
+  uint64 id1 = 7;
+
+  message RankTextMessageSummary {
+    string type = 1;
+    string label = 2;
+    TikTokColor color = 3;
+    ValueLabel details = 4;
+  }
+}
+
+message WebcastRankUpdateMessage {
+  MessageHeader header = 1;
+  RankUpdateData data = 2;
+  uint32 data1 = 3;
+  uint32 data2 = 5;
+
+  message RankUpdateData {
+    uint32 data1 = 1;
+    uint32 data2 = 2;
+    Ranking rankData = 3;
+    RankColor color = 4;
+    uint64 data3 = 6;
+    string data4 = 7;
+    uint32 data5 = 8;
+    uint32 data6 = 9;
+    uint64 data7 = 10;
+
+    message RankColor {
+      string color = 4;
+    }
+
+    message RankColor2 {
+      uint32 data1 = 1;
+      string color = 2;
+      uint32 data2 = 4;
+    }
+  }
+}
+
+// Basic Text Message from Room
+message WebcastRoomMessage {
+  MessageHeader header = 1;
+  string data = 2;
+  Picture picture = 5;
+  string data2 = 6;
+}
+
+// Host Pins comment to stream
+message WebcastRoomPinMessage {
+  MessageHeader header = 1;
+  RoomPinMessageData pinData1 = 2;
+  string originalMsgType = 30;
+  uint64 timestamp = 31;
+  RoomPinMessageData2 pinData2 = 32;
+  uint32 data1 = 33;
+  int32 data2 = 34;
+  uint64 data3 = 35;
+
+  message RoomPinMessageData {
+    RoomPinMessageDataDetails details = 1;
+    User sender = 2;
+    string comment = 3;
+    repeated User mentionedUsers = 12;
+    string language = 14;
+    DataContainer chatData = 18;
+    repeated ModerationData moderationData = 19;
+
+    // Basically a RoomPinMessageHeader
+    message RoomPinMessageDataDetails {
+      string messageType = 1;
+      uint64 messageId = 2;
+      uint64 roomId = 3;
+      uint64 serverTime = 4;
+      uint64 data1 = 6;
+      PinMessageStringContainer data2 = 8;
+      uint64 data3 = 9;
+      uint64 data4 = 10;
+      uint64 data5 = 11;
+      string serverDescription = 15;
+      uint64 data6 = 21;
+      uint64 data7 = 22;
+      uint64 data8 = 23;
+      uint64 data9 = 24;
+      uint64 data10 = 25;
+
+      message PinMessageStringContainer {
+        string data = 3;
+      }
+    }
+  }
+
+  message RoomPinMessageData2 {
+    uint64 id = 1;
+    RoomPinMessageData2Details details = 32;
+
+    message RoomPinMessageData2Details {
+      uint32 data = 2;
+    }
+  }
+}
+
+// Status of Room (ViewerCount + Top Viewers)
+message WebcastRoomUserSeqMessage {
+  MessageHeader header = 1;
+  repeated TopViewer topViewers = 2; // Top 4 or less
+  uint32 viewerCount = 3; // Number of Viewers in Room
+  uint64 data1 = 7;
+  uint32 data2 = 8;
+}
+
+// Sent for a variety of events, including Follow & Share
+message WebcastSocialMessage {
+  SocialMessageHeader header = 1;
+  User sender = 2; // CAN BE NULL
+  uint64 data1 = 3; // Exists on Share-Message
+  uint64 data2 = 4;
+  string data3 = 5;
+  uint64 totalFollowers = 6; // Exists on Follow-Message
+  uint64 data4 = 8; // Exists on Share-Message
+}
+
+message WebcastSubNotifyMessage {
+  SocialMessageHeader header = 1;
+  User sender = 2;
+  uint32 data1 = 4;
+  uint32 data2 = 5;
+  uint32 data3 = 6;
+  uint32 data4 = 8;
+}
+
+// Related to someone getting banned?
+message WebcastUnauthorizedMemberMessage {
+  MessageHeader header = 1;
+  uint32 data1 = 2;
+  MemberMessageData details1 = 3;
+  string data2 = 4;
+  MemberMessageData details2 = 5;
+}
+
+
+/**
+
+-=-=-=-=-=-=-=-=-=-=-=
+   Message-Headers
+-=-=-=-=-=-=-=-=-=-=-=
+
+Most Headers here only different from the base MessageHeader in index 8 (HeaderData)
+This field usually holds a summary of the outer message
+
+*/
+
+message HeaderData {
+  string messageType = 1;
+  string details = 2;
+  TikTokColor color = 3;
+  HeaderDataDetails additionalData = 4;
+
+  message HeaderDataDetails {
+    uint32 data1 = 1;
+    string data2 = 11;
+    repeated UserContainer users = 21;
+  }
+}
+
+message ControlData {
+  StringData data = 1;
+  uint64 serverTime = 2;
+}
+
+// Header for Messages. Usually stored in Index1 in the Message
+message MessageHeader {
+  string messageType = 1;
+  uint64 messageId = 2;
+  uint64 roomId = 3;
+  uint64 serverTime = 4;
+  uint32 data1 = 5;
+  uint64 data2 = 6;
+  HeaderData headerData = 8;
+  uint64 data3 = 9;
+  uint64 data4 = 10;
+  uint64 data5 = 11;
+  string details = 15;
+  ControlData controlData = 18;
+  uint64 data6 = 21;
+  uint64 data7 = 22;
+  uint64 data8 = 23;
+  uint64 data9 = 24;
+  uint64 timeStamp1 = 25;
+}
+
+message GiftMessageHeader {
+  string messageType = 1;
+  uint64 messageId = 2;
+  uint64 roomId = 3; // Does not always match RoomID?
+  uint64 serverTime = 4;
+  uint32 data1 = 5;
+  uint64 data2 = 6;
+  string description = 7; // "{0}: gifted the host {amount} {giftName}"
+  GiftHeaderData headerData = 8;
+  uint64 data3 = 9;
+  uint64 data4 = 10;
+  uint64 data5 = 11;
+  string details = 15;
+  string description2 = 17 ;// "gift_expensive" found in WebcastGiftBroadcastMessage
+  ControlData controlData = 18;
+  uint64 data6 = 21;
+  uint64 data7 = 22;
+  uint64 data8 = 23;
+  uint64 data9 = 24;
+  uint64 timeStamp1 = 25;
+
+  message GiftHeaderData {
+    string messageType = 1;
+    string details = 2;
+    TikTokColor color = 3;
+    repeated GiftHeaderGiftData giftData = 4;
+
+    message GiftHeaderGiftData {
+      uint32 data1 = 1;
+      TikTokColor color = 2;
+      string details = 11;
+      UserContainer user = 21;
+      GiftHeaderGiftDataDetails data2 = 22;
+
+      message GiftHeaderGiftDataDetails {
+        uint64 data1 = 1;
+        StringData details = 2; // 1 = DataType, 2 = GiftName
+        uint64 data2 = 4;
+      }
+    }
+  }
+}
+
+message LikeMessageHeader {
+  string messageType = 1;
+  uint64 messageId = 2;
+  uint64 roomId = 3;
+  uint64 serverTime = 4;
+  uint32 data1 = 5;
+  uint64 data2 = 6;
+  string description = 7;
+  LikeData likeData = 8;
+  uint64 data3 = 9;
+  uint64 data4 = 10;
+  uint64 data5 = 11;
+  string details = 15;
+  ControlData controlData = 18;
+  uint64 data6 = 21;
+  uint64 data7 = 22;
+  uint64 data8 = 23;
+  uint64 data9 = 24;
+  uint64 timeStamp1 = 25;
+}
+
+message MemberMessageHeader {
+  string messageType = 1;
+  uint64 messageId = 2;
+  uint64 roomId = 3;
+  uint64 serverTime = 4;
+  uint32 data1 = 5;
+  uint64 data2 = 6;
+  string description = 7;
+  MemberMessageData messageData = 8;
+  uint64 data3 = 9;
+  uint64 data4 = 10;
+  uint64 data5 = 11;
+  string details = 15;
+  ControlData controlData = 18;
+  uint64 data6 = 21;
+  uint64 data7 = 22;
+  uint64 data8 = 23;
+  uint64 data9 = 24;
+  uint64 timeStamp1 = 25;
+}
+
+message SocialMessageHeader {
+  string messageType = 1;
+  uint64 messageId = 2;
+  uint64 roomId = 3;
+  uint64 serverTime = 4;
+  uint32 data1 = 5;
+  uint64 data2 = 6;
+  string description = 7;
+  SocialMessageData socialData = 8;
+  uint64 data3 = 9;
+  uint64 data4 = 10;
+  uint64 data5 = 11;
+  string details = 15;
+  ControlData controlData = 18;
+  uint64 data6 = 21;
+  uint64 data7 = 22;
+  uint64 data8 = 23;
+  uint64 data9 = 24;
+  uint64 timeStamp1 = 25;
+}

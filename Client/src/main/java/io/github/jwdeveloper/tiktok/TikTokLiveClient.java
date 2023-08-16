@@ -1,5 +1,7 @@
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.live.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
@@ -14,6 +16,8 @@ public class TikTokLiveClient implements LiveClient {
     private final TikTokGiftManager giftManager;
     private final TikTokApiService apiClient;
     private final TikTokWebsocketClient webSocketClient;
+
+    private final TikTokEventHandler tikTokEventHandler;
     private final Logger logger;
 
 
@@ -21,13 +25,17 @@ public class TikTokLiveClient implements LiveClient {
                             TikTokApiService tikTokApiService,
                             TikTokWebsocketClient webSocketClient,
                             TikTokGiftManager tikTokGiftManager,
+                            TikTokEventHandler tikTokEventHandler,
                             Logger logger) {
         this.meta = tikTokLiveMeta;
         this.giftManager = tikTokGiftManager;
         this.apiClient = tikTokApiService;
         this.webSocketClient = webSocketClient;
         this.logger = logger;
+        this.tikTokEventHandler = tikTokEventHandler;
     }
+
+
 
 
     public void run() {

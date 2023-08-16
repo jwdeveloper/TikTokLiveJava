@@ -4,8 +4,10 @@ package io.github.jwdeveloper.tiktok;
 
 public class TikTokLive
 {
-    public static TikTokClientBuilder newClient(String userName)
+    public static TikTokLiveClientBuilder newClient(String userName)
     {
-        return new TikTokClientBuilder(userName);
+        return new TikTokLiveClientBuilder(userName);
     }
+
+
 }
