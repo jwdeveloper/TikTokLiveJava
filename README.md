@@ -20,7 +20,7 @@ Do you prefer other programming languages?
 
 ## Getting started
 
-1. Install the package via NPM
+1. Install the package via Maven
 ```
 npm i tiktok-live-connector
 ```
