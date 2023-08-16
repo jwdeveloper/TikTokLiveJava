@@ -68,7 +68,7 @@ A `TikTokLive` object contains the following methods.
 A `TikTokLive` object has the following events 
 
 Events:
--  [TikTokUnhandledSocialEvent](#TikTokUnhandledSocialEvent)
+-  [a](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokBarrageMessageEvent.java)
 -  [TikTokLinkMicFanTicketEvent](#TikTokLinkMicFanTicketEvent)
 -  [TikTokEnvelopeEvent](#TikTokEnvelopeEvent)
 -  [TikTokShopMessageEvent](#TikTokShopMessageEvent)
