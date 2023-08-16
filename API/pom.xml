@@ -5,10 +5,9 @@
     <parent>
         <artifactId>TikTokLiveJava</artifactId>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>API</artifactId>
     <dependencies>
         <dependency>
@@ -17,12 +16,6 @@
             <version>3.8.0</version>
         </dependency>
     </dependencies>
-
-    <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <build>
         <sourceDirectory>target/generated-sources</sourceDirectory>
@@ -40,8 +33,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
@@ -65,11 +56,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Add other plugins as needed -->
         </plugins>
     </build>
-
-
-
 </project>
