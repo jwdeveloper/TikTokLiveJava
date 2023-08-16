@@ -61,7 +61,7 @@ public class TikTokWebsocketClient {
         }
         try {
             var url =getWebSocketUrl(webcastResponse);
-            startWebSocket(url);
+            webSocket =startWebSocket(url);
             if (clientSettings.isHandleExistingMessagesOnConnect()) {
                 //  HandleWebcastMessages(webcastResponse);
             }

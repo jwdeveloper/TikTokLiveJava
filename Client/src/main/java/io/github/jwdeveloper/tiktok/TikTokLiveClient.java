@@ -16,7 +16,6 @@ public class TikTokLiveClient implements LiveClient {
     private final TikTokGiftManager giftManager;
     private final TikTokApiService apiClient;
     private final TikTokWebsocketClient webSocketClient;
-
     private final TikTokEventHandler tikTokEventHandler;
     private final Logger logger;
 
