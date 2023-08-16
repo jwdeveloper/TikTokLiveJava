@@ -67,32 +67,53 @@ A `TikTokLive` object contains the following methods.
 
 A `TikTokLive` object has the following events 
 
-Control Events:
-- [connected](#connected)
-- [disconnected](#disconnected)
-- [streamEnd](#streamend)
-- [rawData](#rawdata)
-- [websocketConnected](#websocketconnected)
-- [error](#error)
+Events:
+-  [TikTokUnhandledSocialEvent](#TikTokUnhandledSocialEvent)
+-  [TikTokLinkMicFanTicketEvent](#TikTokLinkMicFanTicketEvent)
+-  [TikTokEnvelopeEvent](#TikTokEnvelopeEvent)
+-  [TikTokShopMessageEvent](#TikTokShopMessageEvent)
+-  [TikTokDetectMessageEvent](#TikTokDetectMessageEvent)
+-  [TikTokLinkLayerMessageEvent](#TikTokLinkLayerMessageEvent)
+-  [TikTokConnectedEvent](#TikTokConnectedEvent)
+-  [TikTokCaptionEvent](#TikTokCaptionEvent)
+-  [TikTokQuestionEvent](#TikTokQuestionEvent)
+-  [TikTokRoomPinMessageEvent](#TikTokRoomPinMessageEvent)
+-  [TikTokRoomMessageEvent](#TikTokRoomMessageEvent)
+-  [TikTokLivePausedEvent](#TikTokLivePausedEvent)
+-  [TikTokLikeEvent](#TikTokLikeEvent)
+-  [TikTokLinkMessageEvent](#TikTokLinkMessageEvent)
+-  [TikTokBarrageMessageEvent](#TikTokBarrageMessageEvent)
+-  [TikTokGiftMessageEvent](#TikTokGiftMessageEvent)
+-  [TikTokLinkMicArmiesEvent](#TikTokLinkMicArmiesEvent)
+-  [TikTokEmoteEvent](#TikTokEmoteEvent)
+-  [TikTokUnauthorizedMemberEvent](#TikTokUnauthorizedMemberEvent)
+-  [TikTokInRoomBannerEvent](#TikTokInRoomBannerEvent)
+-  [TikTokLinkMicMethodEvent](#TikTokLinkMicMethodEvent)
+-  [TikTokSubscribeEvent](#TikTokSubscribeEvent)
+-  [TikTokPollMessageEvent](#TikTokPollMessageEvent)
+-  [TikTokFollowEvent](#TikTokFollowEvent)
+-  [TikTokRoomViewerDataEvent](#TikTokRoomViewerDataEvent)
+-  [TikTokGoalUpdateEvent](#TikTokGoalUpdateEvent)
+-  [TikTokCommentEvent](#TikTokCommentEvent)
+-  [TikTokRankUpdateEvent](#TikTokRankUpdateEvent)
+-  [TikTokIMDeleteEvent](#TikTokIMDeleteEvent)
+-  [TikTokLiveEndedEvent](#TikTokLiveEndedEvent)
+-  [TikTokErrorEvent](#TikTokErrorEvent)
+-  [TikTokUnhandledEvent](#TikTokUnhandledEvent)
+-  [TikTokJoinEvent](#TikTokJoinEvent)
+-  [TikTokRankTextEvent](#TikTokRankTextEvent)
+-  [TikTokShareEvent](#TikTokShareEvent)
+-  [TikTokUnhandledMemberEvent](#TikTokUnhandledMemberEvent)
+-  [TikTokSubNotifyEvent](#TikTokSubNotifyEvent)
+-  [TikTokLinkMicBattleEvent](#TikTokLinkMicBattleEvent)
+-  [TikTokDisconnectedEvent](#TikTokDisconnectedEvent)
+-  [TikTokGiftBroadcastEvent](#TikTokGiftBroadcastEvent)
+-  [TikTokUnhandledControlEvent](#TikTokUnhandledControlEvent)
+-  [TikTokEvent](#TikTokEvent)
 
-Message Events:
-- [member](#member)
-- [chat](#chat)
-- [gift](#gift)
-- [roomUser](#roomuser)
-- [like](#like)
-- [social](#social)
-- [emote](#emote)
-- [envelope](#envelope)
-- [questionNew](#questionnew)
-- [linkMicBattle](#linkmicbattle)
-- [linkMicArmies](#linkmicarmies)
-- [liveIntro](#liveintro)
-- [subscribe](#subscribe)
 
-Custom Events:
-- [follow](#follow)
-- [share](#share)
+Process finished with exit code 0
+
 
 <br><br>
 
