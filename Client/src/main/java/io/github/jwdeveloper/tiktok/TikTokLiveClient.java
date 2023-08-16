@@ -82,8 +82,9 @@ public class TikTokLiveClient implements LiveClient {
         setState(ConnectionState.CONNECTED);
     }
 
-    public void disconnect() {
-
+    public void disconnect()
+    {
+        webSocketClient.stop();
     }
 
 

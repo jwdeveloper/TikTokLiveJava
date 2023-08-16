@@ -20,10 +20,10 @@ public class EventsInterfaceGenerator {
             //   System.out.println(clazz.getName());
         }
 
-     //  var result = generateInterface("io.github.jwdeveloper.tiktok.events", classes);System.out.println(result);
+     //var result = generateInterface("io.github.jwdeveloper.tiktok.events", classes);System.out.println(result);
 
 
-       var result =  getBuilderImplementation("x",classes); System.out.println(result);
+      var result =  getBuilderImplementation("x",classes); System.out.println(result);
 
     }
 
@@ -36,8 +36,13 @@ public class EventsInterfaceGenerator {
         // Generate constructors
         for (var clazz : eventsClasses) {
             var clazzName = clazz.getSimpleName();
-            var methodName = clazzName.replace("TikTok", "");
-            methodName = methodName.replace("Event", "");
+
+            var methodName = clazzName;
+            methodName = clazzName.replace("TikTok", "");
+            if(!clazz.equals(TikTokEvent.class))
+            {
+                methodName = methodName.replace("Event", "");
+            }
             MethodSpec.Builder constructorBuilder = MethodSpec.methodBuilder("on" + methodName);
 
 
@@ -76,8 +81,13 @@ public class EventsInterfaceGenerator {
         // Generate constructors
         for (var clazz : eventsClasses) {
             var clazzName = clazz.getSimpleName();
-            var methodName = clazzName.replace("TikTok", "");
-            methodName ="on" + methodName.replace("Event", "");
+            var methodName = clazzName;
+            methodName = clazzName.replace("TikTok", "");
+            if(!clazz.equals(TikTokEvent.class))
+            {
+                methodName = methodName.replace("Event", "");
+            }
+            methodName ="on" + methodName;
             MethodSpec.Builder constructorBuilder = MethodSpec.methodBuilder( methodName);
 
 

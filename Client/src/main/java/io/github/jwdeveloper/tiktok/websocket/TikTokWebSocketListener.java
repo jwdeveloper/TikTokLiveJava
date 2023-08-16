@@ -1,7 +1,12 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
 
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageParsingException;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.WebResponseHandler;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketAck;
 import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketMessage;
@@ -9,33 +14,53 @@ import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketMessage;
 import java.io.ByteArrayOutputStream;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
-import java.util.Base64;
 import java.util.concurrent.CompletionStage;
 
 
 public class TikTokWebSocketListener implements java.net.http.WebSocket.Listener {
 
-    private ByteArrayOutputStream accumulatedData = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream accumulatedData = new ByteArrayOutputStream();
+    private final WebResponseHandler webResponseHandler;
+    private final TikTokEventHandler tikTokEventHandler;
+
+    public TikTokWebSocketListener(WebResponseHandler webResponseHandler, TikTokEventHandler tikTokEventHandler) {
+        this.webResponseHandler = webResponseHandler;
+        this.tikTokEventHandler = tikTokEventHandler;
+    }
 
     @Override
     public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
         try {
-            var decoded = Base64.getEncoder().encodeToString(data.array());
-            System.out.println(decoded);
             var bytes = new byte[data.remaining()];
             data.get(bytes);
             accumulatedData.write(bytes);
             if (last) {
-
-                //handleBinary(webSocket, accumulatedData.toByteArray());
+                handleBinary(webSocket, accumulatedData.toByteArray());
                 accumulatedData.reset();
-                accumulatedData = new ByteArrayOutputStream();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            tikTokEventHandler.publish(new TikTokErrorEvent(e));
         }
         webSocket.request(1);
         return null;
+    }
+
+    @Override
+    public void onOpen(java.net.http.WebSocket webSocket) {
+        tikTokEventHandler.publish(new TikTokConnectedEvent());
+        webSocket.request(1);
+    }
+
+    @Override
+    public void onError(java.net.http.WebSocket webSocket, Throwable error) {
+        tikTokEventHandler.publish(new TikTokErrorEvent(error));
+        webSocket.request(1);
+    }
+
+    @Override
+    public CompletionStage<?> onClose(java.net.http.WebSocket webSocket, int statusCode, String reason) {
+        tikTokEventHandler.publish(new TikTokDisconnectedEvent());
+        return java.net.http.WebSocket.Listener.super.onClose(webSocket, statusCode, reason);
     }
 
     private void handleBinary(WebSocket webSocket, byte[] buffer) {
@@ -46,22 +71,28 @@ public class TikTokWebSocketListener implements java.net.http.WebSocket.Listener
                 return;
             }
             sendAckId(webSocket, websocketMessage.getId());
-
-
             try {
-
-                //error here
                 var response = WebcastResponse.parseFrom(websocketMessage.getBinary());
-                System.out.println("Works");
-                //  handleResponse(response);
+                webResponseHandler.handle(response);
             } catch (Exception e) {
-                throw new TikTokLiveException("Unabel to read WebcastResponse", e);
+                throw new TikTokLiveMessageParsingException("Unable to read WebcastResponse", e);
             }
         } catch (Exception e) {
-            throw new TikTokLiveException("Unabel to read WebcastWebsocketMessage", e);
+            throw new TikTokLiveMessageParsingException("Unable to read WebcastWebsocketMessage", e);
         }
     }
 
+    private void pingTask(WebSocket webSocket) throws InterruptedException {
+        while (true) {
+            byte[] message = new byte[]{58, 2, 104, 98};
+            ByteBuffer buffer = ByteBuffer.wrap(message);
+            while (buffer.hasRemaining()) {
+                webSocket.sendPing(buffer);
+            }
+            buffer.clear();
+            Thread.sleep(10);
+        }
+    }
 
     private void sendAckId(WebSocket webSocket, long id) {
         var serverInfo = WebcastWebsocketAck
@@ -71,30 +102,5 @@ public class TikTokWebSocketListener implements java.net.http.WebSocket.Listener
                 .build();
         webSocket.sendBinary(serverInfo.toByteString().asReadOnlyByteBuffer(), true);
     }
-
-    @Override
-    public void onOpen(java.net.http.WebSocket webSocket) {
-        System.out.println("WebSocket opened");
-        webSocket.request(1);
-    }
-
-    @Override
-    public void onError(java.net.http.WebSocket webSocket, Throwable error) {
-        System.out.println("Error occurred: " + error.getMessage());
-        webSocket.request(1);
-    }
-
-    @Override
-    public CompletionStage<?> onText(java.net.http.WebSocket webSocket, CharSequence data, boolean last) {
-        System.out.println("Received onText: " + data);
-        return java.net.http.WebSocket.Listener.super.onText(webSocket, data, last);
-    }
-
-    @Override
-    public CompletionStage<?> onClose(java.net.http.WebSocket webSocket, int statusCode, String reason) {
-        System.out.println("WebSocket closed with status code: " + statusCode + " and reason: " + reason);
-        return java.net.http.WebSocket.Listener.super.onClose(webSocket, statusCode, reason);
-    }
-
 
 }

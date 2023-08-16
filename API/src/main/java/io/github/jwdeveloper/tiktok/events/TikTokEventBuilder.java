@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 
 
 public interface TikTokEventBuilder<T> {
+    T onUnhandledSocial(Consumer<TikTokUnhandledSocialEvent> event);
+
     T onLinkMicFanTicket(Consumer<TikTokLinkMicFanTicketEvent> event);
 
     T onEnvelope(Consumer<TikTokEnvelopeEvent> event);
@@ -17,6 +19,8 @@ public interface TikTokEventBuilder<T> {
 
     T onLinkLayerMessage(Consumer<TikTokLinkLayerMessageEvent> event);
 
+    T onConnected(Consumer<TikTokConnectedEvent> event);
+
     T onCaption(Consumer<TikTokCaptionEvent> event);
 
     T onQuestion(Consumer<TikTokQuestionEvent> event);
@@ -24,6 +28,8 @@ public interface TikTokEventBuilder<T> {
     T onRoomPinMessage(Consumer<TikTokRoomPinMessageEvent> event);
 
     T onRoomMessage(Consumer<TikTokRoomMessageEvent> event);
+
+    T onLivePaused(Consumer<TikTokLivePausedEvent> event);
 
     T onLike(Consumer<TikTokLikeEvent> event);
 
@@ -59,17 +65,31 @@ public interface TikTokEventBuilder<T> {
 
     T onIMDelete(Consumer<TikTokIMDeleteEvent> event);
 
+    T onLiveEnded(Consumer<TikTokLiveEndedEvent> event);
+
+    T onError(Consumer<TikTokErrorEvent> event);
+
+    T onUnhandled(Consumer<TikTokUnhandledEvent> event);
+
     T onJoin(Consumer<TikTokJoinEvent> event);
 
     T onRankText(Consumer<TikTokRankTextEvent> event);
 
     T onShare(Consumer<TikTokShareEvent> event);
 
+    T onUnhandledMember(Consumer<TikTokUnhandledMemberEvent> event);
+
     T onSubNotify(Consumer<TikTokSubNotifyEvent> event);
 
     T onLinkMicBattle(Consumer<TikTokLinkMicBattleEvent> event);
 
+    T onDisconnected(Consumer<TikTokDisconnectedEvent> event);
+
     T onGiftBroadcast(Consumer<TikTokGiftBroadcastEvent> event);
+
+    T onUnhandledControl(Consumer<TikTokUnhandledControlEvent> event);
+
+    T onEvent(Consumer<TikTokEvent> event);
 }
 
 
