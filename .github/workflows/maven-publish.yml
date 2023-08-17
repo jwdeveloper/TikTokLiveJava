@@ -44,7 +44,7 @@ jobs:
       run: find . -type f -ls
       
     - name: 4.1 copy jar files
-      run: mkdir staging && cp Client/target/Client-1.0.0.jar staging
+      run: mkdir staging && cp Client/target/Client-${{steps.version.outputs.version_tag}}-Release-all.jar staging
       
     - name: 5 set up a cache for maven
       uses: actions/cache@v2
