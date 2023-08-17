@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static String TEST_USER_SUBJECT = "tv_asahi_news";
+    public static String TEST_USER_SUBJECT = "stiflerhub";
 
     public static void main(String[] args) throws IOException {
         var client = TikTokLive.newClient(TEST_USER_SUBJECT)
@@ -23,7 +23,7 @@ public class Main {
                 .onEmote(Main::onEmote)
                 .onError(tikTokErrorEvent ->
                 {
-                    tikTokErrorEvent.getException().printStackTrace();
+                  //  tikTokErrorEvent.getException().printStackTrace();
                 })
                 .buildAndRun();
 
@@ -49,7 +49,8 @@ public class Main {
     }
 
     private static void onComment(TikTokCommentEvent e) {
-        print(e.getUser().getUniqueId(), e.getText());
+        print("DUPA: "+e.getText());
+       // print(e.getUser().getUniqueId(), e.getText());
     }
 
     private static void onFollow(TikTokFollowEvent e) {
