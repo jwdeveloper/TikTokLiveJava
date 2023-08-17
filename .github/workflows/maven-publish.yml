@@ -40,7 +40,9 @@ jobs:
            
     - name: 3 Build with Maven
       run: mvn package -P publish --file pom.xml  
-  
+    - name: 3.1 Show files
+      run: ls -a
+      
     - name: 4.1 copy jar files
       run: mkdir staging && cp Client/target/Client-1.0.0.jar staging
       
