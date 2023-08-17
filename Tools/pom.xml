@@ -30,13 +30,13 @@
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>API</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>Client</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

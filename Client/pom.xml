@@ -6,12 +6,10 @@
         <artifactId>TikTokLiveJava</artifactId>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
         <version>1.0.0</version>
-
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Client</artifactId>
-    <packaging>jar</packaging>
 
 
     <dependencies>
@@ -25,7 +23,7 @@
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
