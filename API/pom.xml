@@ -16,8 +16,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <build>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.24.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
+    <build>
         <plugins>
             <plugin>
                 <groupId>kr.motd.maven</groupId>
