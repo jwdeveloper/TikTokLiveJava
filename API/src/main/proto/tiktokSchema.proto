@@ -186,7 +186,7 @@ message Badge {
 
   message BadgeComplex {
     uint32 data1 = 1;
-    string imageUrl = 2;
+    //string imageUrl = 2; Protocol message had invalid UTF-8
     string data = 4;
     DataContainer detail1 = 5;
     string data2 = 6;
@@ -377,7 +377,7 @@ message RankTextMessage {
 // Links to Image-Files on the TikTok CDN
 message Picture {
   repeated string urls = 1; // Usually has 3 different urls with different sizes/extensions
-  string prefix = 2; // uri
+ // string prefix = 2; // uri not working
   uint32 data1 = 3;
   uint32 data2 = 4;
   string color = 5;
@@ -681,7 +681,7 @@ message WebcastGiftMessage {
   uint32 data11 = 34;
 
   message GiftData1 {
-    string data1 = 1;
+   // string data1 = 1; not working
     uint32 data2 = 2;
     uint32 data3 = 3;
   }

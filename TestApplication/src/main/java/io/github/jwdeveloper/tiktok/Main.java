@@ -23,7 +23,7 @@ public class Main {
                 .onEmote(Main::onEmote)
                 .onError(tikTokErrorEvent ->
                 {
-                  //  tikTokErrorEvent.getException().printStackTrace();
+                    //  tikTokErrorEvent.getException().printStackTrace();
                 })
                 .buildAndRun();
 
@@ -49,8 +49,7 @@ public class Main {
     }
 
     private static void onComment(TikTokCommentEvent e) {
-        print("DUPA: "+e.getText());
-       // print(e.getUser().getUniqueId(), e.getText());
+        print(e.getUser().getUniqueId(), e.getText());
     }
 
     private static void onFollow(TikTokFollowEvent e) {
@@ -83,6 +82,6 @@ public class Main {
         for (var message : messages) {
             sb.append(message).append(" ");
         }
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 }

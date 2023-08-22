@@ -3,6 +3,8 @@ package io.github.jwdeveloper.tiktok;
 import lombok.Data;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 @Data
@@ -11,12 +13,12 @@ public class ClientSettings {
     /// Timeout for Connections
     /// </summary>
 
-    private Duration Timeout;
+    private Duration timeout;
     /// <summary>
     /// Polling-Interval for Socket-Connection
     /// </summary
 
-    private Duration PollingInterval;
+    private Duration pollingInterval;
     /// <summary>
     /// Proxy for Connection
     /// </summary>
@@ -26,46 +28,49 @@ public class ClientSettings {
     /// ISO-Language for Client
     /// </summary>
 
-    private String ClientLanguage;
+    private String clientLanguage;
     /// <summary>
     /// Size for Buffer for Socket-Connection
     /// </summary>
 
-    private int SocketBufferSize;
+    private int socketBufferSize;
 
     /// <summary>
     /// Whether to Retry if Connection Fails
     /// </summary>
-    private boolean RetryOnConnectionFailure;
-
+    private boolean retryOnConnectionFailure;
 
     /// <summary>
     /// Whether to handle Messages received from Room when Connecting
     /// </summary>
-    private boolean HandleExistingMessagesOnConnect;
+    private boolean handleExistingMessagesOnConnect;
     /// <summary>
     /// Whether to download List of Gifts for Room when Connecting
     /// </summary>
-    private boolean DownloadGiftInfo;
+    private boolean downloadGiftInfo;
 
     /// <summary>
     /// Whether to print Logs to Console
     /// </summary>
 
-    private boolean PrintToConsole;
+    private boolean printToConsole;
     /// <summary>
     /// LoggingLevel for Logs
     /// </summary>
-    private Level LogLevel;
+    private Level logLevel;
 
     /// <summary>
     /// Whether to print Base64-Data for Messages to Console
     /// </summary>
-    private boolean PrintMessageData;
+    private boolean printMessageData;
 
     /// <summary>
     /// Whether to check Messages for Unparsed Data
     /// </summary>
-    private boolean CheckForUnparsedData;
+    private boolean checkForUnparsedData;
+
+    private String hostName;
+
+    private Map<String, Object> clientParameters;
 }
 

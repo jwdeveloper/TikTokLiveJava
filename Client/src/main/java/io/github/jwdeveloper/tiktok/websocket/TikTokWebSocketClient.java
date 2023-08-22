@@ -13,16 +13,13 @@ import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
 import java.net.URI;
 import java.net.http.WebSocket;
-import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-public class TikTokWebsocketClient {
+public class TikTokWebSocketClient {
     private final Logger logger;
-    private final Map<String, Object> clientParams;
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
     private final TikTokHttpRequestFactory factory;
@@ -33,15 +30,13 @@ public class TikTokWebsocketClient {
 
     private boolean isConnected;
 
-    public TikTokWebsocketClient(Logger logger,
+    public TikTokWebSocketClient(Logger logger,
                                  TikTokCookieJar tikTokCookieJar,
-                                 Map<String, Object> clientParams,
                                  TikTokHttpRequestFactory factory,
                                  ClientSettings clientSettings,
                                  WebResponseHandler webResponseHandler,
                                  TikTokEventHandler tikTokEventHandler) {
         this.logger = logger;
-        this.clientParams = clientParams;
         this.tikTokCookieJar = tikTokCookieJar;
         this.clientSettings = clientSettings;
         this.factory = factory;
@@ -78,7 +73,7 @@ public class TikTokWebsocketClient {
         var headers = Constants.DefaultRequestHeaders();
 
 
-        var clone = new TreeMap<>(clientParams);
+        var clone = new TreeMap<>(clientSettings.getClientParameters());
         clone.putAll(headers);
         clone.put(name, value);
         var url = webcastResponse.getSocketUrl();

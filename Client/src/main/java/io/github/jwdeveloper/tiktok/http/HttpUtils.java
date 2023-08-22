@@ -44,8 +44,8 @@ public class HttpUtils
                     builder.append("&");
                 }
 
-                final String encodedKey = URLEncoder.encode(param.getKey().toString(), StandardCharsets.UTF_8.toString());
-                final String encodedValue = URLEncoder.encode(param.getValue().toString(), StandardCharsets.UTF_8.toString());
+                final String encodedKey = URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8);
+                final String encodedValue = URLEncoder.encode(param.getValue().toString(), StandardCharsets.UTF_8);
                 builder.append(encodedKey).append("=").append(encodedValue);
                 first = true;
             }

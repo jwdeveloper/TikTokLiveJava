@@ -39,7 +39,6 @@ public class Constants {
 
     public static ClientSettings DefaultClientSettings() {
         var clientSettings = new ClientSettings();
-
         clientSettings.setTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT));
         clientSettings.setPollingInterval(Duration.ofSeconds(DEFAULT_POLLTIME));
         clientSettings.setClientLanguage("en-US");
@@ -51,6 +50,7 @@ public class Constants {
         clientSettings.setLogLevel(Level.ALL);
         clientSettings.setCheckForUnparsedData(false);
         clientSettings.setPrintMessageData(false);
+        clientSettings.setClientParameters(Constants.DefaultClientParams());
         return clientSettings;
     }
 

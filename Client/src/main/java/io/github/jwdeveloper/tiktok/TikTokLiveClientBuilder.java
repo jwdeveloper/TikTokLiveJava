@@ -11,48 +11,26 @@ import io.github.jwdeveloper.tiktok.http.TikTokHttpApiClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.TikTokRoomInfo;
-import io.github.jwdeveloper.tiktok.websocket.TikTokWebsocketClient;
+import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
 import java.time.Duration;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveClientBuilder> {
-    private String userName;
     private final ClientSettings clientSettings;
-    private Map<String, Object> clientParameters;
     private final Logger logger;
     private final TikTokEventHandler tikTokEventHandler;
 
     public TikTokLiveClientBuilder(String userName) {
         this.tikTokEventHandler = new TikTokEventHandler();
-        this.userName = userName;
         this.clientSettings = Constants.DefaultClientSettings();
-        this.clientParameters = Constants.DefaultClientParams();
+        this.clientSettings.setHostName(userName);
         this.logger = Logger.getLogger(TikTokLive.class.getName());
     }
 
-
-
-
-    public TikTokLiveClientBuilder clientSettings(Consumer<ClientSettings> consumer) {
+    public TikTokLiveClientBuilder configure(Consumer<ClientSettings> consumer) {
         consumer.accept(clientSettings);
-        return this;
-    }
-
-    public TikTokLiveClientBuilder hostUserName(String userName) {
-        this.userName = userName;
-        return this;
-    }
-
-    public TikTokLiveClientBuilder clientParameters(Map<String, Object> clientParameters) {
-        this.clientParameters = clientParameters;
-        return this;
-    }
-
-    public TikTokLiveClientBuilder addClientParameters(String key, Object value) {
-        this.clientParameters.put(key, value);
         return this;
     }
 
@@ -75,16 +53,13 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         }
 
 
-        if (userName == null || userName.equals("")) {
-            throw new RuntimeException("UserName can not be null");
+        if (clientSettings.getHostName() == null || clientSettings.getHostName() .equals("")) {
+            throw new RuntimeException("HostName can not be null");
         }
 
-        if (clientParameters == null) {
-            clientParameters = Constants.DefaultClientParams();
-        }
-
-        clientParameters.put("app_language", clientSettings.getClientLanguage());
-        clientParameters.put("webcast_language", clientSettings.getClientLanguage());
+        var params = clientSettings.getClientParameters();
+        params.put("app_language", clientSettings.getClientLanguage());
+        params.put("webcast_language", clientSettings.getClientLanguage());
     }
 
     public LiveClient build() {
@@ -92,18 +67,17 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
 
 
         var meta = new TikTokRoomInfo();
-        meta.setUserName(userName);
+        meta.setUserName(clientSettings.getHostName());
 
 
         var cookieJar = new TikTokCookieJar();
         var requestFactory = new TikTokHttpRequestFactory(cookieJar);
-        var apiClient = new TikTokHttpApiClient(cookieJar, clientSettings, requestFactory);
-        var apiService = new TikTokApiService(apiClient, logger, clientParameters);
+        var apiClient = new TikTokHttpApiClient(cookieJar, requestFactory);
+        var apiService = new TikTokApiService(apiClient, logger, clientSettings);
         var giftManager = new TikTokGiftManager(logger, apiService, clientSettings);
         var webResponseHandler = new WebResponseHandler(tikTokEventHandler,giftManager);
-        var webSocketClient = new TikTokWebsocketClient(logger,
+        var webSocketClient = new TikTokWebSocketClient(logger,
                 cookieJar,
-                clientParameters,
                 requestFactory,
                 clientSettings,
                 webResponseHandler,

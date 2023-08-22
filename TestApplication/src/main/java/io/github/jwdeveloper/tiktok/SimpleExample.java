@@ -1,12 +1,14 @@
 package io.github.jwdeveloper.tiktok;
 
+import java.io.IOException;
+
 public class SimpleExample {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // Username of someone who is currently live
-        var tiktokUsername = "officialgeilegisela";
+        var tiktokUsername = "szwagierkaqueen";
 
         TikTokLive.newClient(tiktokUsername)
-                .clientSettings(settings ->
+                .configure(settings ->
                 {
                 })
                 .onConnected(event ->
@@ -19,12 +21,13 @@ public class SimpleExample {
                 })
                 .onComment(event ->
                 {
-                    System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
+                   System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
                 })
                 .onError(event ->
                 {
                     event.getException().printStackTrace();
                 })
                 .buildAndRun();
+        System.in.read();
     }
 }

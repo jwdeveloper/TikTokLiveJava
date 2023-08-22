@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.Constants;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
 import java.net.URI;
@@ -16,27 +16,23 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class TikTokHttpApiClient {
-    private final ClientSettings clientSettings;
     private final TikTokHttpRequestFactory requestFactory;
     private final TikTokCookieJar tikTokCookieJar;
 
-
-    public TikTokHttpApiClient(TikTokCookieJar tikTokCookieJar, ClientSettings clientSettings, TikTokHttpRequestFactory requestFactory) {
-        this.clientSettings = clientSettings;
+    public TikTokHttpApiClient(TikTokCookieJar tikTokCookieJar,  TikTokHttpRequestFactory requestFactory) {
         this.requestFactory = requestFactory;
         this.tikTokCookieJar = tikTokCookieJar;
     }
 
-
     public String GetLivestreamPage(String userName) {
 
         var url = Constants.TIKTOK_URL_WEB + "@" + userName + "/live/";
-        var get = getRequest(url, null, false);
+        var get = getRequest(url, null);
         return get;
     }
 
     public JsonObject GetJObjectFromWebcastAPI(String path, Map<String, Object> parameters) {
-        var get = getRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters, false);
+        var get = getRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         var json = JsonParser.parseString(get);
         var jsonObject = json.getAsJsonObject();
         return jsonObject;
@@ -49,12 +45,11 @@ public class TikTokHttpApiClient {
         }
         catch (Exception e)
         {
-            throw new TikTokLiveException("Unable to deserialize message: "+path,e);
+            throw new TikTokLiveRequestException("Unable to deserialize message: "+path,e);
         }
     }
 
-
-    private String getRequest(String url, Map<String, Object> parameters, boolean signURL) {
+    private String getRequest(String url, Map<String, Object> parameters) {
         if (parameters == null) {
             parameters = new HashMap<>();
         }
@@ -86,7 +81,7 @@ public class TikTokHttpApiClient {
         }
         catch (Exception e)
         {
-            throw new TikTokLiveException("unabel to send signature");
+            throw new TikTokLiveRequestException("Unable to send signature");
         }
     }
 
@@ -112,7 +107,7 @@ public class TikTokHttpApiClient {
             requestFactory.setAgent(userAgent);
             return signedUrl;
         } catch (Exception e) {
-            throw new TikTokLiveException("Insufficent values have been supplied for signing. Likely due to an update. Post an issue on GitHub.", e);
+            throw new TikTokLiveRequestException("Insufficient values have been supplied for signing. Likely due to an update. Post an issue on GitHub.", e);
         }
     }
 

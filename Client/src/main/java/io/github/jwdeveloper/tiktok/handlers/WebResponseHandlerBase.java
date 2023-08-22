@@ -69,9 +69,10 @@ public abstract class WebResponseHandlerBase {
                 handleSingleMessage(message);
             } catch (Exception e)
             {
+
                 var decoded = Base64.getEncoder().encodeToString(message.getBinary().toByteArray());
 
-                var exception = new TikTokLiveException("Error whilst Handling Message. Stopping Client. Final Message: \n"+decoded, e);
+                var exception = new TikTokLiveException("Error whilst Handling Message"+message.getType()+": \n"+decoded, e);
                 tikTokEventHandler.publish(new TikTokErrorEvent(exception));
             }
         }

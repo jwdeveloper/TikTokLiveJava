@@ -7,7 +7,7 @@ import io.github.jwdeveloper.tiktok.live.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import io.github.jwdeveloper.tiktok.live.TikTokRoomInfo;
-import io.github.jwdeveloper.tiktok.websocket.TikTokWebsocketClient;
+import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
 import java.util.logging.Logger;
 
@@ -15,14 +15,14 @@ public class TikTokLiveClient implements LiveClient {
     private final TikTokRoomInfo meta;
     private final TikTokGiftManager giftManager;
     private final TikTokApiService apiClient;
-    private final TikTokWebsocketClient webSocketClient;
+    private final TikTokWebSocketClient webSocketClient;
     private final TikTokEventHandler tikTokEventHandler;
     private final Logger logger;
 
 
     public TikTokLiveClient(TikTokRoomInfo tikTokLiveMeta,
                             TikTokApiService tikTokApiService,
-                            TikTokWebsocketClient webSocketClient,
+                            TikTokWebSocketClient webSocketClient,
                             TikTokGiftManager tikTokGiftManager,
                             TikTokEventHandler tikTokEventHandler,
                             Logger logger) {
@@ -57,9 +57,9 @@ public class TikTokLiveClient implements LiveClient {
 
     public void tryConnect() {
         if (meta.hasConnectionState(ConnectionState.CONNECTED))
-            throw new RuntimeException("Already connected");
+            throw new TikTokLiveException("Already connected");
         if (meta.hasConnectionState(ConnectionState.CONNECTING))
-            throw new RuntimeException("Already connecting");
+            throw new TikTokLiveException("Already connecting");
 
         logger.info("Connecting");
         setState(ConnectionState.CONNECTING);
