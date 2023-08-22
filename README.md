@@ -100,7 +100,7 @@ public class ConfigurationExample
         TikTokLive.newClient("jwdevtiktok")
                 .configure(clientSettings ->
                 {
-                    clientSettings.setHostName(Main.TEST_TIKTOK_USER); //tiktok user
+                    clientSettings.setHostName("jwdevtiktok"); //tiktok user
                     clientSettings.setClientLanguage("en"); //language
                     clientSettings.setTimeout(Duration.ofSeconds(2)); //connection timeout
                     clientSettings.setLogLevel(Level.ALL); //log level
