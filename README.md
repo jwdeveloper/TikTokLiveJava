@@ -51,7 +51,7 @@ Do you prefer other programming languages?
         <dependency>
             <groupId>com.github.jwdeveloper</groupId>
             <artifactId>TikTok-Live-Java</artifactId>
-            <version>0.0.8-Release</version>
+            <version>0.0.9-Release</version>
         </dependency>
    </dependencies>
 ```
