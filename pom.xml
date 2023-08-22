@@ -7,7 +7,7 @@
     <groupId>io.github.jwdeveloper.tiktok</groupId>
     <artifactId>TikTokLiveJava</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-Release</version>
+    <version>1.0.0</version>
     <modules>
         <module>API</module>
         <module>Client</module>
@@ -77,7 +77,6 @@
             <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
