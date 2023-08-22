@@ -6,12 +6,10 @@ import lombok.Getter;
 
 @Getter
 public class TikTokIMDeleteEvent extends TikTokEvent {
-  private final String data1;
-  private final String data2;
+    private final byte[] data;
 
-  public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
-    super(msg.getHeader());;
-    data1 = msg.getData1();
-    data2 = msg.getData2();
-  }
+    public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
+        super(msg.getHeader());
+        data = msg.getData().toByteArray();
+    }
 }

@@ -749,8 +749,7 @@ message WebcastHourlyRankMessage {
 // Message related to Chat-moderation?
 message WebcastImDeleteMessage {
   MessageHeader header = 1;
-  string data1 = 2;
-  string data2 = 3;
+  bytes data = 3;
 }
 
 message WebcastInRoomBannerMessage {

@@ -5,7 +5,7 @@ import java.io.IOException;
 public class SimpleExample {
     public static void main(String[] args) throws IOException {
         // Username of someone who is currently live
-        var tiktokUsername = "szwagierkaqueen";
+        var tiktokUsername = "mr_cios";
 
         TikTokLive.newClient(tiktokUsername)
                 .configure(settings ->

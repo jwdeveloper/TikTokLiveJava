@@ -119,7 +119,7 @@ public class WebResponseHandler extends WebResponseHandlerBase {
         var message = WebcastSocialMessage.parseFrom(msg.getBinary());
 
         String type = message.getHeader().getSocialData().getType();
-        Pattern pattern = Pattern.compile("pm_mt_guidance_viewer_([0-9]+)_share");
+        Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(type);
         if (matcher.find()) {
             var value = matcher.group(0);

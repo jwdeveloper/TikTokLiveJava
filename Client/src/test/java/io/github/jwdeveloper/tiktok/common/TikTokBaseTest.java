@@ -1,4 +1,4 @@
-package io.github.jwdeveloper.tiktok;
+package io.github.jwdeveloper.tiktok.common;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketMessage;

@@ -29,11 +29,6 @@ public class ClientSettings {
     /// </summary>
 
     private String clientLanguage;
-    /// <summary>
-    /// Size for Buffer for Socket-Connection
-    /// </summary>
-
-    private int socketBufferSize;
 
     /// <summary>
     /// Whether to Retry if Connection Fails
@@ -69,8 +64,16 @@ public class ClientSettings {
     /// </summary>
     private boolean checkForUnparsedData;
 
+
+    /// <summary>
+    /// Tiktok user name
+    /// </summary>
     private String hostName;
 
+
+    /// <summary>
+    /// Parameters used in requests to tiktok api
+    /// </summary>
     private Map<String, Object> clientParameters;
 }
 

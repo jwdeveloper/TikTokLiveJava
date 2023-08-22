@@ -8,6 +8,4 @@ public class TikTokLive
     {
         return new TikTokLiveClientBuilder(userName);
     }
-
-
 }

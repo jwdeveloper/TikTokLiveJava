@@ -78,7 +78,7 @@ public abstract class WebResponseHandlerBase {
         }
     }
 
-    private void handleSingleMessage(WebcastResponse.Message message) throws Exception {
+    public void handleSingleMessage(WebcastResponse.Message message) throws Exception {
         if (!handlers.containsKey(message.getType())) {
             tikTokEventHandler.publish(new TikTokUnhandledEvent(message));
             return;

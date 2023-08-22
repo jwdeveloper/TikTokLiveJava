@@ -48,9 +48,6 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
             clientSettings.setClientLanguage(Constants.DefaultClientSettings().getClientLanguage());
         }
 
-        if (clientSettings.getSocketBufferSize() < 500_000) {
-            clientSettings.setSocketBufferSize(Constants.DefaultClientSettings().getSocketBufferSize());
-        }
 
 
         if (clientSettings.getHostName() == null || clientSettings.getHostName() .equals("")) {
@@ -60,6 +57,8 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         var params = clientSettings.getClientParameters();
         params.put("app_language", clientSettings.getClientLanguage());
         params.put("webcast_language", clientSettings.getClientLanguage());
+
+        logger.setLevel(clientSettings.getLogLevel());
     }
 
     public LiveClient build() {

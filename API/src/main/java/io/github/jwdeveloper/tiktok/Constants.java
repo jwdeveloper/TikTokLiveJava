@@ -45,7 +45,6 @@ public class Constants {
         clientSettings.setHandleExistingMessagesOnConnect(true);
         clientSettings.setDownloadGiftInfo(true);
         clientSettings.setRetryOnConnectionFailure(true);
-        clientSettings.setSocketBufferSize(500_000);
         clientSettings.setPrintToConsole(true);
         clientSettings.setLogLevel(Level.ALL);
         clientSettings.setCheckForUnparsedData(false);

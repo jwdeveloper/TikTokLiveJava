@@ -1,9 +1,8 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import io.github.jwdeveloper.tiktok.messages.WebcastChatMessage;
-import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
-import io.github.jwdeveloper.tiktok.messages.WebcastLikeMessage;
+import io.github.jwdeveloper.tiktok.common.TikTokBaseTest;
+import io.github.jwdeveloper.tiktok.messages.*;
 import org.junit.Test;
 
 public class ParseMessagesTests extends TikTokBaseTest
@@ -11,13 +10,13 @@ public class ParseMessagesTests extends TikTokBaseTest
 
 
     @Test
-    public void ShouldParseLikeMessage() throws InvalidProtocolBufferException {
+    public void ShouldParseMessageWebcastLikeMessage() throws InvalidProtocolBufferException {
         var bytes = getFileBytesUtf("LikeMessage.bin");
         var message = WebcastLikeMessage.parseFrom(bytes);
     }
 
     @Test
-    public void ShouldParseGiftMessage() throws InvalidProtocolBufferException {
+    public void ShouldParseMessageWebcastGiftMessage() throws InvalidProtocolBufferException {
         var bytes = getFileBytesUtf("MessageWebcastGiftMessage.bin");
         var message = WebcastGiftMessage.parseFrom(bytes);
     }
@@ -27,5 +26,16 @@ public class ParseMessagesTests extends TikTokBaseTest
         var message = WebcastChatMessage.parseFrom(bytes);
     }
 
+    @Test
+    public void ShouldParseMessageWebcastImDeleteMessage() throws InvalidProtocolBufferException {
+        var bytes = getFileBytesUtf("MessageWebcastImDeleteMessage.bin");
+        var message = WebcastImDeleteMessage.parseFrom(bytes);
+    }
 
+
+    @Test
+    public void ShouldParseMessageWebcastSocialMessage() throws InvalidProtocolBufferException {
+        var bytes = getFileBytesUtf("MessageWebcastSocialMessage.bin");
+        var message = WebcastSocialMessage.parseFrom(bytes);
+    }
 }
