@@ -35,7 +35,7 @@ Do you prefer other programming languages?
 ```
 
 ```xml
-        <dependency>
+         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>3.24.1</version>
@@ -48,15 +48,9 @@ Do you prefer other programming languages?
         </dependency>
 
         <dependency>
-            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
-            <artifactId>API</artifactId>
-            <version>0.0.4-Release</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
-            <artifactId>Client</artifactId>
-            <version>0.0.4-Release</version>
+            <groupId>com.github.jwdeveloper</groupId>
+            <artifactId>TikTok-Live-Java</artifactId>
+            <version>0.0.8-Release</version>
         </dependency>
 ```
 
