@@ -36,7 +36,7 @@ jobs:
        
    
     - name: 2.7 Update version in pom.xml (Release only)
-      run: mvn versions:set -DnewVersion=${{steps.version.outputs.version_tag}} 
+      run: mvn versions:set -DnewVersion=${{steps.version.outputs.version_tag}} -DprocessAllModules 
            
     - name: 3 Build with Maven
       run: mvn package -P publish --file pom.xml  
