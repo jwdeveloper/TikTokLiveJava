@@ -87,12 +87,6 @@ Do you prefer other programming languages?
 ## Configuration
 
 ```java
-package io.github.jwdeveloper.tiktok;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.logging.Level;
-
 public class ConfigurationExample
 {
     public static void main(String[] args) throws IOException {
