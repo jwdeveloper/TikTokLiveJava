@@ -2,9 +2,10 @@ jdk:
   - openjdk16
 before_install:
   - echo "Before Install"
-  - bash ensure-java-16 install
+  - ./ensure-java-16 install
 install:
   - echo "Install"
-  - if ! bash ensure-java-16 use; then source ~/.sdkman/bin/sdkman-init.sh; fi
+  - if ! ./ensure-java-16 use; then source ~/.sdkman/bin/sdkman-init.sh; fi
   - java -version
-  - mvn install
+
+# Thanks to https://github.com/jitpack/jitpack.io/issues/4355#issuecomment-744678253
