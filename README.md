@@ -23,7 +23,7 @@ Do you prefer other programming languages?
 
 ## Getting started
 
-1. Install the package via Maven (dependecies will be simplify in future)
+1. Install the package via Maven 
 
 ```xml
    <repositories>
