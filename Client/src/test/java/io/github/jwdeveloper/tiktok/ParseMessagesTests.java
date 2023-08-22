@@ -38,4 +38,6 @@ public class ParseMessagesTests extends TikTokBaseTest
         var bytes = getFileBytesUtf("MessageWebcastSocialMessage.bin");
         var message = WebcastSocialMessage.parseFrom(bytes);
     }
+
+
 }

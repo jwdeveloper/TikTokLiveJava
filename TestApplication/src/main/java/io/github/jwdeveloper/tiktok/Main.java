@@ -6,10 +6,10 @@ import java.io.IOException;
 
 public class Main {
 
-    public static String TEST_USER_SUBJECT = "mr_cios";
+    public static String TEST_TIKTOK_USER = "mr_cios";
 
     public static void main(String[] args) throws IOException {
-        var client = TikTokLive.newClient(TEST_USER_SUBJECT)
+        var client = TikTokLive.newClient(TEST_TIKTOK_USER)
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)
                 .onRoomViewerData(Main::onViewerData)

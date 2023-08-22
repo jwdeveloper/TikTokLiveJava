@@ -4,13 +4,8 @@ import java.io.IOException;
 
 public class SimpleExample {
     public static void main(String[] args) throws IOException {
-        // Username of someone who is currently live
-        var tiktokUsername = "mr_cios";
 
-        TikTokLive.newClient(tiktokUsername)
-                .configure(settings ->
-                {
-                })
+        TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .onConnected(event ->
                 {
                     System.out.println("Connected");
@@ -25,6 +20,7 @@ public class SimpleExample {
                 })
                 .onError(event ->
                 {
+                    System.out.println("OTO tajeminica wiary");
                     event.getException().printStackTrace();
                 })
                 .buildAndRun();
