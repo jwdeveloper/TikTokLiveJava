@@ -35,6 +35,7 @@ Do you prefer other programming languages?
 ```
 
 ```xml
+   <dependencies>
          <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -52,6 +53,7 @@ Do you prefer other programming languages?
             <artifactId>TikTok-Live-Java</artifactId>
             <version>0.0.8-Release</version>
         </dependency>
+   </dependencies>
 ```
 
 2. Create your first chat connection
