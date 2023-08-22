@@ -38,7 +38,7 @@ jobs:
     - name: 2.7 Update version in pom.xml (Release only)
       run: mvn versions:set -DnewVersion=${{steps.version.outputs.version_tag}} 
     - name: 2.8 Update modules parent version
-      run: mvn versions:update-parent -DallowSnapshots=true
+      run: mvn versions:update-child-modules
            
     - name: 3 Build with Maven
       run: mvn package -P publish --file pom.xml  
