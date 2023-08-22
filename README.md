@@ -20,9 +20,28 @@ Do you prefer other programming languages?
 
 ## Getting started
 
-1. Install the package via Maven
+1. Install the package via Maven (dependecies will be simplify in future)
 ```
-npm i tiktok-live-connector
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.24.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+            <artifactId>API</artifactId>
+            <version>0.0.4-Release</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+            <artifactId>Client</artifactId>
+            <version>0.0.4-Release</version>
+        </dependency>
 ```
 
 2. Create your first chat connection
