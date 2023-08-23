@@ -1,5 +1,7 @@
-package io.github.jwdeveloper.tiktok.live;
+package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.live.ConnectionState;
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import lombok.Data;
 
 @Data

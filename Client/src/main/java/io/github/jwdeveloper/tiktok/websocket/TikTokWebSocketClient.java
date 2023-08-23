@@ -3,9 +3,10 @@ package io.github.jwdeveloper.tiktok.websocket;
 
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.Constants;
+import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
-import io.github.jwdeveloper.tiktok.handlers.WebResponseHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.http.HttpUtils;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
@@ -23,18 +24,18 @@ public class TikTokWebSocketClient {
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
     private final TikTokHttpRequestFactory factory;
-    private final WebResponseHandler webResponseHandler;
+    private final TikTokMessageHandlerRegistration webResponseHandler;
     private final TikTokEventHandler tikTokEventHandler;
 
     private WebSocket webSocket;
-
     private boolean isConnected;
+    private TikTokLiveClient tikTokLiveClient;
 
     public TikTokWebSocketClient(Logger logger,
                                  TikTokCookieJar tikTokCookieJar,
                                  TikTokHttpRequestFactory factory,
                                  ClientSettings clientSettings,
-                                 WebResponseHandler webResponseHandler,
+                                 TikTokMessageHandlerRegistration webResponseHandler,
                                  TikTokEventHandler tikTokEventHandler) {
         this.logger = logger;
         this.tikTokCookieJar = tikTokCookieJar;
@@ -45,21 +46,22 @@ public class TikTokWebSocketClient {
         isConnected = false;
     }
 
-    public void start(WebcastResponse webcastResponse)
-    {
-        if(isConnected)
-        {
+    public void start(WebcastResponse webcastResponse, TikTokLiveClient tikTokLiveClient) {
+        this.tikTokLiveClient = tikTokLiveClient;
+        if (isConnected) {
             stop();
         }
         if (webcastResponse.getSocketUrl().isEmpty() || webcastResponse.getSocketParamsList().isEmpty()) {
             throw new TikTokLiveException("Could not find Room");
         }
         try {
-            var url =getWebSocketUrl(webcastResponse);
-            webSocket =startWebSocket(url);
-            if (clientSettings.isHandleExistingMessagesOnConnect()) {
-                //  HandleWebcastMessages(webcastResponse);
+            var url = getWebSocketUrl(webcastResponse);
+            if (clientSettings.isHandleExistingMessagesOnConnect())
+            {
+                logger.info("Handling existing messages");
+                webResponseHandler.handle(tikTokLiveClient, webcastResponse);
             }
+            webSocket = startWebSocket(url);
         } catch (Exception e) {
             throw new TikTokLiveException("Failed to connect to the websocket", e);
         }
@@ -82,23 +84,17 @@ public class TikTokWebSocketClient {
 
     private WebSocket startWebSocket(String url) throws Exception {
         var cookie = tikTokCookieJar.parseCookies();
-        //  System.out.println("WssIP: " + url);
-        //  System.out.println("Cookie: " + cookie);
-
         var map = new HashMap<String, String>();
         map.put("Cookie", cookie);
-
-       return factory.openSocket()
+        return factory.openSocket()
                 .subprotocols("echo-protocol")
                 .connectTimeout(Duration.ofSeconds(15))
                 .header("Cookie", cookie)
-                .buildAsync(URI.create(url), new TikTokWebSocketListener(webResponseHandler, tikTokEventHandler)).get();
+                .buildAsync(URI.create(url), new TikTokWebSocketListener(webResponseHandler, tikTokEventHandler, tikTokLiveClient)).get();
     }
 
-
     public void stop() {
-        if(isConnected && webSocket != null)
-        {
+        if (isConnected && webSocket != null) {
             webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "ok");
         }
     }

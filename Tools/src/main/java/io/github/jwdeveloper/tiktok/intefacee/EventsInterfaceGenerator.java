@@ -20,16 +20,16 @@ public class EventsInterfaceGenerator {
             //   System.out.println(clazz.getName());
         }
 
-     //var result = generateInterface("io.github.jwdeveloper.tiktok.events", classes);System.out.println(result);
+    // var result = generateInterface("io.github.jwdeveloper.tiktok.events", classes);System.out.println(result);
 
 
-      var result =  getBuilderImplementation("x",classes); System.out.println(result);
+     var result =  getBuilderImplementation("x",classes); System.out.println(result);
 
     }
 
     public String generateInterface(String packageName, Set<Class<? extends TikTokEvent>> eventsClasses) {
 
-        TypeSpec.Builder classBuilder = TypeSpec.interfaceBuilder("TikTokEvents");
+        TypeSpec.Builder classBuilder = TypeSpec.interfaceBuilder("TikTokEventBuilder");
         classBuilder.addModifiers(Modifier.PUBLIC);
         classBuilder.addTypeVariable(TypeVariableName.get("T"));
 
@@ -46,7 +46,7 @@ public class EventsInterfaceGenerator {
             MethodSpec.Builder constructorBuilder = MethodSpec.methodBuilder("on" + methodName);
 
 
-            var name = "Consumer<" + clazzName + ">";
+            var name = "TikTokEventConsumer<" + clazzName + ">";
             constructorBuilder.addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC);
             constructorBuilder.addParameter(ClassName.bestGuess(name), "event");
             constructorBuilder.returns(TypeVariableName.get("T"));
@@ -91,7 +91,7 @@ public class EventsInterfaceGenerator {
             MethodSpec.Builder constructorBuilder = MethodSpec.methodBuilder( methodName);
 
 
-            var name = "Consumer<" + clazzName + ">";
+            var name = "TikTokEventConsumer<" + clazzName + ">";
             constructorBuilder.addModifiers( Modifier.PUBLIC);
             constructorBuilder.addParameter(ClassName.bestGuess(name), "event");
             constructorBuilder.addStatement("tikTokEventHandler.subscribe("+clazzName+".class,event)");

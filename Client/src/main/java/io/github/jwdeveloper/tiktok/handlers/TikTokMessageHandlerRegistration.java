@@ -1,6 +1,8 @@
 package io.github.jwdeveloper.tiktok.handlers;
 
+import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.TikTokGiftManager;
+import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
@@ -9,15 +11,22 @@ import io.github.jwdeveloper.tiktok.models.GiftId;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
 import lombok.SneakyThrows;
 
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WebResponseHandler extends WebResponseHandlerBase {
+public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     private final TikTokGiftManager giftManager;
+    private final TikTokRoomInfo roomInfo;
 
-    public WebResponseHandler(TikTokEventHandler tikTokEventHandler, TikTokGiftManager giftManager) {
-        super(tikTokEventHandler);
+    public TikTokMessageHandlerRegistration(TikTokEventHandler tikTokEventHandler,
+                                            ClientSettings clientSettings,
+                                            Logger logger,
+                                            TikTokGiftManager giftManager,
+                                            TikTokRoomInfo roomInfo) {
+        super(tikTokEventHandler, clientSettings, logger);
         this.giftManager = giftManager;
+        this.roomInfo = roomInfo;
     }
 
     @Override
@@ -30,7 +39,7 @@ public class WebResponseHandler extends WebResponseHandlerBase {
 
         //Room status events
         register(WebcastLiveIntroMessage.class, TikTokRoomMessageEvent.class);
-        register(WebcastRoomUserSeqMessage.class, TikTokRoomViewerDataEvent.class); //TODO update viewer count    ViewerCount = userSeqMessage.ViewerCount;
+        register(WebcastRoomUserSeqMessage.class, this::handleRoomUserSeqMessage);
         register(RoomMessage.class, TikTokRoomMessageEvent.class);
         register(WebcastRoomMessage.class, TikTokRoomMessageEvent.class);
         register(WebcastCaptionMessage.class, TikTokCaptionEvent.class);
@@ -74,9 +83,9 @@ public class WebResponseHandler extends WebResponseHandlerBase {
     }
 
 
+
     @SneakyThrows
-    private TikTokEvent handleWebcastControlMessage(WebcastResponse.Message msg)
-    {
+    private TikTokEvent handleWebcastControlMessage(WebcastResponse.Message msg) {
         var message = WebcastControlMessage.parseFrom(msg.getBinary());
         return switch (message.getAction()) {
             case STREAM_PAUSED -> new TikTokLivePausedEvent();
@@ -88,29 +97,7 @@ public class WebResponseHandler extends WebResponseHandlerBase {
     @SneakyThrows
     private TikTokEvent handleGift(WebcastResponse.Message msg) {
         var giftMessage = WebcastGiftMessage.parseFrom(msg.getBinary());
-        var giftId = new GiftId(giftMessage.getGiftId(), giftMessage.getSender().getUniqueId());
-
-        var activeGifts = giftManager.getActiveGifts();
-        if (activeGifts.containsKey(giftId)) {
-            //   Debug.Log($"Updating Gift[{giftId.Gift}]Amount[{message.Amount}]");
-            var gift = activeGifts.get(giftId);
-            gift.setAmount(giftMessage.getAmount());
-        } else {
-            TikTokGift newGift = new TikTokGift(giftMessage);
-            activeGifts.put(giftId, newGift);
-            //   Debug.Log($"New Gift[{giftId.Gift}]Amount[{message.Amount}]");
-            //    RunEvent(OnGift, newGift);
-        }
-        if (giftMessage.getRepeatEnd()) {
-            //if (ShouldLog(LogLevel.Verbose))
-            //   Debug.Log($"GiftStreak Ended: [{giftId.Gift}] Amount[{message.Amount}]")
-            var gift = activeGifts.get(giftId);
-            gift.setStreakFinished(true);
-            activeGifts.remove(gift);
-        }
-
-        //   Debug.Log($"Handling GiftMessage");
-
+        giftManager.updateActiveGift(giftMessage);
         return new TikTokGiftMessageEvent(giftMessage);
     }
 
@@ -145,5 +132,12 @@ public class WebResponseHandler extends WebResponseHandlerBase {
             case SUBSCRIBED -> new TikTokSubscribeEvent(message);
             default -> new TikTokUnhandledMemberEvent(message);
         };
+    }
+
+    private TikTokEvent handleRoomUserSeqMessage(WebcastResponse.Message msg)
+    {
+        var event = (TikTokRoomViewerDataEvent)mapMessageToEvent(WebcastRoomUserSeqMessage.class, TikTokRoomViewerDataEvent.class, msg);
+        roomInfo.setViewersCount(event.getViewerCount());
+        return event;
     }
 }

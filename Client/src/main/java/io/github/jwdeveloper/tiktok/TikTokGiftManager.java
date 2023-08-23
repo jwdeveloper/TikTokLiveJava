@@ -1,45 +1,47 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
-import io.github.jwdeveloper.tiktok.http.TikTokApiService;
+import io.github.jwdeveloper.tiktok.live.GiftManager;
+import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.models.GiftId;
-
+import io.github.jwdeveloper.tiktok.models.gifts.TikTokGiftInfo;
 import lombok.Getter;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
-public class TikTokGiftManager {
-    private Logger logger;
-    private ClientSettings clientSettings;
-    private TikTokApiService apiService;
-    private Map<Integer, TikTokGift> gifts;
+public class TikTokGiftManager implements GiftManager {
 
     @Getter
-    private Map<GiftId, TikTokGift> activeGifts;
+    private final Map<Integer, TikTokGiftInfo> giftsInfo;
+    @Getter
+    private final Map<GiftId, TikTokGift> activeGifts;
 
-    public TikTokGiftManager(Logger logger, TikTokApiService apiService, ClientSettings clientSettings) {
-        this.logger = logger;
-        this.clientSettings = clientSettings;
-        this.apiService = apiService;
-        this.gifts = new HashMap<>();
+    public TikTokGiftManager() {
+        giftsInfo = new HashMap<>();
         activeGifts = new HashMap<>();
     }
 
-    public void loadGifts() {
-        if (!clientSettings.isDownloadGiftInfo()) {
-            return;
+    public TikTokGift updateActiveGift(WebcastGiftMessage giftMessage) {
+        var giftId = new GiftId(giftMessage.getGiftId(), giftMessage.getSender().getUniqueId());
+        if (activeGifts.containsKey(giftId)) {
+            var gift = activeGifts.get(giftId);
+            gift.setAmount(giftMessage.getAmount());
+        } else {
+            var newGift = new TikTokGift(giftMessage);
+            activeGifts.put(giftId, newGift);
         }
-        logger.info("Fetching gifts");
-        //TODO gifts =apiService.fetchAvailableGifts();
+
+        var gift = activeGifts.get(giftId);
+
+        if (giftMessage.getRepeatEnd()) {
+            gift.setStreakFinished(true);
+            activeGifts.remove(giftId);
+        }
+        return gift;
     }
 
-    public List<TikTokGift> getGifts()
-    {
-        return gifts.values().stream().toList();
+    public void loadGifsInfo(Map<Integer, TikTokGiftInfo> gifts) {
+        this.giftsInfo.putAll(gifts);
     }
-
-
 }

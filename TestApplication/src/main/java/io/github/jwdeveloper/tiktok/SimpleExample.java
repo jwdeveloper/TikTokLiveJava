@@ -6,21 +6,24 @@ public class SimpleExample {
     public static void main(String[] args) throws IOException {
 
         TikTokLive.newClient(Main.TEST_TIKTOK_USER)
-                .onConnected(event ->
+                .onConnected((client, event) ->
                 {
                     System.out.println("Connected");
                 })
-                .onJoin(event ->
+                .onJoin((client, event)  ->
                 {
                     System.out.println("User joined -> " + event.getUser().getNickName());
                 })
-                .onComment(event ->
+                .onComment((client, event)  ->
                 {
                    System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
                 })
-                .onError(event ->
+                .onEvent((client, event) ->
                 {
-                    System.out.println("OTO tajeminica wiary");
+                    System.out.println("Viewers count: "+client.getRoomInfo().getViewersCount());
+                })
+                .onError((client, event)  ->
+                {
                     event.getException().printStackTrace();
                 })
                 .buildAndRun();

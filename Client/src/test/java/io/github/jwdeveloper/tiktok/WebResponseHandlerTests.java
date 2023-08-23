@@ -1,31 +1,25 @@
 package io.github.jwdeveloper.tiktok;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import io.github.jwdeveloper.tiktok.common.TikTokBaseTest;
-import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
-import io.github.jwdeveloper.tiktok.handlers.WebResponseHandler;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
-import io.github.jwdeveloper.tiktok.messages.WebcastSocialMessage;
-import io.github.jwdeveloper.tiktok.models.SocialTypes;
+import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import org.junit.Before;
-import org.junit.Test;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
 import static org.mockito.Mockito.mock;
 
-public class WebResponseHandlerTests extends TikTokBaseTest
-{
-    public static WebResponseHandler sut;
+public class WebResponseHandlerTests extends TikTokBaseTest {
+    public static TikTokMessageHandlerRegistration sut;
 
     @Before
-    public void before()
-    {
+    public void before() {
         var mockEventHandler = mock(TikTokEventHandler.class);
         var mockGiftManager = mock(TikTokGiftManager.class);
-        sut = new WebResponseHandler(mockEventHandler, mockGiftManager);
+        var mockRoomInfo = mock(TikTokRoomInfo.class);
+        var mockClientSettings = mock(ClientSettings.class);
+        var mockLogger = mock(Logger.class);
+        sut = new TikTokMessageHandlerRegistration(mockEventHandler,mockClientSettings,mockLogger, mockGiftManager, mockRoomInfo);
     }
 
 

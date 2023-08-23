@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TikTokGift
+public class TikTokGiftInfo
 {
     private int action_type;
     private int app_id;

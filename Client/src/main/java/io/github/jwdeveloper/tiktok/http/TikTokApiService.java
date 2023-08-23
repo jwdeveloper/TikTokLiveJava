@@ -2,10 +2,10 @@ package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.Gson;
 import io.github.jwdeveloper.tiktok.ClientSettings;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
-import io.github.jwdeveloper.tiktok.models.gifts.TikTokGift;
+import io.github.jwdeveloper.tiktok.models.gifts.TikTokGiftInfo;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class TikTokApiService {
         }
 
         if (id.isEmpty()) {
-            throw new TikTokLiveException("Unable to fetch room ID");
+            throw new TikTokLiveOfflineHostException("Unable to fetch room ID, live host could be offline or name is misspelled");
         }
 
         clientSettings.getClientParameters().put("room_id", id);
@@ -99,7 +99,7 @@ public class TikTokApiService {
         }
     }
 
-    public Map<Integer, TikTokGift> fetchAvailableGifts() {
+    public Map<Integer, TikTokGiftInfo> fetchAvailableGifts() {
         try {
             var response = apiClient.GetJObjectFromWebcastAPI("gift/list/", clientSettings.getClientParameters());
             if(!response.has("data"))
@@ -112,11 +112,11 @@ public class TikTokApiService {
                 return new HashMap<>();
             }
             var giftsJsonList = dataJson.get("gifts").getAsJsonArray();
-            var gifts = new HashMap<Integer, TikTokGift>();
+            var gifts = new HashMap<Integer, TikTokGiftInfo>();
             var gson = new Gson();
             for(var jsonGift : giftsJsonList)
             {
-                var gift = gson.fromJson(jsonGift, TikTokGift.class);
+                var gift = gson.fromJson(jsonGift, TikTokGiftInfo.class);
                 logger.info("Found Available Gift "+ gift.getName()+ " with ID "+gift.getId());
                 gifts.put(gift.getId(),gift);
             }

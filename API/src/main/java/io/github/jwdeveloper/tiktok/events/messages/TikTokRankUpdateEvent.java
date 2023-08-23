@@ -20,10 +20,15 @@ public class TikTokRankUpdateEvent extends TikTokEvent {
     var rankData = msg.getData().getRankings();
     eventType = rankData.getType();
     label = rankData.getLabel();
-    rank = rankData.getDetails(0).getLabel();
+    if(rankData.getDetailsList().isEmpty())
+    {
+      rank = "";
+    }
+    else
+    {
+      rank = rankData.getDetails(0).getLabel();
+    }
     color = rankData.getColor().getColor();
-
-
   }
 
   public TikTokRankUpdateEvent(WebcastRankUpdateMessage msg) {
@@ -31,7 +36,14 @@ public class TikTokRankUpdateEvent extends TikTokEvent {
     var rankData = msg.getData().getRankData();
     eventType = rankData.getType();
     label = rankData.getLabel();
-    rank = rankData.getDetails(0).getLabel();
+    if(rankData.getDetailsList().isEmpty())
+    {
+      rank = "";
+    }
+    else
+    {
+      rank = rankData.getDetails(0).getLabel();
+    }
     color = rankData.getColor().getColor();
   }
 

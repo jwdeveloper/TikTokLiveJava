@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class GiftId
 {
-    public long Gift;
+    private long giftId;
 
-    public String UserName;
+    private String userName;
 }

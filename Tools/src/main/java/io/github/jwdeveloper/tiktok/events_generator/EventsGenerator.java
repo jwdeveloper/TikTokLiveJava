@@ -1,12 +1,9 @@
 package io.github.jwdeveloper.tiktok.events_generator;
 
-import io.github.jwdeveloper.tiktok.FilesUtility;
+import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EventsGenerator
 {

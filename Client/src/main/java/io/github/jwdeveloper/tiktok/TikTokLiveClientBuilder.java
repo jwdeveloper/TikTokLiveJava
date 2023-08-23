@@ -2,19 +2,21 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.TikTokEventBuilder;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.events.TikTokEventConsumer;
 import io.github.jwdeveloper.tiktok.events.messages.*;
-import io.github.jwdeveloper.tiktok.handlers.WebResponseHandler;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpApiClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
 import java.time.Duration;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveClientBuilder> {
@@ -40,18 +42,13 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
             clientSettings.setTimeout(Duration.ofSeconds(Constants.DEFAULT_TIMEOUT));
         }
 
-        if (clientSettings.getPollingInterval() == null) {
-            clientSettings.setPollingInterval(Duration.ofSeconds(Constants.DEFAULT_POLLTIME));
-        }
-
         if (clientSettings.getClientLanguage() == null || clientSettings.getClientLanguage().equals("")) {
             clientSettings.setClientLanguage(Constants.DefaultClientSettings().getClientLanguage());
         }
 
 
-
-        if (clientSettings.getHostName() == null || clientSettings.getHostName() .equals("")) {
-            throw new RuntimeException("HostName can not be null");
+        if (clientSettings.getHostName() == null || clientSettings.getHostName().equals("")) {
+            throw new TikTokLiveException("HostName can not be null");
         }
 
         var params = clientSettings.getClientParameters();
@@ -59,22 +56,27 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         params.put("webcast_language", clientSettings.getClientLanguage());
 
         logger.setLevel(clientSettings.getLogLevel());
+
+        if(clientSettings.isPrintToConsole() && clientSettings.getLogLevel() == Level.OFF)
+        {
+            logger.setLevel(Level.ALL);
+        }
     }
 
     public LiveClient build() {
         validate();
 
 
-        var meta = new TikTokRoomInfo();
-        meta.setUserName(clientSettings.getHostName());
+        var tiktokRoomInfo = new TikTokRoomInfo();
+        tiktokRoomInfo.setUserName(clientSettings.getHostName());
 
 
         var cookieJar = new TikTokCookieJar();
         var requestFactory = new TikTokHttpRequestFactory(cookieJar);
         var apiClient = new TikTokHttpApiClient(cookieJar, requestFactory);
         var apiService = new TikTokApiService(apiClient, logger, clientSettings);
-        var giftManager = new TikTokGiftManager(logger, apiService, clientSettings);
-        var webResponseHandler = new WebResponseHandler(tikTokEventHandler,giftManager);
+        var giftManager = new TikTokGiftManager();
+        var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler, clientSettings, logger, giftManager, tiktokRoomInfo);
         var webSocketClient = new TikTokWebSocketClient(logger,
                 cookieJar,
                 requestFactory,
@@ -82,7 +84,7 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
                 webResponseHandler,
                 tikTokEventHandler);
 
-        return new TikTokLiveClient(meta, apiService, webSocketClient, giftManager, tikTokEventHandler, logger);
+        return new TikTokLiveClient(tiktokRoomInfo, apiService, webSocketClient, giftManager, tikTokEventHandler, clientSettings, logger);
     }
 
     public LiveClient buildAndRun() {
@@ -91,217 +93,236 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         return client;
     }
 
-    public TikTokLiveClientBuilder onUnhandledSocial(Consumer<TikTokUnhandledSocialEvent> event) {
-        tikTokEventHandler.subscribe(TikTokUnhandledSocialEvent.class,event);
+
+    public TikTokLiveClientBuilder onUnhandledSocial(
+            TikTokEventConsumer<TikTokUnhandledSocialEvent> event) {
+        tikTokEventHandler.subscribe(TikTokUnhandledSocialEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMicFanTicket(Consumer<TikTokLinkMicFanTicketEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLinkMicFanTicketEvent.class,event);
+    public TikTokLiveClientBuilder onLinkMicFanTicket(
+            TikTokEventConsumer<TikTokLinkMicFanTicketEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLinkMicFanTicketEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onEnvelope(Consumer<TikTokEnvelopeEvent> event) {
-        tikTokEventHandler.subscribe(TikTokEnvelopeEvent.class,event);
+    public TikTokLiveClientBuilder onEnvelope(TikTokEventConsumer<TikTokEnvelopeEvent> event) {
+        tikTokEventHandler.subscribe(TikTokEnvelopeEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onShopMessage(Consumer<TikTokShopMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokShopMessageEvent.class,event);
+    public TikTokLiveClientBuilder onShopMessage(TikTokEventConsumer<TikTokShopMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokShopMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onDetectMessage(Consumer<TikTokDetectMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokDetectMessageEvent.class,event);
+    public TikTokLiveClientBuilder onDetectMessage(
+            TikTokEventConsumer<TikTokDetectMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokDetectMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkLayerMessage(Consumer<TikTokLinkLayerMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLinkLayerMessageEvent.class,event);
+    public TikTokLiveClientBuilder onLinkLayerMessage(
+            TikTokEventConsumer<TikTokLinkLayerMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLinkLayerMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onConnected(Consumer<TikTokConnectedEvent> event) {
-        tikTokEventHandler.subscribe(TikTokConnectedEvent.class,event);
+    public TikTokLiveClientBuilder onConnected(TikTokEventConsumer<TikTokConnectedEvent> event) {
+        tikTokEventHandler.subscribe(TikTokConnectedEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onCaption(Consumer<TikTokCaptionEvent> event) {
-        tikTokEventHandler.subscribe(TikTokCaptionEvent.class,event);
+    public TikTokLiveClientBuilder onCaption(TikTokEventConsumer<TikTokCaptionEvent> event) {
+        tikTokEventHandler.subscribe(TikTokCaptionEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onQuestion(Consumer<TikTokQuestionEvent> event) {
-        tikTokEventHandler.subscribe(TikTokQuestionEvent.class,event);
+    public TikTokLiveClientBuilder onQuestion(TikTokEventConsumer<TikTokQuestionEvent> event) {
+        tikTokEventHandler.subscribe(TikTokQuestionEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onRoomPinMessage(Consumer<TikTokRoomPinMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRoomPinMessageEvent.class,event);
+    public TikTokLiveClientBuilder onRoomPinMessage(
+            TikTokEventConsumer<TikTokRoomPinMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokRoomPinMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onRoomMessage(Consumer<TikTokRoomMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRoomMessageEvent.class,event);
+    public TikTokLiveClientBuilder onRoomMessage(TikTokEventConsumer<TikTokRoomMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokRoomMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLivePaused(Consumer<TikTokLivePausedEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLivePausedEvent.class,event);
+    public TikTokLiveClientBuilder onLivePaused(TikTokEventConsumer<TikTokLivePausedEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLivePausedEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLike(Consumer<TikTokLikeEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLikeEvent.class,event);
+    public TikTokLiveClientBuilder onLike(TikTokEventConsumer<TikTokLikeEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLikeEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMessage(Consumer<TikTokLinkMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLinkMessageEvent.class,event);
+    public TikTokLiveClientBuilder onLinkMessage(TikTokEventConsumer<TikTokLinkMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLinkMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onBarrageMessage(Consumer<TikTokBarrageMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokBarrageMessageEvent.class,event);
+    public TikTokLiveClientBuilder onBarrageMessage(
+            TikTokEventConsumer<TikTokBarrageMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokBarrageMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onGiftMessage(Consumer<TikTokGiftMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokGiftMessageEvent.class,event);
+    public TikTokLiveClientBuilder onGiftMessage(TikTokEventConsumer<TikTokGiftMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokGiftMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMicArmies(Consumer<TikTokLinkMicArmiesEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLinkMicArmiesEvent.class,event);
+    public TikTokLiveClientBuilder onLinkMicArmies(
+            TikTokEventConsumer<TikTokLinkMicArmiesEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLinkMicArmiesEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onEmote(Consumer<TikTokEmoteEvent> event) {
-        tikTokEventHandler.subscribe(TikTokEmoteEvent.class,event);
+    public TikTokLiveClientBuilder onEmote(TikTokEventConsumer<TikTokEmoteEvent> event) {
+        tikTokEventHandler.subscribe(TikTokEmoteEvent.class, event);
         return this;
     }
 
     public TikTokLiveClientBuilder onUnauthorizedMember(
-            Consumer<TikTokUnauthorizedMemberEvent> event) {
-        tikTokEventHandler.subscribe(TikTokUnauthorizedMemberEvent.class,event);
+            TikTokEventConsumer<TikTokUnauthorizedMemberEvent> event) {
+        tikTokEventHandler.subscribe(TikTokUnauthorizedMemberEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onInRoomBanner(Consumer<TikTokInRoomBannerEvent> event) {
-        tikTokEventHandler.subscribe(TikTokInRoomBannerEvent.class,event);
+    public TikTokLiveClientBuilder onInRoomBanner(
+            TikTokEventConsumer<TikTokInRoomBannerEvent> event) {
+        tikTokEventHandler.subscribe(TikTokInRoomBannerEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMicMethod(Consumer<TikTokLinkMicMethodEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLinkMicMethodEvent.class,event);
+    public TikTokLiveClientBuilder onLinkMicMethod(
+            TikTokEventConsumer<TikTokLinkMicMethodEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLinkMicMethodEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onSubscribe(Consumer<TikTokSubscribeEvent> event) {
-        tikTokEventHandler.subscribe(TikTokSubscribeEvent.class,event);
+    public TikTokLiveClientBuilder onSubscribe(TikTokEventConsumer<TikTokSubscribeEvent> event) {
+        tikTokEventHandler.subscribe(TikTokSubscribeEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onPollMessage(Consumer<TikTokPollMessageEvent> event) {
-        tikTokEventHandler.subscribe(TikTokPollMessageEvent.class,event);
+    public TikTokLiveClientBuilder onPollMessage(TikTokEventConsumer<TikTokPollMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokPollMessageEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onFollow(Consumer<TikTokFollowEvent> event) {
-        tikTokEventHandler.subscribe(TikTokFollowEvent.class,event);
+    public TikTokLiveClientBuilder onFollow(TikTokEventConsumer<TikTokFollowEvent> event) {
+        tikTokEventHandler.subscribe(TikTokFollowEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onRoomViewerData(Consumer<TikTokRoomViewerDataEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRoomViewerDataEvent.class,event);
+    public TikTokLiveClientBuilder onRoomViewerData(
+            TikTokEventConsumer<TikTokRoomViewerDataEvent> event) {
+        tikTokEventHandler.subscribe(TikTokRoomViewerDataEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onGoalUpdate(Consumer<TikTokGoalUpdateEvent> event) {
-        tikTokEventHandler.subscribe(TikTokGoalUpdateEvent.class,event);
+    public TikTokLiveClientBuilder onGoalUpdate(TikTokEventConsumer<TikTokGoalUpdateEvent> event) {
+        tikTokEventHandler.subscribe(TikTokGoalUpdateEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onComment(Consumer<TikTokCommentEvent> event) {
-        tikTokEventHandler.subscribe(TikTokCommentEvent.class,event);
+    public TikTokLiveClientBuilder onComment(TikTokEventConsumer<TikTokCommentEvent> event) {
+        tikTokEventHandler.subscribe(TikTokCommentEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onRankUpdate(Consumer<TikTokRankUpdateEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRankUpdateEvent.class,event);
+    public TikTokLiveClientBuilder onRankUpdate(TikTokEventConsumer<TikTokRankUpdateEvent> event) {
+        tikTokEventHandler.subscribe(TikTokRankUpdateEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onIMDelete(Consumer<TikTokIMDeleteEvent> event) {
-        tikTokEventHandler.subscribe(TikTokIMDeleteEvent.class,event);
+    public TikTokLiveClientBuilder onIMDelete(TikTokEventConsumer<TikTokIMDeleteEvent> event) {
+        tikTokEventHandler.subscribe(TikTokIMDeleteEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLiveEnded(Consumer<TikTokLiveEndedEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLiveEndedEvent.class,event);
+    public TikTokLiveClientBuilder onLiveEnded(TikTokEventConsumer<TikTokLiveEndedEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLiveEndedEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onError(Consumer<TikTokErrorEvent> event) {
-        tikTokEventHandler.subscribe(TikTokErrorEvent.class,event);
+    public TikTokLiveClientBuilder onError(TikTokEventConsumer<TikTokErrorEvent> event) {
+        tikTokEventHandler.subscribe(TikTokErrorEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnhandled(Consumer<TikTokUnhandledEvent> event) {
-        tikTokEventHandler.subscribe(TikTokUnhandledEvent.class,event);
+    public TikTokLiveClientBuilder onUnhandled(TikTokEventConsumer<TikTokUnhandledEvent> event) {
+        tikTokEventHandler.subscribe(TikTokUnhandledEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onJoin(Consumer<TikTokJoinEvent> event) {
-        tikTokEventHandler.subscribe(TikTokJoinEvent.class,event);
+    public TikTokLiveClientBuilder onJoin(TikTokEventConsumer<TikTokJoinEvent> event) {
+        tikTokEventHandler.subscribe(TikTokJoinEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onRankText(Consumer<TikTokRankTextEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRankTextEvent.class,event);
+    public TikTokLiveClientBuilder onRankText(TikTokEventConsumer<TikTokRankTextEvent> event) {
+        tikTokEventHandler.subscribe(TikTokRankTextEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onShare(Consumer<TikTokShareEvent> event) {
-        tikTokEventHandler.subscribe(TikTokShareEvent.class,event);
+    public TikTokLiveClientBuilder onShare(TikTokEventConsumer<TikTokShareEvent> event) {
+        tikTokEventHandler.subscribe(TikTokShareEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnhandledMember(Consumer<TikTokUnhandledMemberEvent> event) {
-        tikTokEventHandler.subscribe(TikTokUnhandledMemberEvent.class,event);
+    public TikTokLiveClientBuilder onUnhandledMember(
+            TikTokEventConsumer<TikTokUnhandledMemberEvent> event) {
+        tikTokEventHandler.subscribe(TikTokUnhandledMemberEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onSubNotify(Consumer<TikTokSubNotifyEvent> event) {
-        tikTokEventHandler.subscribe(TikTokSubNotifyEvent.class,event);
+    public TikTokLiveClientBuilder onSubNotify(TikTokEventConsumer<TikTokSubNotifyEvent> event) {
+        tikTokEventHandler.subscribe(TikTokSubNotifyEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMicBattle(Consumer<TikTokLinkMicBattleEvent> event) {
-        tikTokEventHandler.subscribe(TikTokLinkMicBattleEvent.class,event);
+    public TikTokLiveClientBuilder onLinkMicBattle(
+            TikTokEventConsumer<TikTokLinkMicBattleEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLinkMicBattleEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onDisconnected(Consumer<TikTokDisconnectedEvent> event) {
-        tikTokEventHandler.subscribe(TikTokDisconnectedEvent.class,event);
+    public TikTokLiveClientBuilder onDisconnected(
+            TikTokEventConsumer<TikTokDisconnectedEvent> event) {
+        tikTokEventHandler.subscribe(TikTokDisconnectedEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onGiftBroadcast(Consumer<TikTokGiftBroadcastEvent> event) {
-        tikTokEventHandler.subscribe(TikTokGiftBroadcastEvent.class,event);
+    public TikTokLiveClientBuilder onGiftBroadcast(
+            TikTokEventConsumer<TikTokGiftBroadcastEvent> event) {
+        tikTokEventHandler.subscribe(TikTokGiftBroadcastEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnhandledControl(Consumer<TikTokUnhandledControlEvent> event) {
-        tikTokEventHandler.subscribe(TikTokUnhandledControlEvent.class,event);
+    public TikTokLiveClientBuilder onUnhandledControl(
+            TikTokEventConsumer<TikTokUnhandledControlEvent> event) {
+        tikTokEventHandler.subscribe(TikTokUnhandledControlEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onEvent(Consumer<TikTokEvent> event) {
-        tikTokEventHandler.subscribe(TikTokEvent.class,event);
+    public TikTokLiveClientBuilder onEvent(TikTokEventConsumer<TikTokEvent> event) {
+        tikTokEventHandler.subscribe(TikTokEvent.class, event);
         return this;
     }
 }
+
+
+
 
 
 

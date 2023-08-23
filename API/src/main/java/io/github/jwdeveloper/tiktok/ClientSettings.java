@@ -12,16 +12,7 @@ public class ClientSettings {
     /// <summary>
     /// Timeout for Connections
     /// </summary>
-
     private Duration timeout;
-    /// <summary>
-    /// Polling-Interval for Socket-Connection
-    /// </summary
-
-    private Duration pollingInterval;
-    /// <summary>
-    /// Proxy for Connection
-    /// </summary>
 
     // public RotatingProxy Proxy;
     /// <summary>
@@ -34,6 +25,11 @@ public class ClientSettings {
     /// Whether to Retry if Connection Fails
     /// </summary>
     private boolean retryOnConnectionFailure;
+
+    /// <summary>
+    /// Wait to connect again for selected amount of time
+    /// </summary>
+    private Duration retryConnectionTimeout;
 
     /// <summary>
     /// Whether to handle Messages received from Room when Connecting
@@ -58,12 +54,6 @@ public class ClientSettings {
     /// Whether to print Base64-Data for Messages to Console
     /// </summary>
     private boolean printMessageData;
-
-    /// <summary>
-    /// Whether to check Messages for Unparsed Data
-    /// </summary>
-    private boolean checkForUnparsedData;
-
 
     /// <summary>
     /// Tiktok user name

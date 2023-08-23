@@ -40,14 +40,13 @@ public class Constants {
     public static ClientSettings DefaultClientSettings() {
         var clientSettings = new ClientSettings();
         clientSettings.setTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT));
-        clientSettings.setPollingInterval(Duration.ofSeconds(DEFAULT_POLLTIME));
         clientSettings.setClientLanguage("en-US");
         clientSettings.setHandleExistingMessagesOnConnect(true);
         clientSettings.setDownloadGiftInfo(true);
-        clientSettings.setRetryOnConnectionFailure(true);
-        clientSettings.setPrintToConsole(true);
+        clientSettings.setRetryOnConnectionFailure(false);
+        clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1));
+        clientSettings.setPrintToConsole(false);
         clientSettings.setLogLevel(Level.ALL);
-        clientSettings.setCheckForUnparsedData(false);
         clientSettings.setPrintMessageData(false);
         clientSettings.setClientParameters(Constants.DefaultClientParams());
         return clientSettings;

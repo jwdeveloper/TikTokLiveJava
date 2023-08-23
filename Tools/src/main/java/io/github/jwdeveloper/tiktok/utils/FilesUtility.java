@@ -1,4 +1,4 @@
-package io.github.jwdeveloper.tiktok;
+package io.github.jwdeveloper.tiktok.utils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

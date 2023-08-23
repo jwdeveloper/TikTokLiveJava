@@ -3,38 +3,39 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.Nullable;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
+import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
 import io.github.jwdeveloper.tiktok.events.objects.User;
 import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
 import lombok.Getter;
 
 @Getter
 public class TikTokGiftMessageEvent extends TikTokEvent {
-  private final Gift gift;
 
-  @Nullable
-  private User sender;
+    private final Gift gift;
 
-  private final String purchaseId;
+    @Nullable
+    private User sender;
 
-  private final String receipt;
+    private final String purchaseId;
 
-  private final Integer amount;
+    private final String receipt;
 
-  private final  Boolean streakFinished;
+    private final Integer amount;
 
-  private final Integer streakIndex;
+    private final Boolean streakFinished;
 
-  public TikTokGiftMessageEvent(WebcastGiftMessage msg) {
-    super(msg.getHeader());;
-    gift = new Gift(msg.getGiftDetails());
-    if(msg.hasSender())
-    {
-      sender = new User(msg.getSender());
+    private final Integer streakIndex;
+
+    public TikTokGiftMessageEvent(WebcastGiftMessage msg) {
+        super(msg.getHeader());
+        gift = new Gift(msg.getGiftDetails());
+        if (msg.hasSender()) {
+            sender = new User(msg.getSender());
+        }
+        purchaseId = msg.getLogId();
+        receipt = msg.getReceiptJson();
+        amount = msg.getAmount();
+        streakFinished = msg.getRepeatEnd();
+        streakIndex = msg.getRepeatCount();
     }
-    purchaseId = msg.getLogId();
-    receipt = msg.getReceiptJson();
-    amount = msg.getAmount();
-    streakFinished = msg.getRepeatEnd();
-    streakIndex = msg.getRepeatCount();
-  }
 }
