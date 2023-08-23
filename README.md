@@ -64,7 +64,7 @@ Do you prefer other programming languages?
      // Username of someone who is currently live
      var tiktokUsername = "jwdevtiktok";
 
-     TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+     TikTokLive.newClient(tiktokUsername)
                 .onConnected((client, event) ->
                 {
                     System.out.println("Connected");
@@ -95,8 +95,8 @@ Do you prefer other programming languages?
 public class ConfigurationExample
 {
     public static void main(String[] args) throws IOException {
-
-       TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+       var tiktokUsername = "jwdevtiktok";
+       TikTokLive.newClient(tiktokUsername)
                 .configure(clientSettings ->
                 {
                     clientSettings.setHostName(Main.TEST_TIKTOK_USER); // TikTok user name
