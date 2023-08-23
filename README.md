@@ -51,7 +51,7 @@ Do you prefer other programming languages?
         <dependency>
             <groupId>com.github.jwdeveloper</groupId>
             <artifactId>TikTok-Live-Java</artifactId>
-            <version>0.0.11-Release</version>
+            <version>0.0.12-Release</version>
         </dependency>
    </dependencies>
 ```
@@ -64,24 +64,29 @@ Do you prefer other programming languages?
      // Username of someone who is currently live
      var tiktokUsername = "jwdevtiktok";
 
-     TikTokLive.newClient(tiktokUsername)
-                .onConnected(event ->
+     TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+                .onConnected((client, event) ->
                 {
                     System.out.println("Connected");
                 })
-                .onJoin(event ->
+                .onJoin((client, event)  ->
                 {
                     System.out.println("User joined -> " + event.getUser().getNickName());
                 })
-                .onComment(event ->
+                .onComment((client, event)  ->
                 {
-                    System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
+                   System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
                 })
-                .onError(event ->
+                .onEvent((client, event) ->
+                {
+                    System.out.println("Viewers count: "+client.getRoomInfo().getViewersCount());
+                })
+                .onError((client, event)  ->
                 {
                     event.getException().printStackTrace();
                 })
                 .buildAndRun();
+        System.in.read();
     }
 ```
 ## Configuration
@@ -91,34 +96,35 @@ public class ConfigurationExample
 {
     public static void main(String[] args) throws IOException {
 
-        TikTokLive.newClient("jwdevtiktok")
+       TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .configure(clientSettings ->
                 {
-                    clientSettings.setHostName("jwdevtiktok"); //tiktok user
-                    clientSettings.setClientLanguage("en"); //language
-                    clientSettings.setTimeout(Duration.ofSeconds(2)); //connection timeout
-                    clientSettings.setLogLevel(Level.ALL); //log level
-                    clientSettings.setDownloadGiftInfo(true); //TODO
-                    clientSettings.setCheckForUnparsedData(true); //TODO
-                    clientSettings.setPollingInterval(Duration.ofSeconds(1)); //TODO
-                    clientSettings.setPrintMessageData(true); //TODO
-                    clientSettings.setPrintToConsole(true); //TODO
-                    clientSettings.setHandleExistingMessagesOnConnect(true); //TODO
-                    clientSettings.setRetryOnConnectionFailure(true); //TODO
+                    clientSettings.setHostName(Main.TEST_TIKTOK_USER); // TikTok user name
+                    clientSettings.setClientLanguage("en"); // Language
+                    clientSettings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
+                    clientSettings.setLogLevel(Level.ALL); // Log level
+                    clientSettings.setDownloadGiftInfo(true); // Downloading meta information about gifts. You can access it by client.getGiftManager().getGiftsInfo();
+                    clientSettings.setPrintMessageData(true); // Printing TikTok Protocol buffer messages in Base64 format
+                    clientSettings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
+                    clientSettings.setHandleExistingMessagesOnConnect(true); // Invokes all TikTok events that had occurred before connection
+                    clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
+                    clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
                 })
                 .buildAndRun();
+       System.in.read();
     }
 }
 
 ```
 
 ## Methods
-A `TikTokLive` object contains the following methods.
+A `client (LiveClient)` object contains the following methods.
 
 | Method Name | Description |
 | ----------- | ----------- |
 | connect     | Connects to the live stream chat.<br>Returns a `Promise` which will be resolved when the connection is successfully established. |
 | disconnect  | Disconnects the connection. |
+| getGiftManager  |  Gets the meta informations about all gifts. |
 | getRoomInfo | Gets the current room info from TikTok API including streamer info, room status and statistics. |
 
 ## Events
