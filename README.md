@@ -40,18 +40,21 @@ Do you prefer other programming languages?
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>3.24.1</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.jwdeveloper</groupId>
             <artifactId>TikTok-Live-Java</artifactId>
             <version>0.0.12-Release</version>
+            <scope>compile</scope>
         </dependency>
    </dependencies>
 ```
