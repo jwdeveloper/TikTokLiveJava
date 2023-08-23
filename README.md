@@ -62,7 +62,7 @@ Do you prefer other programming languages?
   public static void main(String[] args)
   {
      // Username of someone who is currently live
-     var tiktokUsername = "officialgeilegisela";
+     var tiktokUsername = "jwdevtiktok";
 
      TikTokLive.newClient(tiktokUsername)
                 .onConnected(event ->
@@ -83,6 +83,33 @@ Do you prefer other programming languages?
                 })
                 .buildAndRun();
     }
+```
+## Configuration
+
+```java
+public class ConfigurationExample
+{
+    public static void main(String[] args) throws IOException {
+
+        TikTokLive.newClient("jwdevtiktok")
+                .configure(clientSettings ->
+                {
+                    clientSettings.setHostName("jwdevtiktok"); //tiktok user
+                    clientSettings.setClientLanguage("en"); //language
+                    clientSettings.setTimeout(Duration.ofSeconds(2)); //connection timeout
+                    clientSettings.setLogLevel(Level.ALL); //log level
+                    clientSettings.setDownloadGiftInfo(true); //TODO
+                    clientSettings.setCheckForUnparsedData(true); //TODO
+                    clientSettings.setPollingInterval(Duration.ofSeconds(1)); //TODO
+                    clientSettings.setPrintMessageData(true); //TODO
+                    clientSettings.setPrintToConsole(true); //TODO
+                    clientSettings.setHandleExistingMessagesOnConnect(true); //TODO
+                    clientSettings.setRetryOnConnectionFailure(true); //TODO
+                })
+                .buildAndRun();
+    }
+}
+
 ```
 
 ## Methods
