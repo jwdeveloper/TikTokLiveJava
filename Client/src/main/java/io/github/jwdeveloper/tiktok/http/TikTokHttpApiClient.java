@@ -90,7 +90,7 @@ public class TikTokHttpApiClient {
 
         var fullUrl = HttpUtils.parseParameters(url,parameters);
         var singHeaders = new TreeMap<String,Object>();
-        singHeaders.put("client", "ttlive-net");
+        singHeaders.put("client", "ttlive-java");
         singHeaders.put("uuc", 1);
         singHeaders.put("url", fullUrl);
 
