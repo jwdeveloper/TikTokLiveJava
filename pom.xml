@@ -54,6 +54,7 @@
                         <configuration>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>all</shadedClassifierName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>true</minimizeJar>
                             <artifactSet>
                                 <includes>
@@ -64,8 +65,6 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>**/proto/**</exclude>
-                                        <exclude>**/google/**</exclude>
                                         <exclude>**/tiktokSchema.proto/**</exclude>
                                     </excludes>
                                 </filter>
@@ -98,6 +97,8 @@
             <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
+
+
 
     </dependencies>
 

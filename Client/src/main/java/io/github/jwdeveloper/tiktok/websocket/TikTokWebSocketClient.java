@@ -11,10 +11,10 @@ import io.github.jwdeveloper.tiktok.http.HttpUtils;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+import org.java_websocket.client.WebSocketClient;
 
 import java.net.URI;
 import java.net.http.WebSocket;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -23,24 +23,21 @@ public class TikTokWebSocketClient {
     private final Logger logger;
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
-    private final TikTokHttpRequestFactory factory;
     private final TikTokMessageHandlerRegistration webResponseHandler;
     private final TikTokEventHandler tikTokEventHandler;
 
-    private WebSocket webSocket;
+    private WebSocketClient webSocketClient;
     private boolean isConnected;
     private TikTokLiveClient tikTokLiveClient;
 
     public TikTokWebSocketClient(Logger logger,
                                  TikTokCookieJar tikTokCookieJar,
-                                 TikTokHttpRequestFactory factory,
                                  ClientSettings clientSettings,
                                  TikTokMessageHandlerRegistration webResponseHandler,
                                  TikTokEventHandler tikTokEventHandler) {
         this.logger = logger;
         this.tikTokCookieJar = tikTokCookieJar;
         this.clientSettings = clientSettings;
-        this.factory = factory;
         this.webResponseHandler = webResponseHandler;
         this.tikTokEventHandler = tikTokEventHandler;
         isConnected = false;
@@ -56,12 +53,12 @@ public class TikTokWebSocketClient {
         }
         try {
             var url = getWebSocketUrl(webcastResponse);
-            if (clientSettings.isHandleExistingMessagesOnConnect())
-            {
+            if (clientSettings.isHandleExistingMessagesOnConnect()) {
                 logger.info("Handling existing messages");
                 webResponseHandler.handle(tikTokLiveClient, webcastResponse);
             }
-            webSocket = startWebSocket(url);
+            webSocketClient = startWebSocket(url);
+            webSocketClient.connect();
         } catch (Exception e) {
             throw new TikTokLiveException("Failed to connect to the websocket", e);
         }
@@ -82,20 +79,19 @@ public class TikTokWebSocketClient {
         return HttpUtils.parseParametersEncode(url, clone);
     }
 
-    private WebSocket startWebSocket(String url) throws Exception {
+    private WebSocketClient startWebSocket(String url) {
         var cookie = tikTokCookieJar.parseCookies();
         var map = new HashMap<String, String>();
         map.put("Cookie", cookie);
-        return factory.openSocket()
-                .subprotocols("echo-protocol")
-                .connectTimeout(Duration.ofSeconds(15))
-                .header("Cookie", cookie)
-                .buildAsync(URI.create(url), new TikTokWebSocketListener(webResponseHandler, tikTokEventHandler, tikTokLiveClient)).get();
+
+        return new TikTokWebSocketListener(URI.create(url), map, 3000, webResponseHandler, tikTokEventHandler, tikTokLiveClient);
     }
 
+
+
     public void stop() {
-        if (isConnected && webSocket != null) {
-            webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "ok");
+        if (isConnected && webSocketClient != null) {
+            webSocketClient.close();
         }
     }
 }

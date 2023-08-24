@@ -70,7 +70,6 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         var tiktokRoomInfo = new TikTokRoomInfo();
         tiktokRoomInfo.setUserName(clientSettings.getHostName());
 
-
         var cookieJar = new TikTokCookieJar();
         var requestFactory = new TikTokHttpRequestFactory(cookieJar);
         var apiClient = new TikTokHttpApiClient(cookieJar, requestFactory);
@@ -79,7 +78,6 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler, clientSettings, logger, giftManager, tiktokRoomInfo);
         var webSocketClient = new TikTokWebSocketClient(logger,
                 cookieJar,
-                requestFactory,
                 clientSettings,
                 webResponseHandler,
                 tikTokEventHandler);
