@@ -42,6 +42,11 @@ Do you prefer other programming languages?
             <version>0.0.13-Release</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
    </dependencies>
 ```
 
