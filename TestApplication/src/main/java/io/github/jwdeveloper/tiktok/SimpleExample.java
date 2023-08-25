@@ -6,10 +6,15 @@ public class SimpleExample {
     public static void main(String[] args) throws IOException {
 
         TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+                .onFollow((liveClient, event) ->
+                {
+                    System.out.println("Follow joined -> " + event.getNewFollower().getNickName());
+                })
                 .onConnected((client, event) ->
                 {
                     System.out.println("Connected");
                 })
+
                 .onJoin((client, event)  ->
                 {
                     System.out.println("User joined -> " + event.getUser().getNickName());

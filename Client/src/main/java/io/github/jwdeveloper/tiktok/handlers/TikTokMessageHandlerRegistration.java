@@ -105,16 +105,18 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     private TikTokEvent handleSocialMedia(WebcastResponse.Message msg) {
         var message = WebcastSocialMessage.parseFrom(msg.getBinary());
 
-        String type = message.getHeader().getSocialData().getType();
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(type);
-        if (matcher.find()) {
+        var socialType = message.getHeader().getSocialData().getType();
+        var pattern = Pattern.compile("pm_mt_guidance_viewer_([0-9]+)_share");
+        var matcher = pattern.matcher(socialType);
+
+        if (matcher.find())
+        {
             var value = matcher.group(0);
             var number = Integer.parseInt(value);
             return new TikTokShareEvent(message, number);
         }
 
-        var socialType = message.getHeader().getSocialData().getType();
+
         return switch (socialType) {
             case SocialTypes.LikeType -> new TikTokLikeEvent(message);
             case SocialTypes.FollowType -> new TikTokFollowEvent(message);
