@@ -4,8 +4,9 @@
 # TikTok-Live-Java
 A Java library based on [TikTok-Connector](https://github.com/isaackogan/TikTok-Live-Connector) and [TikTokLiveSharp](https://github.com/sebheron/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service. The package includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers. No credentials are required. Besides [Chat Comments](#chat), other events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked. You can also send [automatic messages](#send-chat-messages) into the chat by providing your Session ID.
 
+Join the support [discord](https://discord.gg/KU9GRNsS) and visit the `#java-support` channel for questions, contributions and ideas. Feel free to make pull requests with missing/new features, fixes, etc
 
-Do you prefer other programming languages?????
+Do you prefer other programming languages?
 - **Node** orginal: [TikTok-Live-Connector](https://github.com/isaackogan/TikTok-Live-Connector) by [@zerodytrash](https://github.com/zerodytrash) 
 - **Python** rewrite: [TikTokLive](https://github.com/isaackogan/TikTokLive) by [@isaackogan](https://github.com/isaackogan)
 - **Go** rewrite: [GoTikTokLive](https://github.com/Davincible/gotiktoklive) by [@Davincible](https://github.com/Davincible)
@@ -15,10 +16,9 @@ Do you prefer other programming languages?????
 
 #### Overview
 - [Getting started](#getting-started)
-- [Params and options](#params-and-options)
+- [Configuration](#configuration)
 - [Methods](#methods)
 - [Events](#events)
-- [Examples](#examples)
 - [Contributing](#contributing)
 
 ## Getting started
@@ -116,7 +116,7 @@ A `client (LiveClient)` object contains the following methods.
 
 | Method Name | Description |
 | ----------- | ----------- |
-| connect     | Connects to the live stream chat.<br>Returns a `Promise` which will be resolved when the connection is successfully established. |
+| connect     | Connects to the live stream. |
 | disconnect  | Disconnects the connection. |
 | getGiftManager  |  Gets the meta informations about all gifts. |
 | getRoomInfo | Gets the current room info from TikTok API including streamer info, room status and statistics. |
