@@ -17,7 +17,7 @@ public class Main {
         var db = new TikTokDatabase("test");
         db.init();
         TikTokLive.newClient(tiktokUser)
-                .onWebcastResponseDebug((liveClient, event) ->
+                .onSuccessResponseMapping((liveClient, event) ->
                 {
                     var eventName = event.getEvent().getClass().getSimpleName();
                     var binary = Base64.getEncoder().encodeToString(event.getMessage().getBinary().toByteArray());
