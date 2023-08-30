@@ -13,6 +13,7 @@
         <module>Client</module>
         <module>Tools</module>
         <module>TestApplication</module>
+        <module>Tools-EventsCollector</module>
     </modules>
 
     <properties>

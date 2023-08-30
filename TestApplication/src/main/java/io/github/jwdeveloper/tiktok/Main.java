@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static String TEST_TIKTOK_USER = "kitovskyyy";
+    public static String TEST_TIKTOK_USER = "polonezgarage";
 
     public static void main(String[] args) throws IOException {
         var client = TikTokLive.newClient(TEST_TIKTOK_USER)

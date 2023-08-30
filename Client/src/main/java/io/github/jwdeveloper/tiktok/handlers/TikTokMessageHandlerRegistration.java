@@ -33,8 +33,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     public void init() {
 
         //ConnectionEvents events
-        register(WebcastControlMessage.class, TikTokRoomMessageEvent.class);
-        register(SystemMessage.class, this::handleWebcastControlMessage);
+        register(WebcastControlMessage.class,  this::handleWebcastControlMessage);
+        register(SystemMessage.class,TikTokRoomMessageEvent.class);
 
 
         //Room status events

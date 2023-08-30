@@ -1,8 +1,6 @@
 package io.github.jwdeveloper.tiktok.events;
 
 import io.github.jwdeveloper.tiktok.events.messages.*;
-import java.util.function.Consumer;
-
 
 
 public interface TikTokEventBuilder<T> {
@@ -89,6 +87,9 @@ public interface TikTokEventBuilder<T> {
     T onUnhandledControl(TikTokEventConsumer<TikTokUnhandledControlEvent> event);
 
     T onEvent(TikTokEventConsumer<TikTokEvent> event);
+
+    T onSuccessResponseMapping(TikTokEventConsumer<TikTokSuccessResponseMappingEvent> event);
+
 }
 
 

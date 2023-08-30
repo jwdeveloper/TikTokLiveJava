@@ -21,13 +21,18 @@ public class TikTokLiveMessageException extends TikTokLiveException {
         this.webcastResponse = webcastResponse;
     }
 
-    public void messageToBase64()
+    public String messageName()
     {
-        var decoded = Base64.getEncoder().encodeToString(webcastMessage.getBinary().toByteArray());
+        return webcastMessage.getType();
     }
 
-    public void webcastResponseToBase64()
+    public String messageToBase64()
     {
-        var decoded = Base64.getEncoder().encodeToString(webcastResponse.toByteArray());
+        return Base64.getEncoder().encodeToString(webcastMessage.getBinary().toByteArray());
+    }
+
+    public String webcastResponseToBase64()
+    {
+        return  Base64.getEncoder().encodeToString(webcastResponse.toByteArray());
     }
 }

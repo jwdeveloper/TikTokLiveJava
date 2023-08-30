@@ -317,6 +317,12 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         tikTokEventHandler.subscribe(TikTokEvent.class, event);
         return this;
     }
+
+    @Override
+    public TikTokLiveClientBuilder onSuccessResponseMapping(TikTokEventConsumer<TikTokSuccessResponseMappingEvent> event) {
+        tikTokEventHandler.subscribe(TikTokSuccessResponseMappingEvent.class, event);
+        return this;
+    }
 }
 
 
