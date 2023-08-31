@@ -6,6 +6,8 @@ public interface LiveClient {
 
     void disconnect();
 
+    void sendHeartBeat();
+
     GiftManager getGiftManager();
     LiveRoomInfo getRoomInfo();
 }
