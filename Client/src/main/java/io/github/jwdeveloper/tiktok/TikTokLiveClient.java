@@ -116,8 +116,8 @@ public class TikTokLiveClient implements LiveClient {
         liveRoomInfo.setConnectionState(connectionState);
     }
 
-    public void sendHeartBeat(){
-        webSocketClient.sendHeartBeat();
+    public void sendHeartbeat(){
+        webSocketClient.sendHeartbeat();
     }
 
 }

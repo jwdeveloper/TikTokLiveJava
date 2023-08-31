@@ -95,7 +95,7 @@ public class TikTokWebSocketClient {
         }
     }
 
-    public void sendHeartBeat(){
+    public void sendHeartbeat(){
         webSocketClient.sendPing();
     }
 }
