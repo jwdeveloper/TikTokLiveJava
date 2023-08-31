@@ -118,6 +118,7 @@ A `client (LiveClient)` object contains the following methods.
 | ----------- | ----------- |
 | connect     | Connects to the live stream. |
 | disconnect  | Disconnects the connection. |
+| sendHeartbeat  | Sends a heartbeat to the WebSocketClient. |
 | getGiftManager  |  Gets the meta informations about all gifts. |
 | getRoomInfo | Gets the current room info from TikTok API including streamer info, room status and statistics. |
 
