@@ -34,6 +34,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.13.1</version> <!-- Check for the latest version -->
+        </dependency>
+        <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>Client</artifactId>
             <version>${project.version}</version>

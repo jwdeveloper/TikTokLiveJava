@@ -4,13 +4,19 @@ import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.io.IOException;
+import java.time.Duration;
 
 public class Main {
 
-    public static String TEST_TIKTOK_USER = "polonezgarage";
+    public static String TEST_TIKTOK_USER = "olchik.m1";
 
     public static void main(String[] args) throws IOException {
         var client = TikTokLive.newClient(TEST_TIKTOK_USER)
+                .configure(clientSettings ->
+                {
+                    clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(5));
+                    clientSettings.setRetryOnConnectionFailure(true);
+                })
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)
                 .onRoomViewerData(Main::onViewerData)
@@ -26,9 +32,13 @@ public class Main {
                 {
                     error.getException().printStackTrace();
                 })
+                .onEvent((liveClient, event) ->
+                {
+                    var viewers = liveClient.getRoomInfo().getViewersCount();
+                })
                 .buildAndRun();
 
-        var viewers = client.getRoomInfo().getViewersCount();
+
         System.in.read();
     }
 

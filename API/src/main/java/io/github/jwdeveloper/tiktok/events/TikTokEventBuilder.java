@@ -88,7 +88,7 @@ public interface TikTokEventBuilder<T> {
 
     T onEvent(TikTokEventConsumer<TikTokEvent> event);
 
-    T onSuccessResponseMapping(TikTokEventConsumer<TikTokSuccessResponseMappingEvent> event);
+    T onWebsocketMessage(TikTokEventConsumer<TikTokWebsocketMessageEvent> event);
 
 }
 

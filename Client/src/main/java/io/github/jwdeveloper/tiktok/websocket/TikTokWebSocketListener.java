@@ -101,17 +101,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
         }
     }
 
-    private void pingTask(WebSocket webSocket) throws InterruptedException {
-        while (true) {
-            byte[] message = new byte[]{58, 2, 104, 98};
-            ByteBuffer buffer = ByteBuffer.wrap(message);
-            while (buffer.hasRemaining()) {
-                webSocket.sendPing(buffer);
-            }
-            buffer.clear();
-            Thread.sleep(10);
-        }
-    }
+
 
     private void sendAckId(long id) {
         var serverInfo = WebcastWebsocketAck

@@ -12,6 +12,7 @@ import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpApiClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.utils.CancelationToken;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
 import java.time.Duration;
@@ -319,8 +320,8 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
     }
 
     @Override
-    public TikTokLiveClientBuilder onSuccessResponseMapping(TikTokEventConsumer<TikTokSuccessResponseMappingEvent> event) {
-        tikTokEventHandler.subscribe(TikTokSuccessResponseMappingEvent.class, event);
+    public TikTokLiveClientBuilder onWebsocketMessage(TikTokEventConsumer<TikTokWebsocketMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokWebsocketMessageEvent.class, event);
         return this;
     }
 }

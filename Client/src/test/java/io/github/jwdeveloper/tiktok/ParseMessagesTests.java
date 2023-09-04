@@ -40,4 +40,10 @@ public class ParseMessagesTests extends TikTokBaseTest
     }
 
 
+    @Test
+    public void ShouldParseMessageWebcastMemberMessage() throws InvalidProtocolBufferException {
+        var bytes = getFileBytesUtf("WebcastMemberMessage.bin");
+        var message = WebcastMemberMessage.parseFrom(bytes);
+    }
+
 }

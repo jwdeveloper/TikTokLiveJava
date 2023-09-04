@@ -2,11 +2,48 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- READ ME
+     This POM file is configured to run only inside TikTokLiveJava project
+     In case you have copied it follows this stets to fix console errors
+
+    1. Remember to remove
+     <parent>
+        <artifactId>TikTokLiveJava</artifactId>
+        <groupId>io.github.jwdeveloper.tiktok</groupId>
+        <version>0.0.13-Release</version>
+    </parent>
+
+    2. Paste
+     <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+     <dependencies>
+         <dependency>
+            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+            <artifactId>Client</artifactId>
+            <version>0.0.14-Release</version> <- Change with latest version of TikTokJava
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+     </dependencies>
+    I hope it will help you :)
+     -->
+
     <parent>
         <artifactId>TikTokLiveJava</artifactId>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
         <version>0.0.14-Release</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>TestApplication</artifactId>

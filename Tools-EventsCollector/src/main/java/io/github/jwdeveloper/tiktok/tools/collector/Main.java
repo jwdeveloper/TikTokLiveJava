@@ -8,18 +8,52 @@ import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokErrorModel;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokMessageModel;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class Main {
 
+    //https://protobuf-decoder.netlify.app/
+    /*
+       mia_tattoo
+       moniczkka
+       besin1276
+     */
+
+    public static List<String> ignoredEvents;
+
     public static void main(String[] args) throws SQLException {
-        var tiktokUser = "mr_cios";
+
+        ignoredEvents = List.of("TikTokJoinEvent","TikTokLikeEvent");
+
         var db = new TikTokDatabase("test");
         db.init();
+
+        var users = new ArrayList<String>();
+        users.add("mia_tattoo");
+        users.add("moniczkka");
+        users.add("besin1276");
+
+        for(var user : users)
+        {
+            runTikTokLiveInstance(user, db);
+        }
+    }
+
+    private static void runTikTokLiveInstance(String tiktokUser, TikTokDatabase tikTokDatabase)
+    {
+
         TikTokLive.newClient(tiktokUser)
-                .onSuccessResponseMapping((liveClient, event) ->
+                .onWebsocketMessage((liveClient, event) ->
                 {
                     var eventName = event.getEvent().getClass().getSimpleName();
+
+                    if(ignoredEvents.contains(eventName))
+                    {
+                        return;
+                    }
+
                     var binary = Base64.getEncoder().encodeToString(event.getMessage().getBinary().toByteArray());
                     var model = TikTokMessageModel.builder()
                             .type("message")
@@ -28,8 +62,8 @@ public class Main {
                             .eventContent(binary)
                             .build();
 
-                    db.insertMessage(model);
-                    System.out.println("EVENT: " + eventName);
+                    tikTokDatabase.insertMessage(model);
+                    System.out.println("EVENT: ["+tiktokUser+"] " + eventName);
                 })
                 .onError((liveClient, event) ->
                 {
@@ -53,7 +87,7 @@ public class Main {
                     }
 
                     var error = builder.build();
-                    db.insertError(error);
+                    tikTokDatabase.insertError(error);
                     System.out.println("ERROR: "+error.getErrorName());
                     exception.printStackTrace();
 

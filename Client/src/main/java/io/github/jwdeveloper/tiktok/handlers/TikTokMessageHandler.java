@@ -6,7 +6,7 @@ import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokSuccessResponseMappingEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokUnhandledEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
@@ -70,7 +70,7 @@ public abstract class TikTokMessageHandler {
         }
         var handler = handlers.get(message.getType());
         var tiktokEvent = handler.handle(message);
-        tikTokEventHandler.publish(client, new TikTokSuccessResponseMappingEvent(tiktokEvent, message));
+        tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(tiktokEvent, message));
         tikTokEventHandler.publish(client, tiktokEvent);
     }
 

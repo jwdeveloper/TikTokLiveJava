@@ -5,9 +5,13 @@ import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+
+/**
+ * Happens when TikTok websocket receive message from server
+ */
 @Data
 @AllArgsConstructor
-public class TikTokSuccessResponseMappingEvent extends TikTokEvent
+public class TikTokWebsocketMessageEvent extends TikTokEvent
 {
     private TikTokEvent event;
 

@@ -32,9 +32,7 @@ Do you prefer other programming languages?
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
-```
 
-```xml
    <dependencies>
          <dependency>
             <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>

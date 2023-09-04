@@ -25,10 +25,10 @@ public class TikTokWebSocketClient {
     private final TikTokCookieJar tikTokCookieJar;
     private final TikTokMessageHandlerRegistration webResponseHandler;
     private final TikTokEventHandler tikTokEventHandler;
-
     private WebSocketClient webSocketClient;
-    private boolean isConnected;
     private TikTokLiveClient tikTokLiveClient;
+    private TikTokWebSocketPingingTask pingingTask;
+    private boolean isConnected;
 
     public TikTokWebSocketClient(Logger logger,
                                  TikTokCookieJar tikTokCookieJar,
@@ -59,7 +59,13 @@ public class TikTokWebSocketClient {
             }
             webSocketClient = startWebSocket(url);
             webSocketClient.connect();
-        } catch (Exception e) {
+
+            pingingTask = new TikTokWebSocketPingingTask();
+            pingingTask.run(webSocketClient);
+            isConnected = true;
+        } catch (Exception e)
+        {
+            isConnected =false;
             throw new TikTokLiveException("Failed to connect to the websocket", e);
         }
     }
@@ -83,15 +89,23 @@ public class TikTokWebSocketClient {
         var cookie = tikTokCookieJar.parseCookies();
         var map = new HashMap<String, String>();
         map.put("Cookie", cookie);
-
-        return new TikTokWebSocketListener(URI.create(url), map, 3000, webResponseHandler, tikTokEventHandler, tikTokLiveClient);
+        return new TikTokWebSocketListener(URI.create(url),
+                map,
+                3000,
+                webResponseHandler,
+                tikTokEventHandler,
+                tikTokLiveClient);
     }
 
 
 
-    public void stop() {
+    public void stop()
+    {
         if (isConnected && webSocketClient != null) {
-            webSocketClient.close();
+            webSocketClient.close(1);
         }
+        webSocketClient = null;
+        pingingTask = null;
+        isConnected = false;
     }
 }
