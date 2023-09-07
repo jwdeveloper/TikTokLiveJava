@@ -1,22 +1,18 @@
 package io.github.jwdeveloper.tiktok.events.objects;
+import lombok.Value;
 
-import lombok.Getter;
-
-@Getter
+@Value
 public class TopViewer {
-  private Integer rank;
+   Integer rank;
 
-  private User user;
+   User user;
 
-  private Integer coinsGiven;
+   Integer coinsGiven;
 
   public TopViewer(io.github.jwdeveloper.tiktok.messages.TopViewer viewer)
   {
     rank = viewer.getRank();
-    if(viewer.hasUser())
-    {
-      user = new User(viewer.getUser());
-    }
+    user = User.MapOrEmpty(viewer.getUser());
     coinsGiven = viewer.getCoinsGiven();
   }
 }

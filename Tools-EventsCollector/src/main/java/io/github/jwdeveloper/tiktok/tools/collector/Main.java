@@ -1,6 +1,7 @@
 package io.github.jwdeveloper.tiktok.tools.collector;
 
 import io.github.jwdeveloper.tiktok.TikTokLive;
+import io.github.jwdeveloper.tiktok.events.objects.Badge;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.ExceptionInfoModel;
@@ -25,16 +26,19 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
 
-        ignoredEvents = List.of("TikTokJoinEvent","TikTokLikeEvent");
+
+        ignoredEvents = new ArrayList<>();
+        //ignoredEvents = List.of("TikTokJoinEvent","TikTokLikeEvent");
+
 
         var db = new TikTokDatabase("test");
         db.init();
 
         var users = new ArrayList<String>();
-        users.add("mia_tattoo");
-        users.add("moniczkka");
-        users.add("besin1276");
-
+     //   users.add("mia_tattoo");
+      //  users.add("moniczkka");
+      //  users.add("besin1276");
+        users.add("jackwoln");
         for(var user : users)
         {
             runTikTokLiveInstance(user, db);

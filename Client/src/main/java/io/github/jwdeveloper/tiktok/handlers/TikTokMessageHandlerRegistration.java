@@ -5,21 +5,18 @@ import io.github.jwdeveloper.tiktok.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.*;
-import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
 import io.github.jwdeveloper.tiktok.messages.*;
-import io.github.jwdeveloper.tiktok.models.GiftId;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
 import lombok.SneakyThrows;
 
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     private final TikTokGiftManager giftManager;
     private final TikTokRoomInfo roomInfo;
 
-    public TikTokMessageHandlerRegistration(TikTokEventHandler tikTokEventHandler,
+    public TikTokMessageHandlerRegistration(TikTokEventObserver tikTokEventHandler,
                                             ClientSettings clientSettings,
                                             Logger logger,
                                             TikTokGiftManager giftManager,

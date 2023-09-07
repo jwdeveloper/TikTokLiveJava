@@ -6,7 +6,7 @@ import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketAck;
@@ -16,7 +16,6 @@ import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
-import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Optional;
@@ -24,14 +23,14 @@ import java.util.Optional;
 public class TikTokWebSocketListener extends WebSocketClient {
 
     private final TikTokMessageHandlerRegistration webResponseHandler;
-    private final TikTokEventHandler tikTokEventHandler;
+    private final TikTokEventObserver tikTokEventHandler;
     private final TikTokLiveClient tikTokLiveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
                                    int connectTimeout,
                                    TikTokMessageHandlerRegistration webResponseHandler,
-                                   TikTokEventHandler tikTokEventHandler,
+                                   TikTokEventObserver tikTokEventHandler,
                                    TikTokLiveClient tikTokLiveClient) {
         super(serverUri, new Draft_6455(), httpHeaders,connectTimeout);
         this.webResponseHandler = webResponseHandler;
@@ -43,7 +42,10 @@ public class TikTokWebSocketListener extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokConnectedEvent());
-        sendPing();
+        if(isNotClosing())
+        {
+            sendPing();
+        }
     }
 
 
@@ -55,7 +57,10 @@ public class TikTokWebSocketListener extends WebSocketClient {
         } catch (Exception e) {
             tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(e));
         }
-        sendPing();
+        if(isNotClosing())
+        {
+            sendPing();
+        }
     }
 
     @Override
@@ -66,7 +71,10 @@ public class TikTokWebSocketListener extends WebSocketClient {
     @Override
     public void onError(Exception error) {
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokErrorEvent(error));
-        sendPing();
+        if(isNotClosing())
+        {
+            sendPing();
+        }
     }
 
     private void handleBinary(byte[] buffer) {
@@ -101,6 +109,11 @@ public class TikTokWebSocketListener extends WebSocketClient {
         }
     }
 
+    private boolean isNotClosing()
+    {
+        return !isClosed() && !isClosing();
+    }
+
 
 
     private void sendAckId(long id) {
@@ -109,7 +122,10 @@ public class TikTokWebSocketListener extends WebSocketClient {
                 .setType("ack")
                 .setId(id)
                 .build();
-        send(serverInfo.toByteString().asReadOnlyByteBuffer());
+        if(isNotClosing())
+        {
+            send(serverInfo.toByteString().asReadOnlyByteBuffer());
+        }
     }
 
 

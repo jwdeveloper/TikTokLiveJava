@@ -1,16 +1,19 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.WebcastCaptionMessage;
-import lombok.Getter;
+import lombok.Value;
 
-@Getter
-public class TikTokCaptionEvent extends TikTokEvent {
-    private final Long captionTimeStamp;
+@Value
+@EventMeta(eventType = EventType.Message)
+public class TikTokCaptionEvent extends TikTokHeaderEvent {
+    Long captionTimeStamp;
 
-    private final String iSOLanguage;
+    String iSOLanguage;
 
-    private final String text;
+    String text;
 
     public TikTokCaptionEvent(WebcastCaptionMessage msg) {
         super(msg.getHeader());

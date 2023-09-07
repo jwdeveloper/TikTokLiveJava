@@ -1,11 +1,15 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.WebcastLinkMicFanTicketMethod;
 import lombok.Getter;
 
 @Getter
-public class TikTokLinkMicFanTicketEvent extends TikTokEvent {
+@EventMeta(eventType = EventType.Message)
+public class TikTokLinkMicFanTicketEvent extends TikTokHeaderEvent {
     private final Long id;
     private final Integer data1;
     private final Integer data2;

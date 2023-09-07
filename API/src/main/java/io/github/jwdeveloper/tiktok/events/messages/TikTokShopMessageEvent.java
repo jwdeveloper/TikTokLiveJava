@@ -1,12 +1,16 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.messages.WebcastOecLiveShoppingMessage;
 import lombok.Getter;
 
 @Getter
-public class TikTokShopMessageEvent extends TikTokEvent {
+@EventMeta(eventType = EventType.Message)
+public class TikTokShopMessageEvent extends TikTokHeaderEvent {
   private final String title;
 
   private final String price;

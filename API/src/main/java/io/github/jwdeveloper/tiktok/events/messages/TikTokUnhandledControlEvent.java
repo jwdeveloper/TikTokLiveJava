@@ -1,13 +1,18 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.base.TikTokUnhandledEvent;
 import io.github.jwdeveloper.tiktok.messages.WebcastControlMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class TikTokUnhandledControlEvent extends TikTokEvent {
+@EventMeta(eventType = EventType.Custom)
+public class TikTokUnhandledControlEvent extends TikTokUnhandledEvent<WebcastControlMessage> {
 
-    private final WebcastControlMessage message;
+    public TikTokUnhandledControlEvent(WebcastControlMessage data) {
+        super(data);
+    }
 }

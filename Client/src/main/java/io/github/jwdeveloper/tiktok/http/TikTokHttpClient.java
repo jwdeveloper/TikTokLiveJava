@@ -2,7 +2,6 @@ package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.Constants;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
@@ -15,30 +14,44 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class TikTokHttpApiClient {
+public class TikTokHttpClient {
     private final TikTokHttpRequestFactory requestFactory;
     private final TikTokCookieJar tikTokCookieJar;
 
-    public TikTokHttpApiClient(TikTokCookieJar tikTokCookieJar,  TikTokHttpRequestFactory requestFactory) {
+    public TikTokHttpClient(TikTokCookieJar tikTokCookieJar, TikTokHttpRequestFactory requestFactory) {
         this.requestFactory = requestFactory;
         this.tikTokCookieJar = tikTokCookieJar;
     }
 
-    public String GetLivestreamPage(String userName) {
+    public void setSessionId(String sessionId)
+    {
+        tikTokCookieJar.set("sessionid", sessionId);
+        tikTokCookieJar.set("sessionid_ss", sessionId);
+        tikTokCookieJar.set("sid_tt", sessionId);
+    }
+
+
+    public String getLivestreamPage(String userName) {
 
         var url = Constants.TIKTOK_URL_WEB + "@" + userName + "/live/";
         var get = getRequest(url, null);
         return get;
     }
 
-    public JsonObject GetJObjectFromWebcastAPI(String path, Map<String, Object> parameters) {
+    public String postMessageToChat(Map<String,Object> parameters)
+    {
+        var get = postRequest(Constants.TIKTOK_URL_WEBCAST + "room/chat/", parameters);
+        return get;
+    }
+
+    public JsonObject getJObjectFromWebcastAPI(String path, Map<String, Object> parameters) {
         var get = getRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         var json = JsonParser.parseString(get);
         var jsonObject = json.getAsJsonObject();
         return jsonObject;
     }
 
-    public WebcastResponse GetDeserializedMessage(String path, Map<String, Object> parameters) {
+    public WebcastResponse getDeserializedMessage(String path, Map<String, Object> parameters) {
         var bytes = getSignRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         try {
             return WebcastResponse.parseFrom(bytes);
@@ -49,16 +62,25 @@ public class TikTokHttpApiClient {
         }
     }
 
+    private String postRequest(String url, Map<String, Object> parameters) {
+        if (parameters == null) {
+            parameters = new HashMap<>();
+        }
+        System.out.println("RomMID: "+parameters.get("room_id"));
+        var request = requestFactory.setQueries(parameters);
+        return request.post(url);
+    }
+
     private String getRequest(String url, Map<String, Object> parameters) {
         if (parameters == null) {
             parameters = new HashMap<>();
         }
 
-        var request = requestFactory.SetQueries(parameters);
-        return request.Get(url);
+        var request = requestFactory.setQueries(parameters);
+        return request.get(url);
     }
     private byte[] getSignRequest(String url, Map<String, Object> parameters) {
-        url = GetSignedUrl(url, parameters);
+        url = getSignedUrl(url, parameters);
         try {
             var client = HttpClient.newHttpClient();
             var request = HttpRequest.newBuilder()
@@ -86,7 +108,7 @@ public class TikTokHttpApiClient {
     }
 
 
-    private String GetSignedUrl(String url, Map<String, Object> parameters) {
+    private String getSignedUrl(String url, Map<String, Object> parameters) {
 
         var fullUrl = HttpUtils.parseParameters(url,parameters);
         var singHeaders = new TreeMap<String,Object>();
@@ -94,8 +116,8 @@ public class TikTokHttpApiClient {
         singHeaders.put("uuc", 1);
         singHeaders.put("url", fullUrl);
 
-        var request = requestFactory.SetQueries(singHeaders);
-        var content = request.Get(Constants.TIKTOK_SIGN_API);
+        var request = requestFactory.setQueries(singHeaders);
+        var content = request.get(Constants.TIKTOK_SIGN_API);
 
 
         try {

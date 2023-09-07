@@ -1,6 +1,9 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
 
 import io.github.jwdeveloper.tiktok.events.objects.User;
@@ -10,7 +13,8 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class TikTokGoalUpdateEvent extends TikTokEvent
+@EventMeta(eventType = EventType.Message)
+public class TikTokGoalUpdateEvent extends TikTokHeaderEvent
 {
   private final Long goalId;
   private final Picture picture;
@@ -20,10 +24,10 @@ public class TikTokGoalUpdateEvent extends TikTokEvent
 
   public TikTokGoalUpdateEvent(WebcastGoalUpdateMessage msg) {
     super(msg.getHeader());
-    picture = new Picture(msg.getPicture());
+    picture = new Picture(msg.getImage());
     goalId = msg.getId();
     eventType = msg.getData().getType();
     label = msg.getUpdateData().getLabel();
-    users = msg.getUpdateData().getUsersList().stream().map(u ->new User(u.getId(),u.getNickname(),new Picture(u.getProfilePicture()))).toList();
+    users = msg.getUpdateData().getUsersList().stream().map(u ->new User(u.getId(),u.getNickname(),new Picture(u.getProfileImage()))).toList();
   }
 }

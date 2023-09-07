@@ -23,10 +23,10 @@ public class TikTokGiftManager implements GiftManager {
     }
 
     public TikTokGift updateActiveGift(WebcastGiftMessage giftMessage) {
-        var giftId = new GiftId(giftMessage.getGiftId(), giftMessage.getSender().getUniqueId());
+        var giftId = new GiftId(giftMessage.getGiftId(), giftMessage.getUser().getIdStr());
         if (activeGifts.containsKey(giftId)) {
             var gift = activeGifts.get(giftId);
-            gift.setAmount(giftMessage.getAmount());
+            gift.setAmount(giftMessage.getComboCount());
         } else {
             var newGift = new TikTokGift(giftMessage);
             activeGifts.put(giftId, newGift);
@@ -34,7 +34,8 @@ public class TikTokGiftManager implements GiftManager {
 
         var gift = activeGifts.get(giftId);
 
-        if (giftMessage.getRepeatEnd()) {
+        if (giftMessage.getRepeatEnd() > 0)
+        {
             gift.setStreakFinished(true);
             activeGifts.remove(giftId);
         }

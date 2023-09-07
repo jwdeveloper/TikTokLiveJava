@@ -8,10 +8,11 @@ import java.time.Duration;
 
 public class Main {
 
-    public static String TEST_TIKTOK_USER = "olchik.m1";
+    public static String TEST_TIKTOK_USER = "bangbetmenygy";
 
-    public static void main(String[] args) throws IOException {
-        var client = TikTokLive.newClient(TEST_TIKTOK_USER)
+    public static void main(String[] args) throws IOException, InterruptedException
+    {
+        LiveClient client = TikTokLive.newClient(TEST_TIKTOK_USER)
                 .configure(clientSettings ->
                 {
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(5));
@@ -28,17 +29,15 @@ public class Main {
                 .onLike(Main::onLike)
                 .onGiftMessage(Main::onGiftMessage)
                 .onEmote(Main::onEmote)
+                .onEvent((liveClient, event) ->
+                {
+
+                })
                 .onError((_client, error) ->
                 {
                     error.getException().printStackTrace();
                 })
-                .onEvent((liveClient, event) ->
-                {
-                    var viewers = liveClient.getRoomInfo().getViewersCount();
-                })
                 .buildAndRun();
-
-
         System.in.read();
     }
 
@@ -81,7 +80,7 @@ public class Main {
 
     private static void onGiftMessage(LiveClient tikTokLive, TikTokGiftMessageEvent e)
     {
-        print(e.getSender().getUniqueId(), "sent", e.getAmount(), "x", e.getGift().getName());
+        print(e.getSender().getUniqueId(), "sent", e.getComboCount(), "x", e.getGift().getName());
     }
 
     private static void onEmote(LiveClient tikTokLive, TikTokEmoteEvent e) {

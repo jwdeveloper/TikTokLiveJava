@@ -66,7 +66,7 @@ public interface TikTokEventBuilder<T> {
 
     T onError(TikTokEventConsumer<TikTokErrorEvent> event);
 
-    T onUnhandled(TikTokEventConsumer<TikTokUnhandledEvent> event);
+    T onUnhandled(TikTokEventConsumer<TikTokUnhandledWebsocketMessageEvent> event);
 
     T onJoin(TikTokEventConsumer<TikTokJoinEvent> event);
 

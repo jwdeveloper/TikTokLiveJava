@@ -5,16 +5,14 @@ import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.Constants;
 import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.http.HttpUtils;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
-import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 import org.java_websocket.client.WebSocketClient;
 
 import java.net.URI;
-import java.net.http.WebSocket;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -24,7 +22,7 @@ public class TikTokWebSocketClient {
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
     private final TikTokMessageHandlerRegistration webResponseHandler;
-    private final TikTokEventHandler tikTokEventHandler;
+    private final TikTokEventObserver tikTokEventHandler;
     private WebSocketClient webSocketClient;
     private TikTokLiveClient tikTokLiveClient;
     private TikTokWebSocketPingingTask pingingTask;
@@ -34,7 +32,7 @@ public class TikTokWebSocketClient {
                                  TikTokCookieJar tikTokCookieJar,
                                  ClientSettings clientSettings,
                                  TikTokMessageHandlerRegistration webResponseHandler,
-                                 TikTokEventHandler tikTokEventHandler) {
+                                 TikTokEventObserver tikTokEventHandler) {
         this.logger = logger;
         this.tikTokCookieJar = tikTokCookieJar;
         this.clientSettings = clientSettings;
@@ -97,12 +95,11 @@ public class TikTokWebSocketClient {
                 tikTokLiveClient);
     }
 
-
-
     public void stop()
     {
-        if (isConnected && webSocketClient != null) {
-            webSocketClient.close(1);
+        if (isConnected && webSocketClient != null)
+        {
+            webSocketClient.closeConnection(0,"");
         }
         webSocketClient = null;
         pingingTask = null;

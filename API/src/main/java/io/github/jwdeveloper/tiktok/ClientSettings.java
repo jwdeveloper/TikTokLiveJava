@@ -26,6 +26,7 @@ public class ClientSettings {
     /// </summary>
     private boolean retryOnConnectionFailure;
 
+
     /// <summary>
     /// Wait to connect again for selected amount of time
     /// </summary>
@@ -65,5 +66,6 @@ public class ClientSettings {
     /// Parameters used in requests to tiktok api
     /// </summary>
     private Map<String, Object> clientParameters;
+
 }
 

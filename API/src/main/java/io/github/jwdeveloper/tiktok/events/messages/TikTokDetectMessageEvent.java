@@ -1,18 +1,22 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.WebcastMsgDetectMessage;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class TikTokDetectMessageEvent extends TikTokEvent {
-  private final String language;
+@EventMeta(eventType = EventType.Message)
+public class TikTokDetectMessageEvent extends TikTokHeaderEvent {
+   String language;
 
-  private final List<Number> data;
+   List<Number> data;
 
-  private final List<Number> timings;
+   List<Number> timings;
 
   public TikTokDetectMessageEvent(WebcastMsgDetectMessage msg) {
     super(msg.getHeader());;

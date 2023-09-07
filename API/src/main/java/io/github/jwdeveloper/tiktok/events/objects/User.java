@@ -20,14 +20,14 @@ public class User {
 
     private Picture picture1080;
 
-    private Integer following;
+    private long following;
 
-    private Integer followers;
+    private long followers;
 
-    private Integer followsHost;
-    public List<Picture> additionalPictures;
+    private long followsHost;
+    private List<Picture> additionalPictures;
 
-    public List<Badge> badges;
+    private List<Badge> badges;
 
     public User(Long userId,
                 String uniqueId,
@@ -71,17 +71,39 @@ public class User {
 
     public User(io.github.jwdeveloper.tiktok.messages.User user) {
         assert user != null;
-        userId = user.getUserId();
-        uniqueId = user.getUniqueId();
+        userId = user.getId();
+        uniqueId = user.getSpecialId();
         nickName = user.getNickname();
-        description = user.getDescription();
-        profilePicture = new Picture(user.getProfilePicture());
-        picture720 = new Picture(user.getPicture720());
-        picture1080 = new Picture(user.getPicture1080());
-        following = user.getFollowerData().getFollowing();
-        followers = user.getFollowerData().getFollowers();
-        followsHost = user.getFollowerData().getFollowsHost();
-        badges = user.getBadgesList().stream().map(Badge::new).toList();
+        description = user.getBioDescription();
+        profilePicture = new Picture(user.getAvatarThumb());
+        picture720 = new Picture(user.getAvatarMedium());
+        picture1080 = new Picture(user.getAvatarLarge());
+        following = user.getFollowInfo().getFollowingCount();
+        followers = user.getFollowInfo().getFollowerCount();
+        followsHost = user.getFollowInfo().getFollowStatus();
+        badges = user.getBadgeListList().stream().map(Badge::new).toList();
         additionalPictures = new ArrayList<>();
+    }
+
+
+    public static User MapOrEmpty(io.github.jwdeveloper.tiktok.messages.User user)
+    {
+        if(user != null)
+        {
+            return new User(user);
+        }
+        return new User(0L,
+                "",
+                "",
+                "",
+                Picture.Empty(),
+                Picture.Empty(),
+                Picture.Empty(),
+                Picture.EmptyList(),
+                0,
+                0,
+                0,
+                Badge.EmptyList());
+
     }
 }

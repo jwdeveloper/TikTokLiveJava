@@ -1,11 +1,15 @@
 package io.github.jwdeveloper.tiktok;
-
 import java.io.IOException;
 
 public class SimpleExample {
     public static void main(String[] args) throws IOException {
 
+        // set tiktok username
         TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+                .configure(clientSettings ->
+                {
+
+                })
                 .onFollow((liveClient, event) ->
                 {
                     System.out.println("Follow joined -> " + event.getNewFollower().getNickName());
@@ -14,7 +18,6 @@ public class SimpleExample {
                 {
                     System.out.println("Connected");
                 })
-
                 .onJoin((client, event)  ->
                 {
                     System.out.println("User joined -> " + event.getUser().getNickName());

@@ -2,18 +2,17 @@ package io.github.jwdeveloper.tiktok.events.objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
+@Value
 public class PollOption {
 
     private final User user;
     private final List<Option> options;
 
-    @Getter
-    @AllArgsConstructor
+    @Value
     public static final class Option {
         private final String label;
 

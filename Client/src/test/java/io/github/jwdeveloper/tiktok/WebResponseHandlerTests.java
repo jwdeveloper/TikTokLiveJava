@@ -1,7 +1,7 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.common.TikTokBaseTest;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import org.junit.Before;
 
@@ -14,7 +14,7 @@ public class WebResponseHandlerTests extends TikTokBaseTest {
 
     @Before
     public void before() {
-        var mockEventHandler = mock(TikTokEventHandler.class);
+        var mockEventHandler = mock(TikTokEventObserver.class);
         var mockGiftManager = mock(TikTokGiftManager.class);
         var mockRoomInfo = mock(TikTokRoomInfo.class);
         var mockClientSettings = mock(ClientSettings.class);

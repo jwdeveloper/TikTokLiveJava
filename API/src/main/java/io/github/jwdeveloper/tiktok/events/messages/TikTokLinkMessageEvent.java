@@ -1,7 +1,8 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
-import io.github.jwdeveloper.tiktok.annotations.Nullable;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
 import io.github.jwdeveloper.tiktok.messages.WebcastLinkMessage;
 import lombok.Getter;
@@ -9,10 +10,10 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class TikTokLinkMessageEvent extends TikTokEvent {
+@EventMeta(eventType = EventType.Message)
+public class TikTokLinkMessageEvent extends TikTokHeaderEvent {
     private final String token;
 
-    @Nullable
     private User user;
 
     private final List<User> otherUsers;

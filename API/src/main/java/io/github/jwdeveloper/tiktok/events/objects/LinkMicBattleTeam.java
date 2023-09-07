@@ -3,13 +3,14 @@ package io.github.jwdeveloper.tiktok.events.objects;
 
 import io.github.jwdeveloper.tiktok.messages.WebcastLinkMicBattle;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
-@Getter
+@Value
 public class LinkMicBattleTeam {
-    private final Long teamId;
-    private final List<User> users;
+    Long teamId;
+    List<User> users;
 
     public LinkMicBattleTeam(WebcastLinkMicBattle.LinkMicBattleTeam team) {
         this.teamId = team.getId();

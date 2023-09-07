@@ -1,27 +1,22 @@
 package io.github.jwdeveloper.tiktok.events.objects;
 
-import lombok.Getter;
+import lombok.Value;
 
-@Getter
+@Value
 public class Gift {
-    private final Long id;
+    Long id;
+    String name;
+    String description;
+    Integer diamondCost;
+    Integer type;
+    Picture picture;
 
-    private final String name;
-
-    private final String description;
-
-    private final Integer diamondCost;
-
-    private final Integer type;
-
-    private final Picture picture;
-
-    public Gift(io.github.jwdeveloper.tiktok.messages.Gift gift) {
+    public Gift(io.github.jwdeveloper.tiktok.messages.GiftStruct gift) {
         id = gift.getId();
         name = gift.getName();
-        description = gift.getDescription();
-        diamondCost = gift.getCoinCount();
-        type = gift.getGiftType();
+        description = gift.getDescribe();
+        diamondCost = gift.getDiamondCount();
+        type = gift.getType();
         picture = new Picture(gift.getImage());
     }
 }

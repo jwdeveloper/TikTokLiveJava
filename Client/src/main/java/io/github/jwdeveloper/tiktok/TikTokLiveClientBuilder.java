@@ -5,17 +5,20 @@ import io.github.jwdeveloper.tiktok.events.TikTokEventBuilder;
 import io.github.jwdeveloper.tiktok.events.TikTokEventConsumer;
 import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
-import io.github.jwdeveloper.tiktok.http.TikTokHttpApiClient;
+import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
+import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
+import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.utils.CancelationToken;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,17 +26,24 @@ import java.util.logging.Logger;
 public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveClientBuilder> {
     private final ClientSettings clientSettings;
     private final Logger logger;
-    private final TikTokEventHandler tikTokEventHandler;
+    private final TikTokEventObserver tikTokEventHandler;
+    private final List<TikTokEventListener> listeners;
 
     public TikTokLiveClientBuilder(String userName) {
-        this.tikTokEventHandler = new TikTokEventHandler();
+        this.tikTokEventHandler = new TikTokEventObserver();
         this.clientSettings = Constants.DefaultClientSettings();
         this.clientSettings.setHostName(userName);
         this.logger = Logger.getLogger(TikTokLive.class.getName());
+        this.listeners = new ArrayList<>();
     }
 
     public TikTokLiveClientBuilder configure(Consumer<ClientSettings> consumer) {
         consumer.accept(clientSettings);
+        return this;
+    }
+    public TikTokLiveClientBuilder addListener(TikTokEventListener listener)
+    {
+        listeners.add(listener);
         return this;
     }
 
@@ -71,9 +81,12 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         var tiktokRoomInfo = new TikTokRoomInfo();
         tiktokRoomInfo.setUserName(clientSettings.getHostName());
 
+
+        var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
+
         var cookieJar = new TikTokCookieJar();
         var requestFactory = new TikTokHttpRequestFactory(cookieJar);
-        var apiClient = new TikTokHttpApiClient(cookieJar, requestFactory);
+        var apiClient = new TikTokHttpClient(cookieJar, requestFactory);
         var apiService = new TikTokApiService(apiClient, logger, clientSettings);
         var giftManager = new TikTokGiftManager();
         var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler, clientSettings, logger, giftManager, tiktokRoomInfo);
@@ -83,7 +96,14 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
                 webResponseHandler,
                 tikTokEventHandler);
 
-        return new TikTokLiveClient(tiktokRoomInfo, apiService, webSocketClient, giftManager, tikTokEventHandler, clientSettings, logger);
+        return new TikTokLiveClient(tiktokRoomInfo,
+                apiService,
+                webSocketClient,
+                giftManager,
+                tikTokEventHandler,
+                clientSettings,
+                listenerManager,
+                logger);
     }
 
     public LiveClient buildAndRun() {
@@ -259,8 +279,8 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnhandled(TikTokEventConsumer<TikTokUnhandledEvent> event) {
-        tikTokEventHandler.subscribe(TikTokUnhandledEvent.class, event);
+    public TikTokLiveClientBuilder onUnhandled(TikTokEventConsumer<TikTokUnhandledWebsocketMessageEvent> event) {
+        tikTokEventHandler.subscribe(TikTokUnhandledWebsocketMessageEvent.class, event);
         return this;
     }
 

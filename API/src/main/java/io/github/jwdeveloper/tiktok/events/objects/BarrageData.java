@@ -2,14 +2,15 @@ package io.github.jwdeveloper.tiktok.events.objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
-@Getter
+@Value
 public class BarrageData {
-  private final String eventType;
-  private final String label;
-  private final List<BarrageUser> users;
+  String eventType;
+  String label;
+  List<BarrageUser> users;
 
   public BarrageData(String eventType, String label, List<BarrageUser> users)
   {
@@ -18,12 +19,11 @@ public class BarrageData {
     this.users = users;
   }
 
-  @Getter
-  @AllArgsConstructor
-  public static final class BarrageUser
+  @Value
+  public static class BarrageUser
   {
-      private final User user;
+      User user;
 
-      private final String data;
+      String data;
   }
 }

@@ -1,41 +1,77 @@
 package io.github.jwdeveloper.tiktok.events.objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.messages.BadgeStruct;
+import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Value
 public class Badge {
-    private  ComboBadge comboBadges;
-    private final List<TextBadge> textBadges;
-    private final List<ImageBadge> imageBadges;
+    ComboBadge comboBadges;
+    List<TextBadge> textBadges;
+    List<ImageBadge> imageBadges;
 
-    public Badge(io.github.jwdeveloper.tiktok.messages.Badge badge) {
-        textBadges = badge.getTextBadgesList().stream().map(b -> new TextBadge(b.getType(), b.getName())).toList();
-        imageBadges = badge.getImageBadgesList().stream().map(b -> new ImageBadge(b.getDisplayType(), new Picture(b.getImage()))).toList();
-        comboBadges = new ComboBadge(new Picture("badge.getComplexBadge().getImageUrl()"), badge.getComplexBadge().getData());
+    public Badge(ComboBadge comboBadges, List<TextBadge> textBadges, List<ImageBadge> imageBadges) {
+        this.comboBadges = comboBadges;
+        this.textBadges = textBadges;
+        this.imageBadges = imageBadges;
     }
 
-
-    @AllArgsConstructor
-    @Getter
-    public class TextBadge {
-        private final String type;
-        private final String name;
+    public Badge(io.github.jwdeveloper.tiktok.messages.BadgeStruct badge)
+    {
+        comboBadges = ComboBadge.map(badge.getCombine());
+        textBadges = TextBadge.mapAll(badge.getTextList());
+        imageBadges = ImageBadge.mapAll(badge.getImageList());
     }
 
-    @AllArgsConstructor
-    @Getter
-    public class ImageBadge {
-        private final Integer displayType;
-        private final Picture image;
+    @Value
+    public static class TextBadge {
+        EnumValue type;
+        String name;
+
+        public static TextBadge map(BadgeStruct.TextBadge input) {
+            return new TextBadge(EnumValue.Map(input.getDisplayType()),input.getKey());
+        }
+        public static List<TextBadge> mapAll(List<BadgeStruct.TextBadge> list) {
+            return list.stream().map(TextBadge::map).toList();
+        }
     }
 
-    @AllArgsConstructor
-    @Getter
-    public class ComboBadge {
-        private final Picture image;
-        private final String data;
+    @Value
+    public static class ImageBadge {
+        EnumValue displayType;
+        Picture image;
+
+        public static ImageBadge map(BadgeStruct.ImageBadge input) {
+            return new ImageBadge(EnumValue.Map(input.getDisplayType()), Picture.Map(input.getImage()));
+        }
+        public static List<ImageBadge> mapAll(List<BadgeStruct.ImageBadge> list) {
+            return list.stream().map(ImageBadge::map).toList();
+        }
+    }
+
+    @Value
+    public static class ComboBadge {
+        Picture image;
+        String data;
+
+        public static ComboBadge map(BadgeStruct.CombineBadge input) {
+            return new ComboBadge(Picture.Map(input.getIcon()),input.getStr());
+        }
+        public static List<ComboBadge> mapAll(List<BadgeStruct.CombineBadge> list) {
+            return list.stream().map(ComboBadge::map).toList();
+        }
+    }
+
+    public static Badge Empty() {
+        var comboBadge = new ComboBadge(Picture.Empty(), "");
+        var textBadges = new ArrayList<TextBadge>();
+        var imageBadges = new ArrayList<ImageBadge>();
+        return new Badge(comboBadge, textBadges, imageBadges);
+    }
+
+    public static List<Badge> EmptyList() {
+        return new ArrayList<Badge>();
     }
 }

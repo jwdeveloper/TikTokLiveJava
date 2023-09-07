@@ -1,7 +1,8 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
-import io.github.jwdeveloper.tiktok.annotations.Nullable;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
 import io.github.jwdeveloper.tiktok.messages.RoomMessage;
 import io.github.jwdeveloper.tiktok.messages.SystemMessage;
@@ -10,10 +11,9 @@ import io.github.jwdeveloper.tiktok.messages.WebcastRoomMessage;
 import lombok.Getter;
 
 @Getter
-public class TikTokRoomMessageEvent extends TikTokEvent {
-    @Nullable
+@EventMeta(eventType = EventType.Message)
+public class TikTokRoomMessageEvent extends TikTokHeaderEvent {
     private User host;
-    @Nullable
     private String hostLanguage;
     private final String message;
 

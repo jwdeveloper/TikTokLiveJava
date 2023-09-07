@@ -1,6 +1,9 @@
 package io.github.jwdeveloper.tiktok.events.messages;
 
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.PollOption;
 import io.github.jwdeveloper.tiktok.events.objects.User;
 import io.github.jwdeveloper.tiktok.messages.WebcastPollMessage;
@@ -9,7 +12,8 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class TikTokPollMessageEvent extends TikTokEvent {
+@EventMeta(eventType = EventType.Message)
+public class TikTokPollMessageEvent extends TikTokHeaderEvent {
     private final Long id;
 
     private final PollOption option1;

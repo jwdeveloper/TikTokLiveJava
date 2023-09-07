@@ -11,12 +11,12 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.http.WebSocket;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class TikTokHttpRequestFactory implements TikTokHttpRequest {
     private final CookieManager cookieManager;
@@ -34,13 +34,8 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
                 .connectTimeout(Duration.ofSeconds(2))
                 .build();
     }
-
-    public WebSocket.Builder openSocket() {
-        return client.newWebSocketBuilder();
-    }
-
     @SneakyThrows
-    public String Get(String url) {
+    public String get(String url) {
         var uri = URI.create(url);
         var request = HttpRequest.newBuilder().GET();
         if (query != null) {
@@ -49,22 +44,35 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
             request.uri(requestUri);
         }
 
-        return GetContent(request.build());
+        return getContent(request.build());
     }
 
     @SneakyThrows
-    public String Post(String url, HttpRequest.BodyPublisher data) {
+    public String post(String url) {
         var uri = URI.create(url);
-        var request = HttpRequest.newBuilder().POST(data);
-        for (var header : defaultHeaders.entrySet()) {
+        var request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(""));
+        for (var header : defaultHeaders.entrySet())
+        {
+            if(header.getKey().equals("Connection"))
+            {
+                continue;
+            }
             request.setHeader(header.getKey(), header.getValue());
         }
+        request.setHeader("Content-type","application/x-www-form-urlencoded; charset=UTF-8");
+        request.setHeader("Cookie", tikTokCookieJar.parseCookies());
+
+
         if (query != null) {
             var baseUri = uri.toString();
             var requestUri = URI.create(baseUri + "?" + query);
             request.uri(requestUri);
+            System.out.println(requestUri.toString());
         }
-        return GetContent(request.build());
+
+
+
+        return getContent(request.build());
     }
 
     public TikTokHttpRequest setHeader(String key, String value) {
@@ -77,10 +85,11 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
         return this;
     }
 
-    public TikTokHttpRequest SetQueries(Map<String, Object> queries) {
+    public TikTokHttpRequest setQueries(Map<String, Object> queries) {
         if (queries == null)
             return this;
-        query = String.join("&", queries.entrySet().stream().map(x ->
+        var testMap = new TreeMap<String,Object>(queries);
+        query = String.join("&", testMap.entrySet().stream().map(x ->
         {
             var key = x.getKey();
             var value = "";
@@ -95,7 +104,7 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
     }
 
 
-    private String GetContent(HttpRequest request) throws Exception {
+    private String getContent(HttpRequest request) throws Exception {
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 404) {
             throw new TikTokLiveRequestException("Request responded with 404 NOT_FOUND");

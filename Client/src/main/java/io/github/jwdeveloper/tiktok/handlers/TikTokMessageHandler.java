@@ -7,7 +7,7 @@ import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokWebsocketMessageEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokUnhandledEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokUnhandledWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 public abstract class TikTokMessageHandler {
 
     private final Map<String, io.github.jwdeveloper.tiktok.handler.TikTokMessageHandler> handlers;
-    private final TikTokEventHandler tikTokEventHandler;
+    private final TikTokEventObserver tikTokEventHandler;
     private final ClientSettings clientSettings;
     protected final Logger logger;
 
-    public TikTokMessageHandler(TikTokEventHandler tikTokEventHandler,ClientSettings clientSettings, Logger logger) {
+    public TikTokMessageHandler(TikTokEventObserver tikTokEventHandler, ClientSettings clientSettings, Logger logger) {
         handlers = new HashMap<>();
         this.tikTokEventHandler = tikTokEventHandler;
         this.clientSettings = clientSettings;
@@ -65,7 +65,7 @@ public abstract class TikTokMessageHandler {
 
     private void handleSingleMessage(TikTokLiveClient client, WebcastResponse.Message message) throws Exception {
         if (!handlers.containsKey(message.getType())) {
-            tikTokEventHandler.publish(client, new TikTokUnhandledEvent(message));
+            tikTokEventHandler.publish(client, new TikTokUnhandledWebsocketMessageEvent(message));
             return;
         }
         var handler = handlers.get(message.getType());

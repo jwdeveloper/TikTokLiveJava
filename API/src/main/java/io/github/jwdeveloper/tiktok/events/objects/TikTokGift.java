@@ -7,19 +7,16 @@ import lombok.Setter;
 @Getter
 public class TikTokGift {
     private final Gift gift;
-    private User sender;
+    private final User sender;
     @Setter
-    private int amount;
-
+    private long amount;
     @Setter
-    private  boolean streakFinished;
+    private boolean streakFinished;
 
     public TikTokGift(WebcastGiftMessage message) {
-        gift = new Gift(message.getGiftDetails());
-        if (message.hasSender()) {
-            sender = new User(message.getSender());
-        }
-        amount = message.getAmount();
-        streakFinished = message.getRepeatEnd();
+        gift = new Gift(message.getGift());
+        sender = User.MapOrEmpty(message.getUser());
+        amount = message.getComboCount();
+        streakFinished = message.getRepeatEnd() > 0;
     }
 }
