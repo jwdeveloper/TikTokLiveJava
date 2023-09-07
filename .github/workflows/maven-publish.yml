@@ -76,6 +76,8 @@ jobs:
             git add API/pom.xml
             git add Client/pom.xml
             git add TestApplication/pom.xml
+            git add Tools-EventsCollector/pom.xml
+            git add Tools-ReadmeGenerator/pom.xml
             git add Tools/pom.xml
             git commit -m "Update version in pom.xml"
     - name: Push changes
