@@ -27,25 +27,25 @@ Do you prefer other programming languages?
 
 ```xml
    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 
-   <dependencies>
-         <dependency>
-            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
-            <artifactId>Client</artifactId>
-            <version>0.0.17-Release</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
-   </dependencies>
+<dependencies>
+<dependency>
+    <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+    <artifactId>Client</artifactId>
+    <version>0.0.19-Release</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.10.1</version>
+</dependency>
+</dependencies>
 ```
 
 2. Create your first chat connection
@@ -131,6 +131,7 @@ public class ConfigurationExample {
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokCommentEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftMessageEvent;
@@ -163,6 +164,7 @@ public class ListenerExample
     public static class CustomListener implements TikTokEventListener
     {
 
+
         @TikTokEventHandler
         public void onError(LiveClient liveClient, TikTokErrorEvent event)
         {
@@ -172,7 +174,6 @@ public class ListenerExample
         @TikTokEventHandler
         public void onCommentMessage(LiveClient liveClient, TikTokCommentEvent event)
         {
-            event.getUser().getProfilePicture().downlaod();
             System.out.println(event.getText());
         }
 
@@ -181,6 +182,13 @@ public class ListenerExample
         {
             System.out.println(event.getGift().getDescription());
         }
+
+        @TikTokEventHandler
+        public void onAnyEvent(LiveClient liveClient, TikTokEvent event)
+        {
+            System.out.println(event.getClass().getSimpleName());
+        }
+
     }
 }
 

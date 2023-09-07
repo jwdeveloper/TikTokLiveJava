@@ -67,7 +67,7 @@ public class TikTokListenersManager implements ListenersManager {
         for (var method : methods)
         {
             var eventClazz = method.getParameterTypes()[1];
-            if(eventClazz.isAssignableFrom(TikTokEvent.class))
+            if(eventClazz.isAssignableFrom(TikTokEvent.class) || eventClazz.equals(TikTokEvent.class))
             {
                 throw new TikTokEventListenerMethodException("Method "+method.getName()+"() 2nd parameter must instance of "+TikTokEvent.class.getName());
             }
