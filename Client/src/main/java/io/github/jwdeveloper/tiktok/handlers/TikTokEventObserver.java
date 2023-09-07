@@ -44,4 +44,11 @@ public class TikTokEventObserver {
     public <T extends TikTokEvent> void unsubscribeAll(Class<?> clazz) {
         events.remove(clazz);
     }
+
+    public <T extends TikTokEvent> void unsubscribe(TikTokEventConsumer<T> consumer) {
+        for(var entry : events.entrySet())
+        {
+            entry.getValue().remove(consumer);
+        }
+    }
 }

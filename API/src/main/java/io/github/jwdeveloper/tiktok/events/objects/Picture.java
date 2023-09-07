@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Value
+@Getter
 public class Picture {
 
   List<String> urls;
-
   public Picture(io.github.jwdeveloper.tiktok.messages.Image profilePicture) {
     this.urls = profilePicture.getUrlListList();
   }
@@ -24,15 +23,6 @@ public class Picture {
     this.urls = Arrays.stream(urls).toList();
   }
 
-  public void downlaod()
-  {
-
-  }
-
-  public void downloadAsync()
-  {
-
-  }
 
   public static Picture Map(io.github.jwdeveloper.tiktok.messages.Image profilePicture)
   {

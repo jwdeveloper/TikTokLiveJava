@@ -4,7 +4,6 @@ package io.github.jwdeveloper.tiktok.listener;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.TikTokEventConsumer;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
@@ -45,6 +44,13 @@ public class TikTokListenersManager implements ListenersManager {
         if (optional.isEmpty()) {
             return;
         }
+
+        var bindingModel =optional.get();
+
+        for(var consumer : bindingModel.getEvents())
+        {
+            eventObserver.unsubscribe(consumer);
+        }
         bindingModels.remove(optional.get());
     }
 
@@ -61,9 +67,9 @@ public class TikTokListenersManager implements ListenersManager {
         for (var method : methods)
         {
             var eventClazz = method.getParameterTypes()[1];
-            if(!eventClazz.isAssignableFrom(TikTokEvent.class))
+            if(eventClazz.isAssignableFrom(TikTokEvent.class))
             {
-                throw new TikTokEventListenerMethodException("Method "+method.getName()+" 2nd parameter must instance of "+TikTokEvent.class.getName());
+                throw new TikTokEventListenerMethodException("Method "+method.getName()+"() 2nd parameter must instance of "+TikTokEvent.class.getName());
             }
             var tikTokEventConsumer = new TikTokEventConsumer() {
                 @Override

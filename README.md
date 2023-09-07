@@ -27,25 +27,25 @@ Do you prefer other programming languages?
 
 ```xml
    <repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
-<dependencies>
-<dependency>
-    <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
-    <artifactId>Client</artifactId>
-    <version>0.0.14-Release</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.10.1</version>
-</dependency>
-</dependencies>
+   <dependencies>
+         <dependency>
+            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+            <artifactId>Client</artifactId>
+            <version>0.0.17-Release</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+   </dependencies>
 ```
 
 2. Create your first chat connection
@@ -77,7 +77,7 @@ public class SimpleExample {
                 })
                 .onComment((client, event)  ->
                 {
-                    System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
+                   System.out.println(event.getUser().getUniqueId() + ": " + event.getText());
                 })
                 .onEvent((client, event) ->
                 {
@@ -153,6 +153,13 @@ public class ListenerExample
         System.in.read();
     }
 
+    /*
+       Method in TikTokEventListener should meet 4 requirements to be detected
+        - must have @TikTokEventHandler annotation
+        - must have 2 parameters
+        - first parameter must be LiveClient
+        - second must be class that extending TikTokEvent
+     */
     public static class CustomListener implements TikTokEventListener
     {
 
@@ -165,6 +172,7 @@ public class ListenerExample
         @TikTokEventHandler
         public void onCommentMessage(LiveClient liveClient, TikTokCommentEvent event)
         {
+            event.getUser().getProfilePicture().downlaod();
             System.out.println(event.getText());
         }
 

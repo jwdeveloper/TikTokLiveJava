@@ -23,6 +23,13 @@ public class ListenerExample
         System.in.read();
     }
 
+    /*
+       Method in TikTokEventListener should meet 4 requirements to be detected
+        - must have @TikTokEventHandler annotation
+        - must have 2 parameters
+        - first parameter must be LiveClient
+        - second must be class that extending TikTokEvent
+     */
     public static class CustomListener implements TikTokEventListener
     {
 
