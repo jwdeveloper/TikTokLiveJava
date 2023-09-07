@@ -5,7 +5,7 @@
     <parent>
         <artifactId>TikTokLiveJava</artifactId>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
-        <version>0.0.20-Release</version>
+        <version>0.0.21-Release</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>API</artifactId>
