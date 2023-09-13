@@ -26,45 +26,19 @@ public class TikTokApiService {
         this.clientSettings = clientSettings;
     }
 
-    /*
-       if (sessionId) {
-            // Update sessionId
-            this.#options.sessionId = sessionId;
+
+    public void updateSessionId()
+    {
+        if(clientSettings.getSessionId() == null)
+        {
+            return;
         }
-
-        if (!this.#options.sessionId) {
-            throw new Error('Missing SessionId. Please provide your current SessionId to use this feature.');
+        if(clientSettings.getSessionId().isEmpty())
+        {
+          return;
         }
-
-        try {
-            // Retrieve current room_id if not connected
-            if (!this.#isConnected) {
-                await this.#retrieveRoomId();
-            }
-
-            // Add the session cookie to the CookieJar
-            this.#httpClient.setSessionId(this.#options.sessionId);
-
-            // Submit the chat request
-            let requestParams = { ...this.#clientParams, content: text };
-            let response = await this.#httpClient.postFormDataToWebcastApi('room/chat/', requestParams, null);
-
-            // Success?
-            if (response?.status_code === 0) {
-                return response.data;
-            }
-
-            // Handle errors
-            switch (response?.status_code) {
-                case 20003:
-                    throw new Error('Your SessionId has expired. Please provide a new one.');
-                default:
-                    throw new Error(`TikTok responded with status code ${response?.status_code}: ${response?.data?.message}`);
-            }
-        } catch (err) {
-            throw new Error(`Failed to send chat message. ${err.message}`);
-        }
-     */
+        tiktokHttpClient.setSessionId(clientSettings.getSessionId());
+    }
 
     public boolean sendMessage(String message, String sessionId) {
         if (sessionId.isEmpty()) {

@@ -6,5 +6,6 @@ public class Main {
     {
         var generator = new ReadmeGenerator();
         generator.generate();
+
     }
 }

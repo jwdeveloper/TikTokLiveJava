@@ -37,7 +37,7 @@ Do you prefer other programming languages?
 <dependency>
     <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
     <artifactId>Client</artifactId>
-    <version>0.0.20-Release</version>
+    <version>0.0.22-Release</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
@@ -118,6 +118,10 @@ public class ConfigurationExample {
                     clientSettings.setHandleExistingMessagesOnConnect(true); // Invokes all TikTok events that had occurred before connection
                     clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
+
+                    // Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+                    // documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
+                    clientSettings.setSessionId("86c3c8bf4b17ebb2d74bb7fa66fd0000");
                 })
                 .buildAndRun();
         System.in.read();
@@ -135,6 +139,7 @@ import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokCommentEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftMessageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
@@ -164,6 +169,11 @@ public class ListenerExample
     public static class CustomListener implements TikTokEventListener
     {
 
+        @TikTokEventHandler
+        public void onLike(LiveClient liveClient, TikTokLikeEvent event)
+        {
+            System.out.println(event.toString());
+        }
 
         @TikTokEventHandler
         public void onError(LiveClient liveClient, TikTokErrorEvent event)
@@ -197,7 +207,7 @@ public class ListenerExample
 ## Methods
 A `client (LiveClient)` object contains the following methods.
 
-{{methods}}
+
 
 | Method Name         | Description |
 |---------------------| ----------- |
@@ -206,31 +216,10 @@ A `client (LiveClient)` object contains the following methods.
 | getGiftManager      |  Gets the meta informations about all gifts. |
 | getRoomInfo         | Gets the current room info from TikTok API including streamer info, room status and statistics. |
 | getListenersManager | Gets and manage TikTokEventListeners    |
-
 ## Events
 
 A `TikTokLive` object has the following events
 
-
-**Custom**:
--  [TikTokHeaderEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokHeaderEvent.java)
--  [TikTokUnhandledSocialEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledSocialEvent.java)
--  [TikTokLivePausedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLivePausedEvent.java)
--  [TikTokLikeEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLikeEvent.java)
--  [TikTokWebsocketMessageEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokWebsocketMessageEvent.java)
--  [TikTokSubscribeEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokSubscribeEvent.java)
--  [TikTokFollowEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokFollowEvent.java)
--  [TikTokLiveClientEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLiveClientEvent.java)
--  [TikTokUnhandledEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledEvent.java)
--  [TikTokLiveEndedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLiveEndedEvent.java)
--  [TikTokJoinEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokJoinEvent.java)
--  [TikTokShareEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokShareEvent.java)
--  [TikTokUnhandledControlEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledControlEvent.java)
-
-**Control**:
--  [TikTokConnectedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokConnectedEvent.java)
--  [TikTokErrorEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokErrorEvent.java)
--  [TikTokDisconnectedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokDisconnectedEvent.java)
 
 **Message**:
 -  [TikTokLinkMicFanTicketEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLinkMicFanTicketEvent.java)
@@ -262,6 +251,27 @@ A `TikTokLive` object has the following events
 -  [TikTokLinkMicBattleEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLinkMicBattleEvent.java)
 -  [TikTokGiftBroadcastEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokGiftBroadcastEvent.java)
 -  [TikTokUnhandledWebsocketMessageEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledWebsocketMessageEvent.java)
+
+**Control**:
+-  [TikTokConnectedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokConnectedEvent.java)
+-  [TikTokReconnectingEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokReconnectingEvent.java)
+-  [TikTokErrorEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokErrorEvent.java)
+-  [TikTokDisconnectedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokDisconnectedEvent.java)
+
+**Custom**:
+-  [TikTokHeaderEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokHeaderEvent.java)
+-  [TikTokUnhandledSocialEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledSocialEvent.java)
+-  [TikTokLivePausedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLivePausedEvent.java)
+-  [TikTokLikeEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLikeEvent.java)
+-  [TikTokWebsocketMessageEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokWebsocketMessageEvent.java)
+-  [TikTokSubscribeEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokSubscribeEvent.java)
+-  [TikTokFollowEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokFollowEvent.java)
+-  [TikTokLiveClientEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLiveClientEvent.java)
+-  [TikTokUnhandledEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledEvent.java)
+-  [TikTokLiveEndedEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokLiveEndedEvent.java)
+-  [TikTokJoinEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokJoinEvent.java)
+-  [TikTokShareEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokShareEvent.java)
+-  [TikTokUnhandledControlEvent](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages/TikTokUnhandledControlEvent.java)
 
 
 <br><br>

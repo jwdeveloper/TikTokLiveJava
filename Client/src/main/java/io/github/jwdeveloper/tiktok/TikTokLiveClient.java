@@ -2,6 +2,7 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokReconnectingEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
@@ -62,6 +63,7 @@ public class TikTokLiveClient implements LiveClient {
                 }
                 catch (Exception ignored){}
                 logger.info("Reconnecting");
+                tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
                 this.connect();
             }
             throw e;
@@ -85,6 +87,8 @@ public class TikTokLiveClient implements LiveClient {
         logger.info("Connecting");
         setState(ConnectionState.CONNECTING);
 
+
+        apiService.updateSessionId();
         var roomId = apiService.fetchRoomId(liveRoomInfo.getUserName());
         liveRoomInfo.setRoomId(roomId);
         var roomData = apiService.fetchRoomInfo();

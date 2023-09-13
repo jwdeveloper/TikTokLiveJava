@@ -67,7 +67,7 @@ Do you prefer other programming languages?
 ## Methods
 A `client (LiveClient)` object contains the following methods.
 
-{{methods}}
+
 
 | Method Name         | Description |
 |---------------------| ----------- |
@@ -76,7 +76,6 @@ A `client (LiveClient)` object contains the following methods.
 | getGiftManager      |  Gets the meta informations about all gifts. |
 | getRoomInfo         | Gets the current room info from TikTok API including streamer info, room status and statistics. |
 | getListenersManager | Gets and manage TikTokEventListeners    |
-
 ## Events
 
 A `TikTokLive` object has the following events

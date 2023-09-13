@@ -90,6 +90,8 @@ public interface TikTokEventBuilder<T> {
 
     T onWebsocketMessage(TikTokEventConsumer<TikTokWebsocketMessageEvent> event);
 
+    T onReconnecting(TikTokEventConsumer<TikTokReconnectingEvent> event);
+
 }
 
 

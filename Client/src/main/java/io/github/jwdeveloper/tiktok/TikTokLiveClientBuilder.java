@@ -344,6 +344,13 @@ public class TikTokLiveClientBuilder implements TikTokEventBuilder<TikTokLiveCli
         tikTokEventHandler.subscribe(TikTokWebsocketMessageEvent.class, event);
         return this;
     }
+
+    @Override
+    public TikTokLiveClientBuilder onReconnecting(TikTokEventConsumer<TikTokReconnectingEvent> event)
+    {
+        tikTokEventHandler.subscribe(TikTokReconnectingEvent.class, event);
+        return this;
+    }
 }
 
 
