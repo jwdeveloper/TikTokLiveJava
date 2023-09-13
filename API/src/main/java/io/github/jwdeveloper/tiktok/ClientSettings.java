@@ -3,69 +3,75 @@ package io.github.jwdeveloper.tiktok;
 import lombok.Data;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 @Data
 public class ClientSettings {
-    /// <summary>
-    /// Timeout for Connections
-    /// </summary>
+    /**
+     * Timeout for Connections
+     */
     private Duration timeout;
 
     // public RotatingProxy Proxy;
-    /// <summary>
-    /// ISO-Language for Client
-    /// </summary>
+    /**
+     * ISO-Language for Client
+     */
 
     private String clientLanguage;
 
-    /// <summary>
-    /// Whether to Retry if Connection Fails
-    /// </summary>
+    /**
+     * Whether to Retry if Connection Fails
+     */
     private boolean retryOnConnectionFailure;
 
 
-    /// <summary>
-    /// Wait to connect again for selected amount of time
-    /// </summary>
+    /**
+     * Wait to connect again for selected amount of time
+     */
     private Duration retryConnectionTimeout;
 
-    /// <summary>
-    /// Whether to handle Messages received from Room when Connecting
-    /// </summary>
+    /**
+     * Whether to handle Messages received from Room when Connecting
+     */
     private boolean handleExistingMessagesOnConnect;
-    /// <summary>
-    /// Whether to download List of Gifts for Room when Connecting
-    /// </summary>
+    /**
+     * Whether to download List of Gifts for Room when Connecting
+     */
     private boolean downloadGiftInfo;
 
-    /// <summary>
-    /// Whether to print Logs to Console
-    /// </summary>
+    /**
+     * Whether to print Logs to Console
+     */
 
     private boolean printToConsole;
-    /// <summary>
-    /// LoggingLevel for Logs
-    /// </summary>
+    /**
+     * LoggingLevel for Logs
+     */
     private Level logLevel;
 
-    /// <summary>
-    /// Whether to print Base64-Data for Messages to Console
-    /// </summary>
+    /**
+     * Whether to print Base64-Data for Messages to Console
+     */
     private boolean printMessageData;
 
-    /// <summary>
-    /// Tiktok user name
-    /// </summary>
+    /**
+     * Tiktok user name
+     */
     private String hostName;
 
 
-    /// <summary>
-    /// Parameters used in requests to tiktok api
-    /// </summary>
+    /**
+     * Parameters used in requests to Tiktok api
+     */
     private Map<String, Object> clientParameters;
+
+
+    /*
+     * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+     *  documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
+     */
+    private String sessionId;
 
 }
 

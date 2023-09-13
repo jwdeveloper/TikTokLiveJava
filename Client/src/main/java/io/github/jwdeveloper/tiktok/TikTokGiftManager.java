@@ -14,6 +14,7 @@ public class TikTokGiftManager implements GiftManager {
 
     @Getter
     private final Map<Integer, TikTokGiftInfo> giftsInfo;
+
     @Getter
     private final Map<GiftId, TikTokGift> activeGifts;
 

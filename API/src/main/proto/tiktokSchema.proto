@@ -1348,19 +1348,57 @@ message ModerationData {
 
 // Comment sent by User
 message WebcastChatMessage {
-  MessageHeader header = 1;
-  User sender = 2; // User who sent message
-  string comment = 3; // Text for Chat-Message
-  uint64 data1 = 11;
-  repeated User mentionedUsers = 12; // Users mentioned in comment
-  repeated ChatImage images = 13;
-  string language = 14; // Language for sender
-  DataContainer chatData = 18;
-  repeated ModerationData moderationData = 19;
+  Common common = 1;
+  User user = 2;
+  string content = 3;
+  bool visibleToSender = 4;
+  Image backgroundImage = 5;
+  string fullScreenTextColor = 6;
+  Image backgroundImageV2 = 7;
+  Image giftImage = 10;
+  int32 inputType = 11;
+  User atUser = 12;
+  repeated EmoteWithIndex emotesList = 13;
+  string contentLanguage = 14;
+  int32 quickChatScene = 16;
+  int32 communityFlaggedStatus = 17;
 
-  message ChatImage {
-    uint64 data1 = 1;
-    Image Image = 2;
+  // @EmoteWithIndex
+  // proto.webcast.im.ChatMessage
+  // C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+  message EmoteWithIndex {
+    int64 index = 1;
+    Emote emote = 2;
+  }
+
+  message Emote {
+    string emoteId = 1;
+    Image image = 2;
+    AuditStatus auditStatus = 3; // Enum
+    string uuid = 4;
+    EmoteType emoteType = 5; // Enum
+    ContentSource contentSource = 6; // Enum
+    EmotePrivateType emotePrivateType = 7; // Enum
+  }
+  enum AuditStatus {
+    AUDITSTATUSUNKNOWN = 0;
+    AUDITSTATUSPASS = 1;
+    AUDITSTATUSFAILED = 2;
+    AUDITSTATUSREVIEWING = 3;
+    AUDITSTATUSFORBIDDEN = 4;
+  }
+  enum EmoteType {
+    EMOTETYPENORMAL = 0;
+    EMOTETYPEWITHSTICKER = 1;
+  }
+  enum ContentSource {
+    CONTENTSOURCEUNKNOWN = 0;
+    CONTENTSOURCENORMAL = 1;
+    CONTENTSOURCECAMERA = 2;
+  }
+  enum EmotePrivateType {
+    EMOTE_PRIVATE_TYPE_NORMAL = 0;
+    EMOTE_PRIVATE_TYPE_SUB_WAVE = 1;
   }
 }
 

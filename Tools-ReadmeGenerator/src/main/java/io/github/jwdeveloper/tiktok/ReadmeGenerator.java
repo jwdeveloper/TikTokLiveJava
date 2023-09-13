@@ -14,10 +14,7 @@ public class ReadmeGenerator
         var template = FilesUtility.getFileFromResource(Main.class,"template.md");
         var variables = new HashMap<String,Object>();
 
-        var pomPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\pom.xml";
-
-        variables.put("version", getCurrentVersion(pomPath));
-
+        variables.put("version", getCurrentVersion());
 
         var exampleCodePath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\TestApplication\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\SimpleExample.java";
         variables.put("Code-Example", getCodeExample(exampleCodePath));
@@ -39,23 +36,11 @@ public class ReadmeGenerator
         FilesUtility.saveFile(outputPath, template);
     }
 
-    public String getCurrentVersion(String path)
+    public String getCurrentVersion()
     {
-        var content =  FilesUtility.loadFileContent(path);
-        var pattern = "<version>(.*?)<\\/version>";
+        var version = System.getenv("version");;
 
-        // Create a Pattern object
-        var regex = Pattern.compile(pattern);
-
-        // Create a Matcher object
-        var matcher = regex.matcher(content);
-
-        // Find the first match
-        if (matcher.find()) {
-            // Extract and print the version
-           return matcher.group(1);
-        }
-       return "VERSION NOT FOUND";
+       return version == null?"NOT_FOUND":version;
     }
 
     public String getCodeExample(String path)

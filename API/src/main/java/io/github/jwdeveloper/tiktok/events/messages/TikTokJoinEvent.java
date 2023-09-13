@@ -12,7 +12,6 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Custom)
 public class TikTokJoinEvent extends TikTokHeaderEvent {
     private User user;
-
     private final Long totalViewers;
 
     public TikTokJoinEvent(WebcastSocialMessage msg) {

@@ -108,11 +108,10 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
         if (matcher.find())
         {
-            var value = matcher.group(0);
+            var value = matcher.group(1);
             var number = Integer.parseInt(value);
             return new TikTokShareEvent(message, number);
         }
-
 
         return switch (socialType) {
             case SocialTypes.LikeType -> new TikTokLikeEvent(message);

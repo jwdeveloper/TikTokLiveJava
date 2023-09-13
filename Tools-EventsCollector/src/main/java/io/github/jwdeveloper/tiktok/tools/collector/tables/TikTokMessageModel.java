@@ -3,8 +3,6 @@ package io.github.jwdeveloper.tiktok.tools.collector.tables;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
-
 
 @Data
 @Builder

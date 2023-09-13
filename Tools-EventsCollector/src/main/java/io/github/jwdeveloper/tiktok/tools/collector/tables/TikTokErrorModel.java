@@ -1,10 +1,8 @@
 package io.github.jwdeveloper.tiktok.tools.collector.tables;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class TikTokErrorModel
 {
     private Integer id;

@@ -5,4 +5,5 @@ public interface LiveRoomInfo
      int getViewersCount();
      String getRoomId();
      String getUserName();
+     ConnectionState getConnectionState();
 }

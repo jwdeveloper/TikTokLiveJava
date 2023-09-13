@@ -5,6 +5,7 @@ import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokCommentEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftMessageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
@@ -34,6 +35,11 @@ public class ListenerExample
     public static class CustomListener implements TikTokEventListener
     {
 
+        @TikTokEventHandler
+        public void onLike(LiveClient liveClient, TikTokLikeEvent event)
+        {
+            System.out.println(event.toString());
+        }
 
         @TikTokEventHandler
         public void onError(LiveClient liveClient, TikTokErrorEvent event)

@@ -17,6 +17,7 @@ public class Main {
                 {
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(5));
                     clientSettings.setRetryOnConnectionFailure(true);
+                    clientSettings.setDownloadGiftInfo(true);
                 })
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)
@@ -29,10 +30,6 @@ public class Main {
                 .onLike(Main::onLike)
                 .onGiftMessage(Main::onGiftMessage)
                 .onEmote(Main::onEmote)
-                .onEvent((liveClient, event) ->
-                {
-
-                })
                 .onError((_client, error) ->
                 {
                     error.getException().printStackTrace();

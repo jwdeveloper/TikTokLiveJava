@@ -72,13 +72,8 @@ jobs:
       run: |
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git add pom.xml
-            git add API/pom.xml
-            git add Client/pom.xml
-            git add TestApplication/pom.xml
-            git add Tools-EventsCollector/pom.xml
-            git add Tools-ReadmeGenerator/pom.xml
-            git add Tools/pom.xml
+            git add README.MD
+            git add pom.xml && git add '**/pom.xml'
             git commit -m "Update version in pom.xml"
     - name: Push changes
       uses: ad-m/github-push-action@master

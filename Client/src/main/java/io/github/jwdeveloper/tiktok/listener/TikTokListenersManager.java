@@ -24,7 +24,7 @@ public class TikTokListenersManager implements ListenersManager {
 
 
     @Override
-    public List<TikTokEventListener> getBindingModels() {
+    public List<TikTokEventListener> getListeners() {
         return bindingModels.stream().map(ListenerBindingModel::getListener).toList();
     }
 

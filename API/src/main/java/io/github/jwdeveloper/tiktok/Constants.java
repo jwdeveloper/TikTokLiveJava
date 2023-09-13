@@ -8,33 +8,32 @@ import java.util.logging.Level;
 
 public class Constants {
 
-    /// <summary>
-    /// Web-URL for TikTok
-    /// </summary>
+    /**
+     * Web-URL for TikTok
+     */
     public static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
-    /// <summary>
-    /// WebCast-BaseURL for TikTok
-    /// </summary>
+    /**
+     * WebCast-BaseURL for TikTok
+     */
     public static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
-    /// <summary>
-    /// Signing API by Isaac Kogan
-    /// https://github-wiki-see.page/m/isaackogan/TikTokLive/wiki/All-About-Signatures
-    /// </summary>
+    /**
+     * Signing API by Isaac Kogan
+     * https://github-wiki-see.page/m/isaackogan/TikTokLive/wiki/All-About-Signatures
+     */
     public static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/sign_url";
 
-    /// <summary>
-    /// Default TimeOut for Connections
-    /// </summary>
+    /**
+     * Default TimeOut for Connections
+     */
     public static final int DEFAULT_TIMEOUT = 20;
-    /// <summary>
-    /// Default Polling-Time for Socket-Connection
-    /// </summary>
+    /**
+     * Default Polling-Time for Socket-Connection
+     */
     public static final int DEFAULT_POLLTIME = 1;
 
-    /// <summary>
-    /// Default Settings for Client
-    /// </summary>
-
+    /**
+     * Default Settings for Client
+     */
 
 
     public static ClientSettings DefaultClientSettings() {
@@ -53,15 +52,13 @@ public class Constants {
     }
 
 
+    /**
+     * Default Parameters for HTTP-Request
+     */
 
 
-    /// <summary>
-    /// Default Parameters for HTTP-Request
-    /// </summary>
-
-
-    public static Map<String,Object> DefaultClientParams() {
-        var clientParams = new TreeMap<String,Object>();
+    public static Map<String, Object> DefaultClientParams() {
+        var clientParams = new TreeMap<String, Object>();
         clientParams.put("aid", 1988);
         clientParams.put("app_language", "en-US");
         clientParams.put("app_name", "tiktok_web");
@@ -100,11 +97,11 @@ public class Constants {
     }
 
 
-    /// <summary>
-    /// Default Headers for HTTP-Request
-    /// </summary>
-    public static Map<String,String> DefaultRequestHeaders() {
-        var headers = new HashMap<String,String>();
+    /**
+     * Default Headers for HTTP-Request
+     */
+    public static Map<String, String> DefaultRequestHeaders() {
+        var headers = new HashMap<String, String>();
 
         headers.put("Connection", "keep-alive");
         headers.put("Cache-Control", "max-age=0");
