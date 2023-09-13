@@ -72,7 +72,7 @@ jobs:
       run: |
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git add README.MD
+            git add README.md
             git add pom.xml && git add '**/pom.xml'
             git commit -m "Update version in pom.xml"
     - name: Push changes
