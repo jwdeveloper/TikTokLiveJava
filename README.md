@@ -131,7 +131,7 @@ public class ConfigurationExample {
 ```
 ## Listener Example
 
-Listeners is optional approach for handling events 
+Listener is optional approach for handling events 
 
 ```java
 package io.github.jwdeveloper.tiktok;
