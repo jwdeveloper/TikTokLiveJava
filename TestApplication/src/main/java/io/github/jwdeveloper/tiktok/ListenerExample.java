@@ -18,7 +18,7 @@ public class ListenerExample
         CustomListener customListener = new CustomListener();
 
         // set tiktok username
-        TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+        var client = TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .addListener(customListener)
                 .buildAndRun();
 

@@ -56,7 +56,7 @@ public class ClientSettings {
     private boolean printMessageData;
 
     /**
-     * Tiktok user name
+     *  Optional: Use it if you need to change tiktok live hostname in builder
      */
     private String hostName;
 
@@ -68,10 +68,16 @@ public class ClientSettings {
 
 
     /*
-     * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+     *  Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
      *  documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
      */
     private String sessionId;
+
+    /*
+     * Optional: By default roomID is fetched before connect to live, but you can set it manually
+     *
+     */
+    private String roomId;
 
 }
 

@@ -89,8 +89,20 @@ public class TikTokLiveClient implements LiveClient {
 
 
         apiService.updateSessionId();
-        var roomId = apiService.fetchRoomId(liveRoomInfo.getUserName());
-        liveRoomInfo.setRoomId(roomId);
+
+        if(clientSettings.getRoomId() != null)
+        {
+
+            liveRoomInfo.setRoomId(clientSettings.getRoomId());
+            logger.info("Using roomID from settings: "+clientSettings.getRoomId());
+        }
+        else
+        {
+            var roomId = apiService.fetchRoomId(liveRoomInfo.getUserName());
+            liveRoomInfo.setRoomId(roomId);
+        }
+
+
         var roomData = apiService.fetchRoomInfo();
         if (roomData.getStatus() == 0 || roomData.getStatus() == 4) {
             throw new TikTokLiveOfflineHostException("LiveStream for HostID could not be found. Is the Host online?");

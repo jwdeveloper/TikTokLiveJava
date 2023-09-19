@@ -6,6 +6,7 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
+import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 import io.github.jwdeveloper.tiktok.models.gifts.TikTokGiftInfo;
 
@@ -100,22 +101,10 @@ public class TikTokApiService {
         logger.info("Fetch RoomInfo");
         try {
             var response = tiktokHttpClient.getJObjectFromWebcastAPI("room/info/", clientSettings.getClientParameters());
-            if (!response.has("data")) {
-                return new LiveRoomMeta();
-            }
-
-            var data = response.getAsJsonObject("data");
-            if (!data.has("status")) {
-                return new LiveRoomMeta();
-            }
-
-            var status = data.get("status");
-
-            var info = new LiveRoomMeta();
-            info.setStatus(status.getAsInt());
-
-            logger.info("RoomInfo status -> " + info.getStatus());
-            return info;
+            var mapper = new LiveRoomMetaMapper();
+            var liveRoomMeta = mapper.mapFrom(response);
+            logger.info("RoomInfo status -> " + liveRoomMeta.getStatus());
+            return liveRoomMeta;
         } catch (Exception e) {
             throw new TikTokLiveRequestException("Failed to fetch room info from WebCast, see stacktrace for more info.", e);
         }

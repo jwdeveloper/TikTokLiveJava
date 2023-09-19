@@ -21,9 +21,12 @@ public class ConfigurationExample {
                     clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
 
-                    //Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+                    //Optional: Sometimes not every message from chat are send to TikTokLiveJava to fix this issue you can set sessionId
                     // documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
                     clientSettings.setSessionId("86c3c8bf4b17ebb2d74bb7fa66fd0000");
+
+                    //Optional:
+                    clientSettings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
                 .buildAndRun();
         System.in.read();

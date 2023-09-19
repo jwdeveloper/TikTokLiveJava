@@ -7,7 +7,7 @@ A Java library based on [TikTokLive](https://github.com/isaackogan/TikTokLive) a
 Join the support [discord](https://discord.gg/e2XwPNTBBr) and visit the `#java-support` channel for questions, contributions and ideas. Feel free to make pull requests with missing/new features, fixes, etc
 
 Do you prefer other programming languages?
-- **Node** orginal: [TikTok-Live-Connector](https://github.com/zerodytrash/TikTok-Live-Connector) by [@zerodytrash](https://github.com/zerodytrash)
+- **Node** orginal: [TikTok-Live-Connector](https://github.com/isaackogan/TikTok-Live-Connector) by [@zerodytrash](https://github.com/zerodytrash)
 - **Python** rewrite: [TikTokLive](https://github.com/isaackogan/TikTokLive) by [@isaackogan](https://github.com/isaackogan)
 - **Go** rewrite: [GoTikTokLive](https://github.com/Davincible/gotiktoklive) by [@Davincible](https://github.com/Davincible)
 - **C#** rewrite: [TikTokLiveSharp](https://github.com/frankvHoof93/TikTokLiveSharp) by [@frankvHoof93](https://github.com/frankvHoof93)
@@ -27,25 +27,25 @@ Do you prefer other programming languages?
 
 ```xml
    <repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
-<dependencies>
-<dependency>
-    <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
-    <artifactId>Client</artifactId>
-    <version>0.0.22-Release</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.10.1</version>
-</dependency>
-</dependencies>
+   <dependencies>
+         <dependency>
+            <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+            <artifactId>Client</artifactId>
+            <version>0.0.23-Release</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+   </dependencies>
 ```
 
 2. Create your first chat connection
@@ -119,9 +119,12 @@ public class ConfigurationExample {
                     clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
 
-                    // Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+                    //Optional: Sometimes not every message from chat are send to TikTokLiveJava to fix this issue you can set sessionId
                     // documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
                     clientSettings.setSessionId("86c3c8bf4b17ebb2d74bb7fa66fd0000");
+
+                    //Optional:
+                    clientSettings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
                 .buildAndRun();
         System.in.read();
@@ -130,8 +133,6 @@ public class ConfigurationExample {
 
 ```
 ## Listener Example
-
-Listener is optional approach for handling events 
 
 ```java
 package io.github.jwdeveloper.tiktok;
@@ -154,7 +155,7 @@ public class ListenerExample
         CustomListener customListener = new CustomListener();
 
         // set tiktok username
-        TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+        var client = TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .addListener(customListener)
                 .buildAndRun();
 

@@ -19,9 +19,8 @@ public class TikTokListenersManager implements ListenersManager {
 
     public TikTokListenersManager(List<TikTokEventListener> listeners, TikTokEventObserver tikTokEventHandler) {
         this.eventObserver = tikTokEventHandler;
-        this.bindingModels = listeners.stream().map(this::bindToEvents).toList();
+        this.bindingModels = new ArrayList<>(listeners.stream().map(this::bindToEvents).toList());
     }
-
 
     @Override
     public List<TikTokEventListener> getListeners() {

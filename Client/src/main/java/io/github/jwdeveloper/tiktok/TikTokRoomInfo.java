@@ -11,7 +11,10 @@ public class TikTokRoomInfo implements LiveRoomInfo
 
     private String roomId;
 
+    private boolean ageRestricted;
+
     private String userName;
+
     private ConnectionState connectionState = ConnectionState.DISCONNECTED;
 
     public boolean hasConnectionState(ConnectionState state)

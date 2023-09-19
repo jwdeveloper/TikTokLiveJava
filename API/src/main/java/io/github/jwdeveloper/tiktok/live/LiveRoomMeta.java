@@ -6,4 +6,6 @@ import lombok.Data;
 public class LiveRoomMeta
 {
    private int status;
+
+   private boolean ageRestricted;
 }
