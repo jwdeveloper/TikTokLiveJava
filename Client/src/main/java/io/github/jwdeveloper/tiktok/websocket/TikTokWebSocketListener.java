@@ -124,7 +124,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
                 .build();
         if(isNotClosing())
         {
-            send(serverInfo.toByteString().asReadOnlyByteBuffer());
+            send(serverInfo.toByteString().toByteArray());
         }
     }
 
