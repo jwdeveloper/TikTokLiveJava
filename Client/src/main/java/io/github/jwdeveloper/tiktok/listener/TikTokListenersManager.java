@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.listener;
 
 
@@ -11,6 +33,7 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class TikTokListenersManager implements ListenersManager {
@@ -34,6 +57,13 @@ public class TikTokListenersManager implements ListenersManager {
             throw new TikTokLiveException("Listener " + listener.getClass() + " has already been registered");
         }
         var bindingModel = bindToEvents(listener);
+
+        for (var eventEntrySet : bindingModel.getEvents().entrySet()) {
+            var eventType = eventEntrySet.getKey();
+            for (var methods : eventEntrySet.getValue()) {
+                eventObserver.subscribe(eventType, methods);
+            }
+        }
         bindingModels.add(bindingModel);
     }
 
@@ -44,11 +74,13 @@ public class TikTokListenersManager implements ListenersManager {
             return;
         }
 
-        var bindingModel =optional.get();
+        var bindingModel = optional.get();
 
-        for(var consumer : bindingModel.getEvents())
-        {
-            eventObserver.unsubscribe(consumer);
+        for (var eventEntrySet : bindingModel.getEvents().entrySet()) {
+            var eventType = eventEntrySet.getKey();
+            for (var methods : eventEntrySet.getValue()) {
+                eventObserver.unsubscribe(eventType, methods);
+            }
         }
         bindingModels.remove(optional.get());
     }
@@ -58,30 +90,31 @@ public class TikTokListenersManager implements ListenersManager {
         var clazz = listener.getClass();
         var methods = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
                 m.getParameterCount() == 2 &&
-                        m.isAnnotationPresent(TikTokEventHandler.class) &&
-                        m.getParameterTypes()[0].equals(LiveClient.class)).toList();
-        var eventConsumer = new ArrayList<TikTokEventConsumer<?>>();
-
-
-        for (var method : methods)
-        {
+                        m.isAnnotationPresent(TikTokEventHandler.class)).toList();
+        var eventsMap = new HashMap<Class<?>, List<TikTokEventConsumer<?>>>();
+        for (var method : methods) {
             var eventClazz = method.getParameterTypes()[1];
-            if(eventClazz.isAssignableFrom(TikTokEvent.class) && !eventClazz.equals(TikTokEvent.class))
-            {
-                throw new TikTokEventListenerMethodException("Method "+method.getName()+"() 2nd parameter must instance of "+TikTokEvent.class.getName());
+
+            if (eventClazz.isAssignableFrom(LiveClient.class) &&
+                    !eventClazz.equals(LiveClient.class)) {
+                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 1nd parameter must instance of " + LiveClient.class.getName());
             }
-            var tikTokEventConsumer = new TikTokEventConsumer() {
-                @Override
-                public void onEvent(LiveClient liveClient, TikTokEvent event) {
-                    try {
-                        method.invoke(listener, liveClient, event);
-                    } catch (Exception e) {
-                        throw new TikTokEventListenerMethodException(e);
-                    }
+
+            if (eventClazz.isAssignableFrom(TikTokEvent.class) &&
+                    !eventClazz.equals(TikTokEvent.class)) {
+                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 2nd parameter must instance of " + TikTokEvent.class.getName());
+            }
+
+            TikTokEventConsumer eventMethodRef = (liveClient, event) ->
+            {
+                try {
+                    method.invoke(listener, liveClient, event);
+                } catch (Exception e) {
+                    throw new TikTokEventListenerMethodException(e);
                 }
             };
-            eventObserver.subscribe(eventClazz, tikTokEventConsumer);
+            eventsMap.computeIfAbsent(eventClazz, (a) -> new ArrayList<TikTokEventConsumer<?>>()).add(eventMethodRef);
         }
-        return new ListenerBindingModel(listener, eventConsumer);
+        return new ListenerBindingModel(listener, eventsMap);
     }
 }

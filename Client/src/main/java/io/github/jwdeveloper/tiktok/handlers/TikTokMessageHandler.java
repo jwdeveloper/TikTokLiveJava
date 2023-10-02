@@ -1,8 +1,29 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.handlers;
 
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
@@ -13,57 +34,47 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
 
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 
 public abstract class TikTokMessageHandler {
 
     private final Map<String, io.github.jwdeveloper.tiktok.handler.TikTokMessageHandler> handlers;
     private final TikTokEventObserver tikTokEventHandler;
-    private final ClientSettings clientSettings;
-    protected final Logger logger;
 
-    public TikTokMessageHandler(TikTokEventObserver tikTokEventHandler, ClientSettings clientSettings, Logger logger) {
+    public TikTokMessageHandler(TikTokEventObserver tikTokEventHandler) {
         handlers = new HashMap<>();
         this.tikTokEventHandler = tikTokEventHandler;
-        this.clientSettings = clientSettings;
-        this.logger = logger;
         init();
     }
 
     public abstract void init();
 
-    public void register(Class<?> clazz, Function<WebcastResponse.Message, TikTokEvent> func) {
+    public void registerMapping(Class<?> clazz, Function<WebcastResponse.Message, TikTokEvent> func) {
         handlers.put(clazz.getSimpleName(), func::apply);
     }
 
-    public void register(Class<?> input, Class<?> output) {
-        register(input, (e) -> mapMessageToEvent(input, output, e));
+    public void registerMapping(Class<?> input, Class<?> output) {
+        registerMapping(input, (e) -> mapMessageToEvent(input, output, e));
     }
 
     public void handle(TikTokLiveClient client, WebcastResponse webcastResponse) {
         for (var message : webcastResponse.getMessagesList()) {
             try
             {
-                if(clientSettings.isPrintMessageData())
-                {
-                    var type=  message.getType();
-                    var base64 =     Base64.getEncoder().encodeToString(message.getBinary().toByteArray());
-                    logger.info(type+": \n "+base64);
-                }
                 handleSingleMessage(client, message);
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 var exception = new TikTokLiveMessageException(message, webcastResponse, e);
                 tikTokEventHandler.publish(client, new TikTokErrorEvent(exception));
             }
         }
     }
 
-    private void handleSingleMessage(TikTokLiveClient client, WebcastResponse.Message message) throws Exception {
+
+    public void handleSingleMessage(TikTokLiveClient client, WebcastResponse.Message message) throws Exception {
         if (!handlers.containsKey(message.getType())) {
             tikTokEventHandler.publish(client, new TikTokUnhandledWebsocketMessageEvent(message));
             return;

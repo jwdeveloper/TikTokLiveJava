@@ -1,30 +1,70 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.live;
 
+import io.github.jwdeveloper.tiktok.events.objects.Gift;
 import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
 import io.github.jwdeveloper.tiktok.models.GiftId;
-import io.github.jwdeveloper.tiktok.models.gifts.TikTokGiftInfo;
 
+import java.util.List;
 import java.util.Map;
 
 public interface GiftManager {
 
-     /**
-      *  Meta information about all TikTok available gifts such as, name, id, description, cost, etc
-      *  TikTokGiftInfos are downloaded only if `clientSettings.setDownloadGiftInfo(true);`
-      *
-      * @return map of metainformations about gitfts where Integer is Gift Id and TikTokGiftInfo is gift data
-      * @see TikTokGiftInfo
-      */
-    Map<Integer, TikTokGiftInfo> getGiftsInfo();
 
 
-     /**
-      *  Active Gifts are updated after TikTokGiftMessageEvent. This map contains gifts that
-      *  recently send to host and have active strike
-      *
-      * @return map of active gifts
-      * @see  TikTokGift
-      * @see  io.github.jwdeveloper.tiktok.events.messages.TikTokGiftMessageEvent
-      */
     Map<GiftId, TikTokGift> getActiveGifts();
+
+
+    /**
+     * In case you can't find your gift in Gift enum. You can register gift
+     * manually here to make it detected while TikTokGiftEvent
+     *
+     * @param id gift's id
+     * @param name gift's name
+     * @param diamondCost diamond cost
+     * @return
+     */
+    Gift registerGift(int id, String name, int diamondCost);
+
+
+    /**
+     *
+     * @param giftId
+     * @return
+     */
+    Gift findById(int giftId);
+
+    /**
+     *
+     * @param giftName
+     * @return
+     */
+    Gift findByName(String giftName);
+
+    /**
+     *
+     * @return all gifts
+     */
+    List<Gift> getGifts();
 }
