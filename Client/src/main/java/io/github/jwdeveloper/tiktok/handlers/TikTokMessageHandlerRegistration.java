@@ -32,6 +32,9 @@ import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEndEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollStartEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollUpdateEvent;
+import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomEvent;
+import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomPinEvent;
+import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomUserInfoEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
@@ -111,8 +114,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
 
     @SneakyThrows
-    private TikTokEvent handleWebcastControlMessage(WebcastResponse.Message msg) {
-        var message = WebcastControlMessage.parseFrom(msg.getPayload());
+    private TikTokEvent handleWebcastControlMessage(byte[] msg) {
+        var message = WebcastControlMessage.parseFrom(msg);
         return switch (message.getAction()) {
             case STREAM_PAUSED -> new TikTokLivePausedEvent();
             case STREAM_ENDED -> new TikTokLiveEndedEvent();
@@ -121,8 +124,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     }
 
     @SneakyThrows
-    private TikTokEvent handleGift(WebcastResponse.Message msg) {
-        var giftMessage = WebcastGiftMessage.parseFrom(msg.getPayload());
+    private TikTokEvent handleGift(byte[] msg) {
+        var giftMessage = WebcastGiftMessage.parseFrom(msg);
 
 
         var gift = giftManager.findById((int) giftMessage.getGiftId());
@@ -145,8 +148,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     }
 
     @SneakyThrows
-    private TikTokEvent handleSocialMedia(WebcastResponse.Message msg) {
-        var message = WebcastSocialMessage.parseFrom(msg.getPayload());
+    private TikTokEvent handleSocialMedia(byte[] msg) {
+        var message = WebcastSocialMessage.parseFrom(msg);
 
         var socialType = Text.map(message.getCommon().getDisplayText()).getKey();
         var matcher = socialMediaPattern.matcher(socialType);
@@ -167,8 +170,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     }
 
     @SneakyThrows
-    private TikTokEvent handleMemberMessage(WebcastResponse.Message msg) {
-        var message = WebcastMemberMessage.parseFrom(msg.getPayload());
+    private TikTokEvent handleMemberMessage(byte[] msg) {
+        var message = WebcastMemberMessage.parseFrom(msg);
         return switch (message.getAction()) {
             case JOINED -> new TikTokJoinEvent(message);
             case SUBSCRIBED -> new TikTokSubscribeEvent(message);
@@ -176,21 +179,21 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         };
     }
 
-    private TikTokEvent handleRoomUserSeqMessage(WebcastResponse.Message msg) {
+    private TikTokEvent handleRoomUserSeqMessage(byte[] msg) {
         var event = (TikTokRoomUserInfoEvent) mapMessageToEvent(WebcastRoomUserSeqMessage.class, TikTokRoomUserInfoEvent.class, msg);
         roomInfo.setViewersCount(event.getTotalUsers());
         return event;
     }
 
-    private TikTokEvent handleLike(WebcastResponse.Message msg) {
+    private TikTokEvent handleLike(byte[] msg) {
         var event = (TikTokLikeEvent) mapMessageToEvent(WebcastLikeMessage.class, TikTokLikeEvent.class, msg);
         roomInfo.setLikesCount(event.getTotalLikes());
         return event;
     }
 
     @SneakyThrows
-    private TikTokEvent handlePinMessage(WebcastResponse.Message msg) {
-        var pinMessage = WebcastRoomPinMessage.parseFrom(msg.getPayload());
+    private TikTokEvent handlePinMessage(byte[] msg) {
+        var pinMessage = WebcastRoomPinMessage.parseFrom(msg);
         var chatMessage = WebcastChatMessage.parseFrom(pinMessage.getPinnedMessage());
         var chatEvent = new TikTokCommentEvent(chatMessage);
         return new TikTokRoomPinEvent(pinMessage, chatEvent);
@@ -198,8 +201,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
     //TODO check
     @SneakyThrows
-    private TikTokEvent handlePollEvent(WebcastResponse.Message msg) {
-        var poolMessage = WebcastPollMessage.parseFrom(msg.getPayload());
+    private TikTokEvent handlePollEvent(byte[] msg) {
+        var poolMessage = WebcastPollMessage.parseFrom(msg);
         return switch (poolMessage.getMessageType()) {
             case 0 -> new TikTokPollStartEvent(poolMessage);
             case 1 -> new TikTokPollEndEvent(poolMessage);

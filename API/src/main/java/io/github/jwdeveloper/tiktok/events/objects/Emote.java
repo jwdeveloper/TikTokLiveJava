@@ -30,10 +30,9 @@ import java.util.UUID;
 public class Emote {
     String emoteId;
     Picture picture;
-    UUID uuid;
 
     public static Emote map(io.github.jwdeveloper.tiktok.messages.data.Emote input) {
-        return new Emote(input.getEmoteId(), Picture.map(input.getImage()), UUID.fromString(input.getUuid()));
+        return new Emote(input.getEmoteId(), Picture.map(input.getImage()));
     }
 
 }

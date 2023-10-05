@@ -20,27 +20,43 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.events.messages.room;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomPinMessage;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.UserAttribute;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLiveIntroMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSystemMessage;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokRoomPinEvent extends TikTokHeaderEvent
+public class TikTokRoomEvent extends TikTokHeaderEvent
 {
+    private User hostUser;
+    private String hostLanguage;
+    private final String welcomeMessage;
 
-  private TikTokCommentEvent pinnedMessage;
-  private long timestamp;
+    public TikTokRoomEvent(WebcastRoomMessage msg) {
+        super(msg.getCommon());
+        welcomeMessage = msg.getContent();
+    }
 
-  public TikTokRoomPinEvent(WebcastRoomPinMessage msg, TikTokCommentEvent commentEvent)
-  {
-    super(msg.getCommon());
-    this.timestamp = msg.getTimestamp();
-    this.pinnedMessage = commentEvent;
-  }
+    public TikTokRoomEvent(WebcastSystemMessage msg) {
+        super(msg.getCommon());
+        welcomeMessage = msg.getMessage();
+    }
+
+    public TikTokRoomEvent(WebcastLiveIntroMessage msg) {
+        super(msg.getCommon());
+        hostUser = User.map(msg.getHost());
+        hostUser.addAttribute(UserAttribute.LiveHost);
+        welcomeMessage = msg.getContent();
+        hostLanguage = msg.getLanguage();
+    }
 
 }

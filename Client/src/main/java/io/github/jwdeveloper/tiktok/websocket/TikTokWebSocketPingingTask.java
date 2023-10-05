@@ -36,6 +36,7 @@ public class TikTokWebSocketPingingTask
 
     public void run(WebSocket webSocket)
     {
+        stop();
         var thread = new Thread(() ->
                 {
                     pingTask(webSocket);
@@ -66,7 +67,9 @@ public class TikTokWebSocketPingingTask
                     Thread.sleep(100);
                     continue;
                 }
+                System.out.println("PING!");
                 webSocket.sendPing();
+
                 var timeout = random.nextInt(MAX_TIMEOUT)+MIN_TIMEOUT;
                 Thread.sleep(timeout);
             }

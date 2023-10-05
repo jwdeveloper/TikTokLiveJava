@@ -25,6 +25,8 @@ package io.github.jwdeveloper.tiktok.events;
 import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftComboFinishedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomEvent;
+import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomUserInfoEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
@@ -54,6 +56,7 @@ public interface TikTokEventBuilder<T> {
 
     T onGift(TikTokEventConsumer<TikTokGiftEvent> event);
 
+    T onQuestion(TikTokEventConsumer<TikTokQuestionEvent> event);
 
     T onSubscribe(TikTokEventConsumer<TikTokSubscribeEvent> event);
 
@@ -80,7 +83,6 @@ public interface TikTokEventBuilder<T> {
 
     T onDisconnected(TikTokEventConsumer<TikTokDisconnectedEvent> event);
 
-
     T onError(TikTokEventConsumer<TikTokErrorEvent> event);
 
     T onEvent(TikTokEventConsumer<TikTokEvent> event);
@@ -99,7 +101,7 @@ public interface TikTokEventBuilder<T> {
 
     //T onCaption(TikTokEventConsumer<TikTokCaptionEvent> event);
 
-    //T onQuestion(TikTokEventConsumer<TikTokQuestionEvent> event);
+
 
     //T onRoomPin(TikTokEventConsumer<TikTokRoomPinEvent> event);
 

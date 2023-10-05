@@ -63,7 +63,7 @@ public class RunCollector {
      //   users.add("mia_tattoo");
      //   users.add("mr_wavecheck");
         users.add("bangbetmenygy");
-       users.add("szwagierkaqueen");
+     //  users.add("szwagierkaqueen");
         for (var user : users) {
             try {
                 runTikTokLiveInstance(user, db);

@@ -22,12 +22,13 @@
  */
 package io.github.jwdeveloper.tiktok.mockClient.mocks;
 
-import io.github.jwdeveloper.tiktok.TikTokLiveClientBuilder;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
+import lombok.Value;
 
 import java.util.Base64;
 import java.util.Stack;
@@ -37,16 +38,30 @@ import java.util.logging.Logger;
 public class WebsocketClientMock implements SocketClient {
     Logger logger;
     Stack<WebcastResponse> responses;
+
+    Stack<MsgStruct> messages;
     TikTokMessageHandler messageHandler;
 
     private boolean isRunning;
+
+    @Value
+    public static class MsgStruct {
+        String messageType;
+        byte[] messageValue;
+    }
 
     public WebsocketClientMock(Logger logger, Stack<WebcastResponse> responses, TikTokMessageHandler messageHandler) {
         this.logger = logger;
         this.responses = responses;
         this.messageHandler = messageHandler;
+        messages = new Stack<>();
     }
 
+    public WebsocketClientMock addMessage(String type, String value) {
+        var bytes = Base64.getDecoder().decode(value);
+        messages.push(new MsgStruct(type, bytes));
+        return this;
+    }
 
     public WebsocketClientMock addResponse(String value) {
         var bytes = Base64.getDecoder().decode(value);
@@ -71,13 +86,9 @@ public class WebsocketClientMock implements SocketClient {
     @Override
     public void start(WebcastResponse webcastResponse, LiveClient tikTokLiveClient) {
         logger.info("Running message: " + responses.size());
-        isRunning =true;
-        while (isRunning) {
-            do {
-                if(responses.isEmpty())
-                {
-                    break;
-                }
+        isRunning = true;
+        while (!responses.isEmpty() || !messages.isEmpty()) {
+            if (!responses.isEmpty()) {
                 var response = responses.pop();
                 for (var message : response.getMessagesList()) {
                     try {
@@ -88,11 +99,15 @@ public class WebsocketClientMock implements SocketClient {
                     }
                 }
             }
-            while (!responses.isEmpty());
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (!messages.isEmpty()) {
+                var messageStr = messages.pop();
+                try {
+                    System.out.println("TYPE: " + messageStr.getMessageType());
+                    messageHandler.handleSingleMessage(tikTokLiveClient, messageStr.getMessageType(), messageStr.getMessageValue());
+                } catch (Exception e) {
+                    logger.info("Unable to parse message for response " + messageStr.getMessageType());
+                    throw new TikTokLiveException(e);
+                }
             }
         }
 

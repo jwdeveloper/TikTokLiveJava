@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomUserInfoEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
@@ -38,7 +39,7 @@ import java.time.Duration;
 
 public class Main {
 
-    public static String TEST_TIKTOK_USER = "szwagierkaqueen";
+    public static String TEST_TIKTOK_USER = "ano_liwia";
 
     public static void main(String[] args) throws IOException
     {
@@ -57,7 +58,7 @@ public class Main {
                 })
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)
-                .onRoomUserInfo(Main::onViewerData)
+                .onRoomUserInfo(Main::onRoomUserInfo)
                 .onJoin(Main::onJoin)
                 .onComment(Main::onComment)
                 .onFollow(Main::onFollow)
@@ -81,7 +82,7 @@ public class Main {
     private static void onGift(LiveClient tikTokLive, TikTokGiftEvent e)
     {
         switch (e.getGift()) {
-            case ROSE -> print( "\uD83D\uDC95",ConsoleColors.YELLOW,"x", e.getCombo(), " roses!", "\uD83D\uDC95");
+            case ROSE -> print( ConsoleColors.YELLOW,"x", e.getCombo(), " roses!", "\uD83D\uDC95");
             default -> print(ConsoleColors.YELLOW,"Thanks for gift: ", e.getGift().getName(),"X",e.getCombo());
         }
         if(e.getGift().hasDiamondCostRange(1000,10000))
@@ -93,7 +94,7 @@ public class Main {
     private static void onDisconnected(LiveClient tikTokLive, TikTokDisconnectedEvent e) {
         print(ConsoleColors.GREEN, "[Disconnected]");
     }
-    private static void onViewerData(LiveClient tikTokLive, TikTokRoomUserInfoEvent e) {
+    private static void onRoomUserInfo(LiveClient tikTokLive, TikTokRoomUserInfoEvent e) {
         print("Viewer count is:", e.getTotalUsers());
     }
 

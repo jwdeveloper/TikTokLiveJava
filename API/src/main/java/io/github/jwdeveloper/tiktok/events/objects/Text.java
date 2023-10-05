@@ -25,7 +25,9 @@ package io.github.jwdeveloper.tiktok.events.objects;
 import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
@@ -47,16 +49,14 @@ public class Text {
     }
 
 
-    public static TextPiece mapTextPiece(io.github.jwdeveloper.tiktok.messages.data.Text.TextPiece input)
-    {
-        return switch (input.getType())
-                {
+    public static TextPiece mapTextPiece(io.github.jwdeveloper.tiktok.messages.data.Text.TextPiece input) {
+        return switch (input.getType()) {
             case 11 -> {
                 var user = User.map(input.getUserValue().getUser());
                 yield new UserTextPiece(user);
             }
             //case 12 -> new GiftTextPiece(input.getStringValue());
-            default -> throw new TikTokLiveException("Unknown text piece");
+            default -> new StringTextPiece(input.getStringValue());
         };
     }
 
@@ -66,8 +66,18 @@ public class Text {
 
     }
 
+    @Value
+    public static class StringTextPiece extends TextPiece {
+        String text;
+
+        public StringTextPiece(String text) {
+            this.text = text;
+        }
+    }
+
     public static class UserTextPiece extends TextPiece {
         User user;
+
         public UserTextPiece(User user) {
             this.user = user;
         }

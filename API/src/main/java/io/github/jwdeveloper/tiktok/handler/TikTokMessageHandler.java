@@ -29,5 +29,5 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 public interface TikTokMessageHandler
 {
-    TikTokEvent handle(WebcastResponse.Message message) throws Exception;
+    TikTokEvent handle(byte[] messagePayload) throws Exception;
 }

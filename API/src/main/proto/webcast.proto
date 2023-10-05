@@ -244,7 +244,6 @@ message WebcastEnvelopeMessage {
 
   // @EnvelopeInfo
   // proto.webcast.im.EnvelopeMessage
-  // C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
   message EnvelopeInfo {
     string envelopeId = 1;
     int64 businessType = 2; // @warning Enum not found, should be BusinessType
@@ -283,8 +282,9 @@ message WebcastGoalUpdateMessage {
 // Message related to Chat-moderation?
 //@WebcastImDeleteMessage
 message WebcastImDeleteMessage {
-  Common header = 1;
-  bytes data = 3;
+  Common common = 1;
+  repeated int64 deleteMsgIdsList = 2;
+  repeated int64 deleteUserIdsList = 3;
 }
 
 //@WebcastInRoomBannerMessage
@@ -707,5 +707,13 @@ message WebcastLinkLayerMessage {
   int64 channelId = 3;
 }
 
+
+message RoomVerifyMessage {
+  Common common = 1;
+  int32 action = 2;
+  string content = 3;
+  int64 noticeType = 4;
+  bool closeRoom = 5;
+}
 
 

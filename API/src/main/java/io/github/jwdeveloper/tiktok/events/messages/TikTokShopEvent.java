@@ -42,6 +42,7 @@ public class TikTokShopEvent extends TikTokHeaderEvent {
 
   private final String shopName;
 
+  //Not working
   public TikTokShopEvent(WebcastOecLiveShoppingMessage msg) {
     super(msg.getCommon());
     var data = msg.getShopData();

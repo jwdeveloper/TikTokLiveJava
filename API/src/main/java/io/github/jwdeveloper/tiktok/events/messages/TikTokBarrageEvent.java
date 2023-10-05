@@ -41,6 +41,7 @@ public class TikTokBarrageEvent extends TikTokHeaderEvent {
     private final Picture rightIcon;
     private final String eventName;
     private final int duration;
+
     private BarrageParam barrageParam;
 
     public TikTokBarrageEvent(WebcastBarrageMessage msg) {
@@ -50,15 +51,7 @@ public class TikTokBarrageEvent extends TikTokHeaderEvent {
         backGround = Picture.map(msg.getBackground());
         rightIcon = Picture.map(msg.getRightIcon());
         duration = msg.getDuration();
-        switch (msg.getMsgType()) {
-            case GRADEUSERENTRANCENOTIFICATION:
-                barrageParam = new UserGradeParam(msg.getUserGradeParam());
-            case FANSLEVELUPGRADE:
-                barrageParam = new FansLevelParam(msg.getFansLevelParam());
-            case SUBSCRIBEGIFT:
-                barrageParam = new SubscribeGiftParam(msg.getSubscribeGiftParam());
-            default:
-                barrageParam = new BarrageParam();
-        }
+        barrageParam = BarrageParam.map(msg);
+
     }
 }

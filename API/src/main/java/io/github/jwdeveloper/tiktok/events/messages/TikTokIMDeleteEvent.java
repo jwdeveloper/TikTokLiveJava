@@ -28,11 +28,15 @@ import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastImDeleteMessage;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokIMDeleteEvent extends TikTokHeaderEvent {
 
+    List<Long> userIds;
     public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
-        super(msg.getHeader());
+        super(msg.getCommon());
+        this.userIds = msg.getDeleteUserIdsListList();
     }
 }

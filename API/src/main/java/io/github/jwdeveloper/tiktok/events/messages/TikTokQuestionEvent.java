@@ -36,22 +36,15 @@ Triggered every time someone asks a new question via the question feature.
 @EventMeta(eventType = EventType.Message)
 public class TikTokQuestionEvent extends TikTokHeaderEvent {
     private final Long questionId;
-
     private final String text;
-
     private final Long time;
-
-    private User user;
-
-
+    private final User user;
     public TikTokQuestionEvent(WebcastQuestionNewMessage msg) {
         super(msg.getCommon());
         var data = msg.getDetails();
         questionId = data.getId();
         text = data.getText();
         time = data.getTimeStamp();
-        if (data.hasUser()) {
-            user = new User(data.getUser());
-        }
+        user = User.map(data.getUser());
     }
 }

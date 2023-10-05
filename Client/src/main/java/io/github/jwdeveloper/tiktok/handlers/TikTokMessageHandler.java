@@ -53,7 +53,7 @@ public abstract class TikTokMessageHandler {
 
     public abstract void init();
 
-    public void registerMapping(Class<?> clazz, Function<WebcastResponse.Message, TikTokEvent> func) {
+    public void registerMapping(Class<?> clazz, Function<byte[], TikTokEvent> func) {
         handlers.put(clazz.getSimpleName(), func::apply);
     }
 
@@ -72,6 +72,17 @@ public abstract class TikTokMessageHandler {
             }
         }
     }
+    public void handleSingleMessage(LiveClient client, String type, byte[] bytes) throws Exception {
+
+        if (!handlers.containsKey(type)) {
+            tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(WebcastResponse.Message.newBuilder().setMethod(type).build()));
+            return;
+        }
+        var handler = handlers.get(type);
+        var tiktokEvent = handler.handle(bytes);
+        tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(tiktokEvent, WebcastResponse.Message.newBuilder().build()));
+        tikTokEventHandler.publish(client, tiktokEvent);
+    }
 
 
     public void handleSingleMessage(LiveClient client, WebcastResponse.Message message) throws Exception {
@@ -85,15 +96,15 @@ public abstract class TikTokMessageHandler {
             return;
         }
         var handler = handlers.get(methodName);
-        var tiktokEvent = handler.handle(message);
+        var tiktokEvent = handler.handle(message.getPayload().toByteArray());
         tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(tiktokEvent, message));
         tikTokEventHandler.publish(client, tiktokEvent);
     }
 
-    protected TikTokEvent mapMessageToEvent(Class<?> inputClazz, Class<?> outputClass, WebcastResponse.Message message) {
+    protected TikTokEvent mapMessageToEvent(Class<?> inputClazz, Class<?> outputClass, byte[] payload) {
         try {
-            var parseMethod = inputClazz.getDeclaredMethod("parseFrom", ByteString.class);
-            var deserialized = parseMethod.invoke(null, message.getPayload());
+            var parseMethod = inputClazz.getDeclaredMethod("parseFrom",  byte[].class);
+            var deserialized = parseMethod.invoke(null,payload);
             var constructors = Arrays.stream(outputClass.getConstructors())
                     .filter(ea -> Arrays.stream(ea.getParameterTypes())
                             .toList()

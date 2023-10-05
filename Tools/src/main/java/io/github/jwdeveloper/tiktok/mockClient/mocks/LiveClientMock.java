@@ -56,6 +56,13 @@ public class LiveClientMock extends TikTokLiveClient {
         this.websocketClientMock = webSocketClient;
     }
 
+    public void publishMessage(String type, String base64) {
+        websocketClientMock.addMessage(type, base64);
+    }
+
+    public void publishMessage(Class<?> clazz, String base64) {
+        websocketClientMock.addMessage(clazz.getSimpleName(), base64);
+    }
 
     public void publishResponse(String value) {
         websocketClientMock.addResponse(value);

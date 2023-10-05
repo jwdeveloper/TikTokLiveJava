@@ -22,7 +22,17 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects.barrage;
 
-public class BarrageParam
-{
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastBarrageMessage;
 
+public class BarrageParam {
+
+    //Figure out barrage type:11
+    public static BarrageParam map(WebcastBarrageMessage msg) {
+        return switch (msg.getMsgType()) {
+            case GRADEUSERENTRANCENOTIFICATION -> new UserGradeParam(msg.getUserGradeParam());
+            case FANSLEVELUPGRADE -> new FansLevelParam(msg.getFansLevelParam());
+            case SUBSCRIBEGIFT -> new SubscribeGiftParam(msg.getSubscribeGiftParam());
+            default -> new BarrageParam();
+        };
+    }
 }

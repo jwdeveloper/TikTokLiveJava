@@ -88,11 +88,16 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onClose(int i, String s, boolean b) {
+
+        System.out.println("CLOSE "+i+" "+s+" "+b);
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokDisconnectedEvent());
     }
 
     @Override
-    public void onError(Exception error) {
+    public void onError(Exception error)
+    {
+        System.out.println("ERROR");
+        error.printStackTrace();
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokErrorEvent(error));
         if(isNotClosing())
         {
@@ -106,6 +111,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
             return;
         }
         var websocketMessage = websocketMessageOptional.get();
+        System.out.println("ACK ID "+websocketMessage.getLogId()+" ID "+websocketMessage.getSeqId());
         sendAckId(websocketMessage.getLogId());
 
         var webResponse = getWebResponseMessage(websocketMessage.getPayload());
@@ -147,7 +153,8 @@ public class TikTokWebSocketListener extends WebSocketClient {
                 .build();
         if(isNotClosing())
         {
-            send(serverInfo.toByteString().toByteArray());
+            System.out.println("SEND ICK ID "+id);
+            send(serverInfo.toByteArray());
         }
     }
 

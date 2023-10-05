@@ -40,8 +40,6 @@ import lombok.Getter;
 public class TikTokGiftEvent extends TikTokHeaderEvent {
     private final Gift gift;
     private final User user;
-    private final String purchaseId;
-    private final String receipt;
     private final int combo;
     private final boolean comboFinished;
     private final int comboIndex;
@@ -49,9 +47,7 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
     public TikTokGiftEvent(Gift gift, WebcastGiftMessage msg) {
         super(msg.getCommon());
         this.gift = gift;
-        user = User.map(msg.getUser());
-        purchaseId = msg.getOrderId();
-        receipt = msg.getMonitorExtra();
+        user = User.map(msg.getUser(),msg.getUserIdentity());
         combo = msg.getComboCount();
         comboFinished = msg.getRepeatEnd() > 0;
         comboIndex = msg.getRepeatCount();
