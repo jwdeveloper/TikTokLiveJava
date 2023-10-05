@@ -20,26 +20,13 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
 
+public interface SocketClient {
+    void start(WebcastResponse webcastResponse, LiveClient tikTokLiveClient);
 
-/**
- * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
- */
-@Getter
-@AllArgsConstructor
-@EventMeta(eventType = EventType.Custom)
-public class TikTokWebsocketMessageEvent extends TikTokEvent
-{
-    private TikTokEvent event;
-
-    private WebcastResponse.Message message;
+    void stop();
 }

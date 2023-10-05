@@ -25,6 +25,8 @@ package io.github.jwdeveloper.tiktok.live;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 
+import java.util.logging.Logger;
+
 public interface LiveClient {
 
     /**
@@ -44,6 +46,12 @@ public interface LiveClient {
     GiftManager getGiftManager();
 
     /**
+     *  Get user manager
+     * @return
+     */
+    UserManager getUserManager();
+
+    /**
      * Gets the current room info from TikTok API including streamer info, room status and statistics.
      */
     LiveRoomInfo getRoomInfo();
@@ -53,4 +61,10 @@ public interface LiveClient {
      * @see TikTokEventListener
      */
     ListenersManager getListenersManager();
+
+    /**
+     *  Logger
+     * @return
+     */
+    Logger getLogger();
 }

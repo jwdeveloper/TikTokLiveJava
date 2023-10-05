@@ -43,14 +43,13 @@ public class Picture {
     @Getter
     private final String link;
 
-
     private Image image;
 
     public Picture(String link) {
         this.link = link;
     }
 
-    public static Picture Map(io.github.jwdeveloper.tiktok.messages.data.Image profilePicture) {
+    public static Picture map(io.github.jwdeveloper.tiktok.messages.data.Image profilePicture) {
 
         var index = profilePicture.getUrlListCount() - 1;
         if (index <= 0) {

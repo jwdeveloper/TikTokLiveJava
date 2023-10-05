@@ -48,4 +48,13 @@ public class SqlConsts
             );
             """;
 
+    public static String CREATE_RESPONSE_MODEL = """
+          CREATE TABLE IF NOT EXISTS  TikTokResponseModel (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    hostName TEXT,
+                    response TEXT,
+                    createdAt TEXT
+            );
+            """;
+
 }

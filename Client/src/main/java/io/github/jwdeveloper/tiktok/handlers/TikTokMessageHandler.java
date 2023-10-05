@@ -24,13 +24,14 @@ package io.github.jwdeveloper.tiktok.handlers;
 
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokWebsocketMessageEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokUnhandledWebsocketMessageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.websocket.TikTokWebsocketMessageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.websocket.TikTokWebsocketResponseEvent;
+import io.github.jwdeveloper.tiktok.events.messages.websocket.TikTokWebsocketUnhandledMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.util.Arrays;
@@ -60,13 +61,12 @@ public abstract class TikTokMessageHandler {
         registerMapping(input, (e) -> mapMessageToEvent(input, output, e));
     }
 
-    public void handle(TikTokLiveClient client, WebcastResponse webcastResponse) {
+    public void handle(LiveClient client, WebcastResponse webcastResponse) {
+        tikTokEventHandler.publish(client, new TikTokWebsocketResponseEvent(webcastResponse));
         for (var message : webcastResponse.getMessagesList()) {
-            try
-            {
+            try {
                 handleSingleMessage(client, message);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 var exception = new TikTokLiveMessageException(message, webcastResponse, e);
                 tikTokEventHandler.publish(client, new TikTokErrorEvent(exception));
             }
@@ -74,12 +74,17 @@ public abstract class TikTokMessageHandler {
     }
 
 
-    public void handleSingleMessage(TikTokLiveClient client, WebcastResponse.Message message) throws Exception {
-        if (!handlers.containsKey(message.getMethod())) {
-            tikTokEventHandler.publish(client, new TikTokUnhandledWebsocketMessageEvent(message));
+    public void handleSingleMessage(LiveClient client, WebcastResponse.Message message) throws Exception {
+        var methodName = message.getMethod();
+        if (!methodName.contains("Webcast")) {
+            methodName = "Webcast" + methodName;
+        }
+
+        if (!handlers.containsKey(methodName)) {
+            tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
             return;
         }
-        var handler = handlers.get(message.getMethod());
+        var handler = handlers.get(methodName);
         var tiktokEvent = handler.handle(message);
         tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(tiktokEvent, message));
         tikTokEventHandler.publish(client, tiktokEvent);
@@ -89,15 +94,13 @@ public abstract class TikTokMessageHandler {
         try {
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", ByteString.class);
             var deserialized = parseMethod.invoke(null, message.getPayload());
-
             var constructors = Arrays.stream(outputClass.getConstructors())
                     .filter(ea -> Arrays.stream(ea.getParameterTypes())
                             .toList()
                             .contains(inputClazz))
                     .findFirst();
 
-            if(constructors.isEmpty())
-            {
+            if (constructors.isEmpty()) {
                 throw new TikTokMessageMappingException(inputClazz, outputClass, "Unable to find constructor with input class type");
             }
 

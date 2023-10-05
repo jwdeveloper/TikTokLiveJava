@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSubNotifyMessage;
 import lombok.Value;
 
@@ -36,7 +36,7 @@ public class TikTokSubNotifyEvent extends TikTokHeaderEvent {
 
     public TikTokSubNotifyEvent(WebcastSubNotifyMessage msg) {
         super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
+        user = User.map(msg.getUser());
     }
 
 }

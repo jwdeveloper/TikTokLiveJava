@@ -38,9 +38,9 @@ public class TikTokCaptionEvent extends TikTokHeaderEvent {
     String text;
 
     public TikTokCaptionEvent(WebcastCaptionMessage msg) {
-        super(msg.getHeader());
+        super(msg.getCommon());
         captionTimeStamp = msg.getTimeStamp();
-        iSOLanguage = msg.getCaptionData().getISOLanguage();
+        iSOLanguage = msg.getCaptionData().getLanguage();
         text = msg.getCaptionData().getText();
     }
 }

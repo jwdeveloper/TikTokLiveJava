@@ -103,46 +103,21 @@ message Text {
 // @Image
 message Image {
   repeated string urlList = 1;
-  string uri = 2;
-  int64 height = 3;
-  int64 width = 4;
-  string avgColor = 5;
-  int32 imageType = 6;
-  string openWebUrl = 7;
-  Content content = 8;
   bool isAnimated = 9;
-
-
-  // @Content
-  // proto.webcast.data.Image
-  message Content {
-    string name = 1;
-    string fontColor = 2;
-    int64 level = 3;
-  }
-
 }
 
 // @Badge
 message BadgeStruct {
   BadgeDisplayType displayType = 1; // Enum
-  BadgePriorityType priorityType = 2; // Enum
-  BadgeSceneType sceneType = 3; // Enum
-  Position position = 4; // Enum
-  DisplayStatus displayStatus = 5; // Enum
-  int64 greyedByClient = 6;
-  ExhibitionType exhibitionType = 7; // Enum
-  string openweburl = 10;
-  bool display = 11;
-  // PrivilegeLogExtra privilegeLogExtra = 12;
-  repeated ImageBadge image = 20;
-  repeated TextBadge text = 21;
-  StringBadge str = 22;
-  CombineBadge combine = 23;
-
+  oneof badgeType
+  {
+    ImageBadge image = 20;
+    TextBadge text = 21;
+    StringBadge str = 22;
+    CombineBadge combine = 23;
+  }
 
   message CombineBadge {
-    BadgeDisplayType displayType = 1; // Enum
     Image icon = 2;
     TextBadge text = 3;
     string str = 4;
@@ -180,7 +155,7 @@ message BadgeStruct {
 
   message ProfileCardPanel {
     bool useNewProfileCardStyle = 1;
-    BadgeTextPosition badgeTextPosition = 2; // Enum
+  //  BadgeTextPosition badgeTextPosition = 2; // Enum
     ProjectionConfig projectionConfig = 3;
     ProfileContent profileContent = 4;
   }
@@ -192,15 +167,11 @@ message BadgeStruct {
   }
 
   message ImageBadge {
-    BadgeDisplayType displayType = 1; // Enum
     Image image = 2;
   }
 
   message TextBadge {
-    BadgeDisplayType displayType = 1; // Enum
-    string key = 2;
     string defaultPattern = 3;
-    repeated string piecesList = 4;
   }
 
   message IconConfig {
@@ -210,7 +181,6 @@ message BadgeStruct {
 
 
   message StringBadge {
-    BadgeDisplayType displayType = 1; // Enum
     string str = 2;
   }
 
@@ -230,45 +200,8 @@ message BadgeStruct {
     BADGEDISPLAYTYPE_COMBINE = 4;
   }
 
-  enum BadgePriorityType {
-    BADGEPRIORITYTYPE_UNKNOWN = 0;
-    BADGEPRIORITYTYPE_STRONGRELATION = 10;
-    BADGEPRIORITYTYPE_PLATFORM = 20;
-    BADGEPRIORITYTYPE_RELATION = 30;
-    BADGEPRIORITYTYPE_ACTIVITY = 40;
-    BADGEPRIORITYTYPE_RANKLIST = 50;
-  }
 
-  enum BadgeSceneType {
-    BADGESCENETYPE_UNKNOWN = 0;
-    BADGESCENETYPE_ADMIN = 1;
-    BADGESCENETYPE_FIRSTRECHARGE = 2;
-    BADGESCENETYPE_FRIENDS = 3;
-    BADGESCENETYPE_SUBSCRIBER = 4;
-    BADGESCENETYPE_ACTIVITY = 5;
-    BADGESCENETYPE_RANKLIST = 6;
-    BADGESCENETYPE_NEWSUBSCRIBER = 7;
-    BADGESCENETYPE_USERGRADE = 8;
-    BADGESCENETYPE_STATECONTROLLEDMEDIA = 9;
-    BADGESCENETYPE_FANS = 10;
-    BADGESCENETYPE_LIVEPRO = 11;
-  }
 
-  enum DisplayStatus {
-    DISPLAYSTATUSNORMAL = 0;
-    DISPLAYSTATUSSHADOW = 1;
-  }
-
-  enum ExhibitionType {
-    EXHIBITIONTYPE_DEFAULT = 0;
-    EXHIBITIONTYPE_FOLD = 1;
-    EXHIBITIONTYPE_PUBLICSCREEN = 2;
-  }
-  enum BadgeTextPosition {
-    BADGETEXTPOSITIONUNKNOWN = 0;
-    BADGETEXTPOSITIONRIGHT = 1;
-    BADGETEXTPOSITIONBELOW = 2;
-  }
 
   enum Position {
     POSITIONUNKNOWN = 0;

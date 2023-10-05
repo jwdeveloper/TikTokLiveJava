@@ -25,9 +25,11 @@ package io.github.jwdeveloper.tiktok;
 import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokShareEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.util.ConsoleColors;
 
@@ -36,7 +38,7 @@ import java.time.Duration;
 
 public class Main {
 
-    public static String TEST_TIKTOK_USER = "bangbetmenygy";
+    public static String TEST_TIKTOK_USER = "szwagierkaqueen";
 
     public static void main(String[] args) throws IOException
     {
@@ -55,7 +57,7 @@ public class Main {
                 })
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)
-                .onRoomViewerData(Main::onViewerData)
+                .onRoomUserInfo(Main::onViewerData)
                 .onJoin(Main::onJoin)
                 .onComment(Main::onComment)
                 .onFollow(Main::onFollow)
@@ -79,8 +81,8 @@ public class Main {
     private static void onGift(LiveClient tikTokLive, TikTokGiftEvent e)
     {
         switch (e.getGift()) {
-            case ROSE -> print( "\uD83D\uDC95",ConsoleColors.YELLOW,"x", e.getComboCount(), " roses!", "\uD83D\uDC95");
-            default -> print(ConsoleColors.YELLOW,"Thanks for gift: ", e.getGift().getName(),"X",e.getComboCount());
+            case ROSE -> print( "\uD83D\uDC95",ConsoleColors.YELLOW,"x", e.getCombo(), " roses!", "\uD83D\uDC95");
+            default -> print(ConsoleColors.YELLOW,"Thanks for gift: ", e.getGift().getName(),"X",e.getCombo());
         }
         if(e.getGift().hasDiamondCostRange(1000,10000))
         {
@@ -91,36 +93,36 @@ public class Main {
     private static void onDisconnected(LiveClient tikTokLive, TikTokDisconnectedEvent e) {
         print(ConsoleColors.GREEN, "[Disconnected]");
     }
-    private static void onViewerData(LiveClient tikTokLive, TikTokRoomViewerDataEvent e) {
-        print("Viewer count is:", e.getViewerCount());
+    private static void onViewerData(LiveClient tikTokLive, TikTokRoomUserInfoEvent e) {
+        print("Viewer count is:", e.getTotalUsers());
     }
 
     private static void onJoin(LiveClient tikTokLive, TikTokJoinEvent e) {
-        print(ConsoleColors.GREEN, "Join -> ", ConsoleColors.WHITE_BRIGHT, e.getUser().getNickName());
+        print(ConsoleColors.GREEN, "Join -> ", ConsoleColors.WHITE_BRIGHT, e.getUser().getName());
     }
 
     private static void onComment(LiveClient tikTokLive, TikTokCommentEvent e) {
-        print(ConsoleColors.WHITE, e.getUser().getUniqueId(), ":", ConsoleColors.WHITE_BRIGHT, e.getText());
+        print(ConsoleColors.WHITE, e.getUser().getId(), ":", ConsoleColors.WHITE_BRIGHT, e.getText());
     }
 
     private static void onFollow(LiveClient tikTokLive, TikTokFollowEvent e) {
-        print(e.getUser().getUniqueId(), "followed!");
+        print(e.getUser().getId(), "followed!");
     }
 
     private static void onShare(LiveClient tikTokLive, TikTokShareEvent e) {
-        print(e.getUser().getUniqueId(), "shared!");
+        print(e.getUser().getId(), "shared!");
     }
 
     private static void onSubscribe(LiveClient tikTokLive, TikTokSubscribeEvent e) {
-        print(e.getNewSubscriber().getUniqueId(), "subscribed!");
+        print(e.getUser().getId(), "subscribed!");
     }
 
     private static void onLike(LiveClient tikTokLive, TikTokLikeEvent e) {
 
-        print(e.getUser().getUniqueId(), "liked!");
+        print(e.getUser().getId(), "liked!");
     }
     private static void onEmote(LiveClient tikTokLive, TikTokEmoteEvent e) {
-        print(e.getUser().getUniqueId(), "sent", e.getEmotes().size());
+        print(e.getUser().getId(), "sent", e.getEmotes().size());
     }
 
     private static void print(Object... messages) {

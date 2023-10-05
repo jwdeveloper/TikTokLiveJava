@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Emote;
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastEmoteChatMessage;
 import lombok.Value;
 
@@ -43,7 +43,7 @@ public class TikTokEmoteEvent extends TikTokHeaderEvent {
 
     public TikTokEmoteEvent(WebcastEmoteChatMessage msg) {
         super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
+        user = User.map(msg.getUser());
         emotes = msg.getEmoteListList().stream().map(Emote::map).toList();
     }
 }

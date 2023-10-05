@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.handlers;
 import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.TikTokEventConsumer;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class TikTokEventObserver {
         events = new HashMap<>();
     }
 
-    public void publish(TikTokLiveClient tikTokLiveClient, TikTokEvent tikTokEvent) {
+    public void publish(LiveClient tikTokLiveClient, TikTokEvent tikTokEvent) {
         if (events.containsKey(TikTokEvent.class)) {
             var handlers = events.get(TikTokEvent.class);
             for (var handle : handlers) {

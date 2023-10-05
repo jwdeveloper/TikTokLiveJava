@@ -39,9 +39,9 @@ public class SimpleExample {
                 {
                     switch (event.getGift()) {
                         case ROSE ->
-                                print("\uD83D\uDC95", ConsoleColors.YELLOW, "x", event.getComboCount(), " roses!", "\uD83D\uDC95");
+                                print("\uD83D\uDC95", ConsoleColors.YELLOW, "x", event.getCombo(), " roses!", "\uD83D\uDC95");
                         default ->
-                                print(ConsoleColors.GREEN, "[Thanks for gift] ",ConsoleColors.YELLOW, event.getGift().getName(), "X", event.getComboCount());
+                                print(ConsoleColors.GREEN, "[Thanks for gift] ",ConsoleColors.YELLOW, event.getGift().getName(), "X", event.getCombo());
                     }
                 })
                 .onConnected((client, event) ->
@@ -50,15 +50,15 @@ public class SimpleExample {
                 })
                 .onFollow((liveClient, event) ->
                 {
-                    print(ConsoleColors.BLUE, "Follow -> ", ConsoleColors.WHITE_BRIGHT, event.getUser().getNickName());
+                    print(ConsoleColors.BLUE, "Follow -> ", ConsoleColors.WHITE_BRIGHT, event.getUser().getName());
                 })
                 .onJoin((client, event) ->
                 {
-                    print(ConsoleColors.GREEN, "Join -> ", ConsoleColors.WHITE_BRIGHT, event.getUser().getNickName());
+                    print(ConsoleColors.GREEN, "Join -> ", ConsoleColors.WHITE_BRIGHT, event.getUser().getName());
                 })
                 .onComment((client, event) ->
                 {
-                    print(ConsoleColors.WHITE, event.getUser().getUniqueId(), ":", ConsoleColors.WHITE_BRIGHT, event.getText());
+                    print(ConsoleColors.WHITE, event.getUser().getName(), ":", ConsoleColors.WHITE_BRIGHT, event.getText());
                 })
                 .onEvent((client, event) ->
                 {

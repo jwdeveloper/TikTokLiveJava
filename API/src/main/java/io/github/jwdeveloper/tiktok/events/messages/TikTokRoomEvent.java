@@ -25,33 +25,37 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.UserAttribute;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLiveIntroMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSystemMessage;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokRoomEvent extends TikTokHeaderEvent {
-    private User host;
+public class TikTokRoomEvent extends TikTokHeaderEvent
+{
+    private User hostUser;
     private String hostLanguage;
-    private final String message;
+    private final String welcomeMessage;
 
     public TikTokRoomEvent(WebcastRoomMessage msg) {
         super(msg.getCommon());
-        message = msg.getContent();
+        welcomeMessage = msg.getContent();
     }
 
     public TikTokRoomEvent(WebcastSystemMessage msg) {
         super(msg.getCommon());
-        message = msg.getMessage();
+        welcomeMessage = msg.getMessage();
     }
 
     public TikTokRoomEvent(WebcastLiveIntroMessage msg) {
         super(msg.getCommon());
-        host = User.mapOrEmpty(msg.getHost());
-        message = msg.getContent();
+        hostUser = User.map(msg.getHost());
+        hostUser.addAttribute(UserAttribute.LiveHost);
+        welcomeMessage = msg.getContent();
         hostLanguage = msg.getLanguage();
     }
 

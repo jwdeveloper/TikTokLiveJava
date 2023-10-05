@@ -20,35 +20,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.objects;
+package io.github.jwdeveloper.tiktok.tools.collector.tables;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Value;
+import lombok.Data;
 
-import java.util.List;
+@Data
+public class TikTokResponseModel
+{
+    private Integer id;
 
-@Value
-public class BarrageData {
-  String eventType;
-  String label;
-  List<BarrageUser> users;
+    private String hostName;
 
-  public BarrageData(String eventType, String label, List<BarrageUser> users)
-  {
-    this.eventType = eventType;
-    this.label = label;
-    this.users = users;
-  }
+    private String response;
 
-
-
-
-  @Value
-  public static class BarrageUser
-  {
-      User user;
-
-      String data;
-  }
+    private String createdAt;
 }

@@ -30,6 +30,7 @@ import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPushFrame;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastWebsocketAck;
@@ -46,14 +47,14 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     private final TikTokMessageHandlerRegistration webResponseHandler;
     private final TikTokEventObserver tikTokEventHandler;
-    private final TikTokLiveClient tikTokLiveClient;
+    private final LiveClient tikTokLiveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
                                    int connectTimeout,
                                    TikTokMessageHandlerRegistration webResponseHandler,
                                    TikTokEventObserver tikTokEventHandler,
-                                   TikTokLiveClient tikTokLiveClient) {
+                                   LiveClient tikTokLiveClient) {
         super(serverUri, new Draft_6455(), httpHeaders,connectTimeout);
         this.webResponseHandler = webResponseHandler;
         this.tikTokEventHandler = tikTokEventHandler;
@@ -105,7 +106,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
             return;
         }
         var websocketMessage = websocketMessageOptional.get();
-        sendAckId(websocketMessage.getSeqId());
+        sendAckId(websocketMessage.getLogId());
 
         var webResponse = getWebResponseMessage(websocketMessage.getPayload());
         webResponseHandler.handle(tikTokLiveClient, webResponse);

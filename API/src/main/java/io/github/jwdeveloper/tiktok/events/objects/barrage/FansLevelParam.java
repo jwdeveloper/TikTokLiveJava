@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects.barrage;
 
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastBarrageMessage;
 
 public class FansLevelParam extends BarrageParam
@@ -32,6 +32,6 @@ public class FansLevelParam extends BarrageParam
     public FansLevelParam(WebcastBarrageMessage.BarrageTypeFansLevelParam param)
     {
         this.currentGrade = param.getCurrentGrade();
-        this.user = User.mapOrEmpty(param.getUser());
+        this.user = User.map(param.getUser());
     }
 }

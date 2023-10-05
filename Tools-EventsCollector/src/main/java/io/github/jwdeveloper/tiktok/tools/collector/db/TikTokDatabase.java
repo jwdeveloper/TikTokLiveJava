@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.tools.collector.db;
 
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokErrorModel;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokMessageModel;
+import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokResponseModel;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
@@ -37,6 +38,7 @@ public class TikTokDatabase {
     private final String database;
     private TikTokMessageModelDAO messagesTable;
     private TikTokErrorModelDAO errorTable;
+    private TikTokResponseModelDAO responseTable;
 
     public TikTokDatabase(String database) {
         this.database = database;
@@ -44,27 +46,32 @@ public class TikTokDatabase {
 
     public void init() throws SQLException {
         var jdbcUrl = "jdbc:sqlite:" + database + ".db";
-        var connection = DriverManager.getConnection(jdbcUrl);
+        DriverManager.getConnection(jdbcUrl);
         var jdbi = Jdbi.create(jdbcUrl)
                 .installPlugin(new SqlObjectPlugin());
         jdbi.useHandle(handle -> {
             handle.execute(SqlConsts.CREATE_MESSAGES_TABLE);
             handle.execute(SqlConsts.CREATE_ERROR_TABLE);
+            handle.execute(SqlConsts.CREATE_RESPONSE_MODEL);
         });
         messagesTable = jdbi.onDemand(TikTokMessageModelDAO.class);
         errorTable = jdbi.onDemand(TikTokErrorModelDAO.class);
+        responseTable = jdbi.onDemand(TikTokResponseModelDAO.class);
     }
 
     public void insertMessage(TikTokMessageModel message) {
-        var dateFormat = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss.SSS");
-        message.setCreatedAt(dateFormat.format(new Date()));
+        message.setCreatedAt(getTime());
         messagesTable.insertTikTokMessage(message);
     }
 
     public void insertError(TikTokErrorModel message) {
-        var dateFormat = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss.SSS");
-        message.setCreatedAt(dateFormat.format(new Date()));
+        message.setCreatedAt(getTime());
         errorTable.insertTikTokMessage(message);
+    }
+
+    public void insertResponse(TikTokResponseModel message) {
+        message.setCreatedAt(getTime());
+        responseTable.insert(message);
     }
 
     public List<TikTokErrorModel> selectErrors() {
@@ -73,5 +80,13 @@ public class TikTokDatabase {
 
     public List<TikTokMessageModel> selectMessages() {
         return messagesTable.select();
+    }
+
+    public List<TikTokResponseModel> selectResponces() {
+        return responseTable.select();
+    }
+
+    private String getTime() {
+        return new SimpleDateFormat("dd:MM:yyyy HH:mm:ss.SSS").format(new Date());
     }
 }

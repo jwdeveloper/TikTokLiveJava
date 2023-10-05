@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGoalUpdateMessage;
 import lombok.Getter;
@@ -43,13 +43,13 @@ public class TikTokGoalUpdateEvent extends TikTokHeaderEvent {
 
     public TikTokGoalUpdateEvent(WebcastGoalUpdateMessage msg) {
         super(msg.getCommon());
-        picture = Picture.Map(msg.getContributorAvatar());
+        picture = Picture.map(msg.getContributorAvatar());
         goalId = msg.getGoal().getId();
         description = msg.getGoal().getDescription();
         users = msg.getGoal()
                 .getContributorsListList()
                 .stream()
-                .map(u -> new User(u.getUserId(), u.getDisplayId(), Picture.Map(u.getAvatar())))
+                .map(u -> new User(u.getUserId(), u.getDisplayId(), Picture.map(u.getAvatar())))
                 .toList();
     }
 }

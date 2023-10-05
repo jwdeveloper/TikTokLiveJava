@@ -31,6 +31,7 @@ import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.http.HttpUtils;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import org.java_websocket.client.WebSocketClient;
 
@@ -39,7 +40,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-public class TikTokWebSocketClient {
+public class TikTokWebSocketClient implements SocketClient {
     private final Logger logger;
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
@@ -62,7 +63,7 @@ public class TikTokWebSocketClient {
         isConnected = false;
     }
 
-    public void start(WebcastResponse webcastResponse, TikTokLiveClient tikTokLiveClient) {
+    public void start(WebcastResponse webcastResponse, LiveClient tikTokLiveClient) {
         if (isConnected) {
             stop();
         }
@@ -90,7 +91,7 @@ public class TikTokWebSocketClient {
         }
     }
 
-    private WebSocketClient startWebSocket(String url, TikTokLiveClient liveClient) {
+    private WebSocketClient startWebSocket(String url, LiveClient liveClient) {
         var cookie = tikTokCookieJar.parseCookies();
         var map = new HashMap<String, String>();
         map.put("Cookie", cookie);

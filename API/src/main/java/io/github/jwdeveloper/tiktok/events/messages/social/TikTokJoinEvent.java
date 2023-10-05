@@ -20,21 +20,31 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.objects;
-import lombok.Value;
+package io.github.jwdeveloper.tiktok.events.messages.social;
 
-@Value
-public class TopViewer {
-   Integer rank;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
+import lombok.Getter;
 
-   User user;
+@Getter
+@EventMeta(eventType = EventType.Custom)
+public class TikTokJoinEvent extends TikTokHeaderEvent {
+    private final User user;
+    private final int totalUsers;
 
-   Integer coinsGiven;
+    public TikTokJoinEvent(WebcastSocialMessage msg, int viewersCount) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        this.totalUsers = viewersCount;
+    }
 
-  public TopViewer(io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomUserSeqMessage.Contributor viewer)
-  {
-    rank = (int)viewer.getRank();
-    user = User.mapOrEmpty(viewer.getUser());
-    coinsGiven = (int)viewer.getScore();
-  }
+    public TikTokJoinEvent(WebcastMemberMessage msg) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        totalUsers = msg.getMemberCount();
+    }
 }

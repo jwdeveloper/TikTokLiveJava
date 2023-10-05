@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.events.messages.poll;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.objects.PollOption;
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPollMessage;
 import lombok.Getter;
 
@@ -40,7 +40,7 @@ public class TikTokPollEndEvent extends TikTokPollEvent
     public TikTokPollEndEvent(WebcastPollMessage msg) {
         super(msg);
         var end = msg.getEndContent();
-        operator = User.mapOrEmpty(end.getOperator());
+        operator = User.map(end.getOperator());
         options =  end.getOptionListList().stream().map(PollOption::map).toList();
     }
 }

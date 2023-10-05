@@ -20,21 +20,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.events.objects.badges;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.objects.Gift;
+public class Badge {
 
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
-import lombok.Getter;
-
-@EventMeta(eventType = EventType.Custom)
-@Getter
-public class TikTokGiftComboFinishedEvent extends TikTokGiftEvent
-{
-
-    public TikTokGiftComboFinishedEvent(Gift gift, WebcastGiftMessage msg) {
-        super(gift, msg);
+    public static Badge map(io.github.jwdeveloper.tiktok.messages.data.BadgeStruct badge) {
+        return switch (badge.getDisplayType()) {
+            case BADGEDISPLAYTYPE_TEXT -> new TextBadge(badge.getText());
+            case BADGEDISPLAYTYPE_IMAGE -> new PictureBadge(badge.getImage());
+            case BADGEDISPLAYTYPE_STRING -> new StringBadge(badge.getStr());
+            case BADGEDISPLAYTYPE_COMBINE -> new CombineBadge(badge.getCombine());
+            default -> empty();
+        };
     }
+
+    public static Badge empty() {
+        return new Badge();
+    }
+
+
 }

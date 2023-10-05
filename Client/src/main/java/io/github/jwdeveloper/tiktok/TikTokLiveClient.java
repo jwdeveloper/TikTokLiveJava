@@ -32,11 +32,12 @@ import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
+import io.github.jwdeveloper.tiktok.live.UserManager;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
-import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
+import io.github.jwdeveloper.tiktok.websocket.SocketClient;
 
 import java.util.logging.Logger;
 
@@ -44,7 +45,7 @@ public class TikTokLiveClient implements LiveClient {
     private final TikTokRoomInfo liveRoomInfo;
     private final TikTokGiftManager tikTokGiftManager;
     private final TikTokApiService apiService;
-    private final TikTokWebSocketClient webSocketClient;
+    private final SocketClient webSocketClient;
     private final TikTokEventObserver tikTokEventHandler;
     private final ClientSettings clientSettings;
     private final TikTokListenersManager listenersManager;
@@ -52,7 +53,7 @@ public class TikTokLiveClient implements LiveClient {
 
     public TikTokLiveClient(TikTokRoomInfo tikTokLiveMeta,
                             TikTokApiService tikTokApiService,
-                            TikTokWebSocketClient webSocketClient,
+                            SocketClient webSocketClient,
                             TikTokGiftManager tikTokGiftManager,
                             TikTokEventObserver tikTokEventHandler,
                             ClientSettings clientSettings,
@@ -120,7 +121,7 @@ public class TikTokLiveClient implements LiveClient {
         }
         else
         {
-            var roomId = apiService.fetchRoomId(liveRoomInfo.getUserName());
+            var roomId = apiService.fetchRoomId(liveRoomInfo.getHostName());
             liveRoomInfo.setRoomId(roomId);
         }
 
@@ -146,8 +147,18 @@ public class TikTokLiveClient implements LiveClient {
     }
 
     @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
     public GiftManager getGiftManager() {
         return tikTokGiftManager;
+    }
+
+    @Override
+    public UserManager getUserManager() {
+        return null;
     }
 
 
@@ -155,6 +166,5 @@ public class TikTokLiveClient implements LiveClient {
         logger.info("TikTokLive client state: " + connectionState.name());
         liveRoomInfo.setConnectionState(connectionState);
     }
-
 
 }

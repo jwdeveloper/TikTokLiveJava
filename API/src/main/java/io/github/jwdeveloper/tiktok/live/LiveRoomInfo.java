@@ -30,6 +30,6 @@ public interface LiveRoomInfo
      int getLikesCount();
      boolean isAgeRestricted();
      String getRoomId();
-     String getUserName();
+     String getHostName();
      ConnectionState getConnectionState();
 }

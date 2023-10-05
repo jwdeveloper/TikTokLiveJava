@@ -142,7 +142,7 @@ import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokCommentEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftMessageEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 

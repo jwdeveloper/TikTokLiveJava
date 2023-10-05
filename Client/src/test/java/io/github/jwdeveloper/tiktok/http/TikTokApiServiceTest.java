@@ -35,7 +35,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -130,7 +129,7 @@ public class TikTokApiServiceTest
 
         when(clientSettings.getClientParameters()).thenReturn(clientParameters);
         when(tiktokHttpClient.getJObjectFromWebcastAPI(anyString(), any())).thenReturn(mockResponse);
-        when(new LiveRoomMetaMapper().mapFrom(mockResponse)).thenReturn(expectedLiveRoomMeta);  // Assuming LiveRoomMetaMapper is a simple mapper class
+        when(new LiveRoomMetaMapper().map(mockResponse)).thenReturn(expectedLiveRoomMeta);  // Assuming LiveRoomMetaMapper is a simple mapper class
 
         LiveRoomMeta liveRoomMeta = tikTokApiService.fetchRoomInfo();
 

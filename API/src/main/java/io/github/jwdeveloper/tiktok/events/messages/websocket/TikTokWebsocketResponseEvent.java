@@ -20,41 +20,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.events.messages.websocket;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
+import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
-/**
- * Triggered when a viewer sends likes to the streamer. For streams with many viewers, this event is not always triggered by TikTok.
- */
 @Getter
-@EventMeta(eventType = EventType.Custom)
-public class TikTokLikeEvent extends TikTokHeaderEvent
+@AllArgsConstructor
+@EventMeta(eventType = EventType.Debug)
+public class TikTokWebsocketResponseEvent extends TikTokEvent
 {
-    private final User user;
-
-    private final Integer count;
-
-    private final Integer totalLikes;
-
-    public TikTokLikeEvent(WebcastSocialMessage msg, int totalLikes) {
-        super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
-        count = 1;
-        this.totalLikes = totalLikes;
-    }
-
-    public TikTokLikeEvent(WebcastLikeMessage msg) {
-        super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
-        count = msg.getCount();
-        totalLikes = msg.getTotal();
-    }
+    private WebcastResponse response;
 }

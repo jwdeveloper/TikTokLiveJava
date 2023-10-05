@@ -26,10 +26,16 @@ import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokBarrageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftComboFinishedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEndEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollStartEvent;
 import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollUpdateEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.events.messages.social.TikTokShareEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.events.objects.Text;
@@ -128,7 +134,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
                     (int) giftMessage.getGift().getId(),
                     giftMessage.getGift().getName(),
                     giftMessage.getGift().getDiamondCount(),
-                    Picture.Map(giftMessage.getGift().getImage()));
+                    Picture.map(giftMessage.getGift().getImage()));
         }
 
         if (giftMessage.getRepeatEnd() > 0) {
@@ -171,8 +177,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     }
 
     private TikTokEvent handleRoomUserSeqMessage(WebcastResponse.Message msg) {
-        var event = (TikTokRoomViewerDataEvent) mapMessageToEvent(WebcastRoomUserSeqMessage.class, TikTokRoomViewerDataEvent.class, msg);
-        roomInfo.setViewersCount(event.getViewerCount());
+        var event = (TikTokRoomUserInfoEvent) mapMessageToEvent(WebcastRoomUserSeqMessage.class, TikTokRoomUserInfoEvent.class, msg);
+        roomInfo.setViewersCount(event.getTotalUsers());
         return event;
     }
 

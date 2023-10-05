@@ -45,10 +45,10 @@ public class TikTokBarrageEvent extends TikTokHeaderEvent {
 
     public TikTokBarrageEvent(WebcastBarrageMessage msg) {
         super(msg.getCommon());
-        icon = Picture.Map(msg.getIcon());
+        icon = Picture.map(msg.getIcon());
         eventName = msg.getEvent().getEventName();
-        backGround = Picture.Map(msg.getBackground());
-        rightIcon = Picture.Map(msg.getRightIcon());
+        backGround = Picture.map(msg.getBackground());
+        rightIcon = Picture.map(msg.getRightIcon());
         duration = msg.getDuration();
         switch (msg.getMsgType()) {
             case GRADEUSERENTRANCENOTIFICATION:

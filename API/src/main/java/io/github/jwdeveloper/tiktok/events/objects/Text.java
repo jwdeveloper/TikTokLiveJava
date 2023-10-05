@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects;
 
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,11 +51,11 @@ public class Text {
     {
         return switch (input.getType())
                 {
-            case 0 -> {
-                var user = User.mapOrEmpty(input.getUserValue().getUser());
-                yield new UserTextPiece(input.getStringValue(), user);
+            case 11 -> {
+                var user = User.map(input.getUserValue().getUser());
+                yield new UserTextPiece(user);
             }
-            case 1 -> new GiftTextPiece(input.getStringValue());
+            //case 12 -> new GiftTextPiece(input.getStringValue());
             default -> throw new TikTokLiveException("Unknown text piece");
         };
     }
@@ -62,14 +63,12 @@ public class Text {
     @Getter
     @AllArgsConstructor
     public static class TextPiece {
-        String value;
+
     }
 
     public static class UserTextPiece extends TextPiece {
         User user;
-
-        public UserTextPiece(String value, User user) {
-            super(value);
+        public UserTextPiece(User user) {
             this.user = user;
         }
     }
@@ -78,7 +77,7 @@ public class Text {
         Gift gift;
 
         public GiftTextPiece(String value) {
-            super(value);
+
         }
     }
 }

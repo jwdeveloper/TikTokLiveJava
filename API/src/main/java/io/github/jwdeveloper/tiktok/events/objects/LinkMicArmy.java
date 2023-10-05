@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects;
 
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.messages.data.LinkMicArmiesItems;
 import lombok.Value;
 
@@ -36,7 +37,7 @@ public class LinkMicArmy {
         armyId = army.getHostUserId();
         armies = army.getBattleGroupsList()
                 .stream()
-                .map(x -> new Army(x.getUsersList().stream().map(User::mapOrEmpty).toList(), x.getPoints()))
+                .map(x -> new Army(x.getUsersList().stream().map(User::map).toList(), x.getPoints()))
                 .toList();
     }
 

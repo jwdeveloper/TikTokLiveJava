@@ -20,23 +20,9 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.events.objects.users;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.base.TikTokUnhandledEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import lombok.Getter;
-
-
-/**
- * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
- */
-@Getter
-@EventMeta(eventType = EventType.Message)
-public class TikTokUnhandledWebsocketMessageEvent extends TikTokUnhandledEvent<WebcastResponse.Message>
+public enum UserAttribute
 {
-    public TikTokUnhandledWebsocketMessageEvent(WebcastResponse.Message data) {
-        super(data);
-    }
+    GiftGiver, Subscriber, Follower, Moderator, LiveHost, MutualFollowingWithLiveHost,Admin,Blocked,Muted
 }

@@ -51,7 +51,7 @@ public class TikTokLinkMicArmiesEvent extends TikTokHeaderEvent {
         super(msg.getCommon());
         battleId = msg.getId();
         armies = msg.getBattleItemsList().stream().map(LinkMicArmy::new).toList();
-        picture = Picture.Map(msg.getImage());
+        picture = Picture.map(msg.getImage());
         battleStatus = msg.getBattleStatus();
     }
 }

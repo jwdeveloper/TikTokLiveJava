@@ -20,19 +20,25 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.tools.tester;
+package io.github.jwdeveloper.tiktok.events.messages.websocket;
 
-import io.github.jwdeveloper.tiktok.events.objects.Gift;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public class RefelcionTest {
-    public static void main(String[] run) throws NoSuchFieldException, IllegalAccessException {
-        var gift = Gift.PANDA;
-        var url = gift.getPicture();
 
-        var field = gift.getClass().getDeclaredField("picture");
-        field.setAccessible(true);
-        field.set(gift, null);
+/**
+ * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
+ */
+@Getter
+@AllArgsConstructor
+@EventMeta(eventType = EventType.Debug)
+public class TikTokWebsocketMessageEvent extends TikTokEvent
+{
+    private TikTokEvent event;
 
-        var url2 = gift.getPicture();
-    }
+    private WebcastResponse.Message message;
 }

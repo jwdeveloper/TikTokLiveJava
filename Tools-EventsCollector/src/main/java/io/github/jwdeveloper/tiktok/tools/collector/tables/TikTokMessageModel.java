@@ -22,8 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.tools.collector.tables;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 
@@ -38,7 +36,7 @@ public class TikTokMessageModel
 
     private String type;
 
-    private String eventContent;
+    private String message;
 
     private String createdAt;
 }

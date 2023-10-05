@@ -20,28 +20,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.events.objects.badges;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.TopViewer;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomUserSeqMessage;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.messages.data.BadgeStruct;
 
-import java.util.List;
+public class CombineBadge extends Badge {
+    private final Picture picture;
+    private final String text;
+    private final String subText;
 
-@Getter
-@EventMeta(eventType = EventType.Message)
-public class TikTokRoomViewerDataEvent extends TikTokHeaderEvent {
-    private final Integer viewerCount;
-    private final List<TopViewer> topViewers;
 
-    public TikTokRoomViewerDataEvent(WebcastRoomUserSeqMessage msg) {
-        super(msg.getCommon());
-        //TODO sorting by rank       TopViewers = msg?.TopViewers?.Select(t => new Objects.TopViewer(t))?.OrderBy(t => t.Rank)?
-        viewerCount = (int) msg.getTotalUser();
-        topViewers = msg.getRanksListList().stream().map(TopViewer::new).toList();
+    public CombineBadge(BadgeStruct.CombineBadge combineBadge) {
+
+        picture = Picture.map(combineBadge.getIcon());
+        text = combineBadge.getText().getDefaultPattern();
+        subText = combineBadge.getStr();
     }
+
 
 }

@@ -23,13 +23,16 @@
 package io.github.jwdeveloper.tiktok.events;
 
 
+import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import lombok.Getter;
 
 /*
   Base class for all events
  */
 @Getter
-public abstract class TikTokEvent
-{
+public abstract class TikTokEvent {
 
+    public String toJson() {
+        return JsonUtil.toJson(this);
+    }
 }

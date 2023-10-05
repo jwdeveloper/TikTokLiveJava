@@ -120,7 +120,7 @@ public class TikTokApiService {
         try {
             var response = tiktokHttpClient.getJObjectFromWebcastAPI("room/info/", clientSettings.getClientParameters());
             var mapper = new LiveRoomMetaMapper();
-            var liveRoomMeta = mapper.mapFrom(response);
+            var liveRoomMeta = mapper.map(response);
             logger.info("RoomInfo status -> " + liveRoomMeta.getStatus());
             return liveRoomMeta;
         } catch (Exception e) {

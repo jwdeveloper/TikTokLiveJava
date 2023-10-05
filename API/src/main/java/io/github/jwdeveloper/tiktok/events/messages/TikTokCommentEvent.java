@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
-import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastChatMessage;
 import lombok.Getter;
 
@@ -40,16 +40,18 @@ import java.util.List;
 public class TikTokCommentEvent extends TikTokHeaderEvent {
     private final User user;
     private final String text;
-    private final String language;
-    private final List<User> mentionedUsers;
+    private final String getUserLanguage;
+    private final User mentionedUser;
     private final List<Picture> pictures;
+    private final boolean visibleToSender;
 
     public TikTokCommentEvent(WebcastChatMessage msg) {
         super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
+        user = User.map(msg.getUser());
         text = msg.getContent();
-        language = msg.getContentLanguage();
-        mentionedUsers = List.of(User.mapOrEmpty(msg.getAtUser()));
-        pictures = msg.getEmotesListList().stream().map(e -> Picture.Map(e.getEmote().getImage())).toList();
+        visibleToSender = msg.getVisibleToSender();
+        getUserLanguage = msg.getContentLanguage();
+        mentionedUser = User.map(msg.getAtUser(),msg.getUserIdentity());
+        pictures = msg.getEmotesListList().stream().map(e -> Picture.map(e.getEmote().getImage())).toList();
     }
 }

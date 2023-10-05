@@ -59,7 +59,7 @@ public class FullEventsExampleClass
                 {
 
                 })
-                .onRoomViewerData((liveClient, event) ->
+                .onRoomUserInfo((liveClient, event) ->
                 {
 
                 })

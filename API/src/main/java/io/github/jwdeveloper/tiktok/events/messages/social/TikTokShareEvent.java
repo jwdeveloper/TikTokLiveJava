@@ -20,40 +20,34 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
-
+package io.github.jwdeveloper.tiktok.events.messages.social;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
-
 /**
- * Triggered every time a gift arrives.
+ * Triggers when a user shares the stream. Based on social event.
  */
-@EventMeta(eventType = EventType.Message)
 @Getter
-public class TikTokGiftEvent extends TikTokHeaderEvent {
-    private final Gift gift;
-    private final User sender;
-    private final String purchaseId;
-    private final String receipt;
-    private final Long comboCount;
-    private final boolean comboFinished;
-    private final Long comboIndex;
+@EventMeta(eventType = EventType.Custom)
+public class TikTokShareEvent extends TikTokHeaderEvent {
+  private final User user;
+  private final int totalShares;
 
-    public TikTokGiftEvent(Gift gift, WebcastGiftMessage msg) {
-        super(msg.getCommon());
-        this.gift = gift;
-        sender = User.mapOrEmpty(msg.getUser());
-        purchaseId = msg.getOrderId();
-        receipt = msg.getMonitorExtra();
-        comboCount = msg.getComboCount();
-        comboFinished = msg.getRepeatEnd() > 0;
-        comboIndex = msg.getRepeatCount();
-    }
+  public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
+    super(msg.getCommon());
+    user = User.map(msg.getUser());
+    this.totalShares = amount;
+  }
+
+  public TikTokShareEvent(WebcastSocialMessage msg) {
+    super(msg.getCommon());
+    user = User.map(msg.getUser());
+    totalShares = 1;
+  }
+
 }

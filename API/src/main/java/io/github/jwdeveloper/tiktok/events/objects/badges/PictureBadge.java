@@ -20,31 +20,16 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.events.objects.badges;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.messages.data.BadgeStruct;
 
-@Getter
-@EventMeta(eventType = EventType.Custom)
-public class TikTokJoinEvent extends TikTokHeaderEvent {
-    private final User user;
-    private final int viewersCount;
+public class PictureBadge extends Badge {
 
-    public TikTokJoinEvent(WebcastSocialMessage msg, int viewersCount) {
-        super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
-        this.viewersCount = viewersCount;
-    }
+    private final Picture picture;
+    public PictureBadge(BadgeStruct.ImageBadge imageBadge) {
 
-    public TikTokJoinEvent(WebcastMemberMessage msg) {
-        super(msg.getCommon());
-        user = User.mapOrEmpty(msg.getUser());
-        viewersCount = msg.getMemberCount();
+        picture = Picture.map(imageBadge.getImage());
     }
 }

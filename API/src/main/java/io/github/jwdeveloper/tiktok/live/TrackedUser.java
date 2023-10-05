@@ -20,34 +20,17 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.messages;
+package io.github.jwdeveloper.tiktok.live;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.events.objects.Gift;
+import io.github.jwdeveloper.tiktok.events.objects.users.User;
 
-/**
- * Triggers when a user shares the stream. Based on social event.
- */
-@Getter
-@EventMeta(eventType = EventType.Custom)
-public class TikTokShareEvent extends TikTokHeaderEvent {
-  private final User user;
-  private final Integer amount;
+import java.util.List;
 
-  public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
-    super(msg.getCommon());
-    user = User.mapOrEmpty(msg.getUser());
-    this.amount = amount;
-  }
-
-  public TikTokShareEvent(WebcastSocialMessage msg) {
-    super(msg.getCommon());
-    user = User.mapOrEmpty(msg.getUser());
-    amount = 1;
-  }
-
+public interface TrackedUser
+{
+     List<TikTokEvent> getInvokedEvents();
+     List<Gift> getGifs();
+     User getUserData();
 }

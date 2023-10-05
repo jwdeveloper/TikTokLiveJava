@@ -64,9 +64,9 @@ message WebcastGiftMessage {
   Common common = 1;
   int64 giftId = 2;
   int64 fanTicketCount = 3;
-  int64 groupCount = 4;
-  int64 repeatCount = 5;
-  int64 comboCount = 6;
+  int32 groupCount = 4;
+  int32 repeatCount = 5;
+  int32 comboCount = 6;
   User user = 7;
   User toUser = 8;
   int32 repeatEnd = 9;
@@ -91,15 +91,6 @@ message WebcastGiftMessage {
   message PublicAreaCommon {
     Image userLabel = 1;
     int64 userConsumeInRoom = 2;
-  }
-
-  message UserIdentity {
-    bool isGiftGiverOfAnchor = 1;
-    bool isSubscriberOfAnchor = 2;
-    bool isMutualFollowingWithAnchor = 3;
-    bool isFollowerOfAnchor = 4;
-    bool isModeratorOfAnchor = 5;
-    bool isAnchor = 6;
   }
 }
 
@@ -170,14 +161,13 @@ message WebcastBarrageMessage {
 //@WebcastCaptionMessage
 // Closed Captioning for Video
 message WebcastCaptionMessage {
-  Common header = 1;
+  Common common = 1;
   uint64 timeStamp = 2;
-  uint32 data1 = 3;
   CaptionData captionData = 4;
 
   message CaptionData {
-    string ISOLanguage = 1;
-    string Text = 2;
+    string language = 1;
+    string text = 2;
   }
 }
 
@@ -198,6 +188,8 @@ message WebcastChatMessage {
   string contentLanguage = 14;
   int32 quickChatScene = 16;
   int32 communityFlaggedStatus = 17;
+  UserIdentity UserIdentity = 18;
+  map<int32,string> CommentQualityScores = 19;
 
   // @EmoteWithIndex
   // proto.webcast.im.ChatMessage
@@ -339,16 +331,16 @@ message WebcastSocialMessage {
   int64 shareType = 3;
   int64 action = 4;
   string shareTarget = 5;
-  int64 followCount = 6;
+  int32 followCount = 6;
   int64 shareDisplayStyle = 7;
-  int64 shareCount = 8;
+  int32 shareCount = 8;
 }
 
 //@WebcastSubNotifyMessage
 message WebcastSubNotifyMessage {
   Common common = 1;
   User user = 2;
-  ExhibitionType exhibitionType = 3; // Enum
+//  ExhibitionType exhibitionType = 3; // Enum
   int64 subMonth = 4;
   SubscribeType subscribeType = 5; // Enum
   OldSubscribeStatus oldSubscribeStatus = 6; // Enum

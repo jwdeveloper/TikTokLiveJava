@@ -33,7 +33,7 @@ public class Emote {
     UUID uuid;
 
     public static Emote map(io.github.jwdeveloper.tiktok.messages.data.Emote input) {
-        return new Emote(input.getEmoteId(), Picture.Map(input.getImage()), UUID.fromString(input.getUuid()));
+        return new Emote(input.getEmoteId(), Picture.map(input.getImage()), UUID.fromString(input.getUuid()));
     }
 
 }

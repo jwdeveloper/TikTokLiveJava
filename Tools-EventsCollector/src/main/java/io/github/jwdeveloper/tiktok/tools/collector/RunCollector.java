@@ -23,14 +23,12 @@
 package io.github.jwdeveloper.tiktok.tools.collector;
 
 import io.github.jwdeveloper.tiktok.TikTokLive;
-import io.github.jwdeveloper.tiktok.events.messages.*;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.ExceptionInfoModel;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokErrorModel;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokMessageModel;
+import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokResponseModel;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,33 +50,26 @@ public class RunCollector {
         //ignoredEvents = List.of("TikTokJoinEvent","TikTokLikeEvent");
 
         filter = new ArrayList<>();
-        filter.add(TikTokUnhandledSocialEvent.class);
-        filter.add(TikTokFollowEvent.class);
-        filter.add(TikTokLikeEvent.class);
-        filter.add(TikTokShareEvent.class);
-        filter.add(TikTokJoinEvent.class);
+        //   filter.add(TikTokUnhandledSocialEvent.class);
+        //   filter.add(TikTokFollowEvent.class);
+        //    filter.add(TikTokLikeEvent.class);
+        //    filter.add(TikTokShareEvent.class);
+        //     filter.add(TikTokJoinEvent.class);
 
-
-        var db = new TikTokDatabase("social_db");
+        var db = new TikTokDatabase("test");
         db.init();
 
-        var errors = db.selectErrors();
-
         var users = new ArrayList<String>();
-        users.add("mia_tattoo");
-        users.add("mr_wavecheck");
+     //   users.add("mia_tattoo");
+     //   users.add("mr_wavecheck");
         users.add("bangbetmenygy");
-        users.add("larasworld0202");
-        for (var user : users)
-        {
+       users.add("szwagierkaqueen");
+        for (var user : users) {
             try {
                 runTikTokLiveInstance(user, db);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
 
             }
-
         }
     }
 
@@ -87,29 +78,40 @@ public class RunCollector {
         TikTokLive.newClient(tiktokUser)
                 .onConnected((liveClient, event) ->
                 {
-                    System.out.println("CONNECTED TO "+liveClient.getRoomInfo().getUserName());
+                    System.out.println("CONNECTED TO " + liveClient.getRoomInfo().getHostName());
+                })
+                .onWebsocketResponse((liveClient, event) ->
+                {
+                    var response = Base64.getEncoder().encodeToString(event.getResponse().toByteArray());
+
+                    var responseModel = new TikTokResponseModel();
+                    responseModel.setResponse(response);
+                    responseModel.setHostName(liveClient.getRoomInfo().getHostName());
+
+                    tikTokDatabase.insertResponse(responseModel);
+                    System.out.println("Included response");
                 })
                 .onWebsocketMessage((liveClient, event) ->
                 {
                     var eventName = event.getEvent().getClass().getSimpleName();
 
-                    if(filter.size() != 0 &&  !filter.contains(event.getEvent().getClass()))
-                    {
+                    if (filter.size() != 0 && !filter.contains(event.getEvent().getClass())) {
                         return;
                     }
 
-                    var binary = Base64.getEncoder().encodeToString(event.getMessage().toByteArray());
+                    var messageBinary = Base64.getEncoder().encodeToString(event.getMessage().toByteArray());
                     var model = new TikTokMessageModel();
                     model.setType("messsage");
                     model.setHostName(tiktokUser);
                     model.setEventName(eventName);
-                    model.setEventContent(binary);
+                    model.setMessage(messageBinary);
 
-                    tikTokDatabase.insertMessage(model);
+                 //   tikTokDatabase.insertMessage(model);
                     System.out.println("EVENT: [" + tiktokUser + "] " + eventName);
                 })
                 .onError((liveClient, event) ->
                 {
+                    event.getException().printStackTrace();
                     var exception = event.getException();
                     var exceptionContent = ExceptionInfoModel.getStackTraceAsString(exception);
                     var errorModel = new TikTokErrorModel();

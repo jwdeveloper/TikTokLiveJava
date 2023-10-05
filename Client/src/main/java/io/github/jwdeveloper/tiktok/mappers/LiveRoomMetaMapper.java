@@ -28,7 +28,7 @@ import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 public class LiveRoomMetaMapper implements Mapper<JsonObject, LiveRoomMeta> 
 {
     @Override
-    public LiveRoomMeta mapFrom(JsonObject input) {
+    public LiveRoomMeta map(JsonObject input) {
         var liveRoomMeta = new LiveRoomMeta();
 
         if (!input.has("data")) {
