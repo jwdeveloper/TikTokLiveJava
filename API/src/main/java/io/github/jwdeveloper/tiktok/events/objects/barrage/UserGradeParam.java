@@ -20,7 +20,16 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.events.objects.barrage;
 
-public class SpecialEffects {
+import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastBarrageMessage;
+
+public class UserGradeParam extends BarrageParam {
+    int currentGrade;
+    User user;
+    public UserGradeParam(WebcastBarrageMessage.BarrageTypeUserGradeParam param) {
+        this.currentGrade = param.getCurrentGrade();
+        this.user = User.mapOrEmpty(param.getUser());
+    }
 }

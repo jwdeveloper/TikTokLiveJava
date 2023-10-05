@@ -22,7 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.exceptions;
 
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.Getter;
 
 import java.util.Base64;
@@ -38,19 +39,19 @@ public class TikTokLiveMessageException extends TikTokLiveException {
     public TikTokLiveMessageException(WebcastResponse.Message message,
                                       WebcastResponse webcastResponse,
                                       Throwable cause) {
-        super("Error while handling Message: " + message.getType() + ": \n", cause);
+        super("Error while handling Message: " + message.getMethod() + ": \n", cause);
         this.webcastMessage = message;
         this.webcastResponse = webcastResponse;
     }
 
-    public String messageName()
+    public String messageMethod()
     {
-        return webcastMessage.getType();
+        return webcastMessage.getMethod();
     }
 
     public String messageToBase64()
     {
-        return Base64.getEncoder().encodeToString(webcastMessage.getBinary().toByteArray());
+        return Base64.getEncoder().encodeToString(webcastMessage.getPayload().toByteArray());
     }
 
     public String webcastResponseToBase64()

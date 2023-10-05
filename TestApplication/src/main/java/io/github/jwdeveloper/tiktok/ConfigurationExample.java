@@ -37,7 +37,7 @@ public class ConfigurationExample {
                     clientSettings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     clientSettings.setLogLevel(Level.ALL); // Log level
                     clientSettings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
-                    clientSettings.setHandleExistingEventsAfterConnection(true); // Invokes all TikTok events that had occurred before connection
+                    clientSettings.setHandleExistingEvents(true); // Invokes all TikTok events that had occurred before connection
                     clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
 

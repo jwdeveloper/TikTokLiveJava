@@ -48,16 +48,11 @@ public class Constants {
      * Default TimeOut for Connections
      */
     public static final int DEFAULT_TIMEOUT = 20;
-    /**
-     * Default Polling-Time for Socket-Connection
-     */
-    public static final int DEFAULT_POLLTIME = 1;
+
 
     /**
      * Default Settings for Client
      */
-
-
     public static ClientSettings DefaultClientSettings() {
         var clientSettings = new ClientSettings();
         clientSettings.setTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT));
@@ -75,8 +70,6 @@ public class Constants {
     /**
      * Default Parameters for HTTP-Request
      */
-
-
     public static Map<String, Object> DefaultClientParams() {
         var clientParams = new TreeMap<String, Object>();
         clientParams.put("aid", 1988);

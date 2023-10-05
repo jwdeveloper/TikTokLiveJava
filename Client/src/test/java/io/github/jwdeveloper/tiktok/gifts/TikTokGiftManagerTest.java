@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.gifts;
 
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import org.junit.Assert;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,40 +33,37 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 
-public class TikTokGiftManagerTest
-{
+public class TikTokGiftManagerTest {
 
     @InjectMocks
     TikTokGiftManager giftManager;
 
+    private static final Picture rosePicture = new Picture("https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.png");
+
     @Test
-    void registerGift()
-    {
-        var fakeGift = giftManager.registerGift(123,"Fake gift",123123);
+    void registerGift() {
+        var fakeGift = giftManager.registerGift(123, "Fake gift", 123123, rosePicture);
         var gifts = giftManager.getGifts();
         var optional = gifts.stream().filter(r -> r == fakeGift).findFirst();
         Assertions.assertTrue(optional.isPresent());
     }
 
     @Test
-    void findById()
-    {
-        var target = giftManager.registerGift(123,"FAKE",123123);
+    void findById() {
+        var target = giftManager.registerGift(123, "FAKE", 123123, rosePicture);
         var result = giftManager.findById(target.getId());
-        Assertions.assertEquals(target,result);
+        Assertions.assertEquals(target, result);
     }
 
     @Test
-    void findByName()
-    {
-      var target = giftManager.registerGift(123,"FAKE",123123);
-      var result = giftManager.findByName(target.getName());
-      Assertions.assertEquals(target,result);
+    void findByName() {
+        var target = giftManager.registerGift(123, "FAKE", 123123, rosePicture);
+        var result = giftManager.findByName(target.getName());
+        Assertions.assertEquals(target, result);
     }
 
     @Test
-    void getGifts()
-    {
+    void getGifts() {
         Assertions.assertEquals(Gift.values().length, giftManager.getGifts().size());
     }
 

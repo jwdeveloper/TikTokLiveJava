@@ -22,20 +22,16 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
-import com.google.gson.Gson;
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
-import io.github.jwdeveloper.tiktok.models.gifts.TikTokGiftInfo;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TikTokApiService {
@@ -137,34 +133,10 @@ public class TikTokApiService {
         try {
             var response = tiktokHttpClient.getDeserializedMessage("im/fetch/", clientSettings.getClientParameters());
             clientSettings.getClientParameters().put("cursor", response.getCursor());
-            clientSettings.getClientParameters().put("internal_ext", response.getAckIds());
+            clientSettings.getClientParameters().put("internal_ext", response.getInternalExt());
             return response;
         } catch (Exception e) {
             throw new TikTokLiveRequestException("Failed to fetch client data", e);
-        }
-    }
-
-    public Map<Integer, TikTokGiftInfo> fetchAvailableGifts() {
-        try {
-            var response = tiktokHttpClient.getJObjectFromWebcastAPI("gift/list/", clientSettings.getClientParameters());
-            if (!response.has("data")) {
-                return new HashMap<>();
-            }
-            var dataJson = response.getAsJsonObject("data");
-            if (!dataJson.has("gifts")) {
-                return new HashMap<>();
-            }
-            var giftsJsonList = dataJson.get("gifts").getAsJsonArray();
-            var gifts = new HashMap<Integer, TikTokGiftInfo>();
-            var gson = new Gson();
-            for (var jsonGift : giftsJsonList) {
-                var gift = gson.fromJson(jsonGift, TikTokGiftInfo.class);
-                logger.info("Found Gift " + gift.getName() + " with ID " + gift.getId());
-                gifts.put(gift.getId(), gift);
-            }
-            return gifts;
-        } catch (Exception e) {
-            throw new TikTokLiveRequestException("Failed to fetch giftTokens from WebCast, see stacktrace for more info.", e);
         }
     }
 }

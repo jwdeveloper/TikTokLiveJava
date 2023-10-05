@@ -29,7 +29,7 @@ import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 
 import java.util.Base64;
@@ -75,7 +75,6 @@ public class RunTester {
             sb.append(" combo: " + event.getComboCount());
             sb.append(" index " + event.getComboIndex());
             sb.append(" sender " + event.getSender().getNickName());
-            sb.append(" finished " + event.getComboFinished());
             System.out.println(sb.toString());
         });
         observer.<TikTokGiftComboFinishedEvent>subscribe(TikTokGiftComboFinishedEvent.class, (liveClient, event) ->

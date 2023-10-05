@@ -26,31 +26,25 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastMemberMessage;
-import io.github.jwdeveloper.tiktok.messages.WebcastSocialMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
 @Getter
 @EventMeta(eventType = EventType.Custom)
 public class TikTokJoinEvent extends TikTokHeaderEvent {
-    private User user;
-    private final Long totalViewers;
+    private final User user;
+    private final int viewersCount;
 
-    public TikTokJoinEvent(WebcastSocialMessage msg) {
-        super(msg.getHeader());
-
-        if (msg.hasSender()) {
-            user = new User(msg.getSender());
-        }
-
-        totalViewers = 0L;
+    public TikTokJoinEvent(WebcastSocialMessage msg, int viewersCount) {
+        super(msg.getCommon());
+        user = User.mapOrEmpty(msg.getUser());
+        this.viewersCount = viewersCount;
     }
 
     public TikTokJoinEvent(WebcastMemberMessage msg) {
-        super(msg.getHeader());
-        if (msg.hasUser()) {
-            user = new User(msg.getUser());
-        }
-        totalViewers = msg.getTotalViewers();
+        super(msg.getCommon());
+        user = User.mapOrEmpty(msg.getUser());
+        viewersCount = msg.getMemberCount();
     }
 }

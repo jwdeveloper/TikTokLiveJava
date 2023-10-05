@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastQuestionNewMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastQuestionNewMessage;
 import lombok.Getter;
 
 /*
@@ -45,7 +45,7 @@ public class TikTokQuestionEvent extends TikTokHeaderEvent {
 
 
     public TikTokQuestionEvent(WebcastQuestionNewMessage msg) {
-        super(msg.getHeader());
+        super(msg.getCommon());
         var data = msg.getDetails();
         questionId = data.getId();
         text = data.getText();

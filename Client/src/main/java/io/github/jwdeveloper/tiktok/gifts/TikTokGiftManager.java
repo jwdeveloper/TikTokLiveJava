@@ -23,12 +23,9 @@
 package io.github.jwdeveloper.tiktok.gifts;
 
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
-import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
-import io.github.jwdeveloper.tiktok.models.GiftId;
-import lombok.Getter;
 import sun.misc.Unsafe;
 
 import java.util.HashMap;
@@ -37,13 +34,10 @@ import java.util.Map;
 
 public class TikTokGiftManager implements GiftManager {
 
-    @Getter
-    private final Map<GiftId, TikTokGift> activeGifts;
     private final Map<Integer, Gift> indexById;
     private final Map<String, Gift> indexByName;
 
     public TikTokGiftManager() {
-        activeGifts = new HashMap<>();
         indexById = new HashMap<>();
         indexByName = new HashMap<>();
         init();
@@ -56,26 +50,7 @@ public class TikTokGiftManager implements GiftManager {
         }
     }
 
-    public TikTokGift updateActiveGift(WebcastGiftMessage giftMessage) {
-        var giftId = new GiftId(giftMessage.getGiftId(), giftMessage.getUser().getIdStr());
-        if (activeGifts.containsKey(giftId)) {
-            var gift = activeGifts.get(giftId);
-            gift.setAmount(giftMessage.getComboCount());
-        } else {
-            var newGift = new TikTokGift(findById((int) giftMessage.getGiftId()), giftMessage);
-            activeGifts.put(giftId, newGift);
-        }
-
-        var gift = activeGifts.get(giftId);
-
-        if (giftMessage.getRepeatEnd() > 0) {
-            gift.setStreakFinished(true);
-            activeGifts.remove(giftId);
-        }
-        return gift;
-    }
-
-    public Gift registerGift(int id, String name, int diamondCost) {
+    public Gift registerGift(int id, String name, int diamondCost, Picture picture) {
         try {
             var constructor = Unsafe.class.getDeclaredConstructors()[0];
             constructor.setAccessible(true);
@@ -94,6 +69,10 @@ public class TikTokGiftManager implements GiftManager {
             field = Gift.class.getDeclaredField("diamondCost");
             field.setAccessible(true);
             field.set(enumInstance, diamondCost);
+
+            field = Gift.class.getDeclaredField("picture");
+            field.setAccessible(true);
+            field.set(enumInstance, picture);
 
             indexById.put(enumInstance.getId(), enumInstance);
             indexByName.put(enumInstance.getName(), enumInstance);

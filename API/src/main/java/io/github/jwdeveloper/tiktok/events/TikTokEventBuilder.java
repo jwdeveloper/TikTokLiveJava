@@ -23,6 +23,14 @@
 package io.github.jwdeveloper.tiktok.events;
 
 import io.github.jwdeveloper.tiktok.events.messages.*;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftComboFinishedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokBarrageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEvent;
 
 
 public interface TikTokEventBuilder<T> {

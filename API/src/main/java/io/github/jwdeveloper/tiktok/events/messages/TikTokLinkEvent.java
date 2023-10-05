@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastLinkMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class TikTokLinkEvent extends TikTokHeaderEvent {
     private final List<User> otherUsers;
 
     public TikTokLinkEvent(WebcastLinkMessage msg) {
-        super(msg.getHeader());
+        super(msg.getCommon());
         token = msg.getToken();
         if (msg.getUser().getUser().hasUser()) {
             user = new User(msg.getUser().getUser().getUser());

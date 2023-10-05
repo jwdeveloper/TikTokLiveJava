@@ -32,7 +32,7 @@ import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
-import io.github.jwdeveloper.tiktok.live.ConnectionState;
+import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;

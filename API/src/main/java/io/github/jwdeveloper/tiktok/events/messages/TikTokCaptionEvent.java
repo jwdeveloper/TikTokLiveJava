@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.WebcastCaptionMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastCaptionMessage;
 import lombok.Value;
 
 @Value

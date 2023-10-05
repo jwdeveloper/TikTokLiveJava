@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.Constants;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.net.URI;
 import java.net.http.HttpClient;

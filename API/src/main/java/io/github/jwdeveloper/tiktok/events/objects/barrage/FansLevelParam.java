@@ -20,14 +20,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok;
+package io.github.jwdeveloper.tiktok.events.objects.barrage;
 
+import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastBarrageMessage;
 
-public class Main {
-    public static void main(String[] args)
+public class FansLevelParam extends BarrageParam
+{
+    int currentGrade;
+    User user;
+    public FansLevelParam(WebcastBarrageMessage.BarrageTypeFansLevelParam param)
     {
-        var generator = new ReadmeGenerator();
-        generator.generate();
-
+        this.currentGrade = param.getCurrentGrade();
+        this.user = User.mapOrEmpty(param.getUser());
     }
 }

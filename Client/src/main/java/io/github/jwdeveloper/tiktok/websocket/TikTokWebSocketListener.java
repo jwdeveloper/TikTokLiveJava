@@ -30,9 +30,9 @@ import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
-import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketAck;
-import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPushFrame;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastWebsocketAck;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
@@ -105,16 +105,16 @@ public class TikTokWebSocketListener extends WebSocketClient {
             return;
         }
         var websocketMessage = websocketMessageOptional.get();
-        sendAckId(websocketMessage.getId());
+        sendAckId(websocketMessage.getSeqId());
 
-        var webResponse = getWebResponseMessage(websocketMessage.getBinary());
+        var webResponse = getWebResponseMessage(websocketMessage.getPayload());
         webResponseHandler.handle(tikTokLiveClient, webResponse);
     }
 
-    private Optional<WebcastWebsocketMessage> getWebcastWebsocketMessage(byte[] buffer) {
+    private Optional<WebcastPushFrame> getWebcastWebsocketMessage(byte[] buffer) {
         try {
-            var websocketMessage = WebcastWebsocketMessage.parseFrom(buffer);
-            if (websocketMessage.getBinary().isEmpty()) {
+            var websocketMessage = WebcastPushFrame.parseFrom(buffer);
+            if (websocketMessage.getPayload().isEmpty()) {
                 return Optional.empty();
             }
             return Optional.of(websocketMessage);

@@ -25,33 +25,40 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.events.objects.BarrageData;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
-import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastBarrageMessage;
-import lombok.Value;
+import io.github.jwdeveloper.tiktok.events.objects.barrage.BarrageParam;
+import io.github.jwdeveloper.tiktok.events.objects.barrage.FansLevelParam;
+import io.github.jwdeveloper.tiktok.events.objects.barrage.SubscribeGiftParam;
+import io.github.jwdeveloper.tiktok.events.objects.barrage.UserGradeParam;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastBarrageMessage;
+import lombok.Getter;
 
-@Value
+@Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokBarrageEvent extends TikTokHeaderEvent {
-    Picture picture;
-    Picture picture2;
-    Picture picture3;
-    User user;
-    BarrageData barrageData;
+    private final Picture icon;
+    private final Picture backGround;
+    private final Picture rightIcon;
+    private final String eventName;
+    private final int duration;
+    private BarrageParam barrageParam;
+
     public TikTokBarrageEvent(WebcastBarrageMessage msg) {
-        super(msg.getHeader());
-        picture = Picture.Map(msg.getImage());
-        picture2 = Picture.Map(msg.getImage2());
-        picture3 = Picture.Map(msg.getImage3());
-        user = new User(msg.getUserData().getUser());
-        barrageData = new BarrageData(msg.getMessage().getEventType(),
-                msg.getMessage().getLabel(),
-                msg.getMessage().getData1List().stream().map(e ->
-                {
-                    var user = new User(e.getUser().getUser());
-                    return new BarrageData.BarrageUser(user, e.getData2());
-                }).toList()
-        );
+        super(msg.getCommon());
+        icon = Picture.Map(msg.getIcon());
+        eventName = msg.getEvent().getEventName();
+        backGround = Picture.Map(msg.getBackground());
+        rightIcon = Picture.Map(msg.getRightIcon());
+        duration = msg.getDuration();
+        switch (msg.getMsgType()) {
+            case GRADEUSERENTRANCENOTIFICATION:
+                barrageParam = new UserGradeParam(msg.getUserGradeParam());
+            case FANSLEVELUPGRADE:
+                barrageParam = new FansLevelParam(msg.getFansLevelParam());
+            case SUBSCRIBEGIFT:
+                barrageParam = new SubscribeGiftParam(msg.getSubscribeGiftParam());
+            default:
+                barrageParam = new BarrageParam();
+        }
     }
 }

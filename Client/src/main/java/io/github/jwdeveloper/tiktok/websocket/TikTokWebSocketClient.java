@@ -31,7 +31,7 @@ import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.http.HttpUtils;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import org.java_websocket.client.WebSocketClient;
 
 import java.net.URI;
@@ -67,10 +67,11 @@ public class TikTokWebSocketClient {
             stop();
         }
 
-        if (webcastResponse.getSocketUrl().isEmpty() ||
-            webcastResponse.getSocketParamsList().isEmpty()) {
+        if (webcastResponse.getPushServer().isEmpty() ||
+            webcastResponse.getRouteParamsMapMap().isEmpty()) {
             throw new TikTokLiveException("Could not find Room");
         }
+
         try {
             var url = getWebSocketUrl(webcastResponse);
             if (clientSettings.isHandleExistingEvents()) {
@@ -102,16 +103,10 @@ public class TikTokWebSocketClient {
     }
 
     private String getWebSocketUrl(WebcastResponse webcastResponse) {
-        var params = webcastResponse.getSocketParamsList().get(0);
-        var name = params.getName();
-        var value = params.getValue();
-        var headers = Constants.DefaultRequestHeaders();
-
-
         var clone = new TreeMap<>(clientSettings.getClientParameters());
-        clone.putAll(headers);
-        clone.put(name, value);
-        var url = webcastResponse.getSocketUrl();
+        clone.putAll(Constants.DefaultRequestHeaders());
+        clone.putAll(webcastResponse.getRouteParamsMapMap());
+        var url = webcastResponse.getPushServer();
         return HttpUtils.parseParametersEncode(url, clone);
     }
 

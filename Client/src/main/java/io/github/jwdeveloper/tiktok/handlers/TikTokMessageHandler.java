@@ -31,7 +31,7 @@ import io.github.jwdeveloper.tiktok.events.messages.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokUnhandledWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,11 +75,11 @@ public abstract class TikTokMessageHandler {
 
 
     public void handleSingleMessage(TikTokLiveClient client, WebcastResponse.Message message) throws Exception {
-        if (!handlers.containsKey(message.getType())) {
+        if (!handlers.containsKey(message.getMethod())) {
             tikTokEventHandler.publish(client, new TikTokUnhandledWebsocketMessageEvent(message));
             return;
         }
-        var handler = handlers.get(message.getType());
+        var handler = handlers.get(message.getMethod());
         var tiktokEvent = handler.handle(message);
         tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(tiktokEvent, message));
         tikTokEventHandler.publish(client, tiktokEvent);
@@ -88,7 +88,7 @@ public abstract class TikTokMessageHandler {
     protected TikTokEvent mapMessageToEvent(Class<?> inputClazz, Class<?> outputClass, WebcastResponse.Message message) {
         try {
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", ByteString.class);
-            var deserialized = parseMethod.invoke(null, message.getBinary());
+            var deserialized = parseMethod.invoke(null, message.getPayload());
 
             var constructors = Arrays.stream(outputClass.getConstructors())
                     .filter(ea -> Arrays.stream(ea.getParameterTypes())

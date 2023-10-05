@@ -24,10 +24,8 @@ package io.github.jwdeveloper.tiktok.events.messages;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.base.TikTokUnhandledEvent;
-import io.github.jwdeveloper.tiktok.messages.WebcastControlMessage;
-import lombok.AllArgsConstructor;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastControlMessage;
 import lombok.Getter;
 
 @Getter

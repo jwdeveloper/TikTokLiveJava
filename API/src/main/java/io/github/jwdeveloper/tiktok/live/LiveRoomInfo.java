@@ -22,9 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
+import io.github.jwdeveloper.tiktok.models.ConnectionState;
+
 public interface LiveRoomInfo
 {
      int getViewersCount();
+     int getLikesCount();
      boolean isAgeRestricted();
      String getRoomId();
      String getUserName();

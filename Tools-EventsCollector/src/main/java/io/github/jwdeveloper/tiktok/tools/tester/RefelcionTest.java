@@ -20,16 +20,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.tools.tester;
 
-import lombok.Data;
+import io.github.jwdeveloper.tiktok.events.objects.Gift;
 
-import java.util.List;
+public class RefelcionTest {
+    public static void main(String[] run) throws NoSuchFieldException, IllegalAccessException {
+        var gift = Gift.PANDA;
+        var url = gift.getPicture();
 
-@Data
-public class DisplayText {
-    private DefaultFormat default_format;
-    private String default_pattern;
-    private String key;
-    private List<Object> pieces;
+        var field = gift.getClass().getDeclaredField("picture");
+        field.setAccessible(true);
+        field.set(gift, null);
+
+        var url2 = gift.getPicture();
+    }
 }

@@ -41,6 +41,9 @@ public class BarrageData {
     this.users = users;
   }
 
+
+
+
   @Value
   public static class BarrageUser
   {

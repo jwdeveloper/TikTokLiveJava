@@ -22,8 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.messages.data.PollOptionInfo;
 import lombok.Value;
 
 import java.util.List;
@@ -31,13 +30,18 @@ import java.util.List;
 @Value
 public class PollOption {
 
-    private final User user;
-    private final List<Option> options;
+    int optionId;
+    String content;
+    int votes;
+    List<User> users;
 
-    @Value
-    public static final class Option {
-        private final String label;
+    public static PollOption map(PollOptionInfo pollOptionInfo) {
 
-        private final Integer total;
+        var users = pollOptionInfo.getVoteUserListList().stream().map(User::mapOrEmpty).toList();
+        return new PollOption(
+                pollOptionInfo.getOptionIdx(),
+                pollOptionInfo.getDisplayContent(),
+                pollOptionInfo.getVotes(),
+                users);
     }
 }

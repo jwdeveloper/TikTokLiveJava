@@ -50,7 +50,7 @@ public class SimpleExample {
                 })
                 .onFollow((liveClient, event) ->
                 {
-                    print(ConsoleColors.BLUE, "Follow -> ", ConsoleColors.WHITE_BRIGHT, event.getNewFollower().getNickName());
+                    print(ConsoleColors.BLUE, "Follow -> ", ConsoleColors.WHITE_BRIGHT, event.getUser().getNickName());
                 })
                 .onJoin((client, event) ->
                 {

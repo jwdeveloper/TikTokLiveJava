@@ -26,6 +26,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import io.github.jwdeveloper.tiktok.Constants;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
@@ -64,6 +65,10 @@ public class GiftOfficialJson {
                 .get("image").getAsJsonObject()
                 .get("url_list").getAsJsonArray().get(0).getAsString();
 
+        if(image.endsWith(".webp"))
+        {
+            image = image.replace(".webp",".jpg");
+        }
         var gift = new GiftDto();
         gift.setId(id);
         gift.setName(name);

@@ -30,10 +30,15 @@ import java.util.regex.Pattern;
 
 public class ReadmeGenerator
 {
+    public static void main(String[] args)
+    {
+        var generator = new ReadmeGenerator();
+        generator.generate();
 
+    }
     public void generate()
     {
-        var template = FilesUtility.getFileFromResource(Main.class,"template.md");
+        var template = FilesUtility.getFileFromResource(ReadmeGenerator.class,"template.md");
         var variables = new HashMap<String,Object>();
 
         variables.put("version", getCurrentVersion());

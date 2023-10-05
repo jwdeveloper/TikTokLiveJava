@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects;
 
-import io.github.jwdeveloper.tiktok.messages.BadgeStruct;
+import io.github.jwdeveloper.tiktok.messages.data.BadgeStruct;
 import lombok.Value;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class Badge {
         this.imageBadges = imageBadges;
     }
 
-    public Badge(io.github.jwdeveloper.tiktok.messages.BadgeStruct badge)
+    public Badge(io.github.jwdeveloper.tiktok.messages.data.BadgeStruct badge)
     {
         comboBadges = ComboBadge.map(badge.getCombine());
         textBadges = TextBadge.mapAll(badge.getTextList());

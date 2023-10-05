@@ -20,12 +20,20 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.events.objects;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
-public class LockInfo
-{
-    private int lock_type;
+import java.util.UUID;
+
+@Value
+public class Emote {
+    String emoteId;
+    Picture picture;
+    UUID uuid;
+
+    public static Emote map(io.github.jwdeveloper.tiktok.messages.data.Emote input) {
+        return new Emote(input.getEmoteId(), Picture.Map(input.getImage()), UUID.fromString(input.getUuid()));
+    }
+
 }

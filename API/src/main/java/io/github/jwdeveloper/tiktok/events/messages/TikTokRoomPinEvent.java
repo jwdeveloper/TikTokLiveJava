@@ -25,19 +25,22 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.WebcastRoomPinMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomPinMessage;
 import lombok.Getter;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokRoomPinEvent extends TikTokHeaderEvent {
-  private final Long pinTimeStamp;
-  private final TikTokCommentEvent comment;
+public class TikTokRoomPinEvent extends TikTokHeaderEvent
+{
 
-  public TikTokRoomPinEvent(WebcastRoomPinMessage msg) {
-    super(msg.getHeader());
-    this.pinTimeStamp = msg.getTimestamp();
-    this.comment = new TikTokCommentEvent(msg.getPinData1());
+  private TikTokCommentEvent pinnedMessage;
+  private long timestamp;
+
+  public TikTokRoomPinEvent(WebcastRoomPinMessage msg, TikTokCommentEvent commentEvent)
+  {
+    super(msg.getCommon());
+    this.timestamp = msg.getTimestamp();
+    this.pinnedMessage = commentEvent;
   }
 
 }

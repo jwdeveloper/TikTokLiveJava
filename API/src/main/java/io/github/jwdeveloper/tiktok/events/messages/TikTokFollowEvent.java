@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastSocialMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Value;
 
 /**
@@ -36,12 +36,12 @@ import lombok.Value;
 @EventMeta(eventType = EventType.Custom)
 public class TikTokFollowEvent extends TikTokHeaderEvent
 {
-   User newFollower;
+   User user;
    Long totalFollowers;
 
   public TikTokFollowEvent(WebcastSocialMessage msg) {
-    super(msg.getHeader());
-    newFollower = User.MapOrEmpty(msg.getSender());
-    totalFollowers = msg.getTotalFollowers();
+    super(msg.getCommon());
+    user = User.mapOrEmpty(msg.getUser());
+    totalFollowers = msg.getFollowCount();
   }
 }

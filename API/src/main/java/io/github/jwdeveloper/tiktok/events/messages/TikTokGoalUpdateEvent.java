@@ -27,7 +27,8 @@ import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastGoalUpdateMessage;
+
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGoalUpdateMessage;
 import lombok.Getter;
 
 import java.util.List;
@@ -37,16 +38,18 @@ import java.util.List;
 public class TikTokGoalUpdateEvent extends TikTokHeaderEvent {
     private final Long goalId;
     private final Picture picture;
-    private final String eventType;
-    private final String label;
+    private final String description;
     private final List<User> users;
 
     public TikTokGoalUpdateEvent(WebcastGoalUpdateMessage msg) {
-        super(msg.getHeader());
-        picture = Picture.Map(msg.getImage());
-        goalId = msg.getId();
-        eventType = msg.getData().getType();
-        label = msg.getUpdateData().getLabel();
-        users = msg.getUpdateData().getUsersList().stream().map(u -> new User(u.getId(), u.getNickname(), Picture.Map(u.getProfileImage()))).toList();
+        super(msg.getCommon());
+        picture = Picture.Map(msg.getContributorAvatar());
+        goalId = msg.getGoal().getId();
+        description = msg.getGoal().getDescription();
+        users = msg.getGoal()
+                .getContributorsListList()
+                .stream()
+                .map(u -> new User(u.getUserId(), u.getDisplayId(), Picture.Map(u.getAvatar())))
+                .toList();
     }
 }

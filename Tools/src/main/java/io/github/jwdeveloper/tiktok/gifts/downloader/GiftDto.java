@@ -22,6 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.gifts.downloader;
 
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.utils.JsonIgnore;
 import lombok.Data;
 
 @Data

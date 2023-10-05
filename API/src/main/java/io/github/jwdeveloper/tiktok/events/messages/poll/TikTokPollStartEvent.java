@@ -20,28 +20,31 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.events.messages.poll;
 
-import lombok.Data;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.objects.PollOption;
+import io.github.jwdeveloper.tiktok.events.objects.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPollMessage;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
-public class LeftIcon {
-    private String avg_color;
-    private int height;
-    private int image_type;
-    private boolean is_animated;
-    private String open_web_url;
-    private String uri;
-    private List<String> url_list;
-    private int width;
+@Getter
+@EventMeta(eventType = EventType.Custom)
+public class TikTokPollStartEvent extends TikTokPollEvent {
+
+    private final List<PollOption> options;
+    private final String title;
+    private final User operator;
+
+    public TikTokPollStartEvent(WebcastPollMessage msg) {
+        super(msg);
+        var startContent = msg.getStartContent();
+
+        title = startContent.getTitle();
+        operator = User.mapOrEmpty(startContent.getOperator());
+        options = startContent.getOptionListList().stream().map(PollOption::map).toList();
+    }
 }
-
-
-
-
-
-
-
-

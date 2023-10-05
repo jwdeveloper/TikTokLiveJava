@@ -25,7 +25,8 @@ package io.github.jwdeveloper.tiktok.events.messages;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
+
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
 @EventMeta(eventType = EventType.Custom)

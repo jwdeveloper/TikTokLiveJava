@@ -20,16 +20,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models;
+package io.github.jwdeveloper.tiktok.events.messages.poll;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class GiftId
-{
-    private long giftId;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.objects.PollOption;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPollMessage;
+import lombok.Getter;
 
-    private String userName;
+import java.util.List;
+
+@EventMeta(eventType = EventType.Custom)
+@Getter
+public class TikTokPollUpdateEvent extends TikTokPollEvent {
+    private final List<PollOption> options;
+    public TikTokPollUpdateEvent(WebcastPollMessage msg) {
+        super(msg);
+        options = msg.getUpdateContent().getOptionListList().stream().map(PollOption::map).toList();
+    }
 }

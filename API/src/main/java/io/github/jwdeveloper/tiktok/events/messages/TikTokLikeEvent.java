@@ -26,8 +26,8 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastLikeMessage;
-import io.github.jwdeveloper.tiktok.messages.WebcastSocialMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
 
@@ -38,29 +38,23 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Custom)
 public class TikTokLikeEvent extends TikTokHeaderEvent
 {
-    private User sender;
+    private final User user;
 
     private final Integer count;
 
-    private final Long totalLikes;
+    private final Integer totalLikes;
 
-    public TikTokLikeEvent(WebcastSocialMessage msg) {
-        super(msg.getHeader());
-        if (msg.hasSender()) {
-            sender = new User(msg.getSender());
-        }
+    public TikTokLikeEvent(WebcastSocialMessage msg, int totalLikes) {
+        super(msg.getCommon());
+        user = User.mapOrEmpty(msg.getUser());
         count = 1;
-        totalLikes = 0L;
+        this.totalLikes = totalLikes;
     }
 
     public TikTokLikeEvent(WebcastLikeMessage msg) {
-        super(msg.getHeader());
-
-        if (msg.hasSender()) {
-            sender = new User(msg.getSender());
-        }
-
+        super(msg.getCommon());
+        user = User.mapOrEmpty(msg.getUser());
         count = msg.getCount();
-        totalLikes = msg.getTotalLikes();
+        totalLikes = msg.getTotal();
     }
 }

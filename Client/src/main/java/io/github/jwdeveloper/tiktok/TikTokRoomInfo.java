@@ -22,13 +22,16 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.live.ConnectionState;
+import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import lombok.Data;
 
 @Data
 public class TikTokRoomInfo implements LiveRoomInfo
 {
+
+    private int likesCount;
+
     private int viewersCount;
 
     private String roomId;

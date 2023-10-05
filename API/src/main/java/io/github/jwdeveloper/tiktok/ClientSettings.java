@@ -69,13 +69,13 @@ public class ClientSettings {
 
 
     /**
-     *  Optional: Use it if you need to change tiktok live hostname in builder
+     *  Optional: Use it if you need to change TikTok live hostname in builder
      */
     private String hostName;
 
 
     /**
-     * Parameters used in requests to Tiktok api
+     * Parameters used in requests to TikTok api
      */
     private Map<String, Object> clientParameters;
 

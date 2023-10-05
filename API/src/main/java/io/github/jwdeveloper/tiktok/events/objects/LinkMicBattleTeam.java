@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.events.objects;
 
 
-import io.github.jwdeveloper.tiktok.messages.WebcastLinkMicBattle;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.Getter;
 import lombok.Value;
 

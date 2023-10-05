@@ -28,7 +28,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
 
@@ -43,14 +43,14 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
     private final String purchaseId;
     private final String receipt;
     private final Long comboCount;
-    private final Boolean comboFinished;
+    private final boolean comboFinished;
     private final Long comboIndex;
 
     public TikTokGiftEvent(Gift gift, WebcastGiftMessage msg) {
         super(msg.getCommon());
         this.gift = gift;
-        sender = User.MapOrEmpty(msg.getUser());
-        purchaseId = msg.getLogId();
+        sender = User.mapOrEmpty(msg.getUser());
+        purchaseId = msg.getOrderId();
         receipt = msg.getMonitorExtra();
         comboCount = msg.getComboCount();
         comboFinished = msg.getRepeatEnd() > 0;

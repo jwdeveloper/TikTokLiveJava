@@ -23,6 +23,11 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.events.messages.*;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.util.ConsoleColors;
 
@@ -35,12 +40,18 @@ public class Main {
 
     public static void main(String[] args) throws IOException
     {
+
+
         LiveClient client = TikTokLive.newClient(TEST_TIKTOK_USER)
                 .configure(clientSettings ->
                 {
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(5));
                     clientSettings.setRetryOnConnectionFailure(true);
                     clientSettings.setHandleExistingEvents(true);
+                })
+                .onGift((liveClient, event) ->
+                {
+                    var  i=0;
                 })
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)
@@ -93,7 +104,7 @@ public class Main {
     }
 
     private static void onFollow(LiveClient tikTokLive, TikTokFollowEvent e) {
-        print(e.getNewFollower().getUniqueId(), "followed!");
+        print(e.getUser().getUniqueId(), "followed!");
     }
 
     private static void onShare(LiveClient tikTokLive, TikTokShareEvent e) {
@@ -106,10 +117,10 @@ public class Main {
 
     private static void onLike(LiveClient tikTokLive, TikTokLikeEvent e) {
 
-        print(e.getSender().getUniqueId(), "liked!");
+        print(e.getUser().getUniqueId(), "liked!");
     }
     private static void onEmote(LiveClient tikTokLive, TikTokEmoteEvent e) {
-        print(e.getUser().getUniqueId(), "sent", e.getEmoteId());
+        print(e.getUser().getUniqueId(), "sent", e.getEmotes().size());
     }
 
     private static void print(Object... messages) {

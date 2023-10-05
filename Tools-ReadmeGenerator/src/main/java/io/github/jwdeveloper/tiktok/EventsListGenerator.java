@@ -78,20 +78,5 @@ public class EventsListGenerator
         }
         return EventType.Custom; // Default value if annotation not present
     }
-    private class EventTypeComparator implements Comparator<Class<?>> {
-        @Override
-        public int compare(Class<?> class1, Class<?> class2) {
-            EventType eventType1 = getEventType(class1);
-            EventType eventType2 = getEventType(class2);
-            return eventType1.compareTo(eventType2);
-        }
 
-        private EventType getEventType(Class<?> clazz) {
-            EventMeta annotation = clazz.getAnnotation(EventMeta.class);
-            if (annotation != null) {
-                return annotation.eventType();
-            }
-            return EventType.Custom;
-        }
-    }
 }

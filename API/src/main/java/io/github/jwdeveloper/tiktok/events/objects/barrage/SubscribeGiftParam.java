@@ -20,17 +20,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.events.objects.barrage;
 
-import lombok.Data;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastBarrageMessage;
 
-import java.util.List;
+public class SubscribeGiftParam extends BarrageParam
+{
+    public SubscribeGiftParam(WebcastBarrageMessage.BarrageTypeSubscribeGiftParam param)
+    {
 
-
-@Data
-public class GiftPanelBanner {
-    private List<Object> bg_color_values;
-    private DisplayText display_text;
-    private LeftIcon left_icon;
-    private String schema_url;
+    }
 }

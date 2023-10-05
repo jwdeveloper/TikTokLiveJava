@@ -26,10 +26,9 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.events.objects.User;
-import io.github.jwdeveloper.tiktok.messages.RoomMessage;
-import io.github.jwdeveloper.tiktok.messages.SystemMessage;
-import io.github.jwdeveloper.tiktok.messages.WebcastLiveIntroMessage;
-import io.github.jwdeveloper.tiktok.messages.WebcastRoomMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLiveIntroMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSystemMessage;
 import lombok.Getter;
 
 @Getter
@@ -40,26 +39,19 @@ public class TikTokRoomEvent extends TikTokHeaderEvent {
     private final String message;
 
     public TikTokRoomEvent(WebcastRoomMessage msg) {
-        super(msg.getHeader());
-        message = msg.getData();
+        super(msg.getCommon());
+        message = msg.getContent();
     }
 
-    public TikTokRoomEvent(SystemMessage msg) {
-        super(msg.getHeader());
-        message = msg.getMessage();
-    }
-
-    public TikTokRoomEvent(RoomMessage msg) {
-        super(msg.getHeader());
+    public TikTokRoomEvent(WebcastSystemMessage msg) {
+        super(msg.getCommon());
         message = msg.getMessage();
     }
 
     public TikTokRoomEvent(WebcastLiveIntroMessage msg) {
-        super(msg.getHeader());
-        if (msg.hasHost()) {
-            host = new User(msg.getHost());
-        }
-        message = msg.getDescription();
+        super(msg.getCommon());
+        host = User.mapOrEmpty(msg.getHost());
+        message = msg.getContent();
         hostLanguage = msg.getLanguage();
     }
 

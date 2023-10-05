@@ -20,18 +20,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.utils;
 
-import lombok.Data;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Data
-public class DefaultFormat {
-    private boolean bold;
-    private String color;
-    private int font_size;
-    private boolean italic;
-    private int italic_angle;
-    private boolean use_highlight_color;
-    private boolean use_remote_color;
-    private int weight;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface JsonIgnore {
 }

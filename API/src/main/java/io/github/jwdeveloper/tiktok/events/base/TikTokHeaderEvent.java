@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.events.base;
 
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.messages.*;
+import io.github.jwdeveloper.tiktok.messages.data.Common;
 import lombok.Getter;
 
 @Getter
@@ -34,26 +34,6 @@ public class TikTokHeaderEvent extends TikTokEvent {
 
     public TikTokHeaderEvent(Common header) {
         this(header.getMsgId(), header.getRoomId(), header.getCreateTime());
-    }
-
-    public TikTokHeaderEvent(MessageHeader header) {
-        this(header.getMessageId(), header.getRoomId(), header.getTimeStamp1());
-    }
-
-    public TikTokHeaderEvent(GiftMessageHeader header) {
-        this(header.getMessageId(), header.getRoomId(), header.getTimeStamp1());
-    }
-
-    public TikTokHeaderEvent(MemberMessageHeader header) {
-        this(header.getMessageId(), header.getRoomId(), header.getTimeStamp1());
-    }
-
-    public TikTokHeaderEvent(SocialMessageHeader header) {
-        this(header.getMessageId(), header.getRoomId(), header.getTimeStamp1());
-    }
-
-    public TikTokHeaderEvent(LikeMessageHeader header) {
-        this(header.getMessageId(), header.getRoomId(), header.getTimeStamp1());
     }
 
     public TikTokHeaderEvent(long messageId, long roomId, long timeStamp) {

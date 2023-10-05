@@ -24,9 +24,9 @@ package io.github.jwdeveloper.tiktok.events.messages;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.WebcastRankTextMessage;
+import io.github.jwdeveloper.tiktok.events.objects.Text;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRankTextMessage;
 import lombok.Getter;
 
 @Getter
@@ -36,11 +36,11 @@ public class TikTokRankTextEvent extends TikTokHeaderEvent {
 
   private final String label;
 
-
   public TikTokRankTextEvent(WebcastRankTextMessage msg) {
-    super(0,0,0);//TODO passing info
-    eventType = msg.getDetails().getType();
-    label =msg.getDetails().getLabel();
+    super(msg.getCommon());
+    var text = Text.map(msg.getSelfGetBadgeMsg());
+    label = text.getPattern();
+    eventType = text.getKey();
   }
 
 }

@@ -22,16 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftDto;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftOfficialJson;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftScraperJson;
 import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,15 +67,14 @@ public class GiftsDownloader {
 
 
         var outputHashMap = new TreeMap<Integer, GiftDto>();
-        for (var gift : scraperGifts)
-        {
+        for (var gift : scraperGifts) {
             outputHashMap.put(gift.getId(), gift);
         }
-        for (var gift : officialGifts)
-        {
+        for (var gift : officialGifts) {
             outputHashMap.put(gift.getId(), gift);
         }
-        var gson = new GsonBuilder().setPrettyPrinting().create();
+        var gson = new GsonBuilder().setPrettyPrinting()
+                .create();
         var json = gson.toJson(outputHashMap);
         FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output.json", json);
         System.out.println("Gifts saved to file!");

@@ -20,25 +20,9 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.events.objects;
+package io.github.jwdeveloper.tiktok.models;
 
-import io.github.jwdeveloper.tiktok.messages.WebcastGiftMessage;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-public class TikTokGift {
-    private final Gift gift;
-    private final User sender;
-    @Setter
-    private long amount;
-    @Setter
-    private boolean streakFinished;
-
-    public TikTokGift(Gift gift, WebcastGiftMessage message) {
-        this.gift = gift;
-        sender = User.MapOrEmpty(message.getUser());
-        amount = message.getComboCount();
-        streakFinished = message.getRepeatEnd() > 0;
-    }
+public enum ConnectionState
+{
+    CONNECTING,CONNECTED,DISCONNECTED
 }

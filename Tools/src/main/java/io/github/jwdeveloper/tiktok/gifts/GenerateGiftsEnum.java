@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.gifts;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftDto;
 import lombok.Getter;
 
@@ -44,17 +45,6 @@ public class GenerateGiftsEnum {
         var downloader = new GiftsDownloader();
         var gifts = downloader.getGiftsFromFile();
         var groupedByName = gifts.stream().collect(Collectors.groupingBy(GiftDto::getName));
-        for (var entry : groupedByName.entrySet()) {
-            if (entry.getValue().size() > 1) {
-                System.out.println("LOOK AT THIS SHIT: " + entry.getKey());
-                for (var v : entry.getValue()) {
-                    System.out.println(v.toString());
-                }
-
-                System.out.println("-------------------------");
-            }
-        }
-
         System.out.println("Total gifts" + gifts.size());
         var result = generate(groupedByName);
         result.writeTo(new File("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\API\\src\\main\\java"));
@@ -68,17 +58,19 @@ public class GenerateGiftsEnum {
                 .addAnnotation(Getter.class)
                 .addField(int.class, "id", Modifier.PRIVATE, Modifier.FINAL)
                 .addField(String.class, "name", Modifier.PRIVATE, Modifier.FINAL)
-                .addField(int.class, "diamondCost", Modifier.PRIVATE, Modifier.FINAL);
-
+                .addField(int.class, "diamondCost", Modifier.PRIVATE, Modifier.FINAL)
+                .addField(Picture.class, "picture", Modifier.PRIVATE, Modifier.FINAL);
 
         var constructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
                 .addParameter(int.class, "id")
                 .addParameter(String.class, "name")
                 .addParameter(int.class, "diamondCost")
+                .addParameter(Picture.class, "picture")
                 .addStatement("this.id = id")
                 .addStatement("this.name = name")
                 .addStatement("this.diamondCost = diamondCost")
+                .addStatement("this.picture = picture")
                 .build();
 
         var inRangeMethod = MethodSpec.methodBuilder("hasDiamondCostRange")
@@ -99,7 +91,7 @@ public class GenerateGiftsEnum {
         enumBuilder.addMethod(constructor);
 
 
-        enumBuilder.addEnumConstant("UNDEFINED", addGift(-1, "undefined", -1));
+        enumBuilder.addEnumConstant("UNDEFINED", addGift(-1, "undefined", -1, new Picture("")));
         for (var giftInfo : giftInfoMap.entrySet()) {
 
 
@@ -125,7 +117,7 @@ public class GenerateGiftsEnum {
                 if (contier > 1) {
                     enumName += "_" + value.getId();
                 }
-                enumBuilder.addEnumConstant(enumName, addGift(value.getId(), value.getName(), value.getDiamondCost()));
+                enumBuilder.addEnumConstant(enumName, addGift(value.getId(), value.getName(), value.getDiamondCost(), new Picture(value.getImage())));
                 contier++;
             }
 
@@ -149,18 +141,21 @@ public class GenerateGiftsEnum {
     }
 
     public static void onEnums(TypeSpec.Builder builder) {
-        builder.addEnumConstant("RUGBY_BALL", addGift(6249, "Rugby Ball", 10));
-        builder.addEnumConstant("I_LOVE_YOU", addGift(5779, "I Love you", 10));
-        builder.addEnumConstant("BOUQUET_FLOWER", addGift(5780, "Bouquet Flower", 30));
+      //  builder.addEnumConstant("RUGBY_BALL", addGift(6249, "Rugby Ball", 10));
+     //   builder.addEnumConstant("I_LOVE_YOU", addGift(5779, "I Love you", 10));
+    //    builder.addEnumConstant("BOUQUET_FLOWER", addGift(5780, "Bouquet Flower", 30));
     }
 
 
-    public static TypeSpec addGift(int id, String name, int diamont) {
+    public static TypeSpec addGift(int id, String name, int diamont, Picture picture)
+    {
+        var pictureValue = "new Picture(\""+picture.getLink()+"\")";
         return TypeSpec.anonymousClassBuilder(
-                        "$L, $S, $L",
+                        "$L, $S, $L, $S",
                         id,
                         name,
-                        diamont)
+                        diamont,
+                        pictureValue)
                 .build();
     }
 

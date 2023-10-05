@@ -22,8 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.common;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketMessage;
+
 
 import java.io.IOException;
 import java.util.Base64;

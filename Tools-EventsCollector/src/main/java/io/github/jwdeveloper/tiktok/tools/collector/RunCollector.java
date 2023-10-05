@@ -23,8 +23,9 @@
 package io.github.jwdeveloper.tiktok.tools.collector;
 
 import io.github.jwdeveloper.tiktok.TikTokLive;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.events.messages.*;
 import io.github.jwdeveloper.tiktok.events.messages.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.ExceptionInfoModel;
@@ -40,11 +41,7 @@ public class RunCollector {
 
     //https://protobuf-decoder.netlify.app/
     //https://streamdps.com/tiktok-widgets/gifts/
-    /*
-       mia_tattoo
-       moniczkka
-       besin1276
-     */
+
 
     public static List<String> ignoredEvents;
 
@@ -55,9 +52,14 @@ public class RunCollector {
         //ignoredEvents = List.of("TikTokJoinEvent","TikTokLikeEvent");
 
         filter = new ArrayList<>();
-        filter.add(TikTokGiftEvent.class);
+        filter.add(TikTokUnhandledSocialEvent.class);
+        filter.add(TikTokFollowEvent.class);
+        filter.add(TikTokLikeEvent.class);
+        filter.add(TikTokShareEvent.class);
+        filter.add(TikTokJoinEvent.class);
 
-        var db = new TikTokDatabase("test");
+
+        var db = new TikTokDatabase("social_db");
         db.init();
 
         var errors = db.selectErrors();
@@ -113,7 +115,7 @@ public class RunCollector {
                     var errorModel = new TikTokErrorModel();
                     if (exception instanceof TikTokLiveMessageException ex) {
                         errorModel.setHostName(tiktokUser);
-                        errorModel.setErrorName(ex.messageName());
+                        errorModel.setErrorName(ex.messageMethod());
                         errorModel.setErrorType("error-message");
                         errorModel.setExceptionContent(exceptionContent);
                         errorModel.setMessage(ex.messageToBase64());

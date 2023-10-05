@@ -23,18 +23,11 @@
 package io.github.jwdeveloper.tiktok.live;
 
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.events.objects.TikTokGift;
-import io.github.jwdeveloper.tiktok.models.GiftId;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
 
 import java.util.List;
-import java.util.Map;
 
 public interface GiftManager {
-
-
-
-    Map<GiftId, TikTokGift> getActiveGifts();
-
 
     /**
      * In case you can't find your gift in Gift enum. You can register gift
@@ -45,7 +38,7 @@ public interface GiftManager {
      * @param diamondCost diamond cost
      * @return
      */
-    Gift registerGift(int id, String name, int diamondCost);
+    Gift registerGift(int id, String name, int diamondCost, Picture picture);
 
 
     /**

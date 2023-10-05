@@ -22,38 +22,92 @@
  */
 package io.github.jwdeveloper.tiktok.events.objects;
 
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import lombok.Getter;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-@Getter
+
 public class Picture {
 
-  private final String link;
-  private boolean downloaded;
-  private boolean downloading;
+    @Getter
+    private final String link;
 
 
-  public Picture(String link)
-  {
-    this.link = link;
-    downloaded= false;
-    downloading =false;
-  }
-  public static Picture Map(io.github.jwdeveloper.tiktok.messages.Image profilePicture)
-  {
-    return new Picture(profilePicture.getUri());
-  }
+    private Image image;
 
-  public static Picture Empty()
-  {
-    return new Picture("");
-  }
+    public Picture(String link) {
+        this.link = link;
+    }
 
-  public static List<Picture> EmptyList()
-  {
-    return new ArrayList<Picture>();
-  }
+    public static Picture Map(io.github.jwdeveloper.tiktok.messages.data.Image profilePicture) {
+
+        var index = profilePicture.getUrlListCount() - 1;
+        if (index <= 0) {
+            return new Picture("");
+        }
+        var url = profilePicture.getUrlList(index);
+        return new Picture(url);
+    }
+
+    public boolean isDownloaded() {
+        return image != null;
+    }
+
+    public Image downloadImage() {
+        if (isDownloaded()) {
+            return image;
+        }
+        if (link.equalsIgnoreCase("")) {
+            return null;
+        }
+        image = download(link);
+        return image;
+    }
+
+    public Future<Image> downloadImageAsync() {
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(this::downloadImage);
+        executor.shutdown();
+        return future;
+    }
+
+    private BufferedImage download(String urlString) {
+        var baos = new ByteArrayOutputStream();
+        try (var is = new URL(urlString).openStream()) {
+            var byteChunk = new byte[4096];
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+        } catch (IOException e) {
+            throw new TikTokLiveException("Unable map downloaded image", e);
+        }
+
+        var bais = new ByteArrayInputStream(baos.toByteArray());
+        try {
+            return ImageIO.read(bais);
+        } catch (IOException e) {
+            throw new TikTokLiveException("Unable map downloaded image bytes to Image", e);
+        }
+    }
+
+    public static Picture Empty() {
+        return new Picture("");
+    }
+
+    public static List<Picture> EmptyList() {
+        return new ArrayList<Picture>();
+    }
 }

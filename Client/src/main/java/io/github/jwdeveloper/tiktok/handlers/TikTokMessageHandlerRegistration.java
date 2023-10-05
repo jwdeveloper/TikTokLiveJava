@@ -25,9 +25,16 @@ package io.github.jwdeveloper.tiktok.handlers;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.messages.*;
+import io.github.jwdeveloper.tiktok.events.messages.TikTokBarrageEvent;
+import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEndEvent;
+import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEvent;
+import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollStartEvent;
+import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollUpdateEvent;
 import io.github.jwdeveloper.tiktok.events.objects.Gift;
+import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.events.objects.Text;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
-import io.github.jwdeveloper.tiktok.messages.*;
+import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
 import lombok.SneakyThrows;
 
@@ -36,7 +43,6 @@ import java.util.regex.Pattern;
 public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     private final TikTokGiftManager giftManager;
     private final TikTokRoomInfo roomInfo;
-
     private final Pattern socialMediaPattern = Pattern.compile("pm_mt_guidance_viewer_([0-9]+)_share");
 
     public TikTokMessageHandlerRegistration(TikTokEventObserver tikTokEventHandler,
@@ -52,32 +58,30 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
         //ConnectionEvents events
         registerMapping(WebcastControlMessage.class, this::handleWebcastControlMessage);
-        registerMapping(SystemMessage.class, TikTokRoomEvent.class);
+        registerMapping(WebcastSystemMessage.class, TikTokRoomEvent.class);
 
 
         //Room status events
         registerMapping(WebcastLiveIntroMessage.class, TikTokRoomEvent.class);
         registerMapping(WebcastRoomUserSeqMessage.class, this::handleRoomUserSeqMessage);
-        registerMapping(RoomMessage.class, TikTokRoomEvent.class);
         registerMapping(WebcastRoomMessage.class, TikTokRoomEvent.class);
         registerMapping(WebcastCaptionMessage.class, TikTokCaptionEvent.class);
 
         //User Interactions events
         registerMapping(WebcastChatMessage.class, TikTokCommentEvent.class);
-        registerMapping(WebcastLikeMessage.class, TikTokLikeEvent.class);
+        registerMapping(WebcastLikeMessage.class, this::handleLike);
         registerMapping(WebcastGiftMessage.class, this::handleGift);
         registerMapping(WebcastSocialMessage.class, this::handleSocialMedia);
         registerMapping(WebcastMemberMessage.class, this::handleMemberMessage);
 
         //Host Interaction events
-        registerMapping(WebcastPollMessage.class, TikTokPollEvent.class);
-        registerMapping(WebcastRoomPinMessage.class, TikTokRoomPinEvent.class);
+        registerMapping(WebcastPollMessage.class, this::handlePollEvent);
+        registerMapping(WebcastRoomPinMessage.class, this::handlePinMessage);
         registerMapping(WebcastGoalUpdateMessage.class, TikTokGoalUpdateEvent.class);
 
         //LinkMic events
         registerMapping(WebcastLinkMicBattle.class, TikTokLinkMicBattleEvent.class);
         registerMapping(WebcastLinkMicArmies.class, TikTokLinkMicArmiesEvent.class);
-        registerMapping(LinkMicMethod.class, TikTokLinkMicMethodEvent.class);
         registerMapping(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
         registerMapping(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
 
@@ -102,7 +106,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
     @SneakyThrows
     private TikTokEvent handleWebcastControlMessage(WebcastResponse.Message msg) {
-        var message = WebcastControlMessage.parseFrom(msg.getBinary());
+        var message = WebcastControlMessage.parseFrom(msg.getPayload());
         return switch (message.getAction()) {
             case STREAM_PAUSED -> new TikTokLivePausedEvent();
             case STREAM_ENDED -> new TikTokLiveEndedEvent();
@@ -112,8 +116,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
     @SneakyThrows
     private TikTokEvent handleGift(WebcastResponse.Message msg) {
-        var giftMessage = WebcastGiftMessage.parseFrom(msg.getBinary());
-        giftManager.updateActiveGift(giftMessage);
+        var giftMessage = WebcastGiftMessage.parseFrom(msg.getPayload());
+
 
         var gift = giftManager.findById((int) giftMessage.getGiftId());
         if (gift == Gift.UNDEFINED) {
@@ -123,7 +127,8 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
             gift = giftManager.registerGift(
                     (int) giftMessage.getGift().getId(),
                     giftMessage.getGift().getName(),
-                    giftMessage.getGift().getDiamondCount());
+                    giftMessage.getGift().getDiamondCount(),
+                    Picture.Map(giftMessage.getGift().getImage()));
         }
 
         if (giftMessage.getRepeatEnd() > 0) {
@@ -135,9 +140,9 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
 
     @SneakyThrows
     private TikTokEvent handleSocialMedia(WebcastResponse.Message msg) {
-        var message = WebcastSocialMessage.parseFrom(msg.getBinary());
+        var message = WebcastSocialMessage.parseFrom(msg.getPayload());
 
-        var socialType = message.getHeader().getSocialData().getType();
+        var socialType = Text.map(message.getCommon().getDisplayText()).getKey();
         var matcher = socialMediaPattern.matcher(socialType);
 
         if (matcher.find()) {
@@ -147,17 +152,17 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         }
 
         return switch (socialType) {
-            case SocialTypes.LikeType -> new TikTokLikeEvent(message);
+            case SocialTypes.LikeType -> new TikTokLikeEvent(message, roomInfo.getLikesCount());
             case SocialTypes.FollowType -> new TikTokFollowEvent(message);
             case SocialTypes.ShareType -> new TikTokShareEvent(message);
-            case SocialTypes.JoinType -> new TikTokJoinEvent(message);
+            case SocialTypes.JoinType -> new TikTokJoinEvent(message, roomInfo.getViewersCount());
             default -> new TikTokUnhandledSocialEvent(message);
         };
     }
 
     @SneakyThrows
     private TikTokEvent handleMemberMessage(WebcastResponse.Message msg) {
-        var message = WebcastMemberMessage.parseFrom(msg.getBinary());
+        var message = WebcastMemberMessage.parseFrom(msg.getPayload());
         return switch (message.getAction()) {
             case JOINED -> new TikTokJoinEvent(message);
             case SUBSCRIBED -> new TikTokSubscribeEvent(message);
@@ -170,4 +175,32 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         roomInfo.setViewersCount(event.getViewerCount());
         return event;
     }
+
+    private TikTokEvent handleLike(WebcastResponse.Message msg) {
+        var event = (TikTokLikeEvent) mapMessageToEvent(WebcastLikeMessage.class, TikTokLikeEvent.class, msg);
+        roomInfo.setLikesCount(event.getTotalLikes());
+        return event;
+    }
+
+    @SneakyThrows
+    private TikTokEvent handlePinMessage(WebcastResponse.Message msg) {
+        var pinMessage = WebcastRoomPinMessage.parseFrom(msg.getPayload());
+        var chatMessage = WebcastChatMessage.parseFrom(pinMessage.getPinnedMessage());
+        var chatEvent = new TikTokCommentEvent(chatMessage);
+        return new TikTokRoomPinEvent(pinMessage, chatEvent);
+    }
+
+    //TODO check
+    @SneakyThrows
+    private TikTokEvent handlePollEvent(WebcastResponse.Message msg) {
+        var poolMessage = WebcastPollMessage.parseFrom(msg.getPayload());
+        return switch (poolMessage.getMessageType()) {
+            case 0 -> new TikTokPollStartEvent(poolMessage);
+            case 1 -> new TikTokPollEndEvent(poolMessage);
+            case 2 -> new TikTokPollUpdateEvent(poolMessage);
+            default -> new TikTokPollEvent(poolMessage);
+        };
+    }
+
+
 }

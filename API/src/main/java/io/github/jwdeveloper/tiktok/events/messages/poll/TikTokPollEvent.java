@@ -20,20 +20,22 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.models.gifts;
+package io.github.jwdeveloper.tiktok.events.messages.poll;
 
-import lombok.Data;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPollMessage;
+import lombok.Getter;
 
-import java.util.List;
+@Getter
+@EventMeta(eventType = EventType.Message)
+public class TikTokPollEvent extends TikTokHeaderEvent {
+    private final Long pollId;
 
-@Data
-public class Image {
-    private String avg_color;
-    private int height;
-    private int image_type;
-    private boolean is_animated;
-    private String open_web_url;
-    private String uri;
-    private List<String> url_list;
-    private int width;
+    public TikTokPollEvent(WebcastPollMessage msg)
+    {
+        super(msg.getCommon());
+        pollId = msg.getPollId();
+    }
 }

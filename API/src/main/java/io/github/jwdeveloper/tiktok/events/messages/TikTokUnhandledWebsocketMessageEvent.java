@@ -24,13 +24,14 @@ package io.github.jwdeveloper.tiktok.events.messages;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.base.TikTokUnhandledEvent;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
-import lombok.AllArgsConstructor;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.Getter;
 
 
+/**
+ * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
+ */
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokUnhandledWebsocketMessageEvent extends TikTokUnhandledEvent<WebcastResponse.Message>

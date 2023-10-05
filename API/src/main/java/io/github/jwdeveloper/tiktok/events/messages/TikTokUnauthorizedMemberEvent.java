@@ -24,36 +24,18 @@ package io.github.jwdeveloper.tiktok.events.messages;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
 import io.github.jwdeveloper.tiktok.events.base.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.WebcastUnauthorizedMemberMessage;
-import lombok.AllArgsConstructor;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastUnauthorizedMemberMessage;
 import lombok.Getter;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokUnauthorizedMemberEvent extends TikTokHeaderEvent {
-    private final String data;
-
-    private final UnauthorizedMemberData event;
-
-    private final UnauthorizedMemberData underlying;
+    private final String userNickName;
 
     public TikTokUnauthorizedMemberEvent(WebcastUnauthorizedMemberMessage msg) {
-        super(msg.getHeader());
+        super(msg.getCommon());
 
-        data = msg.getData2();
-        event = new UnauthorizedMemberData(msg.getDetails1().getType(), msg.getDetails1().getLabel());
-        underlying = new UnauthorizedMemberData(msg.getDetails2().getType(), msg.getDetails2().getLabel());
+        userNickName = msg.getNickName();
     }
-
-
-    @Getter
-    @AllArgsConstructor
-    public class UnauthorizedMemberData {
-        private final String data1;
-
-        private final String data2;
-    }
-
 }

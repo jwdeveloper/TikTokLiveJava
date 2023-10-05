@@ -31,10 +31,10 @@ public class TopViewer {
 
    Integer coinsGiven;
 
-  public TopViewer(io.github.jwdeveloper.tiktok.messages.TopViewer viewer)
+  public TopViewer(io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomUserSeqMessage.Contributor viewer)
   {
-    rank = viewer.getRank();
-    user = User.MapOrEmpty(viewer.getUser());
-    coinsGiven = viewer.getCoinsGiven();
+    rank = (int)viewer.getRank();
+    user = User.mapOrEmpty(viewer.getUser());
+    coinsGiven = (int)viewer.getScore();
   }
 }
