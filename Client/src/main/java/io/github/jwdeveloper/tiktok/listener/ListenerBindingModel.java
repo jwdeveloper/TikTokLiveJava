@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
-import io.github.jwdeveloper.tiktok.live.events.TikTokEventConsumer;
+import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 
 import lombok.Value;
 
@@ -36,5 +36,5 @@ public class ListenerBindingModel
 
     TikTokEventListener listener;
 
-    Map<Class<?>, List<TikTokEventConsumer<?>>> events;
+    Map<Class<?>, List<EventConsumer<?>>> events;
 }

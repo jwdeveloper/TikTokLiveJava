@@ -20,12 +20,12 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.live.events;
+package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
-public interface TikTokEventConsumer<T extends TikTokEvent>
+public interface EventConsumer<T extends TikTokEvent>
 {
      void onEvent(LiveClient liveClient, T event);
 }

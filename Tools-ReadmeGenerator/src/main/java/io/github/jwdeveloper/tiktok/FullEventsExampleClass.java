@@ -67,10 +67,6 @@ public class FullEventsExampleClass
                 {
 
                 })
-                .onEnvelope((liveClient, event) ->
-                {
-
-                })
                 .onLiveEnded((liveClient, event) ->
                 {
 

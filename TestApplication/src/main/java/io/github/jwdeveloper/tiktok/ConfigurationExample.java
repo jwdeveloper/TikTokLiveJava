@@ -32,7 +32,7 @@ public class ConfigurationExample {
         TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .configure(clientSettings ->
                 {
-                    clientSettings.setHostName(Main.TEST_TIKTOK_USER); // TikTok user name
+                    clientSettings.setHostName(Main.TEST_TIKTOK_USER); // TikTok hostname
                     clientSettings.setClientLanguage("en"); // Language
                     clientSettings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     clientSettings.setLogLevel(Level.ALL); // Log level
@@ -49,6 +49,7 @@ public class ConfigurationExample {
                     clientSettings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
                 .buildAndConnect();
+
         System.in.read();
     }
 }

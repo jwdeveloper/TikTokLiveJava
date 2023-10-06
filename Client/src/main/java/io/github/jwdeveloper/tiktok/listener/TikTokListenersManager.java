@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.listener;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.live.events.TikTokEventConsumer;
+import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
@@ -91,7 +91,7 @@ public class TikTokListenersManager implements ListenersManager {
         var methods = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
                 m.getParameterCount() == 2 &&
                         m.isAnnotationPresent(TikTokEventHandler.class)).toList();
-        var eventsMap = new HashMap<Class<?>, List<TikTokEventConsumer<?>>>();
+        var eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
         for (var method : methods) {
             var eventClazz = method.getParameterTypes()[1];
 
@@ -105,7 +105,7 @@ public class TikTokListenersManager implements ListenersManager {
                 throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 2nd parameter must instance of " + TikTokEvent.class.getName());
             }
 
-            TikTokEventConsumer eventMethodRef = (liveClient, event) ->
+            EventConsumer eventMethodRef = (liveClient, event) ->
             {
                 try {
                     method.invoke(listener, liveClient, event);
@@ -113,7 +113,7 @@ public class TikTokListenersManager implements ListenersManager {
                     throw new TikTokEventListenerMethodException(e);
                 }
             };
-            eventsMap.computeIfAbsent(eventClazz, (a) -> new ArrayList<TikTokEventConsumer<?>>()).add(eventMethodRef);
+            eventsMap.computeIfAbsent(eventClazz, (a) -> new ArrayList<EventConsumer<?>>()).add(eventMethodRef);
         }
         return new ListenerBindingModel(listener, eventsMap);
     }

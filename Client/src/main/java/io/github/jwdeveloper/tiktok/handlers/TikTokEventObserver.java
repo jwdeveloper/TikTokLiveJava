@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.handlers;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.live.events.TikTokEventConsumer;
+import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class TikTokEventObserver {
-    private final Map<Class<?>, Set<TikTokEventConsumer>> events;
+    private final Map<Class<?>, Set<EventConsumer>> events;
 
     public TikTokEventObserver() {
         events = new HashMap<>();
@@ -56,7 +56,7 @@ public class TikTokEventObserver {
         }
     }
 
-    public <T extends TikTokEvent> void subscribe(Class<?> clazz, TikTokEventConsumer<T> event) {
+    public <T extends TikTokEvent> void subscribe(Class<?> clazz, EventConsumer<T> event) {
         events.computeIfAbsent(clazz, e -> new HashSet<>()).add(event);
     }
 
@@ -64,13 +64,13 @@ public class TikTokEventObserver {
         events.remove(clazz);
     }
 
-    public <T extends TikTokEvent> void unsubscribe(TikTokEventConsumer<T> consumer) {
+    public <T extends TikTokEvent> void unsubscribe(EventConsumer<T> consumer) {
         for (var entry : events.entrySet()) {
             entry.getValue().remove(consumer);
         }
     }
 
-    public <T extends TikTokEvent> void unsubscribe(Class<?> clazz, TikTokEventConsumer<T> consumer) {
+    public <T extends TikTokEvent> void unsubscribe(Class<?> clazz, EventConsumer<T> consumer) {
         if (clazz == null) {
             return;
         }

@@ -23,11 +23,12 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
 public class TikTokLive
 {
-    public static TikTokLiveClientBuilder newClient(String userName)
+    public static LiveClientBuilder newClient(String hostName)
     {
-        return new TikTokLiveClientBuilder(userName);
+        return new TikTokLiveClientBuilder(hostName);
     }
 }

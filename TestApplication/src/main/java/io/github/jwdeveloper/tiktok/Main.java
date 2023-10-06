@@ -51,9 +51,9 @@ public class Main {
                     clientSettings.setRetryOnConnectionFailure(true);
                     clientSettings.setHandleExistingEvents(true);
                 })
-                .onGift((liveClient, event) ->
+                .onError((liveClient, event) ->
                 {
-                    var  i=0;
+
                 })
                 .onConnected(Main::onConnected)
                 .onDisconnected(Main::onDisconnected)

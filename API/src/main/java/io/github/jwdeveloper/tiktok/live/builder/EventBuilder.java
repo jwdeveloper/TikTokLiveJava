@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.live.events;
+package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
@@ -37,59 +37,57 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketRespons
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
 
 
-public interface TikTokEventBuilder<T> {
+public interface EventBuilder<T> {
 
-    T onRoom(TikTokEventConsumer<TikTokRoomEvent> event);
+    T onRoom(EventConsumer<TikTokRoomEvent> event);
 
-    T onRoomUserInfo(TikTokEventConsumer<TikTokRoomUserInfoEvent> event);
+    T onRoomUserInfo(EventConsumer<TikTokRoomUserInfoEvent> event);
 
-    T onComment(TikTokEventConsumer<TikTokCommentEvent> event);
-
-
-    T onWebsocketMessage(TikTokEventConsumer<TikTokWebsocketMessageEvent> event);
-
-    T onWebsocketResponse(TikTokEventConsumer<TikTokWebsocketResponseEvent> event);
-
-    T onWebsocketUnhandledMessage(TikTokEventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
+    T onComment(EventConsumer<TikTokCommentEvent> event);
 
 
-    T onGiftCombo(TikTokEventConsumer<TikTokGiftComboFinishedEvent> event);
+    T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> event);
 
-    T onGift(TikTokEventConsumer<TikTokGiftEvent> event);
+    T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> event);
 
-    T onQuestion(TikTokEventConsumer<TikTokQuestionEvent> event);
-
-    T onSubscribe(TikTokEventConsumer<TikTokSubscribeEvent> event);
-
-    T onFollow(TikTokEventConsumer<TikTokFollowEvent> event);
-
-    T onLike(TikTokEventConsumer<TikTokLikeEvent> event);
-
-    T onEmote(TikTokEventConsumer<TikTokEmoteEvent> event);
-
-    T onJoin(TikTokEventConsumer<TikTokJoinEvent> event);
-
-    T onShare(TikTokEventConsumer<TikTokShareEvent> event);
-
-    T onUnhandledSocial(TikTokEventConsumer<TikTokUnhandledSocialEvent> event);
+    T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
 
 
-    T onLivePaused(TikTokEventConsumer<TikTokLivePausedEvent> event);
+    T onGiftCombo(EventConsumer<TikTokGiftComboFinishedEvent> event);
 
-    T onLiveEnded(TikTokEventConsumer<TikTokLiveEndedEvent> event);
+    T onGift(EventConsumer<TikTokGiftEvent> event);
 
-    T onConnected(TikTokEventConsumer<TikTokConnectedEvent> event);
+    T onQuestion(EventConsumer<TikTokQuestionEvent> event);
 
-    T onReconnecting(TikTokEventConsumer<TikTokReconnectingEvent> event);
+    T onSubscribe(EventConsumer<TikTokSubscribeEvent> event);
 
-    T onDisconnected(TikTokEventConsumer<TikTokDisconnectedEvent> event);
+    T onFollow(EventConsumer<TikTokFollowEvent> event);
 
-    T onError(TikTokEventConsumer<TikTokErrorEvent> event);
+    T onLike(EventConsumer<TikTokLikeEvent> event);
 
-    T onEvent(TikTokEventConsumer<TikTokEvent> event);
+    T onEmote(EventConsumer<TikTokEmoteEvent> event);
+
+    T onJoin(EventConsumer<TikTokJoinEvent> event);
+
+    T onShare(EventConsumer<TikTokShareEvent> event);
+    T onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event);
+
+    T onLivePaused(EventConsumer<TikTokLivePausedEvent> event);
+
+    T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> event);
+
+    T onConnected(EventConsumer<TikTokConnectedEvent> event);
+
+    T onReconnecting(EventConsumer<TikTokReconnectingEvent> event);
+
+    T onDisconnected(EventConsumer<TikTokDisconnectedEvent> event);
+
+    T onError(EventConsumer<TikTokErrorEvent> event);
+
+    T onEvent(EventConsumer<TikTokEvent> event);
 
 
-    // TODO implement later
+    // TODO Figure out how those events works
     //T onLinkMicFanTicket(TikTokEventConsumer<TikTokLinkMicFanTicketEvent> event);
 
     //T onEnvelope(TikTokEventConsumer<TikTokEnvelopeEvent> event);
@@ -101,8 +99,6 @@ public interface TikTokEventBuilder<T> {
     //T onLinkLayer(TikTokEventConsumer<TikTokLinkLayerEvent> event);
 
     //T onCaption(TikTokEventConsumer<TikTokCaptionEvent> event);
-
-
 
     //T onRoomPin(TikTokEventConsumer<TikTokRoomPinEvent> event);
 
