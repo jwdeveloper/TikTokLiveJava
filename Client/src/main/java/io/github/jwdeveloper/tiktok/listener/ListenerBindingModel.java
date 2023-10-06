@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
-import io.github.jwdeveloper.tiktok.events.TikTokEventConsumer;
+import io.github.jwdeveloper.tiktok.live.events.TikTokEventConsumer;
 
 import lombok.Value;
 

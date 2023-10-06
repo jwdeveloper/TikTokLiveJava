@@ -23,10 +23,9 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.TikTokLiveClient;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
@@ -88,16 +87,12 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onClose(int i, String s, boolean b) {
-
-        System.out.println("CLOSE "+i+" "+s+" "+b);
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokDisconnectedEvent());
     }
 
     @Override
     public void onError(Exception error)
     {
-        System.out.println("ERROR");
-        error.printStackTrace();
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokErrorEvent(error));
         if(isNotClosing())
         {
@@ -111,10 +106,14 @@ public class TikTokWebSocketListener extends WebSocketClient {
             return;
         }
         var websocketMessage = websocketMessageOptional.get();
-        System.out.println("ACK ID "+websocketMessage.getLogId()+" ID "+websocketMessage.getSeqId());
-        sendAckId(websocketMessage.getLogId());
-
         var webResponse = getWebResponseMessage(websocketMessage.getPayload());
+
+        if(webResponse.getNeedsAck())
+        {
+            //For some reason while send ack id, server get disconnected
+           // sendAckId(webResponse.getFetchInterval());
+        }
+
         webResponseHandler.handle(tikTokLiveClient, webResponse);
     }
 
@@ -142,8 +141,6 @@ public class TikTokWebSocketListener extends WebSocketClient {
     {
         return !isClosed() && !isClosing();
     }
-
-
 
     private void sendAckId(long id) {
         var serverInfo = WebcastWebsocketAck

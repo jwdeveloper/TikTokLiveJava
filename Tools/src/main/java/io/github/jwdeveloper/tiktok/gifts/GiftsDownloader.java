@@ -22,12 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftDto;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftOfficialJson;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftScraperJson;

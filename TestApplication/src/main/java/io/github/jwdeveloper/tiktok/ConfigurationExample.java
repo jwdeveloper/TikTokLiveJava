@@ -48,7 +48,7 @@ public class ConfigurationExample {
                     //Optional:
                     clientSettings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
-                .buildAndRun();
+                .buildAndConnect();
         System.in.read();
     }
 }

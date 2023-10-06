@@ -138,18 +138,17 @@ public class ConfigurationExample {
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokCommentEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokGiftMessageEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokCommentEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokGiftMessageEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.io.IOException;
 
-public class ListenerExample
-{
+public class ListenerExample {
     public static void main(String[] args) throws IOException {
 
         CustomListener customListener = new CustomListener();
@@ -169,36 +168,30 @@ public class ListenerExample
         - first parameter must be LiveClient
         - second must be class that extending TikTokEvent
      */
-    public static class CustomListener implements TikTokEventListener
-    {
+    public static class CustomListener implements TikTokEventListener {
 
         @TikTokEventHandler
-        public void onLike(LiveClient liveClient, TikTokLikeEvent event)
-        {
+        public void onLike(LiveClient liveClient, TikTokLikeEvent event) {
             System.out.println(event.toString());
         }
 
         @TikTokEventHandler
-        public void onError(LiveClient liveClient, TikTokErrorEvent event)
-        {
+        public void onError(LiveClient liveClient, TikTokErrorEvent event) {
             System.out.println(event.getException().getMessage());
         }
 
         @TikTokEventHandler
-        public void onCommentMessage(LiveClient liveClient, TikTokCommentEvent event)
-        {
+        public void onCommentMessage(LiveClient liveClient, TikTokCommentEvent event) {
             System.out.println(event.getText());
         }
 
         @TikTokEventHandler
-        public void onGiftMessage(LiveClient liveClient, TikTokGiftMessageEvent event)
-        {
+        public void onGiftMessage(LiveClient liveClient, TikTokGiftMessageEvent event) {
             System.out.println(event.getGift().getDescription());
         }
 
         @TikTokEventHandler
-        public void onAnyEvent(LiveClient liveClient, TikTokEvent event)
-        {
+        public void onAnyEvent(LiveClient liveClient, TikTokEvent event) {
             System.out.println(event.getClass().getSimpleName());
         }
 

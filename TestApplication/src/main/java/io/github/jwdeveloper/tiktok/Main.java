@@ -22,17 +22,17 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.events.messages.*;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomUserInfoEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokShareEvent;
+import io.github.jwdeveloper.tiktok.data.events.*;
+import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomUserInfoEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.util.ConsoleColors;
+import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -43,8 +43,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException
     {
-
-
+        showLogo();
         LiveClient client = TikTokLive.newClient(TEST_TIKTOK_USER)
                 .configure(clientSettings ->
                 {
@@ -71,7 +70,9 @@ public class Main {
                 {
                     error.getException().printStackTrace();
                 })
-                .buildAndRun();
+                .buildAndConnect();
+
+
         System.in.read();
     }
 
@@ -126,6 +127,18 @@ public class Main {
         print(e.getUser().getId(), "sent", e.getEmotes().size());
     }
 
+    private static void showLogo()
+    {
+        System.out.println(ConsoleColors.GREEN+"""
+                                
+                 _____ _ _    _____     _    _     _          \s
+                |_   _(_) | _|_   _|__ | | _| |   (_)_   _____\s
+                  | | | | |/ / | |/ _ \\| |/ / |   | \\ \\ / / _ \\
+                  | | | |   <  | | (_) |   <| |___| |\\ V /  __/ 
+                  |_| |_|_|\\_\\ |_|\\___/|_|\\_\\_____|_| \\_/ \\___| 
+                """);
+
+    }
     private static void print(Object... messages) {
         var sb = new StringBuilder();
         for (var message : messages) {

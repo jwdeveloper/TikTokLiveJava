@@ -23,12 +23,11 @@
 package io.github.jwdeveloper.tiktok.handlers;
 
 
-import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.events.messages.websocket.TikTokWebsocketMessageEvent;
-import io.github.jwdeveloper.tiktok.events.messages.websocket.TikTokWebsocketResponseEvent;
-import io.github.jwdeveloper.tiktok.events.messages.websocket.TikTokWebsocketUnhandledMessageEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
+import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
+import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
@@ -86,16 +85,12 @@ public abstract class TikTokMessageHandler {
 
 
     public void handleSingleMessage(LiveClient client, WebcastResponse.Message message) throws Exception {
-        var methodName = message.getMethod();
-        if (!methodName.contains("Webcast")) {
-            methodName = "Webcast" + methodName;
-        }
-
-        if (!handlers.containsKey(methodName)) {
+        var messageClassName = message.getMethod();
+        if (!handlers.containsKey(messageClassName)) {
             tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
             return;
         }
-        var handler = handlers.get(methodName);
+        var handler = handlers.get(messageClassName);
         var tiktokEvent = handler.handle(message.getPayload().toByteArray());
         tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(tiktokEvent, message));
         tikTokEventHandler.publish(client, tiktokEvent);

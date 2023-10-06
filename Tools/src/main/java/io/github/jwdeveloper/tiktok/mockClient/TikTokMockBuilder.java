@@ -112,7 +112,7 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
     }
 
     @Override
-    public LiveClientMock buildAndRun() {
+    public LiveClientMock buildAndConnect() {
         var client = build();
         client.connect();
         return client;

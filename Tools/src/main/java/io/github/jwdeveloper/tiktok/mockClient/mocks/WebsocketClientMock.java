@@ -102,7 +102,6 @@ public class WebsocketClientMock implements SocketClient {
             if (!messages.isEmpty()) {
                 var messageStr = messages.pop();
                 try {
-                    System.out.println("TYPE: " + messageStr.getMessageType());
                     messageHandler.handleSingleMessage(tikTokLiveClient, messageStr.getMessageType(), messageStr.getMessageValue());
                 } catch (Exception e) {
                     logger.info("Unable to parse message for response " + messageStr.getMessageType());

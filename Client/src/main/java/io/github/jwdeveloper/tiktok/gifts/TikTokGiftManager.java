@@ -22,8 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
-import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.data.models.Gift;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import sun.misc.Unsafe;

@@ -23,25 +23,25 @@
 package io.github.jwdeveloper.tiktok.handlers;
 
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.events.messages.*;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokBarrageEvent;
-import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftComboFinishedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEndEvent;
-import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollEvent;
-import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollStartEvent;
-import io.github.jwdeveloper.tiktok.events.messages.poll.TikTokPollUpdateEvent;
-import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomEvent;
-import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomPinEvent;
-import io.github.jwdeveloper.tiktok.events.messages.room.TikTokRoomUserInfoEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokFollowEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokShareEvent;
-import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.events.objects.Picture;
-import io.github.jwdeveloper.tiktok.events.objects.Text;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.*;
+import io.github.jwdeveloper.tiktok.data.events.TikTokBarrageEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboFinishedEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEndEvent;
+import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
+import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollStartEvent;
+import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollUpdateEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomUserInfoEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
+import io.github.jwdeveloper.tiktok.data.models.Gift;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.Text;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
@@ -73,6 +73,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         //Room status events
         registerMapping(WebcastLiveIntroMessage.class, TikTokRoomEvent.class);
         registerMapping(WebcastRoomUserSeqMessage.class, this::handleRoomUserSeqMessage);
+        registerMapping(RoomMessage.class, TikTokRoomEvent.class);
         registerMapping(WebcastRoomMessage.class, TikTokRoomEvent.class);
         registerMapping(WebcastCaptionMessage.class, TikTokCaptionEvent.class);
 

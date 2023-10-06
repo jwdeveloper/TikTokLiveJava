@@ -67,7 +67,6 @@ public class TikTokWebSocketPingingTask
                     Thread.sleep(100);
                     continue;
                 }
-                System.out.println("PING!");
                 webSocket.sendPing();
 
                 var timeout = random.nextInt(MAX_TIMEOUT)+MIN_TIMEOUT;

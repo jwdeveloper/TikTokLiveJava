@@ -23,8 +23,7 @@
 package io.github.jwdeveloper.tiktok.handler;
 
 
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 
 
 public interface TikTokMessageHandler

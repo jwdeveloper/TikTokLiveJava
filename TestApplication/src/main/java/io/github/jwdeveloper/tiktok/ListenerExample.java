@@ -23,11 +23,11 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokCommentEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokCommentEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
@@ -46,7 +46,7 @@ public class ListenerExample {
         // set tiktok username
         var client = TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .addListener(customListener)
-                .buildAndRun();
+                .buildAndConnect();
 
         System.in.read();
     }

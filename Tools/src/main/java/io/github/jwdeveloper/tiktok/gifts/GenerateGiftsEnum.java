@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.gifts;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftDto;
 import lombok.Getter;
 

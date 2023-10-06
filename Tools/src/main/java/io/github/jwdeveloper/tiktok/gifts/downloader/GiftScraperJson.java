@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok.gifts.downloader;
 
 
-import io.github.jwdeveloper.tiktok.events.objects.Picture;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 

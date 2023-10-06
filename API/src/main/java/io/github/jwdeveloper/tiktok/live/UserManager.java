@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
-import io.github.jwdeveloper.tiktok.events.objects.users.User;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 
 import java.util.List;
 

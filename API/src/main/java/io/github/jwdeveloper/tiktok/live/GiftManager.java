@@ -22,8 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
-import io.github.jwdeveloper.tiktok.events.objects.Gift;
-import io.github.jwdeveloper.tiktok.events.objects.Picture;
+import io.github.jwdeveloper.tiktok.data.models.Gift;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 
 import java.util.List;
 

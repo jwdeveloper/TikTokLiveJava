@@ -23,9 +23,9 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.events.messages.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.live.LiveClient;

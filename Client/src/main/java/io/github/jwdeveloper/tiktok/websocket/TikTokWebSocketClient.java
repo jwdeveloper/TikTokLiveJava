@@ -68,17 +68,17 @@ public class TikTokWebSocketClient implements SocketClient {
             stop();
         }
 
-        if (webcastResponse.getPushServer().isEmpty() ||
-            webcastResponse.getRouteParamsMapMap().isEmpty()) {
+        if (webcastResponse.getPushServer().isEmpty() || webcastResponse.getRouteParamsMapMap().isEmpty())
+        {
             throw new TikTokLiveException("Could not find Room");
         }
 
         try {
-            var url = getWebSocketUrl(webcastResponse);
             if (clientSettings.isHandleExistingEvents()) {
                 logger.info("Handling existing messages");
                 webResponseHandler.handle(tikTokLiveClient, webcastResponse);
             }
+            var url = getWebSocketUrl(webcastResponse);
             webSocketClient = startWebSocket(url, tikTokLiveClient);
             webSocketClient.connect();
 
@@ -91,26 +91,28 @@ public class TikTokWebSocketClient implements SocketClient {
         }
     }
 
-    private WebSocketClient startWebSocket(String url, LiveClient liveClient) {
+    private URI getWebSocketUrl(WebcastResponse webcastResponse) {
+        var tiktokAccessKey = webcastResponse.getRouteParamsMapMap();
+
+        var parameters = new TreeMap<>(clientSettings.getClientParameters());
+        parameters.putAll(tiktokAccessKey);
+
+        var url = webcastResponse.getPushServer();
+        var parsed = HttpUtils.parseParametersEncode(url, parameters);
+        return URI.create(parsed);
+    }
+
+    private WebSocketClient startWebSocket(URI url, LiveClient liveClient) {
         var cookie = tikTokCookieJar.parseCookies();
-        var map = new HashMap<String, String>();
-        map.put("Cookie", cookie);
-        return new TikTokWebSocketListener(URI.create(url),
-                map,
+        var headers = new HashMap<String, String>();
+        headers.put("Cookie", cookie);
+        return new TikTokWebSocketListener(url,
+                headers,
                 3000,
                 webResponseHandler,
                 tikTokEventHandler,
                 liveClient);
     }
-
-    private String getWebSocketUrl(WebcastResponse webcastResponse) {
-        var clone = new TreeMap<>(clientSettings.getClientParameters());
-        clone.putAll(Constants.DefaultRequestHeaders());
-        clone.putAll(webcastResponse.getRouteParamsMapMap());
-        var url = webcastResponse.getPushServer();
-        return HttpUtils.parseParametersEncode(url, clone);
-    }
-
     public void stop()
     {
         if (isConnected && webSocketClient != null) {

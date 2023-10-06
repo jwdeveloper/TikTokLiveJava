@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.util.ConsoleColors;
+import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 
 import java.io.IOException;
 
@@ -68,7 +68,7 @@ public class SimpleExample {
                 {
                     event.getException().printStackTrace();
                 })
-                .buildAndRunAsync();
+                .buildAndConnectAsync();
 
         System.in.read();
     }

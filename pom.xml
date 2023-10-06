@@ -15,6 +15,7 @@
         <module>TestApplication</module>
         <module>Tools-EventsCollector</module>
         <module>Tools-ReadmeGenerator</module>
+        <module>Tools-EventsWebViewer</module>
     </modules>
 
     <properties>

@@ -94,8 +94,8 @@ message WebcastGiftMessage {
   }
 }
 
-//@WebcastRoomMessage
-message WebcastRoomMessage {
+//@RoomMessage
+message RoomMessage {
   Common common = 1;
   string content = 2;
   bool supprotLandscape = 3;
@@ -103,6 +103,12 @@ message WebcastRoomMessage {
   Image icon = 5;
   string scene = 6;
   bool isWelcome = 7;
+}
+
+//@WebcastRoomMessage
+message WebcastRoomMessage {
+  Common common = 1;
+  string content = 2;
 }
 
 //@WebcastBarrageMessage

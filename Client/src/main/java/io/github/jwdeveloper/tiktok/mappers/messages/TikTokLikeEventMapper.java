@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers.messages;
 
-import io.github.jwdeveloper.tiktok.events.messages.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.mappers.Mapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
 

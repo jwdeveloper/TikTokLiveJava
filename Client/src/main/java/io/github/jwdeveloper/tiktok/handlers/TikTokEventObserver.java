@@ -22,9 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.handlers;
 
-import io.github.jwdeveloper.tiktok.TikTokLiveClient;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
-import io.github.jwdeveloper.tiktok.events.TikTokEventConsumer;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.live.events.TikTokEventConsumer;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.util.HashMap;

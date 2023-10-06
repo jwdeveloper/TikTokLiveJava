@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.mockClient.TikTokClientMock;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokResponseModel;
+import io.github.jwdeveloper.tiktok.tools.util.MessageUtil;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 
@@ -49,54 +50,28 @@ public class RunDbTester {
                 .addResponses(responses)
                 .onWebsocketUnhandledMessage((liveClient, event) ->
                 {
-                    liveClient.getLogger().info("Unhandled Message! " + event.getData().getMethod());
+                    var sb = new StringBuilder();
+                    sb.append("Unhandled Message! " );
+                    sb.append(event.getData().getMethod());
+                    sb.append(MessageUtil.getContent(event.getData()));
+
+                    liveClient.getLogger().info(sb.toString());
                 })
                 .onWebsocketMessage((liveClient, event) ->
                 {
                     var sb = new StringBuilder();
                     sb.append(event.getEvent().getClass().getSimpleName());
                     sb.append(event.getEvent().toJson());
-                   // sb.append(ConsoleColors.YELLOW + messageContent(event.getMessage()));
-
-                    liveClient.getLogger().info(sb.toString());
+                    liveClient.getLogger().fine(sb.toString());
                 })
                 .build();
 
-        updateLogger(client.getLogger());
+
         client.connect();
     }
 
-    protected static String messageContent(WebcastResponse.Message message) {
-        try {
 
-            var methodName = message.getMethod();
-            if (!methodName.contains("Webcast")) {
-                methodName = "Webcast" + methodName;
-            }
-            var inputClazz = Class.forName("io.github.jwdeveloper.tiktok.messages.webcast." + methodName);
-            var parseMethod = inputClazz.getDeclaredMethod("parseFrom", ByteString.class);
-            var deserialized = parseMethod.invoke(null, message.getPayload());
-            return JsonUtil.messageToJson(deserialized);
-        } catch (Exception ex) {
-            return "";
-        }
-    }
 
-    public static void updateLogger(Logger logger) {
-        for (var handler : logger.getHandlers()) {
-            logger.removeHandler(handler);
-        }
-
-        var handler = new ConsoleHandler();
-        handler.setFormatter(new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                return ConsoleColors.WHITE_BRIGHT + record.getLevel() + ": " + ConsoleColors.GREEN + record.getMessage() + "\n" + ConsoleColors.RESET;
-            }
-        });
-        logger.setUseParentHandlers(false);
-        logger.addHandler(handler);
-    }
 
 
 }

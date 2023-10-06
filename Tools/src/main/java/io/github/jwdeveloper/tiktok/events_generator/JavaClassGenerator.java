@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.events_generator;
 
 import com.squareup.javapoet.*;
-import io.github.jwdeveloper.tiktok.events.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import lombok.Getter;
 
 import javax.lang.model.element.Modifier;
