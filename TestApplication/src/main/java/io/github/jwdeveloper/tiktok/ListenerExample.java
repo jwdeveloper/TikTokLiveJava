@@ -23,9 +23,9 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokCommentEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
@@ -34,30 +34,33 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
 import java.io.IOException;
 
 public class ListenerExample {
-    /*
-      Listeners are an alternative way of handling events.
-      I would to suggest to use then when logic of handing event
-      is more complex
+    /**
+     *
+     *  Listeners are an alternative way of handling events.
+     *  I would to suggest to use then when logic of handing event
+     *  is more complex
+     *
      */
     public static void main(String[] args) throws IOException {
 
         CustomListener customListener = new CustomListener();
 
-        // set tiktok username
-        var client = TikTokLive.newClient(Main.TEST_TIKTOK_USER)
+        TikTokLive.newClient(Main.TEST_TIKTOK_USER)
                 .addListener(customListener)
                 .buildAndConnect();
 
         System.in.read();
     }
 
-    /*
-       Method in TikTokEventListener should meet 4 requirements to be detected
-        - must have @TikTokEventHandler annotation
-        - must have 2 parameters
-        - first parameter must be LiveClient
-        - second must be class that extending TikTokEvent
+    /**
+     *
+     *  Method in TikTokEventListener should meet 4 requirements to be detected
+     *         - must have @TikTokEventHandler annotation
+     *         - must have 2 parameters
+     *         - first parameter must be LiveClient
+     *         - second must be class that extending TikTokEvent
      */
+
     public static class CustomListener implements TikTokEventListener {
 
         @TikTokEventHandler
@@ -67,27 +70,32 @@ public class ListenerExample {
 
         @TikTokEventHandler
         public void onError(LiveClient liveClient, TikTokErrorEvent event) {
-            System.out.println(event.getException().getMessage());
+            event.getException().printStackTrace();
         }
 
         @TikTokEventHandler
         public void onComment(LiveClient liveClient, TikTokCommentEvent event) {
-            System.out.println(event.getText());
+            var userName = event.getUser().getName();
+            var text = event.getText();
+            liveClient.getLogger().info(userName + ": " + text);
         }
 
         @TikTokEventHandler
         public void onGift(LiveClient liveClient, TikTokGiftEvent event) {
             var message = switch (event.getGift()) {
                 case ROSE -> "Thanks :)";
-                default -> "as";
+                case APPETIZERS -> ":$";
+                case APRIL -> ":D";
+                case TIKTOK -> ":P";
+                case CAP -> ":F";
+                default -> ":I";
             };
-
-
+            liveClient.getLogger().info(message);
         }
 
         @TikTokEventHandler
         public void onAnyEvent(LiveClient liveClient, TikTokEvent event) {
-            System.out.println(event.getClass().getSimpleName());
+            liveClient.getLogger().info(event.getClass().getSimpleName());
         }
 
     }

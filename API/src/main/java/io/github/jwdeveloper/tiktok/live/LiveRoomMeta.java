@@ -25,9 +25,16 @@ package io.github.jwdeveloper.tiktok.live;
 import lombok.Data;
 
 @Data
-public class LiveRoomMeta
-{
-   private int status;
+public class LiveRoomMeta {
+    /**
+     * 0 - Unknown
+     * 1 - ?
+     * 2 - Online
+     * 3 - ?
+     * 4 - Offline
+     */
 
-   private boolean ageRestricted;
+    private int status;
+
+    private boolean ageRestricted;
 }

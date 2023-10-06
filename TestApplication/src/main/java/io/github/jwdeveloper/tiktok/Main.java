@@ -39,7 +39,7 @@ import java.time.Duration;
 
 public class Main {
 
-    public static String TEST_TIKTOK_USER = "ano_liwia";
+    public static String TEST_TIKTOK_USER = "bangbetmenygy";
 
     public static void main(String[] args) throws IOException
     {
@@ -121,7 +121,7 @@ public class Main {
 
     private static void onLike(LiveClient tikTokLive, TikTokLikeEvent e) {
 
-        print(e.getUser().getId(), "liked!");
+        print(e.getUser().getDisplayName(), "liked!");
     }
     private static void onEmote(LiveClient tikTokLive, TikTokEmoteEvent e) {
         print(e.getUser().getId(), "sent", e.getEmotes().size());

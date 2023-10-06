@@ -38,10 +38,10 @@ public class SimpleExample {
                 .onGift((liveClient, event) ->
                 {
                     switch (event.getGift()) {
-                        case ROSE ->
-                                print("\uD83D\uDC95", ConsoleColors.YELLOW, "x", event.getCombo(), " roses!", "\uD83D\uDC95");
-                        default ->
-                                print(ConsoleColors.GREEN, "[Thanks for gift] ",ConsoleColors.YELLOW, event.getGift().getName(), "X", event.getCombo());
+                        case ROSE -> print(ConsoleColors.RED, " roses!", "\uD83D\uDC95");
+                        case GG -> print(ConsoleColors.YELLOW, " GOOD GAME!");
+                        case TIKTOK -> print(ConsoleColors.CYAN,"Thanks for TikTok");
+                        default -> print(ConsoleColors.GREEN, "[Thanks for gift] ", ConsoleColors.YELLOW, event.getGift().getName(), "X", event.getCombo());
                     }
                 })
                 .onConnected((client, event) ->
@@ -54,7 +54,7 @@ public class SimpleExample {
                 })
                 .onJoin((client, event) ->
                 {
-                    print(ConsoleColors.GREEN, "Join -> ", ConsoleColors.WHITE_BRIGHT, event.getUser().getName());
+                    print(ConsoleColors.WHITE_BRIGHT, "Join ->", ConsoleColors.GREEN, event.getUser().getName());
                 })
                 .onComment((client, event) ->
                 {
