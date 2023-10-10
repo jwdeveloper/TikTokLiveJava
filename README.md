@@ -1,57 +1,33 @@
 
 <div align="center" >
-
-
 <a target="blank" >
-
 <img src="https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/develop-1_0_0/Tools-ReadmeGenerator/src/main/resources/logo.svg" width="15%" >
 </img>
 </a>
-
 </div>
 <div align="center" >
-
 <h1>TikTokLive Java</h1>
 
-
- 
-
 ❤️❤️🎁 *Connect to TikTok live in 3 lines* 🎁❤️❤️
-  
-
-
 
 <div align="center" >
-
-
-<a href="https://jitpack.io/#jwdeveloper/DepenDance" target="blank" >
-
-<img src="https://jitpack.io/v/jwdeveloper/DepenDance.svg" width="20%" >
+<a href="https://jitpack.io/#jwdeveloper/TikTok-Live-Java" target="blank" >
+<img src="https://jitpack.io/v/jwdeveloper/TikTok-Live-Java.svg" width="20%" >
 </img>
 </a>
 
-<a href="https://discord.gg/2hu6fPPeF7" target="blank" >
 
+<a href="https://discord.gg/e2XwPNTBBr" target="blank" >
 <img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" >
 </img>
 </a>
 
-
-
 <a target="blank" >
-
 <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white" >
 </img>
 </a>
-
 </div>
-
 </div>
-
-
-
-
-
 
 
 # Introdution
