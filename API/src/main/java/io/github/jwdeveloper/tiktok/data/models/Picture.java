@@ -34,8 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 
 public class Picture {
@@ -67,21 +66,20 @@ public class Picture {
         if (isDownloaded()) {
             return image;
         }
-        if (link.equalsIgnoreCase("")) {
-            return null;
-        }
         image = download(link);
         return image;
     }
 
-    public Future<Image> downloadImageAsync() {
-        var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(this::downloadImage);
-        executor.shutdown();
-        return future;
+    public CompletableFuture<Image> downloadImageAsync() {
+        return CompletableFuture.supplyAsync(this::downloadImage);
     }
 
-    private BufferedImage download(String urlString) {
+    private BufferedImage download(String urlString)
+    {
+        if(urlString.isEmpty())
+        {
+            return null;
+        }
         var baos = new ByteArrayOutputStream();
         try (var is = new URL(urlString).openStream()) {
             var byteChunk = new byte[4096];
@@ -104,9 +102,5 @@ public class Picture {
 
     public static Picture Empty() {
         return new Picture("");
-    }
-
-    public static List<Picture> EmptyList() {
-        return new ArrayList<Picture>();
     }
 }

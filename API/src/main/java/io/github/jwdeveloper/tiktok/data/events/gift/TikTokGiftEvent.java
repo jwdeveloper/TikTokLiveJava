@@ -32,7 +32,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
 
-/**
+/*
  * Triggered every time a gift arrives.
  */
 @EventMeta(eventType = EventType.Message)

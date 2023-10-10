@@ -66,7 +66,7 @@ public class JsonUtil {
                         }
 
                         if (fieldAttributes.getName().equals("common_")) {
-                            return true;
+                        //    return true;
                         }
                         if (fieldAttributes.getName().equals("bytes")) {
                             return true;

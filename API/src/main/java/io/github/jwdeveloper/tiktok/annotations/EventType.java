@@ -25,5 +25,5 @@ package io.github.jwdeveloper.tiktok.annotations;
 
 public enum EventType
 {
-   Control, Message, Custom, Debug
+   Control, Message, Debug
 }

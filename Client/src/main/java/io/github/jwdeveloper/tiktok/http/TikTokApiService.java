@@ -30,6 +30,7 @@ import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
+import javax.script.ScriptEngineManager;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -116,22 +117,24 @@ public class TikTokApiService {
 
 
     public LiveRoomMeta fetchRoomInfo() {
-        logger.info("Fetch RoomInfo");
+        logger.info("Fetching RoomInfo");
         try {
             var response = tiktokHttpClient.getJObjectFromWebcastAPI("room/info/", clientSettings.getClientParameters());
             var mapper = new LiveRoomMetaMapper();
             var liveRoomMeta = mapper.map(response);
             logger.info("RoomInfo status -> " + liveRoomMeta.getStatus());
             return liveRoomMeta;
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             throw new TikTokLiveRequestException("Failed to fetch room info from WebCast, see stacktrace for more info.", e);
         }
     }
 
     public WebcastResponse fetchClientData() {
-        logger.info("Fetch ClientData");
+
+        logger.info("Fetching ClientData");
         try {
-            var response = tiktokHttpClient.getDeserializedMessage("im/fetch/", clientSettings.getClientParameters());
+            var response = tiktokHttpClient.getSigningServerMessage("im/fetch/", clientSettings.getClientParameters());
             clientSettings.getClientParameters().put("cursor", response.getCursor());
             clientSettings.getClientParameters().put("internal_ext", response.getInternalExt());
             return response;

@@ -32,13 +32,15 @@ import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
-import io.github.jwdeveloper.tiktok.live.UserManager;
-import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
+import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class TikTokLiveClient implements LiveClient {
@@ -70,22 +72,37 @@ public class TikTokLiveClient implements LiveClient {
     }
 
 
+    public void connectAsync(Consumer<LiveClient> onConnection) {
+        CompletableFuture.supplyAsync(() ->
+        {
+            connect();
+            onConnection.accept(this);
+            return this;
+        });
+    }
+
+    public CompletableFuture<LiveClient> connectAsync() {
+        return CompletableFuture.supplyAsync(() ->
+        {
+            connect();
+            return this;
+        });
+    }
+
     public void connect() {
         try {
             tryConnect();
-        }
-        catch (TikTokLiveException e)
+        } catch (TikTokLiveException e)
         {
             setState(ConnectionState.DISCONNECTED);
             tikTokEventHandler.publish(this, new TikTokErrorEvent(e));
             tikTokEventHandler.publish(this, new TikTokDisconnectedEvent());
 
-            if(e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure())
-            {
+            if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
                 try {
                     Thread.sleep(clientSettings.getRetryConnectionTimeout().toMillis());
+                } catch (Exception ignored) {
                 }
-                catch (Exception ignored){}
                 logger.info("Reconnecting");
                 tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
                 this.connect();
@@ -108,27 +125,22 @@ public class TikTokLiveClient implements LiveClient {
         if (liveRoomInfo.hasConnectionState(ConnectionState.CONNECTING))
             throw new TikTokLiveException("Already connecting");
 
-        logger.info("Connecting");
         setState(ConnectionState.CONNECTING);
-
 
         apiService.updateSessionId();
 
-        if(clientSettings.getRoomId() != null)
-        {
+        if (clientSettings.getRoomId() != null) {
             liveRoomInfo.setRoomId(clientSettings.getRoomId());
-            logger.info("Using roomID from settings: "+clientSettings.getRoomId());
-        }
-        else
-        {
+            logger.info("Using roomID from settings: " + clientSettings.getRoomId());
+        } else {
             var roomId = apiService.fetchRoomId(liveRoomInfo.getHostName());
             liveRoomInfo.setRoomId(roomId);
         }
 
 
         var roomData = apiService.fetchRoomInfo();
-        if (roomData.getStatus() == 0 || roomData.getStatus() == 4) {
-            throw new TikTokLiveOfflineHostException("LiveStream for HostID could not be found. Is the Host online?");
+        if (roomData.getStatus() != LiveRoomMeta.LiveRoomStatus.HostOnline)  {
+            throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found. Is the Host online?");
         }
 
         var clientData = apiService.fetchClientData();
@@ -140,9 +152,9 @@ public class TikTokLiveClient implements LiveClient {
     public LiveRoomInfo getRoomInfo() {
         return liveRoomInfo;
     }
+
     @Override
-    public ListenersManager getListenersManager()
-    {
+    public ListenersManager getListenersManager() {
         return listenersManager;
     }
 
@@ -154,11 +166,6 @@ public class TikTokLiveClient implements LiveClient {
     @Override
     public GiftManager getGiftManager() {
         return tikTokGiftManager;
-    }
-
-    @Override
-    public UserManager getUserManager() {
-        return null;
     }
 
 

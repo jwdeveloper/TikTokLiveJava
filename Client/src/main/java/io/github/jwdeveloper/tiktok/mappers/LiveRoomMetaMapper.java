@@ -25,9 +25,14 @@ package io.github.jwdeveloper.tiktok.mappers;
 import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 
-public class LiveRoomMetaMapper
-{
-
+public class LiveRoomMetaMapper {
+    /**
+     * 0 - Unknown
+     * 1 - ?
+     * 2 - Online
+     * 3 - ?
+     * 4 - Offline
+     */
     public LiveRoomMeta map(JsonObject input) {
         var liveRoomMeta = new LiveRoomMeta();
 
@@ -35,16 +40,27 @@ public class LiveRoomMetaMapper
             return liveRoomMeta;
         }
         var data = input.getAsJsonObject("data");
+
+
         if (data.has("status")) {
             var status = data.get("status");
-            liveRoomMeta.setStatus(status.getAsInt());
+            var statusId = status.getAsInt();
+            var statusValue = switch (statusId) {
+                case 0 -> LiveRoomMeta.LiveRoomStatus.HostNotFound;
+                case 2 -> LiveRoomMeta.LiveRoomStatus.HostOnline;
+                case 4 -> LiveRoomMeta.LiveRoomStatus.HostOffline;
+                default-> LiveRoomMeta.LiveRoomStatus.HostNotFound;
+            };
+            liveRoomMeta.setStatus(statusValue);
+        }
+        else
+        {
+            liveRoomMeta.setStatus(LiveRoomMeta.LiveRoomStatus.HostNotFound);
         }
 
-
-        if(data.has("age_restricted"))
-        {
+        if (data.has("age_restricted")) {
             var element = data.getAsJsonObject("age_restricted");
-            var restricted= element.get("restricted").getAsBoolean();
+            var restricted = element.get("restricted").getAsBoolean();
             liveRoomMeta.setAgeRestricted(restricted);
         }
         return liveRoomMeta;

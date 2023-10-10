@@ -43,20 +43,14 @@ public class ReadmeGenerator
 
         variables.put("version", getCurrentVersion());
 
-        var exampleCodePath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\TestApplication\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\SimpleExample.java";
-        variables.put("Code-Example", getCodeExample(exampleCodePath));
+        var exampleCodePath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\SimpleExample.java";
+        variables.put("code-content", getCodeExample(exampleCodePath));
 
+        variables.put("events-content", new EventsInfoGenerator().run());
 
-        var exampleConfigurationPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\TestApplication\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\ConfigurationExample.java";
-        variables.put("Configuration-Example", getCodeExample(exampleConfigurationPath));
+        var listenerExamplePath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\ListenerExample.java";
+       // variables.put("listener-content", getCodeExample(listenerExamplePath));
 
-        variables.put("Events", EventsListGenerator.GetEventsList());
-
-        var listenerExamplePath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\TestApplication\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\ListenerExample.java";
-        variables.put("Listener-Example", getCodeExample(listenerExamplePath));
-
-       // var liveClientPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\API\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\live\\LiveClient.java";
-       // variables.put("methods", LiveClientMethodsGenerator.generate(liveClientPath));
 
         template = TemplateUtility.generateTemplate(template, variables);
         var outputPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\resources\\output.md";
@@ -72,7 +66,9 @@ public class ReadmeGenerator
 
     public String getCodeExample(String path)
     {
-        return  FilesUtility.loadFileContent(path);
+        var content = FilesUtility.loadFileContent(path);
+        content = content.substring(content.indexOf("*/")+2);
+        return content;
     }
 
 }

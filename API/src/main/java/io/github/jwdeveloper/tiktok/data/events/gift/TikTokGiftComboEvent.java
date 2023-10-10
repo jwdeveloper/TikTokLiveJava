@@ -29,12 +29,11 @@ import io.github.jwdeveloper.tiktok.data.models.Gift;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 @Getter
-public class TikTokGiftComboFinishedEvent extends TikTokGiftEvent
+public class TikTokGiftComboEvent extends TikTokGiftEvent
 {
-
-    public TikTokGiftComboFinishedEvent(Gift gift, WebcastGiftMessage msg) {
+    public TikTokGiftComboEvent(Gift gift, WebcastGiftMessage msg) {
         super(gift, msg);
     }
 }

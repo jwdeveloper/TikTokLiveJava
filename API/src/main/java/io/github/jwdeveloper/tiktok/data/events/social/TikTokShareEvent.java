@@ -33,7 +33,7 @@ import lombok.Getter;
  * Triggers when a user shares the stream. Based on social event.
  */
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokShareEvent extends TikTokHeaderEvent {
   private final User user;
   private final int totalShares;

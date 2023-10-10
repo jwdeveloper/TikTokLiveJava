@@ -27,18 +27,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Getter
 public class Text {
     String key;
     String pattern;
     List<TextPiece> textPieces;
+    String value;
 
     public Text(String key, String pattern, List<TextPiece> textPieces) {
         this.key = key;
         this.pattern = pattern;
         this.textPieces = textPieces;
+        this.value = computeValue();
     }
 
     public static Text map(io.github.jwdeveloper.tiktok.messages.data.Text input) {
@@ -53,15 +57,31 @@ public class Text {
                 var user = User.map(input.getUserValue().getUser());
                 yield new UserTextPiece(user);
             }
-            //case 12 -> new GiftTextPiece(input.getStringValue());
+            case 12 -> new GiftTextPiece(input.getGiftValue().getGiftId());
             default -> new StringTextPiece(input.getStringValue());
         };
     }
 
+
+    private String computeValue() {
+        var regexPattern = Pattern.compile("\\{.*?\\}");
+        var matcher = regexPattern.matcher(pattern);
+        var format = matcher.replaceAll("%s");
+
+        var output = new ArrayList<String>();
+        for (var piece : textPieces) {
+            output.add(piece.getText());
+        }
+        return String.format(format, output.toArray());
+    }
+
+
     @Getter
     @AllArgsConstructor
     public static class TextPiece {
-
+        public String getText() {
+            return "";
+        }
     }
 
     @Value
@@ -79,13 +99,25 @@ public class Text {
         public UserTextPiece(User user) {
             this.user = user;
         }
+
+
+        @Override
+        public String getText() {
+            return user.getDisplayName();
+        }
     }
 
     public static class GiftTextPiece extends TextPiece {
-        Gift gift;
 
-        public GiftTextPiece(String value) {
+        int giftId;
 
+        public GiftTextPiece(int giftId) {
+            this.giftId = giftId;
+        }
+
+        @Override
+        public String getText() {
+            return giftId + "";
         }
     }
 }

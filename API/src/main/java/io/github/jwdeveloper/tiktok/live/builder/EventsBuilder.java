@@ -24,7 +24,7 @@ package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboFinishedEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomUserInfoEvent;
@@ -37,7 +37,7 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketRespons
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
 
 
-public interface EventBuilder<T> {
+public interface EventsBuilder<T> {
 
     T onRoom(EventConsumer<TikTokRoomEvent> event);
 
@@ -45,15 +45,13 @@ public interface EventBuilder<T> {
 
     T onComment(EventConsumer<TikTokCommentEvent> event);
 
-
     T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> event);
 
     T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> event);
 
     T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
 
-
-    T onGiftCombo(EventConsumer<TikTokGiftComboFinishedEvent> event);
+    T onGiftCombo(EventConsumer<TikTokGiftComboEvent> event);
 
     T onGift(EventConsumer<TikTokGiftEvent> event);
 

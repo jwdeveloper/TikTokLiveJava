@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.tools.collector.client;
 
 import io.github.jwdeveloper.tiktok.TikTokLiveClientBuilder;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 
 import java.sql.SQLException;
@@ -35,7 +36,7 @@ public class TikTokMessagessCollectorBuilder {
     List<String> users;
     String outputFileName;
     List<Class<?>> filters;
-    Consumer<TikTokLiveClientBuilder> onBuilder;
+    Consumer<LiveClientBuilder> onBuilder;
     List<LiveClient> tiktokclients;
 
     MessageCollector messageCollector;
@@ -61,7 +62,7 @@ public class TikTokMessagessCollectorBuilder {
     }
 
 
-    public TikTokMessagessCollectorBuilder addOnBuilder(Consumer<TikTokLiveClientBuilder> consumer) {
+    public TikTokMessagessCollectorBuilder addOnBuilder(Consumer<LiveClientBuilder> consumer) {
         onBuilder = consumer;
         return this;
     }

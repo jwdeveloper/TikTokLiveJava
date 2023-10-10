@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.TikTokBarrageEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboFinishedEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEndEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
@@ -142,7 +142,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         }
 
         if (giftMessage.getRepeatEnd() > 0) {
-            return new TikTokGiftComboFinishedEvent(gift, giftMessage);
+            return new TikTokGiftComboEvent(gift, giftMessage);
         }
 
         return new TikTokGiftEvent(gift, giftMessage);

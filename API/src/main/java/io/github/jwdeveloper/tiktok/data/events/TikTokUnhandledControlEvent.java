@@ -29,7 +29,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastControlMessage;
 import lombok.Getter;
 
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokUnhandledControlEvent extends TikTokUnhandledEvent<WebcastControlMessage> {
 
     public TikTokUnhandledControlEvent(WebcastControlMessage data) {

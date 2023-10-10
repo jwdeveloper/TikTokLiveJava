@@ -35,7 +35,7 @@ import lombok.Getter;
  * Triggered when a viewer sends likes to the streamer. For streams with many viewers, this event is not always triggered by TikTok.
  */
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokLikeEvent extends TikTokHeaderEvent
 {
     private final User user;

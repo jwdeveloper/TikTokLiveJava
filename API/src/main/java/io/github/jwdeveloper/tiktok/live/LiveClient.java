@@ -25,6 +25,8 @@ package io.github.jwdeveloper.tiktok.live;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public interface LiveClient {
@@ -33,6 +35,19 @@ public interface LiveClient {
      * Connects to the live stream.
      */
     void connect();
+
+
+    /**
+     * Connects in asynchronous way
+     * When connected Consumer returns instance of LiveClient
+     */
+    void connectAsync(Consumer<LiveClient> onConnection);
+
+    /**
+     * Connects in asynchronous way
+     */
+    CompletableFuture<LiveClient> connectAsync();
+
 
     /**
      * Disconnects the connection.
@@ -46,25 +61,19 @@ public interface LiveClient {
     GiftManager getGiftManager();
 
     /**
-     *  Get user manager
-     * @return
-     */
-    UserManager getUserManager();
-
-    /**
      * Gets the current room info from TikTok API including streamer info, room status and statistics.
      */
     LiveRoomInfo getRoomInfo();
 
     /**
      * Manage TikTokEventListener
+     *
      * @see TikTokEventListener
      */
     ListenersManager getListenersManager();
 
     /**
-     *  Logger
-     * @return
+     * Logger
      */
     Logger getLogger();
 }

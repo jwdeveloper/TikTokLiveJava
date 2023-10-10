@@ -29,6 +29,6 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 /**
  * Triggered when the live stream gets terminated by the host. Will also trigger the TikTokDisconnectedEvent event.
  */
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokLiveEndedEvent extends TikTokEvent {
 }

@@ -46,7 +46,7 @@ public class ApiServiceMock extends TikTokApiService {
     public LiveRoomMeta fetchRoomInfo()
     {
         var meta = new LiveRoomMeta();
-        meta.setStatus(1);
+        meta.setStatus(LiveRoomMeta.LiveRoomStatus.HostOnline);
         return meta;
     }
 

@@ -51,38 +51,20 @@ Do you prefer other programming languages?
 2. Create your first chat connection
 
 ```java
-{{Code-Example}}
+{{code-content}}
 ```
-## Configuration
+## Events
 
-```java
-{{Configuration-Example}}
-```
+{{events-content}}
+
+<br>
+<br>
+
 ## Listener Example
 
 ```java
-{{Listener-Example}}
+{{listener-content}}
 ```
-
-## Methods
-A `client (LiveClient)` object contains the following methods.
-
-
-
-| Method Name         | Description |
-|---------------------| ----------- |
-| connect             | Connects to the live stream. |
-| disconnect          | Disconnects the connection. |
-| getGiftManager      |  Gets the meta informations about all gifts. |
-| getRoomInfo         | Gets the current room info from TikTok API including streamer info, room status and statistics. |
-| getListenersManager | Gets and manage TikTokEventListeners    |
-## Events
-
-A `TikTokLive` object has the following events
-
-{{Events}}
-
-<br><br>
 
 ## Contributing
 Your improvements are welcome! Feel free to open an <a href="https://github.com/jwdeveloper/TikTok-Live-Java/issues">issue</a> or <a href="https://github.com/jwdeveloper/TikTok-Live-Java/pulls">pull request</a>.

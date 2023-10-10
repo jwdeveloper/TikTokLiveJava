@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.TikTokLive;
 import io.github.jwdeveloper.tiktok.TikTokLiveClientBuilder;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 import io.github.jwdeveloper.tiktok.tools.collector.db.TikTokDatabase;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.ExceptionInfoModel;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokErrorModel;
@@ -45,7 +46,7 @@ public class TikTokClientFactory {
         this.tikTokDatabase = tikTokDatabase;
     }
 
-    public CompletableFuture<LiveClient> runClientAsync(String tiktokUser, Consumer<TikTokLiveClientBuilder> onBuilder) {
+    public CompletableFuture<LiveClient> runClientAsync(String tiktokUser, Consumer<LiveClientBuilder> onBuilder) {
         var builder = TikTokLive.newClient(tiktokUser);
         onBuilder.accept(builder);
         return builder.onConnected((liveClient, event) ->

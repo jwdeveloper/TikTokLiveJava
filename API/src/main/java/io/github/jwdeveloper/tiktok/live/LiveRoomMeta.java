@@ -26,15 +26,17 @@ import lombok.Data;
 
 @Data
 public class LiveRoomMeta {
-    /**
-     * 0 - Unknown
-     * 1 - ?
-     * 2 - Online
-     * 3 - ?
-     * 4 - Offline
-     */
 
-    private int status;
+    private LiveRoomStatus status;
 
     private boolean ageRestricted;
+
+
+
+    public enum LiveRoomStatus
+    {
+        HostNotFound,
+        HostOnline,
+        HostOffline
+    }
 }

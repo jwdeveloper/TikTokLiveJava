@@ -32,7 +32,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokPollStartEvent extends TikTokPollEvent {
 
     private final List<PollOption> options;

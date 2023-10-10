@@ -33,7 +33,7 @@ import lombok.Value;
  * Triggers when a user follows the streamer. Based on social event.
  */
 @Value
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokFollowEvent extends TikTokHeaderEvent
 {
    User user;

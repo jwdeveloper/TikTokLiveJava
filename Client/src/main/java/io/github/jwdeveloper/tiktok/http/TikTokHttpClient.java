@@ -73,7 +73,7 @@ public class TikTokHttpClient {
         return jsonObject;
     }
 
-    public WebcastResponse getDeserializedMessage(String path, Map<String, Object> parameters) {
+    public WebcastResponse getSigningServerMessage(String path, Map<String, Object> parameters) {
         var bytes = getSignRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         try {
             return WebcastResponse.parseFrom(bytes);

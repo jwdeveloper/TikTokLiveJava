@@ -75,7 +75,7 @@ public class TikTokWebSocketClient implements SocketClient {
 
         try {
             if (clientSettings.isHandleExistingEvents()) {
-                logger.info("Handling existing messages");
+                logger.info("Handling existing events");
                 webResponseHandler.handle(tikTokLiveClient, webcastResponse);
             }
             var url = getWebSocketUrl(webcastResponse);

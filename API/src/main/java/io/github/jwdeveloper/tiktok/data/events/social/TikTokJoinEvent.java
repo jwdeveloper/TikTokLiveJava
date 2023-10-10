@@ -31,7 +31,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokJoinEvent extends TikTokHeaderEvent {
     private final User user;
     private final int totalUsers;

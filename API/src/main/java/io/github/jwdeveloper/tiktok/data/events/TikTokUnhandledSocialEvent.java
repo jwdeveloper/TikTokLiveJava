@@ -29,7 +29,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokUnhandledSocialEvent extends TikTokUnhandledEvent<WebcastSocialMessage>
 {
     public TikTokUnhandledSocialEvent(WebcastSocialMessage data) {

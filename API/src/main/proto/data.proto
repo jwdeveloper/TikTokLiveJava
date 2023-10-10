@@ -82,7 +82,7 @@ message Text {
   }
 
   message TextPieceGift {
-    int64 giftId = 1;
+    int32 giftId = 1;
     // PatternRef nameRef = 2;
     // ShowType showType = 3; // Enum
     int64 colorId = 4;

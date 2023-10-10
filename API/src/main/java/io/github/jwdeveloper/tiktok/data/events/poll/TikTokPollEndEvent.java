@@ -31,7 +31,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 @Getter
 public class TikTokPollEndEvent extends TikTokPollEvent
 {

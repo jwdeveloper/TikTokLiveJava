@@ -33,7 +33,7 @@ import lombok.Getter;
  * Triggers when a user creates a subscription.
  */
 @Getter
-@EventMeta(eventType = EventType.Custom)
+@EventMeta(eventType = EventType.Message)
 public class TikTokSubscribeEvent extends TikTokHeaderEvent {
   private User user;
 

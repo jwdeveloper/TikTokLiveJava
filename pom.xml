@@ -12,7 +12,7 @@
         <module>API</module>
         <module>Client</module>
         <module>Tools</module>
-        <module>TestApplication</module>
+        <module>Examples</module>
         <module>Tools-EventsCollector</module>
         <module>Tools-ReadmeGenerator</module>
         <module>Tools-EventsWebViewer</module>

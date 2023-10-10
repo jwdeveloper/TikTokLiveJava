@@ -22,26 +22,21 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.live.builder.EventBuilder;
-import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.data.events.*;
-import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboFinishedEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomUserInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokBarrageEvent;
-import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
+import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
@@ -53,6 +48,7 @@ import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
@@ -64,8 +60,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.*;
 
-public class TikTokLiveClientBuilder implements LiveClientBuilder
-{
+public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     protected final ClientSettings clientSettings;
     protected final Logger logger;
@@ -76,7 +71,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
         this.tikTokEventHandler = new TikTokEventObserver();
         this.clientSettings = Constants.DefaultClientSettings();
         this.clientSettings.setHostName(userName);
-        this.logger = Logger.getLogger(TikTokLive.class.getSimpleName()+" "+userName);
+        this.logger = Logger.getLogger(TikTokLive.class.getSimpleName() + " " + userName);
         this.listeners = new ArrayList<>();
     }
 
@@ -105,16 +100,21 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
             throw new TikTokLiveException("HostName can not be null");
         }
 
+        if (clientSettings.getHostName().startsWith("@"))
+        {
+            clientSettings.setHostName(clientSettings.getHostName().substring(1));
+        }
+
+
         var params = clientSettings.getClientParameters();
         params.put("app_language", clientSettings.getClientLanguage());
         params.put("webcast_language", clientSettings.getClientLanguage());
 
-        logger.setLevel(clientSettings.getLogLevel());
+
         var handler = new ConsoleHandler();
         handler.setFormatter(new Formatter() {
             @Override
-            public String format(LogRecord record)
-            {
+            public String format(LogRecord record) {
                 var sb = new StringBuilder();
                 sb.append(ConsoleColors.GREEN).append("[").append(record.getLoggerName()).append("] ");
                 sb.append(ConsoleColors.GREEN).append("[").append(record.getLevel()).append("]: ");
@@ -126,9 +126,13 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
         logger.setUseParentHandlers(false);
         logger.addHandler(handler);
 
+        logger.setLevel(clientSettings.getLogLevel());
+
         if (clientSettings.isPrintToConsole() && clientSettings.getLogLevel() == Level.OFF) {
             logger.setLevel(Level.ALL);
         }
+
+
     }
 
     public LiveClient build() {
@@ -171,7 +175,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
     }
 
     public CompletableFuture<LiveClient> buildAndConnectAsync() {
-        return CompletableFuture.supplyAsync(this::buildAndConnect);
+        return build().connectAsync();
     }
 
     public TikTokLiveClientBuilder onUnhandledSocial(
@@ -261,8 +265,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
         return this;
     }
 
-    public TikTokLiveClientBuilder onGiftCombo(EventConsumer<TikTokGiftComboFinishedEvent> event) {
-        tikTokEventHandler.subscribe(TikTokGiftComboFinishedEvent.class, event);
+    public TikTokLiveClientBuilder onGiftCombo(EventConsumer<TikTokGiftComboEvent> event) {
+        tikTokEventHandler.subscribe(TikTokGiftComboEvent.class, event);
         return this;
     }
 
@@ -318,7 +322,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
     }
 
 
-
     public TikTokLiveClientBuilder onComment(EventConsumer<TikTokCommentEvent> event) {
         tikTokEventHandler.subscribe(TikTokCommentEvent.class, event);
         return this;
@@ -328,6 +331,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
         tikTokEventHandler.subscribe(TikTokGoalUpdateEvent.class, event);
         return this;
     }
+
     public TikTokLiveClientBuilder onRankUpdate(EventConsumer<TikTokRankUpdateEvent> event) {
         tikTokEventHandler.subscribe(TikTokRankUpdateEvent.class, event);
         return this;
@@ -347,7 +351,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
         tikTokEventHandler.subscribe(TikTokErrorEvent.class, event);
         return this;
     }
-
 
 
     public TikTokLiveClientBuilder onJoin(EventConsumer<TikTokJoinEvent> event) {
@@ -404,6 +407,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder
         tikTokEventHandler.subscribe(TikTokWebsocketResponseEvent.class, event);
         return this;
     }
+
     @Override
     public TikTokLiveClientBuilder onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> event) {
         tikTokEventHandler.subscribe(TikTokWebsocketMessageEvent.class, event);
