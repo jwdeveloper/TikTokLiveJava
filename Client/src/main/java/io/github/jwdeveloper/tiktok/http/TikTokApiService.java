@@ -1,19 +1,38 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.http;
 
-import com.google.gson.Gson;
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
-import io.github.jwdeveloper.tiktok.models.gifts.TikTokGiftInfo;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
+import javax.script.ScriptEngineManager;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TikTokApiService {
@@ -68,7 +87,9 @@ public class TikTokApiService {
         String html;
         try {
             html = tiktokHttpClient.getLivestreamPage(userName);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             throw new TikTokLiveRequestException("Failed to fetch room id from WebCast, see stacktrace for more info.", e);
         }
 
@@ -98,51 +119,29 @@ public class TikTokApiService {
 
 
     public LiveRoomMeta fetchRoomInfo() {
-        logger.info("Fetch RoomInfo");
+        logger.info("Fetching RoomInfo");
         try {
             var response = tiktokHttpClient.getJObjectFromWebcastAPI("room/info/", clientSettings.getClientParameters());
             var mapper = new LiveRoomMetaMapper();
-            var liveRoomMeta = mapper.mapFrom(response);
+            var liveRoomMeta = mapper.map(response);
             logger.info("RoomInfo status -> " + liveRoomMeta.getStatus());
             return liveRoomMeta;
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             throw new TikTokLiveRequestException("Failed to fetch room info from WebCast, see stacktrace for more info.", e);
         }
     }
 
     public WebcastResponse fetchClientData() {
-        logger.info("Fetch ClientData");
+
+        logger.info("Fetching ClientData");
         try {
-            var response = tiktokHttpClient.getDeserializedMessage("im/fetch/", clientSettings.getClientParameters());
+            var response = tiktokHttpClient.getSigningServerMessage("im/fetch/", clientSettings.getClientParameters());
             clientSettings.getClientParameters().put("cursor", response.getCursor());
-            clientSettings.getClientParameters().put("internal_ext", response.getAckIds());
+            clientSettings.getClientParameters().put("internal_ext", response.getInternalExt());
             return response;
         } catch (Exception e) {
             throw new TikTokLiveRequestException("Failed to fetch client data", e);
-        }
-    }
-
-    public Map<Integer, TikTokGiftInfo> fetchAvailableGifts() {
-        try {
-            var response = tiktokHttpClient.getJObjectFromWebcastAPI("gift/list/", clientSettings.getClientParameters());
-            if (!response.has("data")) {
-                return new HashMap<>();
-            }
-            var dataJson = response.getAsJsonObject("data");
-            if (!dataJson.has("gifts")) {
-                return new HashMap<>();
-            }
-            var giftsJsonList = dataJson.get("gifts").getAsJsonArray();
-            var gifts = new HashMap<Integer, TikTokGiftInfo>();
-            var gson = new Gson();
-            for (var jsonGift : giftsJsonList) {
-                var gift = gson.fromJson(jsonGift, TikTokGiftInfo.class);
-                logger.info("Found Available Gift " + gift.getName() + " with ID " + gift.getId());
-                gifts.put(gift.getId(), gift);
-            }
-            return gifts;
-        } catch (Exception e) {
-            throw new TikTokLiveRequestException("Failed to fetch giftTokens from WebCast, see stacktrace for more info.", e);
         }
     }
 }

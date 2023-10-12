@@ -1,10 +1,32 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.Constants;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -51,7 +73,7 @@ public class TikTokHttpClient {
         return jsonObject;
     }
 
-    public WebcastResponse getDeserializedMessage(String path, Map<String, Object> parameters) {
+    public WebcastResponse getSigningServerMessage(String path, Map<String, Object> parameters) {
         var bytes = getSignRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         try {
             return WebcastResponse.parseFrom(bytes);
@@ -111,12 +133,12 @@ public class TikTokHttpClient {
     private String getSignedUrl(String url, Map<String, Object> parameters) {
 
         var fullUrl = HttpUtils.parseParameters(url,parameters);
-        var singHeaders = new TreeMap<String,Object>();
-        singHeaders.put("client", "ttlive-java");
-        singHeaders.put("uuc", 1);
-        singHeaders.put("url", fullUrl);
+        var signParams = new TreeMap<String,Object>();
+        signParams.put("client", "ttlive-java");
+        signParams.put("uuc", 1);
+        signParams.put("url", fullUrl);
 
-        var request = requestFactory.setQueries(singHeaders);
+        var request = requestFactory.setQueries(signParams);
         var content = request.get(Constants.TIKTOK_SIGN_API);
 
 

@@ -1,16 +1,38 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.websocket;
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.TikTokLiveClient;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.events.messages.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
-import io.github.jwdeveloper.tiktok.messages.WebcastResponse;
-import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketAck;
-import io.github.jwdeveloper.tiktok.messages.WebcastWebsocketMessage;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPushFrame;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastWebsocketAck;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
@@ -24,14 +46,14 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     private final TikTokMessageHandlerRegistration webResponseHandler;
     private final TikTokEventObserver tikTokEventHandler;
-    private final TikTokLiveClient tikTokLiveClient;
+    private final LiveClient tikTokLiveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
                                    int connectTimeout,
                                    TikTokMessageHandlerRegistration webResponseHandler,
                                    TikTokEventObserver tikTokEventHandler,
-                                   TikTokLiveClient tikTokLiveClient) {
+                                   LiveClient tikTokLiveClient) {
         super(serverUri, new Draft_6455(), httpHeaders,connectTimeout);
         this.webResponseHandler = webResponseHandler;
         this.tikTokEventHandler = tikTokEventHandler;
@@ -69,7 +91,8 @@ public class TikTokWebSocketListener extends WebSocketClient {
     }
 
     @Override
-    public void onError(Exception error) {
+    public void onError(Exception error)
+    {
         tikTokEventHandler.publish(tikTokLiveClient,new TikTokErrorEvent(error));
         if(isNotClosing())
         {
@@ -83,21 +106,26 @@ public class TikTokWebSocketListener extends WebSocketClient {
             return;
         }
         var websocketMessage = websocketMessageOptional.get();
-        sendAckId(websocketMessage.getId());
+        var webResponse = getWebResponseMessage(websocketMessage.getPayload());
 
-        var webResponse = getWebResponseMessage(websocketMessage.getBinary());
+        if(webResponse.getNeedsAck())
+        {
+            //For some reason while send ack id, server get disconnected
+           // sendAckId(webResponse.getFetchInterval());
+        }
+
         webResponseHandler.handle(tikTokLiveClient, webResponse);
     }
 
-    private Optional<WebcastWebsocketMessage> getWebcastWebsocketMessage(byte[] buffer) {
+    private Optional<WebcastPushFrame> getWebcastWebsocketMessage(byte[] buffer) {
         try {
-            var websocketMessage = WebcastWebsocketMessage.parseFrom(buffer);
-            if (websocketMessage.getBinary().isEmpty()) {
+            var websocketMessage = WebcastPushFrame.parseFrom(buffer);
+            if (websocketMessage.getPayload().isEmpty()) {
                 return Optional.empty();
             }
             return Optional.of(websocketMessage);
         } catch (Exception e) {
-            throw new TikTokProtocolBufferException("Unable to parse WebcastWebsocketMessage", buffer, e);
+            throw new TikTokProtocolBufferException("Unable to parse WebcastPushFrame", buffer, e);
         }
     }
 
@@ -114,8 +142,6 @@ public class TikTokWebSocketListener extends WebSocketClient {
         return !isClosed() && !isClosing();
     }
 
-
-
     private void sendAckId(long id) {
         var serverInfo = WebcastWebsocketAck
                 .newBuilder()
@@ -124,7 +150,8 @@ public class TikTokWebSocketListener extends WebSocketClient {
                 .build();
         if(isNotClosing())
         {
-            send(serverInfo.toByteString().toByteArray());
+            System.out.println("SEND ICK ID "+id);
+            send(serverInfo.toByteArray());
         }
     }
 

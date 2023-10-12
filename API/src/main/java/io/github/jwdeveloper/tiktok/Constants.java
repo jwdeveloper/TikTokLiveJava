@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok;
 
 import java.time.Duration;
@@ -26,27 +48,20 @@ public class Constants {
      * Default TimeOut for Connections
      */
     public static final int DEFAULT_TIMEOUT = 20;
-    /**
-     * Default Polling-Time for Socket-Connection
-     */
-    public static final int DEFAULT_POLLTIME = 1;
+
 
     /**
      * Default Settings for Client
      */
-
-
     public static ClientSettings DefaultClientSettings() {
         var clientSettings = new ClientSettings();
         clientSettings.setTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT));
         clientSettings.setClientLanguage("en-US");
-        clientSettings.setHandleExistingMessagesOnConnect(true);
-        clientSettings.setDownloadGiftInfo(true);
+        clientSettings.setHandleExistingEvents(true);
         clientSettings.setRetryOnConnectionFailure(false);
         clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1));
         clientSettings.setPrintToConsole(false);
         clientSettings.setLogLevel(Level.ALL);
-        clientSettings.setPrintMessageData(false);
         clientSettings.setClientParameters(Constants.DefaultClientParams());
         return clientSettings;
     }
@@ -55,8 +70,6 @@ public class Constants {
     /**
      * Default Parameters for HTTP-Request
      */
-
-
     public static Map<String, Object> DefaultClientParams() {
         var clientParams = new TreeMap<String, Object>();
         clientParams.put("aid", 1988);
@@ -103,6 +116,7 @@ public class Constants {
     public static Map<String, String> DefaultRequestHeaders() {
         var headers = new HashMap<String, String>();
 
+        headers.put("authority","www.tiktok.com");
         headers.put("Connection", "keep-alive");
         headers.put("Cache-Control", "max-age=0");
         headers.put("Accept", "text/html,application/json,application/protobuf");

@@ -1,8 +1,37 @@
-[![](https://jitpack.io/v/jwdeveloper/TikTok-Live-Java.svg)](https://jitpack.io/#jwdeveloper/TikTok-Live-Java)
+<div align="center" >
+<a target="blank" >
+<img src="https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/develop-1_0_0/Tools-ReadmeGenerator/src/main/resources/logo.svg" width="15%" >
+</img>
+</a>
+</div>
+<div align="center" >
+<h1>TikTok Live Java</h1>
+
+❤️❤️🎁 *Connect to TikTok live in 3 lines* 🎁❤️❤️
+
+<div align="center" >
+<a href="https://jitpack.io/#jwdeveloper/TikTok-Live-Java" target="blank" >
+<img src="https://jitpack.io/v/jwdeveloper/TikTok-Live-Java.svg" width="20%" >
+</img>
+</a>
 
 
-# TikTokLive Java
-A Java library based on [TikTokLive](https://github.com/isaackogan/TikTokLive) and [TikTokLiveSharp](https://github.com/sebheron/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service. The package includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers. No credentials are required. Besides [Chat Comments](#chat), other events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked. You can also send [automatic messages](#send-chat-messages) into the chat by providing your Session ID.
+<a href="https://discord.gg/e2XwPNTBBr" target="blank" >
+<img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" >
+</img>
+</a>
+
+<a target="blank" >
+<img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white" >
+</img>
+</a>
+</div>
+</div>
+
+# Introduction
+A Java library inspired by [TikTokLive](https://github.com/isaackogan/TikTokLive) and [TikTokLiveSharp](https://github.com/frankvHoof93/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service. 
+The library includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers. 
+No credentials are required. Events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked. 
 
 Join the support [discord](https://discord.gg/e2XwPNTBBr) and visit the `#java-support` channel for questions, contributions and ideas. Feel free to make pull requests with missing/new features, fixes, etc
 
@@ -16,9 +45,8 @@ Do you prefer other programming languages?
 
 #### Overview
 - [Getting started](#getting-started)
-- [Configuration](#configuration)
-- [Methods](#methods)
 - [Events](#events)
+- [Listeners](#listeners)
 - [Contributing](#contributing)
 
 ## Getting started
@@ -40,49 +68,25 @@ Do you prefer other programming languages?
             <version>{{version}}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
    </dependencies>
 ```
 
 2. Create your first chat connection
 
-```java
-{{Code-Example}}
-```
-## Configuration
+{{code-content}}
 
-```java
-{{Configuration-Example}}
-```
-## Listener Example
-
-```java
-{{Listener-Example}}
-```
-
-## Methods
-A `client (LiveClient)` object contains the following methods.
-
-
-
-| Method Name         | Description |
-|---------------------| ----------- |
-| connect             | Connects to the live stream. |
-| disconnect          | Disconnects the connection. |
-| getGiftManager      |  Gets the meta informations about all gifts. |
-| getRoomInfo         | Gets the current room info from TikTok API including streamer info, room status and statistics. |
-| getListenersManager | Gets and manage TikTokEventListeners    |
 ## Events
 
-A `TikTokLive` object has the following events
+{{events-content}}
 
-{{Events}}
+<br>
 
-<br><br>
+## Listeners
+
+```java
+{{listener-content}}
+```
+
 
 ## Contributing
 Your improvements are welcome! Feel free to open an <a href="https://github.com/jwdeveloper/TikTok-Live-Java/issues">issue</a> or <a href="https://github.com/jwdeveloper/TikTok-Live-Java/pulls">pull request</a>.

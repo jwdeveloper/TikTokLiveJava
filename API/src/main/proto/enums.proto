@@ -1,0 +1,113 @@
+syntax = "proto3";
+package TikTok;
+
+option java_package = "io.github.jwdeveloper.tiktok.messages.enums";
+option java_multiple_files = true;
+
+enum AuditStatus {
+  AUDITSTATUSUNKNOWN = 0;
+  AUDITSTATUSPASS = 1;
+  AUDITSTATUSFAILED = 2;
+  AUDITSTATUSREVIEWING = 3;
+  AUDITSTATUSFORBIDDEN = 4;
+}
+enum EmoteType {
+  EMOTETYPENORMAL = 0;
+  EMOTETYPEWITHSTICKER = 1;
+}
+enum ContentSource {
+  CONTENTSOURCEUNKNOWN = 0;
+  CONTENTSOURCENORMAL = 1;
+  CONTENTSOURCECAMERA = 2;
+}
+enum EmotePrivateType {
+  EMOTE_PRIVATE_TYPE_NORMAL = 0;
+  EMOTE_PRIVATE_TYPE_SUB_WAVE = 1;
+}
+
+
+enum SubscribeType {
+  SUBSCRIBETYPE_ONCE = 0;
+  SUBSCRIBETYPE_AUTO = 1;
+  SUBSCRIBETYPE_DEFAULT = 100;
+}
+enum OldSubscribeStatus {
+  OLDSUBSCRIBESTATUS_FIRST = 0;
+  OLDSUBSCRIBESTATUS_RESUB = 1;
+  OLDSUBSCRIBESTATUS_SUBINGRACEPERIOD = 2;
+  OLDSUBSCRIBESTATUS_SUBNOTINGRACEPERIOD = 3;
+  OLDSUBSCRIBESTATUS_DEFAULT = 100;
+}
+enum SubscribingStatus {
+  SUBSCRIBINGSTATUS_UNKNOWN = 0;
+  SUBSCRIBINGSTATUS_ONCE = 1;
+  SUBSCRIBINGSTATUS_CIRCLE = 2;
+  SUBSCRIBINGSTATUS_CIRCLECANCEL = 3;
+  SUBSCRIBINGSTATUS_REFUND = 4;
+  SUBSCRIBINGSTATUS_INGRACEPERIOD = 5;
+  SUBSCRIBINGSTATUS_NOTINGRACEPERIOD = 6;
+}
+enum LinkmicStatus
+{
+  Disable = 0;
+  Enable = 1;
+  Just_Following = 2;
+  Multi_Linking = 3;
+  Multi_Linking_Only_Following = 4;
+}
+
+enum MemberMessageAction {
+  UNKNOWN = 0;
+  JOINED = 1; // User Joined the Stream
+  SUBSCRIBED = 3; // User Subscribed to the Host
+  //?? = 26
+  //?? = 27
+  //?? = 50 (share?)
+}
+
+enum ControlAction {
+  ControlActionUNKNOWN = 0;
+  STREAM_PAUSED = 1; // Stream Paused by Host
+  STREAM_ENDED = 3; // Stream Ended by Host
+}
+
+enum LinkLayerMessageType
+{
+  Linker_Unknown = 0;
+  Linker_Create = 1;
+  Linker_Invite = 2;
+  Linker_Apply = 3;
+  Linker_Permit = 4;
+  Linker_Reply = 5;
+  Linker_Kick_Out = 6;
+  Linker_Cancel_Apply = 7;
+  Linker_Cancel_Invite = 8;
+  Linker_Leave = 9;
+  Linker_Finish = 10;
+  Linker_List_Change = 11;
+  Linker_Join_Direct = 12;
+  Linker_Join_Group = 13;
+  Linker_Permit_Group = 14;
+  Linker_Cancel_Group = 15;
+  Linker_Leave_Group = 16;
+  Linker_P2P_Group_Change = 17;
+  Linker_Group_Change = 18;
+}
+
+
+enum BarrageType
+{
+  BarrageType_Unknown = 0;
+  EComOrdering = 1;
+  EComBuying = 2;
+  Normal = 3;
+  Subscribe = 4;
+  EventView = 5;
+  EventRegistered = 6;
+  SubscribeGift = 7;
+  UserUpgrade = 8;
+  GradeUserEntranceNotification = 9;
+  FansLevelUpgrade = 10;
+  FansLevelEntrance = 11;
+  GamePartnership = 12;
+}
