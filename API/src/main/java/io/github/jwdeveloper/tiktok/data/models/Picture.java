@@ -51,7 +51,7 @@ public class Picture {
     public static Picture map(io.github.jwdeveloper.tiktok.messages.data.Image profilePicture) {
 
         var index = profilePicture.getUrlListCount() - 1;
-        if (index <= 0) {
+        if (index < 0) {
             return new Picture("");
         }
         var url = profilePicture.getUrlList(index);

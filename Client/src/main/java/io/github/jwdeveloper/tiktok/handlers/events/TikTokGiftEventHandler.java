@@ -28,9 +28,11 @@ import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
+import sun.misc.Unsafe;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +47,8 @@ public class TikTokGiftEventHandler {
         giftsMessages = new HashMap<>();
     }
 
-    @SneakyThrows
-    public List<TikTokEvent> handleGift(byte[] msg) {
-        var currentMessage = WebcastGiftMessage.parseFrom(msg);
+    public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage)
+    {
         var userId = currentMessage.getUser().getId();
         var currentType = GiftSendType.fromNumber(currentMessage.getSendType());
         var containsPreviousMessage = giftsMessages.containsKey(userId);
@@ -80,6 +81,13 @@ public class TikTokGiftEventHandler {
 
         return List.of();
     }
+    @SneakyThrows
+    public List<TikTokEvent> handleGift(byte[] msg) {
+        var currentMessage = WebcastGiftMessage.parseFrom(msg);
+        return handleGift(currentMessage);
+    }
+
+
 
     private TikTokGiftEvent getGiftEvent(WebcastGiftMessage message) {
         var gift = getGiftObject(message);
@@ -103,6 +111,24 @@ public class TikTokGiftEventHandler {
                     giftMessage.getGift().getDiamondCount(),
                     Picture.map(giftMessage.getGift().getImage()));
         }
+
+        if (gift.getPicture().getLink().endsWith(".webp")) {
+            updatePicture(gift, giftMessage);
+        }
         return gift;
+    }
+
+
+    private void updatePicture(Gift gift, WebcastGiftMessage webcastGiftMessage) {
+        try {
+            var picture = Picture.map(webcastGiftMessage.getGift().getImage());
+            var constructor = Unsafe.class.getDeclaredConstructors()[0];
+            constructor.setAccessible(true);
+            var field = Gift.class.getDeclaredField("picture");
+            field.setAccessible(true);
+            field.set(gift, picture);
+        } catch (Exception e) {
+            throw new TikTokLiveException("Unable to update picture in gift: " + gift.toString());
+        }
     }
 }

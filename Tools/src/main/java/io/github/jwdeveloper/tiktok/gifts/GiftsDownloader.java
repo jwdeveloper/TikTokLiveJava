@@ -38,7 +38,11 @@ import java.util.TreeMap;
 public class GiftsDownloader {
 
     public static void main(String[] run) {
-        new GiftsDownloader().getGifts();
+        var gifts = new GiftsDownloader().getGifts();
+        for(var gift : gifts)
+        {
+            System.out.println(gift.toString());
+        }
     }
 
     public List<GiftDto> getGiftsFromFile() {

@@ -44,6 +44,10 @@ public class GenerateGiftsEnum {
 
         var downloader = new GiftsDownloader();
         var gifts = downloader.getGiftsFromFile();
+        for(var link : gifts)
+        {
+            System.out.println(link.getImage());
+        }
         var groupedByName = gifts.stream().collect(Collectors.groupingBy(GiftDto::getName));
         System.out.println("Total gifts" + gifts.size());
         var result = generate(groupedByName);
@@ -66,11 +70,11 @@ public class GenerateGiftsEnum {
                 .addParameter(int.class, "id")
                 .addParameter(String.class, "name")
                 .addParameter(int.class, "diamondCost")
-                .addParameter(Picture.class, "picture")
+                .addParameter(String.class, "pictureLink")
                 .addStatement("this.id = id")
                 .addStatement("this.name = name")
                 .addStatement("this.diamondCost = diamondCost")
-                .addStatement("this.picture = picture")
+                .addStatement("this.picture = new Picture(pictureLink)")
                 .build();
 
         var inRangeMethod = MethodSpec.methodBuilder("hasDiamondCostRange")
@@ -91,7 +95,7 @@ public class GenerateGiftsEnum {
         enumBuilder.addMethod(constructor);
 
 
-        enumBuilder.addEnumConstant("UNDEFINED", addGift(-1, "undefined", -1, new Picture("")));
+        enumBuilder.addEnumConstant("UNDEFINED", addGift(-1, "undefined", -1, ""));
         for (var giftInfo : giftInfoMap.entrySet()) {
 
 
@@ -117,16 +121,13 @@ public class GenerateGiftsEnum {
                 if (contier > 1) {
                     enumName += "_" + value.getId();
                 }
-                enumBuilder.addEnumConstant(enumName, addGift(value.getId(), value.getName(), value.getDiamondCost(), new Picture(value.getImage())));
+                enumBuilder.addEnumConstant(enumName, addGift(value.getId(), value.getName(), value.getDiamondCost(), value.getImage()));
                 contier++;
             }
 
 
         }
-        onEnums(enumBuilder);
-
-
-        var output = JavaFile.builder("io.github.jwdeveloper.tiktok.events.objects", enumBuilder.build());
+        var output = JavaFile.builder("io.github.jwdeveloper.tiktok.data.models.gifts", enumBuilder.build());
         output.addFileComment("This enum is generated");
         return output.build();
     }
@@ -140,22 +141,14 @@ public class GenerateGiftsEnum {
         }
     }
 
-    public static void onEnums(TypeSpec.Builder builder) {
-      //  builder.addEnumConstant("RUGBY_BALL", addGift(6249, "Rugby Ball", 10));
-     //   builder.addEnumConstant("I_LOVE_YOU", addGift(5779, "I Love you", 10));
-    //    builder.addEnumConstant("BOUQUET_FLOWER", addGift(5780, "Bouquet Flower", 30));
-    }
-
-
-    public static TypeSpec addGift(int id, String name, int diamont, Picture picture)
+    public static TypeSpec addGift(int id, String name, int diamond, String picture)
     {
-        var pictureValue = "new Picture(\""+picture.getLink()+"\")";
         return TypeSpec.anonymousClassBuilder(
                         "$L, $S, $L, $S",
                         id,
                         name,
-                        diamont,
-                        pictureValue)
+                        diamond,
+                        picture)
                 .build();
     }
 
