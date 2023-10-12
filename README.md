@@ -1,8 +1,9 @@
 <div align="center" >
 <a target="blank" >
-<img src="https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/develop-1_0_0/Tools-ReadmeGenerator/src/main/resources/logo.svg" width="15%" >
+<img src="https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/1f9951b4-a270-4535-bf38-a6f41cdf8f43" width="15%" >
 </img>
 </a>
+
 </div>
 <div align="center" >
 <h1>TikTok Live Java</h1>
@@ -14,6 +15,7 @@
 <img src="https://jitpack.io/v/jwdeveloper/TikTok-Live-Java.svg" width="20%" >
 </img>
 </a>
+
 
 
 <a href="https://discord.gg/e2XwPNTBBr" target="blank" >
