@@ -45,6 +45,7 @@ public class Main {
         app.get("/tiktok/connect", handler::connect);
         app.get("/tiktok/disconnect", handler::disconnect);
         app.get("/tiktok/events", handler::events);
+        app.get("/tiktok/events/pages", handler::eventPages);
         app.get("/tiktok/events/message", handler::eventMessage);
     }
 }

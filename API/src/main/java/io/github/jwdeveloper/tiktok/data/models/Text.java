@@ -69,8 +69,13 @@ public class Text {
         var format = matcher.replaceAll("%s");
 
         var output = new ArrayList<String>();
-        for (var piece : textPieces) {
+        for (var piece : textPieces)
+        {
             output.add(piece.getText());
+        }
+        if(matcher.groupCount() != output.size())
+        {
+            return format;
         }
         return String.format(format, output.toArray());
     }

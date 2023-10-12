@@ -34,6 +34,7 @@ import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokMessageModel;
 import io.github.jwdeveloper.tiktok.tools.collector.tables.TikTokResponseModel;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -46,8 +47,9 @@ public class TikTokClientFactory {
         this.tikTokDatabase = tikTokDatabase;
     }
 
-    public CompletableFuture<LiveClient> runClientAsync(String tiktokUser, Consumer<LiveClientBuilder> onBuilder) {
+    public CompletableFuture<LiveClient> runClientAsync(String tiktokUser, List<Class<?>> filters, Consumer<LiveClientBuilder> onBuilder) {
         var builder = TikTokLive.newClient(tiktokUser);
+        var msgFilter = filters.stream().map(Class::getSimpleName).toList();
         onBuilder.accept(builder);
         return builder.onConnected((liveClient, event) ->
                 {
@@ -62,7 +64,12 @@ public class TikTokClientFactory {
                     responseModel.setHostName(liveClient.getRoomInfo().getHostName());
                     tikTokDatabase.insertResponse(responseModel);
                     liveClient.getLogger().info("Response");
-                    for (var message : event.getResponse().getMessagesList()) {
+                    for (var message : event.getResponse().getMessagesList())
+                    {
+                        if(msgFilter.size() > 0 && !msgFilter.contains(message.getMethod()))
+                        {
+                            continue;
+                        }
                         messageCollector.addMessage(liveClient.getLogger(), liveClient.getRoomInfo().getHostName(), message);
                     }
                 })
@@ -71,7 +78,7 @@ public class TikTokClientFactory {
                     var eventName = event.getEvent().getClass().getSimpleName();
 
                     /*
-                    if (filter.size() != 0 && !filter.contains(event.getEvent().getClass())) {
+                    if (msgFilter.size() != 0 && !msgFilter.contains(event.getEvent().getClass())) {
                         return;
                     }*/
 
@@ -83,7 +90,7 @@ public class TikTokClientFactory {
                     model.setMessage(messageBinary);
 
                     //   tikTokDatabase.insertMessage(model);
-                    liveClient.getLogger().info("EVENT: [" + tiktokUser + "] " + eventName);
+                   // liveClient.getLogger().info("EVENT: [" + tiktokUser + "] " + eventName);
                 })
                 .onError((liveClient, event) ->
                 {

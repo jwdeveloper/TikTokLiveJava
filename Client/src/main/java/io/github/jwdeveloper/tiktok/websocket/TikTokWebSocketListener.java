@@ -125,7 +125,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
             }
             return Optional.of(websocketMessage);
         } catch (Exception e) {
-            throw new TikTokProtocolBufferException("Unable to parse WebcastWebsocketMessage", buffer, e);
+            throw new TikTokProtocolBufferException("Unable to parse WebcastPushFrame", buffer, e);
         }
     }
 

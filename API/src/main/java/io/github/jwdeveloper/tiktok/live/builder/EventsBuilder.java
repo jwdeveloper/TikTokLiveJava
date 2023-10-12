@@ -52,7 +52,6 @@ public interface EventsBuilder<T> {
     T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
 
     T onGiftCombo(EventConsumer<TikTokGiftComboEvent> event);
-
     T onGift(EventConsumer<TikTokGiftEvent> event);
 
     T onQuestion(EventConsumer<TikTokQuestionEvent> event);

@@ -86,7 +86,7 @@ public class EventsInfoGenerator {
                       
                       
                                 
-                #### {{method-name}} [{{event-name}}](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages.java)
+                ## {{method-name}} [{{event-name}}](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages.java)
                           
                 {{content}}
                         

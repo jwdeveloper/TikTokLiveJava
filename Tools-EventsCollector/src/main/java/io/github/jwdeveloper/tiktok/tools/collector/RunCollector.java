@@ -22,8 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok.tools.collector;
 
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.tools.collector.client.TikTokMessageCollectorClient;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class RunCollector {
@@ -33,15 +35,48 @@ public class RunCollector {
 
     //WebcastLinkMicBattleItemCard does streamer win battle?
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
 
-        TikTokMessageCollectorClient.create("messageCollector")
-                .addUser("bangbetmenygy")
-                .addUser("mr_cios")
-                .addUser("sleepstreamxxx")
-                .addUser("psychotropnazywo")
-                .addUser("accordionistka")
+        TikTokMessageCollectorClient.create("giftsCollector")
+                .addUser("cbcgod")
+                // .addUser("mr_cios")
+               // .addUser("cbcgod")
+                //   .addUser("psychotropnazywo")
+                //  .addUser("accordionistka")
+                .addEventFilter(WebcastGiftMessage.class)
+                .addOnBuilder(liveClientBuilder ->
+                {
+                    liveClientBuilder.onGift((liveClient, event) ->
+                    {
+
+                    });
+
+                    liveClientBuilder.onGiftCombo((liveClient, event) ->
+                    {
+
+                    });
+
+                    liveClientBuilder.onGift((liveClient, event) ->
+                    {
+                       var sb = new StringBuilder();
+                        sb.append("GIFT User: " + event.getUser().getDisplayName()+" ");
+                        sb.append("Name: " + event.getGift().name() + " ");
+                        sb.append("Combo: " + event.getCombo() + " ");
+                        System.out.println(sb.toString());
+                    });
+                    liveClientBuilder.onGiftCombo((liveClient, event) ->
+                    {
+                        var sb = new StringBuilder();
+                        sb.append("COMBO User: " + event.getUser().getDisplayName()+" ");
+                        sb.append("Name: " + event.getGift().name() + " ");
+                        sb.append("Combo: " + event.getCombo() + " ");
+                        sb.append("Type: " + event.getComboState().name());
+                        System.out.println(sb.toString());
+                    });
+                })
                 .buildAndRun();
+
+        System.in.read();
     }
 
 

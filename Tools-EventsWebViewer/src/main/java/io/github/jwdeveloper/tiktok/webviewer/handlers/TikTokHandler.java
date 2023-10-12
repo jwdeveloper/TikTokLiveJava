@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.webviewer.handlers;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.github.jwdeveloper.tiktok.webviewer.TikTokManager;
 import io.javalin.http.Context;
@@ -55,7 +56,7 @@ public class TikTokHandler {
 
     public void events(Context context) throws SQLException {
         var events = tikTokManager.getEventsNames();
-        var gson = new Gson();
+        var gson = getGson();
         var result = gson.toJson(events);
         context.result(result);
         context.status(200);
@@ -63,8 +64,22 @@ public class TikTokHandler {
 
     public void eventMessage(Context context) throws InvalidProtocolBufferException {
         String name = context.queryParam("eventName");
-        var result = tikTokManager.getMessage(name);
-        var gson = new Gson();
+        String page = context.queryParam("page");
+
+        var result = tikTokManager.getMessage(name, page);
+        var gson = getGson();
         context.result(gson.toJson(result));
+    }
+
+    public void eventPages(Context context) throws InvalidProtocolBufferException {
+        String name = context.queryParam("eventName");
+        var result = tikTokManager.getPages(name);
+        var gson = getGson();
+        context.result(gson.toJson(result));
+    }
+
+
+    public Gson getGson() {
+        return new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     }
 }

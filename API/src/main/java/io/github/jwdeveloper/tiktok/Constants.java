@@ -116,6 +116,7 @@ public class Constants {
     public static Map<String, String> DefaultRequestHeaders() {
         var headers = new HashMap<String, String>();
 
+        headers.put("authority","www.tiktok.com");
         headers.put("Connection", "keep-alive");
         headers.put("Cache-Control", "max-age=0");
         headers.put("Accept", "text/html,application/json,application/protobuf");

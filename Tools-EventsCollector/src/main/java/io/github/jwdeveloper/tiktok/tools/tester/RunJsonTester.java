@@ -47,7 +47,15 @@ public class RunJsonTester {
                     sb.append(MessageUtil.getContent(event.getData()));
 
 
-                    liveClient.getLogger().info(sb.toString());
+                   // liveClient.getLogger().info(sb.toString());
+                }).
+                onGift((liveClient, event) ->
+                {
+                    liveClient.getLogger().info("Gift event: "+event.toJson());
+                })
+                .onGiftCombo((liveClient, event) ->
+                {
+                    liveClient.getLogger().info("GiftCombo event"+event.toJson());
                 })
                 .onError((liveClient, event) ->
                 {

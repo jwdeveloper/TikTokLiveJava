@@ -24,16 +24,32 @@ package io.github.jwdeveloper.tiktok.data.events.gift;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.models.Gift;
-
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
+
+/**
+ * Triggered every time gift is sent
+ *
+ * @see GiftSendType it has 3 states
+ *
+ * Example when user sends gift with combo
+ * Combo: 1  -> comboState = GiftSendType.Begin
+ * Combo: 4 -> comboState = GiftSendType.Active
+ * Combo: 8 -> comboState = GiftSendType.Active
+ * Combo: 12 -> comboState = GiftSendType.Finsihed
+ *
+ * Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
+ */
 @EventMeta(eventType = EventType.Message)
 @Getter
-public class TikTokGiftComboEvent extends TikTokGiftEvent
-{
-    public TikTokGiftComboEvent(Gift gift, WebcastGiftMessage msg) {
+public class TikTokGiftComboEvent extends TikTokGiftEvent {
+    private final GiftSendType comboState;
+
+    public TikTokGiftComboEvent(Gift gift, WebcastGiftMessage msg, GiftSendType comboState) {
         super(gift, msg);
+        this.comboState = comboState;
     }
 }

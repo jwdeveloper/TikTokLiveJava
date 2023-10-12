@@ -26,14 +26,17 @@ package io.github.jwdeveloper.tiktok.data.events.gift;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
 
 /*
- * Triggered every time a gift arrives.
+ * Triggered when user sends gifts that has
+ *  no combo (most of expensive gifts)
+ *  or if combo has finished
  */
 @EventMeta(eventType = EventType.Message)
 @Getter
@@ -41,15 +44,10 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
     private final Gift gift;
     private final User user;
     private final int combo;
-    private final boolean comboFinished;
-    private final int comboIndex;
-
     public TikTokGiftEvent(Gift gift, WebcastGiftMessage msg) {
         super(msg.getCommon());
         this.gift = gift;
-        user = User.map(msg.getUser(),msg.getUserIdentity());
+        user = User.map(msg.getUser(), msg.getUserIdentity());
         combo = msg.getComboCount();
-        comboFinished = msg.getRepeatEnd() > 0;
-        comboIndex = msg.getRepeatCount();
     }
 }

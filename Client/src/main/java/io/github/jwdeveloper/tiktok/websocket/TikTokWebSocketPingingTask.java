@@ -28,7 +28,6 @@ import java.util.Random;
 public class TikTokWebSocketPingingTask
 {
     private Thread thread;
-
     private boolean isRunning = false;
     private final int MIN_TIMEOUT = 5;
     private final int MAX_TIMEOUT = 100;
@@ -37,7 +36,7 @@ public class TikTokWebSocketPingingTask
     public void run(WebSocket webSocket)
     {
         stop();
-        var thread = new Thread(() ->
+        thread = new Thread(() ->
                 {
                     pingTask(webSocket);
                 });

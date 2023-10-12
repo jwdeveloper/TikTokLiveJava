@@ -21,8 +21,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 // This enum is generated
-package io.github.jwdeveloper.tiktok.data.models;
+package io.github.jwdeveloper.tiktok.data.models.gifts;
 
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 import lombok.Getter;
 
 @Getter

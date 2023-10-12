@@ -25,8 +25,10 @@ package io.github.jwdeveloper.tiktok.handler;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 
+import java.util.List;
+
 
 public interface TikTokMessageHandler
 {
-    TikTokEvent handle(byte[] messagePayload) throws Exception;
+    List<TikTokEvent> handle(byte[] messagePayload) throws Exception;
 }

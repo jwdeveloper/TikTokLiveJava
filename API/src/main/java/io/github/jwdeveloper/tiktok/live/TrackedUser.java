@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.live;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.models.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 
 import java.util.List;

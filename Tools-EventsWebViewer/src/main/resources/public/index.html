@@ -103,6 +103,10 @@
               language: 'json',
               theme: 'vs-dark' 
           });
+          editor.onDidChangeModelContent(function () {
+                console.log("hello")
+          });
+          
       });
   </script>
 
@@ -130,11 +134,8 @@
         </div>
         <div class="col-md-10 editor-container ">
             <nav aria-label="Page navigation example">
-                <ul class="pagination">
+                <ul id="pages" class="pagination">
                   <li class="page-item btn-primary"><a class="page-link" href="#">Previous</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
                   <li class="page-item"><a class="page-link" href="#">Next</a></li>
                 </ul>
               </nav>
@@ -156,10 +157,9 @@
 
 
 <script>
- 
         async function connect() {
             let name = document.getElementById('name').value;
-            name = "bangbetmenygy"
+          //  name = "bangbetmenygy"
             let response = await fetch(`http://localhost:8001/tiktok/connect?name=${name}`);
             let greeting = await response.text();
             console.log("connect",greeting);
@@ -176,11 +176,37 @@
         {
             let response = await fetch(`http://localhost:8001/tiktok/events/message?eventName=${event}`);
             let json = await response.text();
-           // json = json.replace(/\/n/g, "\n");
             let root= JSON.parse(json);
-            console.log(root)
-
             editor.setValue(root.content);
+        }
+
+        async function loadMessageLink(link)
+        {
+            let response = await fetch(link);
+            let json = await response.text();
+            let root= JSON.parse(json);
+            editor.setValue(root.content);
+        }
+
+        async function loadPagination(event)
+        {
+            let response = await fetch(`http://localhost:8001/tiktok/events/pages?eventName=${event}`);
+            let json = await response.text();
+            let object = JSON.parse(json);
+            let pages = object.links;
+            console.log("PAGES: ",pages)
+            $("#pages").empty();
+                $.each(pages, function(index, element) {
+                    let content = $('<button>',{
+                        class: 'btn btn-primary',
+                        text: index
+                    }).click(async function() 
+                    { 
+                        await loadMessageLink(element);
+                        console.log(editor)
+                     });
+                    $("#pages").append(content);
+                });
         }
 
         async function showEvents() {
@@ -197,6 +223,7 @@
                     }).click(async function() 
                     { 
                         await loadMessage(event);
+                        await loadPagination(event);
                      });
                     $("#eventList").append(listItem);
                 });
@@ -213,6 +240,9 @@
         }
 
         var connected = false;
+        var paginationIndex = 0;
+        var maxPages = 10;
+        var pages = [];
         setInterval(loop, 1000)
         showEvents()
 

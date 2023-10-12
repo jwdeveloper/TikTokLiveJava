@@ -28,6 +28,9 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
+
+import java.time.Duration;
 
 
 /**
@@ -41,4 +44,12 @@ public class TikTokWebsocketMessageEvent extends TikTokEvent
     private TikTokEvent event;
 
     private WebcastResponse.Message message;
+
+    private MetaData metaData;
+
+    @Value
+    public static class MetaData
+    {
+        Duration handlingTime;
+    }
 }

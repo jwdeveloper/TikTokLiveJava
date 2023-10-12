@@ -41,6 +41,7 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
+import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
@@ -50,6 +51,7 @@ import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
+import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
@@ -147,10 +149,14 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var apiClient = new TikTokHttpClient(cookieJar, requestFactory);
         var apiService = new TikTokApiService(apiClient, logger, clientSettings);
         var giftManager = new TikTokGiftManager();
+        var eventMapper = new TikTokGenericEventMapper();
+        var giftHandler = new TikTokGiftEventHandler(giftManager);
 
         var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler,
-                giftManager,
-                tiktokRoomInfo);
+                tiktokRoomInfo,
+                eventMapper,
+                giftHandler
+                );
 
         var webSocketClient = new TikTokWebSocketClient(logger,
                 cookieJar,

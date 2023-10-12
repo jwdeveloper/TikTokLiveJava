@@ -62,7 +62,7 @@ public class MessageCollector {
 
         var queue = messages.get(name);
         if (queue.size() > limit) {
-            queue.poll();
+            queue.remove();
         }
 
         queue.add(new MessageData(base64, host, LocalDateTime.now().toString()));

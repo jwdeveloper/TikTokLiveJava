@@ -133,12 +133,12 @@ public class TikTokHttpClient {
     private String getSignedUrl(String url, Map<String, Object> parameters) {
 
         var fullUrl = HttpUtils.parseParameters(url,parameters);
-        var singHeaders = new TreeMap<String,Object>();
-        singHeaders.put("client", "ttlive-java");
-        singHeaders.put("uuc", 1);
-        singHeaders.put("url", fullUrl);
+        var signParams = new TreeMap<String,Object>();
+        signParams.put("client", "ttlive-java");
+        signParams.put("uuc", 1);
+        signParams.put("url", fullUrl);
 
-        var request = requestFactory.setQueries(singHeaders);
+        var request = requestFactory.setQueries(signParams);
         var content = request.get(Constants.TIKTOK_SIGN_API);
 
 

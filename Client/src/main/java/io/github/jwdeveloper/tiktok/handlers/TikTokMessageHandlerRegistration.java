@@ -23,11 +23,8 @@
 package io.github.jwdeveloper.tiktok.handlers;
 
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
-import io.github.jwdeveloper.tiktok.data.events.TikTokBarrageEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEndEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollStartEvent;
@@ -39,10 +36,9 @@ import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
-import io.github.jwdeveloper.tiktok.data.models.Gift;
-import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.Text;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
+import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
 import lombok.SneakyThrows;
@@ -50,19 +46,21 @@ import lombok.SneakyThrows;
 import java.util.regex.Pattern;
 
 public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
-    private final TikTokGiftManager giftManager;
+
     private final TikTokRoomInfo roomInfo;
+    private final TikTokGiftEventHandler giftHandler;
     private final Pattern socialMediaPattern = Pattern.compile("pm_mt_guidance_viewer_([0-9]+)_share");
 
     public TikTokMessageHandlerRegistration(TikTokEventObserver tikTokEventHandler,
-                                            TikTokGiftManager giftManager,
-                                            TikTokRoomInfo roomInfo) {
-        super(tikTokEventHandler);
-        this.giftManager = giftManager;
+                                            TikTokRoomInfo roomInfo,
+                                            TikTokGenericEventMapper genericTikTokEventMapper,
+                                            TikTokGiftEventHandler tikTokGiftEventHandler) {
+        super(tikTokEventHandler, genericTikTokEventMapper);
+        this.giftHandler = tikTokGiftEventHandler;
         this.roomInfo = roomInfo;
+        init();
     }
 
-    @Override
     public void init() {
 
         //ConnectionEvents events
@@ -80,7 +78,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         //User Interactions events
         registerMapping(WebcastChatMessage.class, TikTokCommentEvent.class);
         registerMapping(WebcastLikeMessage.class, this::handleLike);
-        registerMapping(WebcastGiftMessage.class, this::handleGift);
+        registerMappings(WebcastGiftMessage.class, giftHandler::handleGift);
         registerMapping(WebcastSocialMessage.class, this::handleSocialMedia);
         registerMapping(WebcastMemberMessage.class, this::handleMemberMessage);
 
@@ -124,29 +122,6 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         };
     }
 
-    @SneakyThrows
-    private TikTokEvent handleGift(byte[] msg) {
-        var giftMessage = WebcastGiftMessage.parseFrom(msg);
-
-
-        var gift = giftManager.findById((int) giftMessage.getGiftId());
-        if (gift == Gift.UNDEFINED) {
-            gift = giftManager.findByName(giftMessage.getGift().getName());
-        }
-        if (gift == Gift.UNDEFINED) {
-            gift = giftManager.registerGift(
-                    (int) giftMessage.getGift().getId(),
-                    giftMessage.getGift().getName(),
-                    giftMessage.getGift().getDiamondCount(),
-                    Picture.map(giftMessage.getGift().getImage()));
-        }
-
-        if (giftMessage.getRepeatEnd() > 0) {
-            return new TikTokGiftComboEvent(gift, giftMessage);
-        }
-
-        return new TikTokGiftEvent(gift, giftMessage);
-    }
 
     @SneakyThrows
     private TikTokEvent handleSocialMedia(byte[] msg) {
@@ -181,13 +156,13 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     }
 
     private TikTokEvent handleRoomUserSeqMessage(byte[] msg) {
-        var event = (TikTokRoomUserInfoEvent) mapMessageToEvent(WebcastRoomUserSeqMessage.class, TikTokRoomUserInfoEvent.class, msg);
+        var event = (TikTokRoomUserInfoEvent) mapper.mapToEvent(WebcastRoomUserSeqMessage.class, TikTokRoomUserInfoEvent.class, msg);
         roomInfo.setViewersCount(event.getTotalUsers());
         return event;
     }
 
     private TikTokEvent handleLike(byte[] msg) {
-        var event = (TikTokLikeEvent) mapMessageToEvent(WebcastLikeMessage.class, TikTokLikeEvent.class, msg);
+        var event = (TikTokLikeEvent) mapper.mapToEvent(WebcastLikeMessage.class, TikTokLikeEvent.class, msg);
         roomInfo.setLikesCount(event.getTotalLikes());
         return event;
     }
@@ -200,7 +175,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         return new TikTokRoomPinEvent(pinMessage, chatEvent);
     }
 
-    //TODO check
+    //TODO Probably not working
     @SneakyThrows
     private TikTokEvent handlePollEvent(byte[] msg) {
         var poolMessage = WebcastPollMessage.parseFrom(msg);

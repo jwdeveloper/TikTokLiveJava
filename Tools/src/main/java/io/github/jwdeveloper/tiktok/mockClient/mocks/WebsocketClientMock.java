@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mockClient.mocks;
 
+import com.google.protobuf.ByteString;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
@@ -102,7 +103,11 @@ public class WebsocketClientMock implements SocketClient {
             if (!messages.isEmpty()) {
                 var messageStr = messages.pop();
                 try {
-                    messageHandler.handleSingleMessage(tikTokLiveClient, messageStr.getMessageType(), messageStr.getMessageValue());
+                    var msg = WebcastResponse.Message.newBuilder()
+                            .setMethod(messageStr.messageType)
+                            .setPayload(ByteString.copyFrom(messageStr.getMessageValue()))
+                            .build();
+                    messageHandler.handleSingleMessage(tikTokLiveClient, msg);
                 } catch (Exception e) {
                     logger.info("Unable to parse message for response " + messageStr.getMessageType());
                     throw new TikTokLiveException(e);

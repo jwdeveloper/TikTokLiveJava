@@ -26,8 +26,8 @@ package io.github.jwdeveloper.tiktok.data.events.common;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import lombok.Getter;
 
-/*
-  Base class for all events
+/**
+ * Base class for all events
  */
 @Getter
 public abstract class TikTokEvent {

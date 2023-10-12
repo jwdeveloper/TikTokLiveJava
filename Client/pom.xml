@@ -80,7 +80,7 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>**/tiktokSchema.proto/**</exclude>
+                                        <exclude>**/*.proto</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

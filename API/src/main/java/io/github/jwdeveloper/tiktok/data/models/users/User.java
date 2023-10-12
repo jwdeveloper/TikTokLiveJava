@@ -46,9 +46,6 @@ public class User {
     @Getter(AccessLevel.NONE)
     private Set<UserAttribute> attributes;
 
-    @Setter
-    private boolean tracked;
-
     public List<UserAttribute> getAttributes() {
         return attributes.stream().toList();
     }

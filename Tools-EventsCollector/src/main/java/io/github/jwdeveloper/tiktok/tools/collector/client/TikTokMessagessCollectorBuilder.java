@@ -82,7 +82,7 @@ public class TikTokMessagessCollectorBuilder {
         db.init();
         var factory = new TikTokClientFactory(messageCollector, db);
         for (var user : users) {
-            var client = factory.runClientAsync(user, onBuilder);
+            var client = factory.runClientAsync(user,filters, onBuilder);
             client.thenAccept(liveClient ->
             {
                 tiktokclients.add(liveClient);
