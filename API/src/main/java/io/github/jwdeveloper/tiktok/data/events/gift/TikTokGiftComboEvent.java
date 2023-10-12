@@ -35,11 +35,11 @@ import lombok.Getter;
  *
  * @see GiftSendType it has 3 states
  *
- * Example when user sends gift with combo
- * Combo: 1  -> comboState = GiftSendType.Begin
- * Combo: 4 -> comboState = GiftSendType.Active
- * Combo: 8 -> comboState = GiftSendType.Active
- * Combo: 12 -> comboState = GiftSendType.Finsihed
+ * <p>Example when user sends gift with combo</p>
+ * <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
+ * <p>Combo: 4 -> comboState = GiftSendType.Active</p>
+ * <p>Combo: 8 -> comboState = GiftSendType.Active</p>
+ * <p>Combo: 12 -> comboState = GiftSendType.Finsihed</p>
  *
  * Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
  */

@@ -22,54 +22,56 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-
 import java.time.Duration;
 import java.util.logging.Level;
 
-public class CodeExample
-{
-    public static void main(String[] args)
-    {
+public class CodeExample {
+    public static void main(String[] args) {
         TikTokLive.newClient("mrBeast")
-                  .onGift((liveClient, event) ->
-                  {
-                     System.out.println("Thank you for Money!");
-                  })
-                  .buildAndConnect();
-    }
-
-
-
-    public static void codeExample()
-    {
-        TikTokLive.newClient("bangbetmenygy")
                 .onGift((liveClient, event) ->
                 {
-                    if(event.getGift() == Gift.ROSE)
-                    {
-                        liveClient.getLogger().info("Rose from "+event.getUser().getDisplayName());
-                        return;
-                    }
-                    liveClient.getLogger().info("Thank you for "+event.getGift().getName());
-                })
-                .onJoin((liveClient, event) ->
-                {
-                    liveClient.getLogger().info("Hello "+event.getUser().getDisplayName());
-                })
-                .onConnected((liveClient, event) ->
-                {
-                    liveClient.getLogger().info("Connected to live ");
-                })
-                .onError((liveClient, event) ->
-                {
-                    liveClient.getLogger().info("ERROR! "+event.getException().getMessage());
+                    System.out.println("Thank you for Money!");
                 })
                 .buildAndConnect();
     }
 
-    public static void configExample()
-    {
+
+    public static void codeExample() {
+        //  <code>
+        TikTokLive.newClient("bangbetmenygy")
+                .onGift((liveClient, event) ->
+                {
+                    String message = switch (event.getGift()) {
+                        case ROSE -> "ROSE!";
+                        case GG -> "GOOD GAME";
+                        case TIKTOK -> "Ye";
+                        case CORGI -> "Nice gift";
+                        default -> "Thank you for " + event.getGift().getName();
+                    };
+                    System.out.println(event.getUser().getProfileName() + " sends " + message);
+                })
+                .onGiftCombo((liveClient, event) ->
+                {
+                    System.out.println(event.getComboState()+ " " + event.getCombo() + " " + event.getGift().getName());
+                })
+                .onJoin((liveClient, event) ->
+                {
+                    System.out.println(event.getUser().getProfileName() + "Hello on my stream! ");
+                })
+                .onConnected((liveClient, event) ->
+                {
+                    System.out.println("Connected to live ");
+                })
+                .onError((liveClient, event) ->
+                {
+                    System.out.println("Error! " + event.getException().getMessage());
+                })
+                .buildAndConnect();
+        //  </code>
+    }
+
+    public static void configExample() {
+        //  <code>
         TikTokLive.newClient("bangbetmenygy")
                 .configure((settings) ->
                 {
@@ -92,6 +94,7 @@ public class CodeExample
                     settings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
                 .buildAndConnect();
+        //  </code>
     }
 
 

@@ -59,7 +59,7 @@ public class RunCollector {
                     liveClientBuilder.onGift((liveClient, event) ->
                     {
                        var sb = new StringBuilder();
-                        sb.append("GIFT User: " + event.getUser().getDisplayName()+" ");
+                        sb.append("GIFT User: " + event.getUser().getProfileName()+" ");
                         sb.append("Name: " + event.getGift().name() + " ");
                         sb.append("Combo: " + event.getCombo() + " ");
                         System.out.println(sb.toString());
@@ -67,7 +67,7 @@ public class RunCollector {
                     liveClientBuilder.onGiftCombo((liveClient, event) ->
                     {
                         var sb = new StringBuilder();
-                        sb.append("COMBO User: " + event.getUser().getDisplayName()+" ");
+                        sb.append("COMBO User: " + event.getUser().getProfileName()+" ");
                         sb.append("Name: " + event.getGift().name() + " ");
                         sb.append("Combo: " + event.getCombo() + " ");
                         sb.append("Type: " + event.getComboState().name());

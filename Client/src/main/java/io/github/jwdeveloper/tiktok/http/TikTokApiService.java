@@ -87,7 +87,9 @@ public class TikTokApiService {
         String html;
         try {
             html = tiktokHttpClient.getLivestreamPage(userName);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             throw new TikTokLiveRequestException("Failed to fetch room id from WebCast, see stacktrace for more info.", e);
         }
 

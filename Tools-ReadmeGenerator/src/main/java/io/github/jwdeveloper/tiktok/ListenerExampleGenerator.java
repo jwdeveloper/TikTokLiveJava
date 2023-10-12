@@ -20,23 +20,28 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.utils;
+package io.github.jwdeveloper.tiktok;
 
-public class Stopwatch {
-    private long startTime;
-    private long stopTime;
+import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 
-    public void start() {
-        startTime = System.nanoTime();
+import java.util.regex.Pattern;
+
+public class ListenerExampleGenerator
+{
+    public static void main(String[] arg)
+    {
+        var result = new ListenerExampleGenerator();
+        System.out.println(result);
     }
 
-    public long stop() {
-        stopTime = System.nanoTime();
-        return getElapsedTime();
-    }
 
-    public long getElapsedTime() {
-        return stopTime - startTime;
+    public String run()
+    {
+        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\ListenerExample.java");
+        var p = "<code>(.*?)</code>";
+        var r = Pattern.compile(p, Pattern.DOTALL);
+        var m = r.matcher(content);
+        m.find();
+        return m.group(1);
     }
-
 }

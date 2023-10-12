@@ -48,7 +48,7 @@
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>Tools</artifactId>
-            <version>0.0.25-Release</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

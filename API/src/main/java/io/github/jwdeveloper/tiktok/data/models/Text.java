@@ -108,7 +108,7 @@ public class Text {
 
         @Override
         public String getText() {
-            return user.getDisplayName();
+            return user.getProfileName();
         }
     }
 

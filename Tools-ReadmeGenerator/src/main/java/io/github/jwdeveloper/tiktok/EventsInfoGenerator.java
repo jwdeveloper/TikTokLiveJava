@@ -82,11 +82,15 @@ public class EventsInfoGenerator {
         variables.put("method-name", dto.getMethodName());
         variables.put("content", doc);
         variables.put("event-name", dto.getEventClazz().getSimpleName());
+
+        var baseUrl = "https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/";
+        baseUrl += dto.getEventClazz().getPackageName().replace(".","/");
+        baseUrl += "/"+dto.getEventClazz().getSimpleName()+".java";
+        variables.put("event-file-url",baseUrl);
         var temp = """
                       
                       
-                                
-                ## {{method-name}} [{{event-name}}](https://github.com/jwdeveloper/TikTok-Live-Java/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/events/messages.java)
+                ## {{method-name}} [{{event-name}}]({{event-file-url}})
                           
                 {{content}}
                         

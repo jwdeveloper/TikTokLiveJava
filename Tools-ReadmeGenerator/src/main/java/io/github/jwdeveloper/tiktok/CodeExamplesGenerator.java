@@ -26,39 +26,47 @@ import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 import io.github.jwdeveloper.tiktok.utils.TemplateUtility;
 
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
-public class ReadmeGenerator {
+public class CodeExamplesGenerator {
     public static void main(String[] args) {
-        var generator = new ReadmeGenerator();
-        generator.generate();
-
+        var result = new CodeExamplesGenerator().run();
+        System.out.println(result);
     }
 
-    public void generate() {
-        var template = FilesUtility.getFileFromResource(ReadmeGenerator.class, "template.md");
-        var variables = new HashMap<String, Object>();
+    public String run() {
 
-        variables.put("version", getCurrentVersion());
-        variables.put("code-content", new CodeExamplesGenerator().run());
-        variables.put("events-content", new EventsInfoGenerator().run());
-        variables.put("listener-content",new ListenerExampleGenerator().run());
+        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\CodeExample.java");
+        var p = "<code>(.*?)</code>";
+        var r = Pattern.compile(p, Pattern.DOTALL);
+        var m = r.matcher(content);
 
-        template = TemplateUtility.generateTemplate(template, variables);
-        var outputPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\resources\\output.md";
-        FilesUtility.saveFile(outputPath, template);
+
+        var pattern = """
+                ```java
+                {{code}}
+                ```
+                3. Configure (optional)
+                                
+                ```java
+                {{config}}
+                ```
+                """;
+
+
+        var values = new HashMap<String, Object>();
+        m.find();
+        var code = m.group(0)
+                .replace("<code>", "")
+                .replace("//  </code>", "")
+                .replaceAll("(?m)^ {8}", "");
+        values.put("code", code);
+
+        m.find();
+        values.put("config", m.group(1));
+        var result = TemplateUtility.generateTemplate(pattern, values);
+
+
+        return result;
     }
-
-    public String getCurrentVersion() {
-        var version = System.getenv("version");
-        ;
-
-        return version == null ? "NOT_FOUND" : version;
-    }
-
-    public String getCodeExample(String path) {
-        var content = FilesUtility.loadFileContent(path);
-        content = content.substring(content.indexOf("*/") + 2);
-        return content;
-    }
-
 }

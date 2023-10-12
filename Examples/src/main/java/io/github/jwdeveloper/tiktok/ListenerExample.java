@@ -34,7 +34,9 @@ import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 
 import java.io.IOException;
 
-public class ListenerExample {
+public class ListenerExample
+{
+    // <code>
     /**
      *
      *  Listeners are an alternative way of handling events.
@@ -84,7 +86,7 @@ public class ListenerExample {
         public void onGift(LiveClient liveClient, TikTokGiftEvent event) {
             var message = switch (event.getGift()) {
                 case ROSE -> "Thanks :)";
-                case APPETIZERS -> ":$";
+                case APPETIZERS -> ":OO";
                 case APRIL -> ":D";
                 case TIKTOK -> ":P";
                 case CAP -> ":F";
@@ -100,6 +102,7 @@ public class ListenerExample {
 
     }
 
+    // </code>
     private static void showLogo()
     {
         System.out.println(ConsoleColors.GREEN+"""

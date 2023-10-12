@@ -27,7 +27,6 @@ import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastEnvelopeMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,7 +37,7 @@ import java.util.Set;
 public class User {
     private final Long id;
     private final String name;
-    private String displayName;
+    private String profileName;
     private Picture picture;
     private long following;
     private long followers;
@@ -124,7 +123,7 @@ public class User {
 
     public User(io.github.jwdeveloper.tiktok.messages.data.User user) {
         this(user.getId(), user.getDisplayId(), Picture.map(user.getAvatarThumb()));
-        displayName = user.getNickname();
+        profileName = user.getNickname();
         following = user.getFollowInfo().getFollowingCount();
         followers = user.getFollowInfo().getFollowerCount();
         badges = user.getBadgeListList().stream().map(Badge::map).toList();

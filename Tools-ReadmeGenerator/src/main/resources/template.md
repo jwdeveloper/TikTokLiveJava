@@ -29,7 +29,7 @@
 </div>
 
 # Introduction
-A Java library inspired by [TikTokLive](https://github.com/isaackogan/TikTokLive) and [TikTokLiveSharp](https://github.com/sebheron/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service. 
+A Java library inspired by [TikTokLive](https://github.com/isaackogan/TikTokLive) and [TikTokLiveSharp](https://github.com/frankvHoof93/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service. 
 The library includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers. 
 No credentials are required. Events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked. 
 
@@ -45,9 +45,8 @@ Do you prefer other programming languages?
 
 #### Overview
 - [Getting started](#getting-started)
-- [Configuration](#configuration)
-- [Methods](#methods)
 - [Events](#events)
+- [Listeners](#listeners)
 - [Contributing](#contributing)
 
 ## Getting started
@@ -74,20 +73,20 @@ Do you prefer other programming languages?
 
 2. Create your first chat connection
 
-```java
 {{code-content}}
-```
+
 ## Events
 
 {{events-content}}
 
 <br>
 
-## Listener Example
+## Listeners
 
 ```java
 {{listener-content}}
 ```
+
 
 ## Contributing
 Your improvements are welcome! Feel free to open an <a href="https://github.com/jwdeveloper/TikTok-Live-Java/issues">issue</a> or <a href="https://github.com/jwdeveloper/TikTok-Live-Java/pulls">pull request</a>.
