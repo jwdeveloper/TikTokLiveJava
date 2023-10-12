@@ -1,8 +1,9 @@
 <div align="center" >
 <a target="blank" >
-<img src="https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/develop-1_0_0/Tools-ReadmeGenerator/src/main/resources/logo.svg" width="15%" >
+<img src="https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/1f9951b4-a270-4535-bf38-a6f41cdf8f43" width="15%" >
 </img>
 </a>
+
 </div>
 <div align="center" >
 <h1>TikTok Live Java</h1>
@@ -14,6 +15,7 @@
 <img src="https://jitpack.io/v/jwdeveloper/TikTok-Live-Java.svg" width="20%" >
 </img>
 </a>
+
 
 
 <a href="https://discord.gg/e2XwPNTBBr" target="blank" >
@@ -28,10 +30,17 @@
 </div>
 </div>
 
+
+
+
 # Introduction
 A Java library inspired by [TikTokLive](https://github.com/isaackogan/TikTokLive) and [TikTokLiveSharp](https://github.com/sebheron/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service. 
 The library includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers. 
 No credentials are required. Events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked. 
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=eerWGgUKc6c" align="right" target="blank"><img src="https://img.youtube.com/vi/eerWGgUKc6c/hqdefault.jpg" alt="IMAGE ALT TEXT" width="38%" align="right"></a>
+</div>
 
 Join the support [discord](https://discord.gg/e2XwPNTBBr) and visit the `#java-support` channel for questions, contributions and ideas. Feel free to make pull requests with missing/new features, fixes, etc
 
@@ -43,11 +52,18 @@ Do you prefer other programming languages?
 
 **NOTE:** This is not an official API. It's a reverse engineering project.
 
+
 #### Overview
 - [Getting started](#getting-started)
 - [Events](#events)
 - [Listeners](#listeners)
 - [Contributing](#contributing)
+
+
+
+
+
+
 
 ## Getting started
 
@@ -65,7 +81,7 @@ Do you prefer other programming languages?
          <dependency>
             <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
             <artifactId>Client</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-Release</version>
             <scope>compile</scope>
         </dependency>
    </dependencies>
