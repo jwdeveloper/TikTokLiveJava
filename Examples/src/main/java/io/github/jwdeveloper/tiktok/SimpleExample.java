@@ -95,10 +95,6 @@ public class SimpleExample
                 {
                     print(ConsoleColors.RED,"[Disconnected]");
                 })
-                .onChest((liveClient, event) ->
-                {
-                    print(ConsoleColors.GREEN,"Chest has been open by ",event.getUser().getName());
-                })
                 .onRoom((liveClient, event) ->
                 {
 

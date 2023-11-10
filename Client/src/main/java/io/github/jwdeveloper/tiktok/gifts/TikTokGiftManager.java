@@ -70,16 +70,6 @@ public class TikTokGiftManager implements GiftManager {
             field.set(enumInstance, name);
 
 
-            Arrays.stream(Gift.class.getSuperclass().getDeclaredFields()).toList().forEach(field1 ->
-            {
-                System.out.println(field1.getName()+" ");
-            });
-
-
-            field = Gift.class.getSuperclass().getDeclaredField("name");
-            field.setAccessible(true);
-            field.set(enumInstance,"dupa");
-
          //   EnumSet
             field = Gift.class.getDeclaredField("diamondCost");
             field.setAccessible(true);
