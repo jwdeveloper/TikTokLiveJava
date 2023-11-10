@@ -37,6 +37,7 @@ public class MessageUtil
             var deserialized = parseMethod.invoke(null, message.getPayload());
             return JsonUtil.messageToJson(deserialized);
         } catch (Exception ex) {
+
             return ConsoleColors.RED+ "Can not find mapper for "+message.getMethod();
         }
     }
@@ -48,8 +49,13 @@ public class MessageUtil
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", byte[].class);
             var deserialized = parseMethod.invoke(null, bytes);
             return JsonUtil.messageToJson(deserialized);
-        } catch (Exception ex) {
-            return ConsoleColors.RED+ "Can not find mapper for "+methodName;
+        } catch (Exception ex)
+        {
+            var sb = new StringBuilder();
+            sb.append("Can not find mapper for "+methodName);
+            sb.append("\n");
+            //String jsonString = JsonFormat.printToString(protobufData);
+            return sb.toString();
         }
     }
 

@@ -88,7 +88,7 @@ public class GiftOfficialJson {
         var fileName = "official_" + date + ".json";
 
         try {
-            var response = tiktokHttpClient.getJObjectFromWebcastAPI("gift/list/", settings.getClientParameters());
+            var response = tiktokHttpClient.getJsonFromWebcastApi("gift/list/", settings.getClientParameters());
             var gson = new GsonBuilder().setPrettyPrinting().create();
             FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\official\\" + fileName, gson.toJson(response));
             if (!response.has("data")) {

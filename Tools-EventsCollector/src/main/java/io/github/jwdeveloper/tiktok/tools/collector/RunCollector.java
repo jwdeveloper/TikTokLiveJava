@@ -38,39 +38,23 @@ public class RunCollector {
     public static void main(String[] args) throws SQLException, IOException {
 
         TikTokMessageCollectorClient.create("giftsCollector")
-                .addUser("cbcgod")
-                // .addUser("mr_cios")
+                .addUser("crece.sara")
+                .addUser("moniczkka")
                // .addUser("cbcgod")
                 //   .addUser("psychotropnazywo")
                 //  .addUser("accordionistka")
                 .addEventFilter(WebcastGiftMessage.class)
                 .addOnBuilder(liveClientBuilder ->
                 {
-                    liveClientBuilder.onGift((liveClient, event) ->
-                    {
-
-                    });
-
-                    liveClientBuilder.onGiftCombo((liveClient, event) ->
-                    {
-
-                    });
 
                     liveClientBuilder.onGift((liveClient, event) ->
                     {
-                       var sb = new StringBuilder();
-                        sb.append("GIFT User: " + event.getUser().getProfileName()+" ");
-                        sb.append("Name: " + event.getGift().name() + " ");
-                        sb.append("Combo: " + event.getCombo() + " ");
-                        System.out.println(sb.toString());
-                    });
-                    liveClientBuilder.onGiftCombo((liveClient, event) ->
-                    {
+                        var gifts  = liveClient.getGiftManager().getGifts();
+
                         var sb = new StringBuilder();
-                        sb.append("COMBO User: " + event.getUser().getProfileName()+" ");
-                        sb.append("Name: " + event.getGift().name() + " ");
+                        sb.append("GIFT User: " + event.getUser().getProfileName()+" ");
+                        sb.append("Name: " + event.getGift().getName() + " ");
                         sb.append("Combo: " + event.getCombo() + " ");
-                        sb.append("Type: " + event.getComboState().name());
                         System.out.println(sb.toString());
                     });
                 })
@@ -78,6 +62,7 @@ public class RunCollector {
 
         System.in.read();
     }
-
-
 }
+
+
+

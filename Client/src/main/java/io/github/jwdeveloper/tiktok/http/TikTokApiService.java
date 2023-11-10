@@ -30,7 +30,6 @@ import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
-import javax.script.ScriptEngineManager;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -47,49 +46,34 @@ public class TikTokApiService {
     }
 
 
-    public void updateSessionId()
-    {
-        if(clientSettings.getSessionId() == null)
-        {
+    public void updateSessionId() {
+        if (clientSettings.getSessionId() == null) {
             return;
         }
-        if(clientSettings.getSessionId().isEmpty())
-        {
-          return;
+        if (clientSettings.getSessionId().isEmpty()) {
+            return;
         }
         tiktokHttpClient.setSessionId(clientSettings.getSessionId());
     }
 
-    public boolean sendMessage(String message, String sessionId) {
-        if (sessionId.isEmpty()) {
-            throw new TikTokLiveException("Session ID must not be Empty");
-        }
-        var roomId = clientSettings.getClientParameters().get("room_id");
-        if (roomId == null) {
-            throw new TikTokLiveException("Room ID must not be Empty");
-        }
-        logger.info("Sending message to chat");
-        try {
-            var params = new HashMap<String, Object>(clientSettings.getClientParameters());
-            params.put("content", message);
-            params.put("channel", "tiktok_web");
-            params.remove("cursor");
-            tiktokHttpClient.setSessionId(sessionId);
-            tiktokHttpClient.postMessageToChat(params);
-            return true;
-        } catch (Exception e) {
-            throw new TikTokLiveRequestException("Failed to fetch room id from WebCast, see stacktrace for more info.", e);
-        }
+    public String fetchRoomId(String userName) {
+        var roomId = fetchRoomIdFromTiktokApi(userName);
+        clientSettings.getClientParameters().put("room_id", roomId);
+        logger.info("RoomID -> " + roomId);
+        return roomId;
     }
 
-    public String fetchRoomId(String userName) {
+    private String fetchRoomIdFromTikTokPage(String userName)
+    {
+           /*  var roomId = RequestChain.<String>create()
+                .then(() -> fetchRoomIdFromTikTokPage(userName))
+                .then(() -> fetchRoomIdFromTiktokApi(userName))
+                .run();*/
         logger.info("Fetching room ID");
         String html;
         try {
             html = tiktokHttpClient.getLivestreamPage(userName);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new TikTokLiveRequestException("Failed to fetch room id from WebCast, see stacktrace for more info.", e);
         }
 
@@ -112,22 +96,35 @@ public class TikTokApiService {
             throw new TikTokLiveOfflineHostException("Unable to fetch room ID, live host could be offline or name is misspelled");
         }
 
-        clientSettings.getClientParameters().put("room_id", id);
-        logger.info("RoomID -> " + id);
+
         return id;
+    }
+
+    private String fetchRoomIdFromTiktokApi(String userName) {
+
+        var params = new HashMap<>(clientSettings.getClientParameters());
+        params.put("uniqueId", userName);
+        params.put("sourceType", 54);
+        var roomData = tiktokHttpClient.getJsonFromTikTokApi("api-live/user/room/", params);
+
+        var data = roomData.getAsJsonObject("data");
+        var user =data.getAsJsonObject("user");
+        var roomId = user.get("roomId").getAsString();
+
+
+        return roomId;
     }
 
 
     public LiveRoomMeta fetchRoomInfo() {
         logger.info("Fetching RoomInfo");
         try {
-            var response = tiktokHttpClient.getJObjectFromWebcastAPI("room/info/", clientSettings.getClientParameters());
+            var response = tiktokHttpClient.getJsonFromWebcastApi("room/info/", clientSettings.getClientParameters());
             var mapper = new LiveRoomMetaMapper();
             var liveRoomMeta = mapper.map(response);
             logger.info("RoomInfo status -> " + liveRoomMeta.getStatus());
             return liveRoomMeta;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new TikTokLiveRequestException("Failed to fetch room info from WebCast, see stacktrace for more info.", e);
         }
     }
@@ -136,7 +133,7 @@ public class TikTokApiService {
 
         logger.info("Fetching ClientData");
         try {
-            var response = tiktokHttpClient.getSigningServerMessage("im/fetch/", clientSettings.getClientParameters());
+            var response = tiktokHttpClient.getSigningServerResponse("im/fetch/", clientSettings.getClientParameters());
             clientSettings.getClientParameters().put("cursor", response.getCursor());
             clientSettings.getClientParameters().put("internal_ext", response.getInternalExt());
             return response;

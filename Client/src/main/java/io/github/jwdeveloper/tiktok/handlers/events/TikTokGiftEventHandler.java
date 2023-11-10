@@ -47,6 +47,12 @@ public class TikTokGiftEventHandler {
         giftsMessages = new HashMap<>();
     }
 
+    @SneakyThrows
+    public List<TikTokEvent> handleGift(byte[] msg) {
+        var currentMessage = WebcastGiftMessage.parseFrom(msg);
+        return handleGift(currentMessage);
+    }
+
     public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage)
     {
         var userId = currentMessage.getUser().getId();
@@ -81,11 +87,6 @@ public class TikTokGiftEventHandler {
 
         return List.of();
     }
-    @SneakyThrows
-    public List<TikTokEvent> handleGift(byte[] msg) {
-        var currentMessage = WebcastGiftMessage.parseFrom(msg);
-        return handleGift(currentMessage);
-    }
 
 
 
@@ -99,14 +100,17 @@ public class TikTokGiftEventHandler {
         return new TikTokGiftComboEvent(gift, message, state);
     }
 
-    private Gift getGiftObject(WebcastGiftMessage giftMessage) {
-        var gift = giftManager.findById((int) giftMessage.getGiftId());
+    private Gift getGiftObject(WebcastGiftMessage giftMessage)
+    {
+        var giftId = (int) giftMessage.getGiftId();
+        var gift = giftManager.findById(giftId);
         if (gift == Gift.UNDEFINED) {
             gift = giftManager.findByName(giftMessage.getGift().getName());
         }
-        if (gift == Gift.UNDEFINED) {
+        if (gift == Gift.UNDEFINED)
+        {
             gift = giftManager.registerGift(
-                    (int) giftMessage.getGift().getId(),
+                    giftId,
                     giftMessage.getGift().getName(),
                     giftMessage.getGift().getDiamondCount(),
                     Picture.map(giftMessage.getGift().getImage()));

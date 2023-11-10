@@ -34,6 +34,11 @@ public class CustomGiftExample {
 
     public static void main(String[] args) {
         LiveClient client = TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+                .onConnected((liveClient, event) ->
+                {
+                    liveClient.disconnect();
+                })
+
                 .onGift((liveClient, event) ->
                 {
                     liveClient.getLogger().info(event.getGift().getName());

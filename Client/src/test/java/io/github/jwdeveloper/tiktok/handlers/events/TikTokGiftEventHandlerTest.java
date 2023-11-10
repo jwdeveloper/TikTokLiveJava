@@ -34,6 +34,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.logging.Logger;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TikTokGiftEventHandlerTest {
@@ -43,7 +45,7 @@ class TikTokGiftEventHandlerTest {
 
     @BeforeAll
     public void before() {
-        var manager = new TikTokGiftManager();
+        var manager = new TikTokGiftManager(Logger.getLogger("x"));
         manager.registerGift(123, "example", 123, new Picture("image.webp"));
         handler = new TikTokGiftEventHandler(manager);
     }

@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.handlers;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEndEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollStartEvent;
@@ -37,12 +38,16 @@ import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
 import io.github.jwdeveloper.tiktok.data.models.Text;
+import io.github.jwdeveloper.tiktok.data.models.chest.Chest;
 import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
+import io.github.jwdeveloper.tiktok.messages.enums.EnvelopeDisplay;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
 import lombok.SneakyThrows;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
@@ -106,7 +111,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         registerMapping(WebcastOecLiveShoppingMessage.class, TikTokShopEvent.class);
         registerMapping(WebcastImDeleteMessage.class, TikTokIMDeleteEvent.class);
         registerMapping(WebcastQuestionNewMessage.class, TikTokQuestionEvent.class);
-        registerMapping(WebcastEnvelopeMessage.class, TikTokEnvelopeEvent.class);
+        registerMappings(WebcastEnvelopeMessage.class, this::handleEnvelop);
         registerMapping(WebcastSubNotifyMessage.class, TikTokSubNotifyEvent.class);
         registerMapping(WebcastEmoteChatMessage.class, TikTokEmoteEvent.class);
     }
@@ -148,6 +153,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     @SneakyThrows
     private TikTokEvent handleMemberMessage(byte[] msg) {
         var message = WebcastMemberMessage.parseFrom(msg);
+        roomInfo.setViewersCount(message.getMemberCount());
         return switch (message.getAction()) {
             case JOINED -> new TikTokJoinEvent(message);
             case SUBSCRIBED -> new TikTokSubscribeEvent(message);
@@ -185,6 +191,19 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
             case 2 -> new TikTokPollUpdateEvent(poolMessage);
             default -> new TikTokPollEvent(poolMessage);
         };
+    }
+
+    @SneakyThrows
+    private List<TikTokEvent> handleEnvelop(byte[] data) {
+        var msg = WebcastEnvelopeMessage.parseFrom(data);
+        if (msg.getDisplay() != EnvelopeDisplay.EnvelopeDisplayNew) {
+            return Collections.emptyList();
+        }
+        var totalDiamonds = msg.getEnvelopeInfo().getDiamondCount();
+        var totalUsers = msg.getEnvelopeInfo().getPeopleCount();
+        var chest = new Chest(totalDiamonds, totalUsers);
+
+        return List.of(new TikTokChestEvent(chest, msg));
     }
 
 

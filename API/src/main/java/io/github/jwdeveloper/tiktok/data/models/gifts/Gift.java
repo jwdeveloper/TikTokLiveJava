@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
 // This enum is generated
 package io.github.jwdeveloper.tiktok.data.models.gifts;
 
@@ -31,13 +9,13 @@ import lombok.Getter;
 public enum Gift {
   UNDEFINED(-1, "undefined", -1, ""),
 
-  HEART(5480, "Heart", 10, "https://storage.streamdps.com/iblock/b7a/b7ae3af2d67d7b7708a69d765531712a/7a382fcc2e03076c9e4b089176de1395.webp"),
+  HEART(5480, "Heart", 10, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/98bea1b189fba75bf0ca766b4dc1976e.png~tplv-obj.jpg"),
 
   HEART_5738(5738, "Heart", 200, "https://storage.streamdps.com/iblock/046/046417f5f825f44235c2ae98c56703a2/925cc55f3650d03ad58de6fa0edec143.png"),
 
-  HEART_6247(6247, "Heart", 1, "https://storage.streamdps.com/iblock/21d/21de8189873fc8550b8f19501effab4f/0be54b4cf3e40c52fca6be3f71220d69.png"),
+  HEART_6247(6247, "Heart", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/dd300fd35a757d751301fba862a258f1~tplv-obj.jpg"),
 
-  INTERSTELLAR(6149, "Interstellar", 10000, "https://storage.streamdps.com/iblock/4e3/4e341b08230703a6f09ba3234c3fe717/3854ed8e881ebbe5208882602b30cf88.png"),
+  INTERSTELLAR(6149, "Interstellar", 10000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/8520d47b59c202a4534c1560a355ae06~tplv-obj.jpg"),
 
   LOVE_CHAT(6205, "Love Chat", 400, "https://storage.streamdps.com/iblock/440/4402267722e227b72adc97db92504b75/ae0f562146e701f32ae96761ac67c5cc.png"),
 
@@ -57,7 +35,7 @@ public enum Gift {
 
   SHOOTING_STARS(5753, "Shooting Stars", 1580, "https://storage.streamdps.com/iblock/b36/b36bb8c332ade25b2e591cd3ed164a99/a06c10f4dc562c24f4f5b6812b9fa01f.png"),
 
-  LION(6369, "Lion", 29999, "https://storage.streamdps.com/iblock/0c4/0c446fb276fafbb0f0d5e3abfedf2510/f4bbea9d03b1453bd37d571282334f1b.png"),
+  LION(6369, "Lion", 29999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4fb89af2082a290b37d704e20f4fe729~tplv-obj.jpg"),
 
   CAR_DRIFTING(8086, "Car Drifting", 3000, "https://storage.streamdps.com/iblock/4e5/4e537a5c27bc6be1887f40eb2995d38e/62635a8973c01d0a0330f778e5ba5872.webp"),
 
@@ -65,11 +43,11 @@ public enum Gift {
 
   ENJOY_MUSIC(5685, "Enjoy Music", 1, "https://storage.streamdps.com/iblock/82b/82b1fc25e1aab4c5502c31bfd1c001d7/ce0e2cc4cecb12e0fc2938eb4871008c.webp"),
 
-  COOPER_FLIES_HOME(6862, "Cooper Flies Home", 1999, "https://storage.streamdps.com/iblock/778/7784f4e4b22c7acb8c90b9ccf4cfd71c/e3bb5fd549bc047912dda450fb714f84.webp"),
+  COOPER_FLIES_HOME(6862, "Cooper Flies Home", 1999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/3f1945b0d96e665a759f747e5e0cf7a9~tplv-obj.jpg"),
 
-  MAKE_UP_BOX(6033, "Make-up Box", 1999, "https://storage.streamdps.com/iblock/006/006d256121db1824975ae0f9f8a0fd1d/775b702c6935f6b7fc82fca6221d65b0.png"),
+  MAKE_UP_BOX(6033, "Make-up Box", 1999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a29aa87203ec09c699e3dafa1944b23e~tplv-obj.jpg"),
 
-  LITTLE_CROWN(6097, "Little Crown", 99, "https://storage.streamdps.com/iblock/50d/50df20e691bbeeeb1c2faf03c2c86243/2b412c3b322b27cd9836bbe636ea2a1d.png"),
+  LITTLE_CROWN(6097, "Little Crown", 99, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/cf3db11b94a975417043b53401d0afe1~tplv-obj.jpg"),
 
   RUBY_RED(8434, "Ruby red", 88, "https://storage.streamdps.com/iblock/405/405fcf52a1de3d14ab9834c1f30cc330/0deed9ee2c79ba6bf2005b0ce667bf60.webp"),
 
@@ -103,7 +81,7 @@ public enum Gift {
 
   GIVE_IT_ALL(6649, "Give It All", 1, "https://storage.streamdps.com/iblock/de8/de8468d1003361452021c2d4796bb0f6/574aa0cdd7b418a2a3af2ca4739e9e7f.webp"),
 
-  MARVELOUS_CONFETTI(7121, "Marvelous Confetti", 100, "https://storage.streamdps.com/iblock/a2e/a2e6e84d5786d5a4afb05d03cb76c519/cc8b527c9b83f76ee7fc314cc8cb80f6.webp"),
+  MARVELOUS_CONFETTI(7121, "Marvelous Confetti", 100, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/fccc851d351716bc8b34ec65786c727d~tplv-obj.jpg"),
 
   PINKY_PROMISE(8810, "Pinky promise", 5, "https://storage.streamdps.com/iblock/686/6864e9132aa300e189e93054ad735407/fe1a1a4405f77f009f4a76a184bafc52.webp"),
 
@@ -115,25 +93,25 @@ public enum Gift {
 
   WEIGHTS(5760, "Weights", 1, "https://storage.streamdps.com/iblock/d6f/d6f46242fd4f0396f5c5070ff960e83c/87884fe9998fea43e8aa56ecce15a541.png"),
 
-  RED_LIGHTNING(8419, "Red Lightning", 12000, "https://storage.streamdps.com/iblock/12a/12ac7db3c837f029beee318c45e3ad88/da93190dd1082f876b4461ec0924e453.webp"),
+  RED_LIGHTNING(8419, "Red Lightning", 12000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/5f48599c8d2a7bbc6e6fcf11ba2c809f~tplv-obj.jpg"),
 
   GUACAMOLE(6519, "Guacamole", 6, "https://storage.streamdps.com/iblock/207/20793577805a0b4fe0efeb37cc0bd7d9/10e97510121def59e538f0290d2d751a.png"),
 
-  FINGER_HEART(5487, "Finger Heart", 5, "https://storage.streamdps.com/iblock/688/688f0c350f9cd9751cb02659f4ab105e/2b2d66c2f9767fc8332ee1b5ba0c1057.png"),
+  FINGER_HEART(5487, "Finger Heart", 5, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a4c4dc437fd3a6632aba149769491f49.png~tplv-obj.jpg"),
 
   COOPER_SWIMS_HOME(6863, "Cooper Swims Home", 3999, "https://storage.streamdps.com/iblock/493/4930e92e37637187f38ca100fa52b242/413beebb2e2c1a6f4640d73d3b6000d8.webp"),
 
-  RED_CARPET(6789, "Red Carpet", 1999, "https://storage.streamdps.com/iblock/bf1/bf11d2786cbcce31a9ba2f95982921be/4229588ababc215c9fab76e953647c89.webp"),
+  RED_CARPET(6789, "Red Carpet", 1999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/5b9bf90278f87b9ca0c286d3c8a12936~tplv-obj.jpg"),
 
   CUPID(5236, "Cupid", 2888, "https://storage.streamdps.com/iblock/94f/94f6f0d4bfb3294395007ba45db34a54/e141809d2278e1ca80a5107bce4a16f6.png"),
 
-  MYSTERY_FIREWORK(7529, "Mystery Firework", 1999, "https://storage.streamdps.com/iblock/a53/a53a028b290673abcdaa7858e5753a99/666cd8c2e66d6fb004ca64c8112af989.webp"),
+  MYSTERY_FIREWORK(7529, "Mystery Firework", 1999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/c110230c5db903db5f060a432f5a86cd~tplv-obj.jpg"),
 
   BUNGEO_PPANG(5644, "Bungeo-ppang", 1, "https://storage.streamdps.com/iblock/7af/7afe4a4d67c1343a2df4703537b897eb/cd51c9bbb8291363ea4189bd2370eb8c.png"),
 
   SCENTED_CANDLE(7131, "Scented Candle", 20, "https://storage.streamdps.com/iblock/01f/01f4015c4cad98734c55ecd42824ace3/eb1d8dd998edd8f658c43c60d33b9904.webp"),
 
-  MOTORCYCLE(5765, "Motorcycle", 2988, "https://storage.streamdps.com/iblock/322/3226dd779addd06444ec9326eb25eb7c/0c6f14d291823969c916aa782c842d9a.png"),
+  MOTORCYCLE(5765, "Motorcycle", 2988, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/6517b8f2f76dc75ff0f4f73107f8780e~tplv-obj.jpg"),
 
   DREAM_TEAM(7532, "Dream Team", 299, "https://storage.streamdps.com/iblock/252/2523636860d9336ab7cd149bbfb94533/b171f50afc37dc216144b4bc9ca259a1.webp"),
 
@@ -157,7 +135,7 @@ public enum Gift {
 
   YELLOW_BUS(8263, "Yellow Bus", 6000, "https://storage.streamdps.com/iblock/88d/88df4387d65bcc77b691098fd649bd59/ad401a92ddba9aae15bb777f9f38638d.webp"),
 
-  ROSA_NEBULA(8912, "Rosa Nebula", 15000, "https://storage.streamdps.com/iblock/2d7/2d7dca6dc709e54b38336bedbd9eb06f/96de9ba917cf3f96bc15cb0f255b50c4.webp"),
+  ROSA_NEBULA(8912, "Rosa Nebula", 15000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/f722088231103b66875dae33f13f8719.png~tplv-obj.jpg"),
 
   KISS(5284, "Kiss", 150, "https://storage.streamdps.com/iblock/d3d/d3df4a0ecebd25c21e7ce5a6f910f8f1/d9ce143ac4707f74d8b1fe4708a92ab3.png"),
 
@@ -173,11 +151,11 @@ public enum Gift {
 
   LUCKY_PIG(7375, "Lucky Pig", 1, "https://storage.streamdps.com/iblock/bf8/bf8e32bd0bf5a916195b5848db571f4f/a9241b01b970aa44c2d5cea5e8ba69d6.webp"),
 
-  GARLAND_(5651, "Garland ", 1500, "https://storage.streamdps.com/iblock/2b7/2b715453ba05fa402edba017ac0c11a0/b31ad3573f6b4fe41e89e16f2615606d.png"),
+  GARLAND_(5651, "Garland ", 1500, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/69d7dadcd93942bad49d0b9874f69c1b~tplv-obj.jpg"),
 
   COWBOY_HAT(8842, "Cowboy Hat", 199, "https://storage.streamdps.com/iblock/5f3/5f3df5eccbc82f458fdacd0f82d13e40/40980853c80e3da0e902a1db49ea9798.webp"),
 
-  SPORTS_CAR(6089, "Sports Car", 7000, "https://storage.streamdps.com/iblock/b61/b610a9669c8a833dfcc1d24c6ffef32a/a4fdb6b0c3a2efc75e09a0923976dd77.png"),
+  SPORTS_CAR(6089, "Sports Car", 7000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/e7ce188da898772f18aaffe49a7bd7db~tplv-obj.jpg"),
 
   ICE_TEA(5464, "Ice Tea", 1, "https://storage.streamdps.com/iblock/531/5313a4ca89a7c7588a88898c8f1e9053/dab85392562772099474a050c251d340.png"),
 
@@ -187,7 +165,7 @@ public enum Gift {
 
   WHALE_DIVING(6084, "Whale diving", 1750, "https://storage.streamdps.com/iblock/5b2/5b27c388fe0d4dbe0a5f0a44ba7a8410/602a5a7cf538240f48ccf47c13237aa2.png"),
 
-  WHALE_DIVING_6820(6820, "Whale diving", 2150, "https://storage.streamdps.com/iblock/db2/db286be21ff2672b6e825a883c8c3e8f/ab9021773e219665f526cee02252f936.webp"),
+  WHALE_DIVING_6820(6820, "Whale diving", 2150, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/46fa70966d8e931497f5289060f9a794~tplv-obj.jpg"),
 
   DIAMOND_RING_OF_LOVE(5283, "Diamond ring of love", 300, "https://storage.streamdps.com/iblock/433/4334f4d32ccb792976b1097ae605d1d0/890c718960ebebdd65f1843ec944f483.png"),
 
@@ -197,7 +175,7 @@ public enum Gift {
 
   MONEY_GUN_6365(6365, "Money Gun", 500, "https://storage.streamdps.com/iblock/25f/25f030f47cfc60d296bb1041ddb91f6e/ca3357a76a2be178c581530009ce215a.png"),
 
-  MONEY_GUN_7168(7168, "Money Gun", 500, "https://storage.streamdps.com/iblock/248/248d3e4000124666d17b89889bf7468b/9c7aa57e3bd14e2ed6c1d8acd53b1970.webp"),
+  MONEY_GUN_7168(7168, "Money Gun", 500, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/e0589e95a2b41970f0f30f6202f5fce6~tplv-obj.jpg"),
 
   HONORABLE_PERSON(6525, "Honorable Person", 99, "https://storage.streamdps.com/iblock/46d/46deaf56b0ee85c34e23e793dbcbab73/4e8f3162028de2f938cda110554d51cc.webp"),
 
@@ -217,9 +195,9 @@ public enum Gift {
 
   MAN_V_SEAGULL(9086, "Man V Seagull", 15000, "https://storage.streamdps.com/iblock/e5d/e5d95d519ee0ed7922de14f224a9504d/e80d8e840dd44cdf20de4c572c25e0f4.webp"),
 
-  GIFT_BOX(6834, "Gift Box", 1999, "https://storage.streamdps.com/iblock/daa/daa30e32902238fe45acd7ad97d93e67/f76b6dc0d74fa3dd7a0a3e7c703fae13.webp"),
+  GIFT_BOX(6834, "Gift Box", 1999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/9cc22f7c8ac233e129dec7b981b91b76~tplv-obj.jpg"),
 
-  GIFT_BOX_6835(6835, "Gift Box", 3999, "https://storage.streamdps.com/iblock/fe3/fe3ea09799010f4185e3f862431db84b/951f010f281aea5b15e90d74b7e6306c.webp"),
+  GIFT_BOX_6835(6835, "Gift Box", 3999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/3646c259f8ce6f79c762ad00ce51dda0~tplv-obj.jpg"),
 
   ARCADE_GAME(5876, "Arcade Game", 1200, "https://storage.streamdps.com/iblock/d5a/d5aaa3c8ef3d271c2f93709c3ff51e67/721d870d5a5d9d82d726ff5a9ba3aa5e.png"),
 
@@ -245,7 +223,7 @@ public enum Gift {
 
   NOVEMBER(7177, "November", 88, "https://storage.streamdps.com/iblock/ee5/ee55ec79ae4695803d79a7fa0904333c/781835a90e8f6d8f216b54eb2a1b2b8c.webp"),
 
-  GG(6064, "GG", 1, "https://storage.streamdps.com/iblock/232/232e2afc8e6c022c5c78df18cf196663/f2ba6300ef54121763648a60d465eef5.png"),
+  GG(6064, "GG", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/3f02fa9594bd1495ff4e8aa5ae265eef~tplv-obj.jpg"),
 
   GG_8286(8286, "GG", 1, "https://storage.streamdps.com/iblock/993/993d6fe6ba90a007abd712557c96be80/26dd80bd9499dbed22cd6f1ac6ef6fd1.webp"),
 
@@ -257,7 +235,7 @@ public enum Gift {
 
   ROMAN_EMPIRE(7166, "Roman Empire", 199, "https://storage.streamdps.com/iblock/c77/c778c4e5cd1c68a50dcc06e4bfc3aa08/48edf8b190d98b0a3cc4623e6cc9a22c.webp"),
 
-  CHEER_FOR_YOU(6713, "Cheer For You", 199, "https://storage.streamdps.com/iblock/9ac/9aca1e40fff8679e8d37ef5c566fb872/15abbbe55a2269339a6b28e5c582fbfd.webp"),
+  CHEER_FOR_YOU(6713, "Cheer For You", 199, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/1059dfa76c78dc17d7cf0a1fc2ece185~tplv-obj.jpg"),
 
   TREASURE_CHEST(5513, "Treasure Chest", 100, "https://storage.streamdps.com/iblock/ef8/ef8e2b32aa2e81e7c7efa1e6913dcbc6/0282de629a9d41f4862150bec2e4f35b.png"),
 
@@ -273,15 +251,17 @@ public enum Gift {
 
   PIZZA(7055, "Pizza", 40, "https://storage.streamdps.com/iblock/c9d/c9d7f483cc0059a1e8165bfbd1341688/307a559eb2b371b92b8ea36ae96bfa30.webp"),
 
+  AMUSEMENT_PARK(9466, "Amusement Park", 17000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/12ecc01c2984c5d85bb508e80103a3cb.png~tplv-obj.jpg"),
+
   CLUB(6417, "Club", 2000, "https://storage.streamdps.com/iblock/49b/49be18ae5914346ffcaf15a519ba9c1c/41326cb23d22010f0c4a8edf5bd27615.webp"),
 
   LOVE_BALLOON(5488, "LOVE Balloon", 699, "https://storage.streamdps.com/iblock/02e/02e14e15a34e20b9bc12631b89855609/40e6ba49ff1e8b344199e44b63adcb6f.png"),
 
   DANCING_CAPYBARAS(8806, "Dancing Capybaras", 2200, "https://storage.streamdps.com/iblock/ac2/ac2606f1dc2504c9a1b7974f40074c87/c243031480e8f2e4bbd8e7a43228ff1f.webp"),
 
-  DUCK(6265, "Duck", 299, "https://storage.streamdps.com/iblock/7cc/7ccb5acba5bb4359f402941267f3d88e/1032cb33afecc207c136dcd2cf0bbea1.png"),
+  DUCK(6265, "Duck", 299, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/e172f660a1d4f95813a3ace0fde42323~tplv-obj.jpg"),
 
-  FLOWER_OVERFLOW(6148, "Flower Overflow", 4000, "https://storage.streamdps.com/iblock/891/891bc5302f00b006c23975bc80357be2/3b1bfc1ba027d7839fe822a7e51d2833.png"),
+  FLOWER_OVERFLOW(6148, "Flower Overflow", 4000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/743c4bb44e7e0bf251a7f2f5ada231ee~tplv-obj.jpg"),
 
   PINK_SHOES(8815, "Pink shoes", 5, "https://storage.streamdps.com/iblock/387/387c559abfc868aa8f7d605a25748c14/06e08ba736cb17076b9c314058160ad2.webp"),
 
@@ -291,7 +271,7 @@ public enum Gift {
 
   COUNTING_SHEEP(7984, "Counting Sheep", 1200, "https://storage.streamdps.com/iblock/f32/f32291f6832c1eb265820aede5db65b2/006d4bd8018d5da1addb803dabd2b64b.webp"),
 
-  DOUGHNUT(5879, "Doughnut", 30, "https://storage.streamdps.com/iblock/ae6/ae65a581d82f828e9e3834cd8444986a/9a1acf1d35f2cbef7a4c3929f9587567.png"),
+  DOUGHNUT(5879, "Doughnut", 30, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4e7ad6bdf0a1d860c538f38026d4e812~tplv-obj.jpg"),
 
   SPAGHETTI_KISS(7282, "Spaghetti Kiss", 500, "https://storage.streamdps.com/iblock/fba/fba8022bcf5a189adec072e5ffa1be77/708c406b13d9fd4811ae19a8be9c327b.webp"),
 
@@ -303,6 +283,8 @@ public enum Gift {
 
   MATE_TEA(7089, "Mate tea", 10, "https://storage.streamdps.com/iblock/506/506e98699cdfefd679b35ea5170823b0/a95e9e3721c9b86e3342169b3211b30e.webp"),
 
+  TEAM_BRACELET(9139, "Team Bracelet", 2, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/54cb1eeca369e5bea1b97707ca05d189.png~tplv-obj.png"),
+
   HAPPY_NEW_YEAR(6101, "Happy New Year", 199, "https://storage.streamdps.com/iblock/717/71785e60184d69e928972250d3029262/75e3567557eb65c1d9bab3ff99357cdf.webp"),
 
   SAKURA_TRAIN(6244, "Sakura Train", 3999, "https://storage.streamdps.com/iblock/a8e/a8e50d5c5d0eaa42bd71dbeca3b1b95a/204910c857958e7e9efd0178d30a2fbe.png"),
@@ -311,13 +293,13 @@ public enum Gift {
 
   SKI_GOGGLES(7781, "Ski Goggles", 199, "https://storage.streamdps.com/iblock/f42/f42cbce436db4e60adbf85641a768a12/fa9a4cea3c23829cf6f0725fea8d3c1a.webp"),
 
-  PAPER_CRANE(5659, "Paper Crane", 99, "https://storage.streamdps.com/iblock/6a0/6a0b418bc4ae8f04be3194c88389e9e7/bf071c7cc84cf3aac6435adbd222f577.png"),
+  PAPER_CRANE(5659, "Paper Crane", 99, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/0f158a08f7886189cdabf496e8a07c21~tplv-obj.jpg"),
 
   BIGFOOT(9147, "Bigfoot", 3000, "https://storage.streamdps.com/iblock/f95/f95a4fcfa57150610fa50542db5b0990/ecb879cd751e580d3fe92770788c1735.webp"),
 
   SO_BEAUTIFUL(7024, "So Beautiful", 1, "https://storage.streamdps.com/iblock/ad6/ad67c8d6c93ff4c375568b0bfabbed6f/c68dfd6fda7e8bd84f0bc7fa9ce47af0.webp"),
 
-  SUNGLASSES(5509, "Sunglasses", 199, "https://storage.streamdps.com/iblock/919/9191409989dbc6bb4808ce18f8d0d0d7/bc837a05add0cf0f37e946d605df1a54.png"),
+  SUNGLASSES(5509, "Sunglasses", 199, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/08af67ab13a8053269bf539fd27f3873.png~tplv-obj.jpg"),
 
   PANDA(37, "Panda", 5, "https://storage.streamdps.com/iblock/833/833aadcba552a8a2cc779dd8d4c537c7/f952c72ee1f40e4fcd07d713b3da6565.png"),
 
@@ -327,7 +309,7 @@ public enum Gift {
 
   TIKTOK_UNIVERSE_6041(6041, "TikTok Universe", 34999, "https://storage.streamdps.com/iblock/374/374cf4298ba2c9817bc87dc2aa48d385/f04c43000c1c33765615c7ef7cacc58d.png"),
 
-  TIKTOK_UNIVERSE_9072(9072, "TikTok Universe", 44999, "https://storage.streamdps.com/iblock/cb8/cb81dd4932de73d6c5874c05e93c511b/abb83322d4cb67b8ae6fc7ec15d4d426.webp"),
+  TIKTOK_UNIVERSE_9072(9072, "TikTok Universe", 44999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/8f471afbcebfda3841a6cc515e381f58~tplv-obj.jpg"),
 
   CUDDLE_WITH_ME(8074, "Cuddle with Me", 500, "https://storage.streamdps.com/iblock/b73/b73e476594a2e9728a5d0ba459fbfb6c/3c37f3a0b52c276a3374bfc0c1247d5c.webp"),
 
@@ -339,23 +321,25 @@ public enum Gift {
 
   ELEPHANT_TRUNK(8260, "Elephant trunk", 299, "https://storage.streamdps.com/iblock/1ea/1eafea22e99969312cda7c142d8eb3c5/59f72e0dce1bc4fcf83a34f56872b492.webp"),
 
-  TRAIN(5978, "Train", 899, "https://storage.streamdps.com/iblock/17d/17dfaee8b85e1b972f86b080729b4126/73c36a574fa91b8b44e1ff63ba130e93.png"),
+  TRAIN(5978, "Train", 899, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4227ed71f2c494b554f9cbe2147d4899~tplv-obj.jpg"),
 
   MAY(6470, "May", 1, "https://storage.streamdps.com/iblock/ec6/ec6d320bb93df97057208f5163d81a92/67cb233e8cf0454213300c945b2f9256.webp"),
 
   WISHING_BOTTLE(7160, "Wishing Bottle", 1, "https://storage.streamdps.com/iblock/381/381ef41d500da1120bdfcf83f97e76fc/1a1c9b6be78144f22b8e858effc39333.webp"),
 
-  RABBIT(6348, "Rabbit", 1999, "https://storage.streamdps.com/iblock/151/151aef30aabf8be77064d93b4c947876/1a732f3990c54ac993ebe0d9a0316ac6.png"),
+  RABBIT(6348, "Rabbit", 1999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/61b42d630091b661e82fc8ed400b1de2~tplv-obj.jpg"),
 
-  ROSE(5655, "Rose", 1, "https://storage.streamdps.com/iblock/f59/f5902abbd13178017285a308606fd0dd/cf6a40558018965a8171cf5a575dd9de.png"),
+  ROSE(5655, "Rose", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.jpg"),
+
+  TRENDING_FIGURE(9138, "Trending Figure", 999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/df7b556ccf369bf9a42fe83ec8a77acf.png~tplv-obj.jpg"),
 
   ROSA(7997, "Rosa", 10, "https://storage.streamdps.com/iblock/486/486a2490c987c2bb97b6068fd5aac5ab/49d9045fcfe94bbfbd08c3363bb4512a.webp"),
 
-  ROSA_8913(8913, "Rosa", 10, "https://storage.streamdps.com/iblock/d75/d75e85cc034e46f992262e4791eebdb5/5bcd13609b96c3cea7d67a6f68b29a18.webp"),
+  ROSA_8913(8913, "Rosa", 10, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/eb77ead5c3abb6da6034d3cf6cfeb438~tplv-obj.jpg"),
 
   COOPER_S_HOME(6864, "Cooper's Home", 5999, "https://storage.streamdps.com/iblock/2b4/2b405c6cee3848dbf54629bd25725246/b289cd0ec91e4658bd31e48b4e69674e.webp"),
 
-  CHEER_YOU_UP(8243, "Cheer You Up", 9, "https://storage.streamdps.com/iblock/788/788d5d3a74a511c5dad52353ffa00b14/bbc76c1cf6b20e20b2b4f149c04cb23d.webp"),
+  CHEER_YOU_UP(8243, "Cheer You Up", 9, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/97e0529ab9e5cbb60d95fc9ff1133ea6~tplv-obj.jpg"),
 
   BOXING_ROBE(7989, "Boxing Robe", 99, "https://storage.streamdps.com/iblock/653/653d737cee4ef1f2cbd1d69d3aebdcee/478170842ea659c42df24028ea92f883.webp"),
 
@@ -365,13 +349,13 @@ public enum Gift {
 
   FLAME_HEART(9087, "Flame heart", 1, "https://storage.streamdps.com/iblock/10d/10df10624cdeebe8ff5e0e89e8c8e960/28b8da2878a420f8465cbbc1ec1e6b58.webp"),
 
-  TIKTOK_SHUTTLE(6751, "TikTok Shuttle", 20000, "https://storage.streamdps.com/iblock/88e/88e4853bd66a5e7dfb92ff4889ba8c52/179f7f3a339166b1f3369bb9d829905d.webp"),
+  TIKTOK_SHUTTLE(6751, "TikTok Shuttle", 20000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/8ef48feba8dd293a75ae9d4376fb17c9~tplv-obj.jpg"),
 
   MAGGIE(7911, "Maggie", 15000, "https://storage.streamdps.com/iblock/a12/a12a1b23f1f6a19d728de84e1f43e21d/ff288346e9855a9bb6deb4450491028f.webp"),
 
   PANDA_SKYDIVING(8812, "Panda skydiving", 2000, "https://storage.streamdps.com/iblock/a29/a29903a975ce45f7b9939b510412fcee/051afc0510a7349a9ebfcde9e0fdec24.webp"),
 
-  FIREWORKS(6090, "Fireworks", 1088, "https://storage.streamdps.com/iblock/eeb/eebfef5c217a749cf9a997d187a17d67/e1e443ee1532c9f04922acf770f04edb.png"),
+  FIREWORKS(6090, "Fireworks", 1088, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/9494c8a0bc5c03521ef65368e59cc2b8~tplv-obj.jpg"),
 
   DANCING_BEAVER_IN_SUNGLASSES(5798, "Dancing beaver in sunglasses", 500, "https://storage.streamdps.com/iblock/f0d/f0d0ca698fdf0d0610afd1033d79f4c2/8989843eb6c8f1de3bb6d72260a5d208.png"),
 
@@ -381,7 +365,7 @@ public enum Gift {
 
   KO_7655(7655, "KO", 20, "https://storage.streamdps.com/iblock/aa6/aa613e765fe5c42519bd83d2d4705118/7db90e1f83b8c87c74dfdc8ee88440cb.webp"),
 
-  LEON_AND_LILI(8916, "Leon and Lili", 9699, "https://storage.streamdps.com/iblock/00e/00e32385d86e71d5126a0f7de0d102a5/e50f83ab840e595bb5c7175f91d0e071.webp"),
+  LEON_AND_LILI(8916, "Leon and Lili", 9699, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/6958244f3eeb69ce754f735b5833a4aa.png~tplv-obj.jpg"),
 
   MAGIC_STAGE(6263, "Magic Stage", 2599, "https://storage.streamdps.com/iblock/399/399df717aefef9de9259e8256221076f/dfa2835c35b2177701ee65139bdfc59a.png"),
 
@@ -391,9 +375,9 @@ public enum Gift {
 
   GOLDEN_TRUMPET(8767, "Golden Trumpet", 15, "https://storage.streamdps.com/iblock/a44/a4441a11d3cb073e855088a4eff72fdb/020b0d041c38b00b730b28806dbe6cc5.webp"),
 
-  HANDS_UP(8244, "Hands Up", 499, "https://storage.streamdps.com/iblock/e0f/e0f08e9e2d4ee388e6995b96c0ecdb11/c7e487b976e30be258208b2dcdbeabf8.webp"),
+  HANDS_UP(8244, "Hands Up", 499, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/f4d906542408e6c87cf0a42f7426f0c6~tplv-obj.jpg"),
 
-  HAT_AND_MUSTACHE(6427, "Hat and Mustache", 99, "https://storage.streamdps.com/iblock/2d8/2d8065490de12823e64617fe407c138b/b5ba8728531da2e0e52e23b9479c246a.png"),
+  HAT_AND_MUSTACHE(6427, "Hat and Mustache", 99, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/2f1e4f3f5c728ffbfa35705b480fdc92~tplv-obj.jpg"),
 
   CONCERT(7880, "Concert", 2888, "https://storage.streamdps.com/iblock/0a5/0a59a6ed630ba5aa03392675e6a25654/9ea2257ab244985b43ee801d0889a626.webp"),
 
@@ -423,19 +407,21 @@ public enum Gift {
 
   MAXWELL(8189, "Maxwell", 10, "https://storage.streamdps.com/iblock/82b/82b7041dcdd8fcc1842c0dd7b5a63099/73736d5ec979ad00f4b771397d9b998b.webp"),
 
-  LOVE_DROP(8277, "Love Drop", 1800, "https://storage.streamdps.com/iblock/896/896832589053f394e9b14cac7992a0d1/df08b30c59ff13f1eec030d1e27a2a35.webp"),
+  LOVE_DROP(8277, "Love Drop", 1800, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/1ea684b3104abb725491a509022f7c02~tplv-obj.jpg"),
+
+  WHITE_ROSE(8239, "White Rose", 1, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/a2d81f3847457be9083a9c76a59b08cb~tplv-obj.png"),
 
   YACHT(6103, "Yacht", 9888, "https://storage.streamdps.com/iblock/b6c/b6c9d3c6df6733cc85149897764d2c6b/023d358a3d7a7a330ed006eb07117582.png"),
 
   WINDOW_BASKET(8648, "Window basket", 500, "https://storage.streamdps.com/iblock/a8d/a8d0c44c86385d4cd02ad2d840dcb148/8bbdca8666946a2e7172b3eaeed02303.webp"),
 
-  SWAN(5897, "Swan", 699, "https://storage.streamdps.com/iblock/bd1/bd1d065774ce50e2c0331dba965d1ac4/a423a5b7b80743d36b8960e79421060c.png"),
+  SWAN(5897, "Swan", 699, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/97a26919dbf6afe262c97e22a83f4bf1~tplv-obj.jpg"),
 
   GREAT_TEAM(8203, "Great Team", 1, "https://storage.streamdps.com/iblock/95f/95f3f1519e2b1d025b9a0a1e2faa2fa5/ff1b5216cf3b50aa851d6bd865957dba.webp"),
 
   HELLO_TRAVELER(7501, "Hello Traveler", 5, "https://storage.streamdps.com/iblock/a46/a4668dd315e2d9d84fd267fd0bc9ca59/0eb68fd9e58d9c9072d8ec7185103371.webp"),
 
-  HEARTS(5586, "Hearts", 199, "https://storage.streamdps.com/iblock/f28/f2886812bc78d33eab9d70e86b665753/b97d8bfa0bc6d960cad3bfcf5716be12.png"),
+  HEARTS(5586, "Hearts", 199, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/934b5a10dee8376df5870a61d2ea5cb6.png~tplv-obj.jpg"),
 
   FOOTBALL_HELMET(7851, "Football Helmet", 50, "https://storage.streamdps.com/iblock/9cc/9cce61670c1a81b7954fcf3520dc15a2/b78182e9fd2ff1c6ae1256abd8e2e2bf.webp"),
 
@@ -445,7 +431,7 @@ public enum Gift {
 
   GAME_CONTROLLER_6960(6960, "Game Controller", 100, "https://storage.streamdps.com/iblock/030/030f63329d68d21c5faacab88006a17f/fbb8dd78b47184321d93e3ae5a1f2cca.webp"),
 
-  TIKTOK_UNIVERSE_(7312, "TikTok Universe+", 34999, "https://storage.streamdps.com/iblock/f23/f23b0f26a9b1cb931243bacfa5a3b7e4/17263e949df9e7e2f173e6eae68fd198.webp"),
+  TIKTOK_UNIVERSE_(7312, "TikTok Universe+", 34999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/b13105782e8bf8fbefaa83b7af413cee~tplv-obj.jpg"),
 
   HANGING_LIGHTS(5937, "Hanging Lights", 199, "https://storage.streamdps.com/iblock/e03/e03da22fa8c302dbf1d9439c65380549/6d9f912b5a9253f91c01ed58e3ccbe47.png"),
 
@@ -453,7 +439,7 @@ public enum Gift {
 
   DANCING_QUEENS(9240, "Dancing queens", 20000, "https://storage.streamdps.com/iblock/c79/c793af446369ecef5238e73312c84ccd/464a76f3e6eaee9afc771f45a4bba9df.webp"),
 
-  TIKTOK(5269, "TikTok", 1, "https://storage.streamdps.com/iblock/50f/50f8e7cf26128a6e10d0b792019c1303/94aa2d574cfe6e3893c087cfb5a5efcd.png"),
+  TIKTOK(5269, "TikTok", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/802a21ae29f9fae5abe3693de9f874bd~tplv-obj.jpg"),
 
   AIR_DANCER(5661, "Air Dancer", 300, "https://storage.streamdps.com/iblock/8ab/8abe051a8ba9b99026dc3c0a12b59b9e/914def28d5bd9a77be433f35a51d3bc2.png"),
 
@@ -473,7 +459,7 @@ public enum Gift {
 
   GAMING_CHAIR(6031, "Gaming Chair", 1200, "https://storage.streamdps.com/iblock/bd1/bd14b9754a264a2b1fca22c7171d79ac/448d467dd4d3e6a8945981c52017b11a.png"),
 
-  CHAMPION(5955, "Champion", 1500, "https://storage.streamdps.com/iblock/3c9/3c95aee9d94798b88b7132c0f1f006e3/60a55983aa3cf0b2c30de3b30aedcbea.png"),
+  CHAMPION(5955, "Champion", 1500, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/58ce827091411e667dd6ba8a93215f86~tplv-obj.jpg"),
 
   STAR_ADVENTURES(6320, "Star Adventures", 1999, "https://storage.streamdps.com/iblock/411/4116197948fd486fa5543b87eae4e89e/e6895f7490ccd06c913917ab3e0f1884.png"),
 
@@ -483,7 +469,7 @@ public enum Gift {
 
   ISLAND_OF_LOVE(6506, "Island of Love", 4000, "https://storage.streamdps.com/iblock/b4d/b4d960acabcbf7b72400d8711174e6f6/e31b32b8e14e7790fcde6f3e8dea975d.png"),
 
-  LEON_AND_LION(7823, "Leon and Lion", 34000, "https://storage.streamdps.com/iblock/a28/a28a82c70a624e448a96d3bebbfad3ea/833c0071d92604b5a544bf8f0ad72b68.webp"),
+  LEON_AND_LION(7823, "Leon and Lion", 34000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a291aedacf27d22c3fd2d83575d2bee9~tplv-obj.jpg"),
 
   CLOUD_BREAD(5826, "Cloud Bread", 1, "https://storage.streamdps.com/iblock/116/1166fd0ea70e5a7b7a51d718f2cbd06c/6ebf49c51e627d917d96291316c3f812.png"),
 
@@ -495,7 +481,7 @@ public enum Gift {
 
   FOUNTAIN(8887, "Fountain", 1200, "https://storage.streamdps.com/iblock/07d/07d678346c7eb588bc3cbddf343ab791/8f8f50f5350e4b1c0b151aff333e43a4.webp"),
 
-  GARLAND_HEADPIECE(6437, "Garland Headpiece", 199, "https://storage.streamdps.com/iblock/c42/c42c09a6f9075eca708111ea59a33ebd/c097bdc90a3bff337a25f6c53aa1aee5.png"),
+  GARLAND_HEADPIECE(6437, "Garland Headpiece", 199, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/bdbdd8aeb2b69c173a3ef666e63310f3~tplv-obj.jpg"),
 
   AEROBIC_HEADBAND(9255, "Aerobic headband", 99, "https://storage.streamdps.com/iblock/3d9/3d98c2fbc96922da37a9d22881bb06b9/0a99af132ab8e3fe9806d2412abc6bf0.webp"),
 
@@ -511,7 +497,7 @@ public enum Gift {
 
   RACCOON(8448, "Raccoon", 15, "https://storage.streamdps.com/iblock/539/5396582d174489f32525f871cb3087f8/041896a3554f3d4b8c86f486bc81b125.webp"),
 
-  HEART_ME(7934, "Heart Me", 1, "https://storage.streamdps.com/iblock/13e/13e5b040286e1eb50502af4539441cce/f82b75d67c3e4553d278404babdf91e2.webp"),
+  HEART_ME(7934, "Heart Me", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/d56945782445b0b8c8658ed44f894c7b~tplv-obj.jpg"),
 
   LEOPARD(7978, "Leopard", 15000, "https://storage.streamdps.com/iblock/eb4/eb4d116b15c03c2974b86fa400fa6a07/9a34b020e29f2d25f434387ae01b6386.webp"),
 
@@ -531,11 +517,11 @@ public enum Gift {
 
   ICE_LOLLY(6545, "Ice Lolly", 10, "https://storage.streamdps.com/iblock/93d/93dda2498d64aa0a29d444103a7804dd/92fd7397fffbaa8755cb233815964bbf.png"),
 
-  CONFETTI(5585, "Confetti", 100, "https://storage.streamdps.com/iblock/364/3640905e132905eb2b0ff64a068db337/fcb80819257fb17f881eeb85b3a0b0d2.png"),
+  CONFETTI(5585, "Confetti", 100, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/cb4e11b3834e149f08e1cdcc93870b26~tplv-obj.jpg"),
 
   MATCH__MATCH_(7068, "Match! Match!", 200, "https://storage.streamdps.com/iblock/cb4/cb43e14c94694d3d3ae355bdfc517afd/494cd902b8018b35b6dc0f0016c89694.webp"),
 
-  SHINY_AIR_BALLOON(7123, "Shiny air balloon", 1000, "https://storage.streamdps.com/iblock/bbf/bbf19d5a1bc2851cf5d7fea1b9fb0609/b636bdafd709c81fa041f72ffdf56645.webp"),
+  SHINY_AIR_BALLOON(7123, "Shiny air balloon", 1000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/9e7ebdca64b8f90fcc284bb04ab92d24~tplv-obj.jpg"),
 
   RACE_CAR(6892, "Race Car", 12000, "https://storage.streamdps.com/iblock/c1d/c1dd91d0cb97495c4d69a389b3a5a1ae/ee71e32f9e7bfa24a1d0e0a6dc28add1.webp"),
 
@@ -543,7 +529,7 @@ public enum Gift {
 
   MARIACHI_HAT_7094(7094, "Mariachi Hat", 199, "https://storage.streamdps.com/iblock/ada/ada653db47b3c097d794fc908a604357/aad16e67de36036f1ddfaf22627d6824.webp"),
 
-  SUNSET_SPEEDWAY(6203, "Sunset Speedway", 10000, "https://storage.streamdps.com/iblock/088/088e035c1766dc6d511735c97288eb74/855c619602420fe4f34eefe1ec809de6.png"),
+  SUNSET_SPEEDWAY(6203, "Sunset Speedway", 10000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/df63eee488dc0994f6f5cb2e65f2ae49~tplv-obj.jpg"),
 
   DANCING_ADAM(7468, "Dancing Adam", 5000, "https://storage.streamdps.com/iblock/f5c/f5cda80a1f9853c49226a450faf26e8f/6318d17d7a2526f521123402d19a4c3e.webp"),
 
@@ -551,15 +537,15 @@ public enum Gift {
 
   SCEPTRE_7364(7364, "Sceptre", 150, "https://storage.streamdps.com/iblock/d2d/d2d1b0359f480a7db08e490364d056b2/bcb44a039dfa4d148af6cde9f233ea13.webp"),
 
-  SEAL_AND_WHALE(8381, "Seal and Whale", 34500, "https://storage.streamdps.com/iblock/7ea/7eaaad60ec567af6679b633b13d45d67/a4efc1be2a75340110072f2b6bba554b.webp"),
+  SEAL_AND_WHALE(8381, "Seal and Whale", 34500, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/3781e9159ff09272826d3f2216ba36ef.png~tplv-obj.jpg"),
 
-  HAPPY_PARTY(8247, "Happy Party", 6999, "https://storage.streamdps.com/iblock/0f0/0f0bbac0fe85be28013b327a2e8c46e4/c1d7cbc8ea8493709416759f049b03be.webp"),
+  HAPPY_PARTY(8247, "Happy Party", 6999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/41774a8ba83c59055e5f2946d51215b4~tplv-obj.jpg"),
 
   WE_LOVE(7503, "We Love", 299, "https://storage.streamdps.com/iblock/679/679e9e38e38f8a4ce707328aa92b8997/9fedb22710af980bbf7b3092b08ecb94.webp"),
 
   HI_NOVEMBER(7176, "Hi November", 1, "https://storage.streamdps.com/iblock/2e1/2e1bd0d30bac3377a114d2080f9687b0/4213592ba44947c98100df3dd8969f32.webp"),
 
-  CELEBRATION_TIME(6790, "Celebration Time", 6999, "https://storage.streamdps.com/iblock/25e/25eb996989f2c9f66c3edcdfc6674049/42a32ced64d47b5bf8e7f57dd5b7a57f.webp"),
+  CELEBRATION_TIME(6790, "Celebration Time", 6999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/e73e786041d8218d8e9dbbc150855f1b~tplv-obj.jpg"),
 
   MONTY(7742, "Monty", 1, "https://storage.streamdps.com/iblock/c70/c70e3a9404b18068056d04d5394d739a/4e0e55d9d10a7747b7caf462cd87b4b3.webp"),
 
@@ -613,15 +599,15 @@ public enum Gift {
 
   MIC(5650, "Mic", 5, "https://storage.streamdps.com/iblock/1db/1dbec91a90cdeca9f7fb1ea7280ad5cd/cae0a287f4d2e8d0e1558dcbb4aa3b2f.png"),
 
-  FOREVER_ROSA(8914, "Forever Rosa", 399, "https://storage.streamdps.com/iblock/a97/a97e8f4489fb62aefe7afd0137e6cdad/3ebbb3e1119ff1c3b7bc9b5ced47a4e0.webp"),
+  FOREVER_ROSA(8914, "Forever Rosa", 399, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/863e7947bc793f694acbe970d70440a1.png~tplv-obj.jpg"),
 
-  ICE_CREAM_CONE(5827, "Ice Cream Cone", 1, "https://storage.streamdps.com/iblock/1a1/1a13988014fd9fb5990b3060beb2151d/71ba7d4c6eeaef46e5cc11fbf36ba3fa.png"),
+  ICE_CREAM_CONE(5827, "Ice Cream Cone", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/968820bc85e274713c795a6aef3f7c67~tplv-obj.jpg"),
 
-  FLY_LOVE(8248, "Fly Love", 19999, "https://storage.streamdps.com/iblock/729/729736d11c9014d99d088fa77da2bcea/d461d23ae2f3c5d2014f78a34c0b8956.webp"),
+  FLY_LOVE(8248, "Fly Love", 19999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a598ba4c7024f4d46c1268be4d82f901~tplv-obj.jpg"),
 
   BEACH_DATE(6132, "Beach Date", 899, "https://storage.streamdps.com/iblock/504/504a5dfef033a7e90e4f07987b0c0f28/70ec484fc4c798d3e09a7fbcae83ee95.png"),
 
-  TRAVEL_WITH_YOU(6233, "Travel with You", 999, "https://storage.streamdps.com/iblock/5f1/5f15bb4166a3be380c71682d27b1e38f/ad2519381f60bb3e2c6b603ed4baff24.png"),
+  TRAVEL_WITH_YOU(6233, "Travel with You", 999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/753098e5a8f45afa965b73616c04cf89~tplv-obj.jpg"),
 
   CHOCOLATE_STICK(6002, "Chocolate Stick", 1, "https://storage.streamdps.com/iblock/5c9/5c9487af2038c340fdbeb0b9ea4ff83e/b377ae8024881b93822f7b0a6bfe04e8.png"),
 
@@ -641,7 +627,7 @@ public enum Gift {
 
   SQUIRREL(7213, "Squirrel", 1, "https://storage.streamdps.com/iblock/5c3/5c37dce1eab0d67386329f3a2920a874/38104bd52d316ea76464433b3b07dea7.webp"),
 
-  METEOR_SHOWER(6563, "Meteor Shower", 3000, "https://storage.streamdps.com/iblock/484/484359bdcbb83121575fcbce75e6d9c0/5d501b2acc4a12ca9fe685b0cf6fcaba.png"),
+  METEOR_SHOWER(6563, "Meteor Shower", 3000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/71883933511237f7eaa1bf8cd12ed575~tplv-obj.jpg"),
 
   CAKE(5720, "Cake", 20, "https://storage.streamdps.com/iblock/edb/edbe349c5a4be01ec1fbf2225d0f48dc/4169ef7f0263177384205df6663451c8.png"),
 
@@ -651,9 +637,9 @@ public enum Gift {
 
   SNOWBOARD(7747, "Snowboard", 199, "https://storage.streamdps.com/iblock/9f1/9f1a3c5fe2fe7ef505a144e01fc37d29/cbac5622c575d34dfd943bc2a8f3d80c.webp"),
 
-  FIRE_PHOENIX(9092, "Fire Phoenix", 41999, "https://storage.streamdps.com/iblock/13b/13bd6d3510e802831552d711c688c958/ffedd22a99c1eb2ac888974816c979cb.webp"),
+  FIRE_PHOENIX(9092, "Fire Phoenix", 41999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/bfb8425a7e8fa03f9fec05a973a4a506.png~tplv-obj.jpg"),
 
-  STAR(6432, "Star", 99, "https://storage.streamdps.com/iblock/cc9/cc9317321e70cc776adc68bd3e0e66e7/4f3082259def021d1a2ed29e77a77713.png"),
+  STAR(6432, "Star", 99, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/485175fda92f4d2f862e915cbcf8f5c4~tplv-obj.jpg"),
 
   SPRING_TRAIN(8152, "Spring train", 3999, "https://storage.streamdps.com/iblock/035/035862dc0952468fc95f02995cec0f22/eeb69650806ea4c2e22558ef4b5e2b47.webp"),
 
@@ -668,6 +654,8 @@ public enum Gift {
   DANCE_TOGETHER(6554, "Dance Together", 699, "https://storage.streamdps.com/iblock/803/803c640fa9a7cefeaa37ce5a827bb8f3/d052d0ac9a1a408d3265a11ca8a52725.png"),
 
   CAMPING(6322, "Camping", 250, "https://storage.streamdps.com/iblock/9a9/9a9370a392311149be37e7c40c3e960d/ecb9dcdacf3a2ae0abef79baf0c4f41c.webp"),
+
+  FAIRY_WINGS(9463, "Fairy Wings", 1, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/e504dc2f313b8c6df9e99a848e1b3a99.png~tplv-obj.png"),
 
   TICKET(6856, "Ticket", 10, "https://storage.streamdps.com/iblock/434/434746bffe494ac6ad2eb5e7e4384955/92e426ea0b4d4a9f89d7e2786115cd20.webp"),
 
@@ -685,13 +673,13 @@ public enum Gift {
 
   ASMR_TIME_(6990, "ASMR Time ", 10, "https://storage.streamdps.com/iblock/49d/49dccba4525df92ed17678cc6ea47e95/b2c8c52d5294bb531d7d87a4c3ff97fe.webp"),
 
-  POOL_PARTY(5938, "Pool Party", 4999, "https://storage.streamdps.com/iblock/a27/a27e6730390e890198ebc0f3a2a6d68b/df71cae96fb8a3e616931c7c48a2574c.png"),
+  POOL_PARTY(5938, "Pool Party", 4999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4147c5bcfad9623c693f83d5d6cba1f7~tplv-obj.jpg"),
 
   MATCH_STAR(7070, "Match Star", 1, "https://storage.streamdps.com/iblock/497/497fa45aa565639b858e333ae2e0450c/f381f7c1c9a66fb6712e78a3b210b3ab.webp"),
 
   MATCH_STAR_7074(7074, "Match Star", 1, "https://storage.streamdps.com/iblock/bd5/bd50fed09a13493a57589939f8419460/5b136dca770fbb5c96dc9c62e20bf6b0.webp"),
 
-  GLOW_STICK(6788, "Glow Stick", 1, "https://storage.streamdps.com/iblock/751/751d663d0939f5d4a5178c32731a8c03/29d8d050f88ee2eb30b4099c86017d58.webp"),
+  GLOW_STICK(6788, "Glow Stick", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/8e1a5d66370c5586545e358e37c10d25~tplv-obj.jpg"),
 
   MUSIC(6415, "Music", 499, "https://storage.streamdps.com/iblock/366/3663e0462a9eb4519288bf93fce16a76/ee50d49d9ab88cac71617c69be201161.webp"),
 
@@ -703,7 +691,9 @@ public enum Gift {
 
   AIRSHIP(6327, "Airship", 1999, "https://storage.streamdps.com/iblock/85e/85e8a2811f78d9e6df7d00419394b88c/da5e075e4040fd8a3b60d4f28a2fb5db.webp"),
 
-  DRAGON_FLAME(7610, "Dragon Flame", 26999, "https://storage.streamdps.com/iblock/544/544a04d819ce2c2a51624bd4cd01e70d/489f08c5dc7c27d0c1fc2a97d2f79b1d.webp"),
+  HEALTH_POTION(7813, "Health Potion", 1, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/13f6a46b763c496306ff541daf3021a4~tplv-obj.png"),
+
+  DRAGON_FLAME(7610, "Dragon Flame", 26999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/89b4d1d93c1cc614e3a0903ac7a94e0c~tplv-obj.jpg"),
 
   NASI_LEMAK(5588, "Nasi Lemak", 1, "https://storage.streamdps.com/iblock/565/56533f45e52bfd5f73f31ddf75812f46/f9aadd4e8227fa94828795c763b22fff.png"),
 
@@ -715,19 +705,21 @@ public enum Gift {
 
   TELESCOPE(6733, "Telescope", 5, "https://storage.streamdps.com/iblock/0ff/0ff6c8d47e3d601ef9f775bfa6cf9647/4489d8324898af2a82d18ea04166db2c.webp"),
 
+  POWER_HUG(5631, "Power hug", 1, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/9578adce6e3da2d211583212bdfd1b0e~tplv-obj.png"),
+
   SPACESHIP(6588, "Spaceship", 13999, "https://storage.streamdps.com/iblock/fb1/fb1096568dcc97c2575dec7441d0d651/245c4c7ce9bf5d5378586eb3a2478b42.webp"),
 
   BIRTHDAY_CROWN(9096, "Birthday Crown", 99, "https://storage.streamdps.com/iblock/c07/c073f2d950a252aa24b7343655208c8a/68f6af6dc16ab51396cef18f50a43792.webp"),
 
   LION_S_MANE(7985, "Lion's Mane", 500, "https://storage.streamdps.com/iblock/267/2670a5a8c9666b7afffb3255c2c104ee/abe9a0e7a6ef8b83d94df90f3a356748.webp"),
 
-  WATERMELON_LOVE(6781, "Watermelon Love", 1000, "https://storage.streamdps.com/iblock/44a/44a62f73bbaa2b0a6bd0a39d62f73033/e8775b631b23ed6756b9cdb4132ee85e.webp"),
+  WATERMELON_LOVE(6781, "Watermelon Love", 1000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/1d1650cd9bb0e39d72a6e759525ffe59~tplv-obj.jpg"),
 
   COTTON_THE_SEAL(8349, "Cotton the Seal", 399, "https://storage.streamdps.com/iblock/6da/6dac7ca9a1f92e28287a9ef01e55a560/d0317b7d3411edd28a393a56d24a863f.webp"),
 
   COTTON_THE_SEAL_8852(8852, "Cotton the Seal", 399, "https://storage.streamdps.com/iblock/a36/a36238dfeb0d768707d336eac32cdf82/cf84e06c4c8f1e9dce3db677fd4770a5.webp"),
 
-  ADAM_S_DREAM(7400, "Adam’s Dream", 25999, "https://storage.streamdps.com/iblock/d10/d10e9c17cf198b2da7ae2ad13ffa6541/33b7de1f4f63e68ce8fa6d5693770042.webp"),
+  ADAM_S_DREAM(7400, "Adam’s Dream", 25999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/9a586391fbb1e21621c4203e5563a9e0~tplv-obj.jpg"),
 
   GOLDEN_SPORTS_CAR(5287, "Golden sports car", 29999, "https://storage.streamdps.com/iblock/4c1/4c1fa9bee06971f242e06b4578492c3a/2460543c6afe7d35854e3147811fcc1f.png"),
 
@@ -737,7 +729,7 @@ public enum Gift {
 
   M4_BEATRIX_7656(7656, "M4 Beatrix", 20, "https://storage.streamdps.com/iblock/da7/da77071a5194b9d7a3a6e94a9dcb5a4f/04a7595d5f7ffb42c9e28a697f0feed3.webp"),
 
-  LIKE_POP(8130, "Like-Pop", 99, "https://storage.streamdps.com/iblock/272/2726ba4a1c7bbd0d4a483207b12d8f71/9c96b3106699eadcdf54c3e379418b99.webp"),
+  LIKE_POP(8130, "Like-Pop", 99, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/75eb7b4aca24eaa6e566b566c7d21e2f~tplv-obj.jpg"),
 
   FOREST_FAIRY(9148, "Forest Fairy", 4000, "https://storage.streamdps.com/iblock/078/07801fde04dd77b439384738e630e59f/e50ece2683001006eae00866d6df7b63.webp"),
 
@@ -747,9 +739,9 @@ public enum Gift {
 
   PUMPKIN_PIE(7396, "Pumpkin Pie", 5, "https://storage.streamdps.com/iblock/abf/abf5efb8fac6f64568b472c3afdb3e25/f85e4ef55b8c7d03f81351babd833c69.webp"),
 
-  EMAIL_MESSAGE(6199, "Email Message", 1000, "https://storage.streamdps.com/iblock/dc2/dc21bd6120598b10e5146c713249059e/4eb90329ca1344ccc1f88105ff0dafcf.png"),
+  EMAIL_MESSAGE(6199, "Email Message", 1000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/c959df6dbffd6f07849d22d2c3c07861~tplv-obj.jpg"),
 
-  PREMIUM_SHUTTLE(7125, "Premium Shuttle", 20000, "https://storage.streamdps.com/iblock/fc0/fc0bb0d7097635a7a91dd643f42a5258/cea9087fc79225ba647a6fa6bc60863c.webp"),
+  PREMIUM_SHUTTLE(7125, "Premium Shuttle", 20000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/c2b287adee5151b7889d6e3d45b72e44~tplv-obj.jpg"),
 
   PARTY_HAT(6398, "Party hat", 199, "https://storage.streamdps.com/iblock/e92/e924ae4ad405da962162650abe98c01f/403b19fc0f2f47739d32448548be3263.png"),
 
@@ -759,7 +751,7 @@ public enum Gift {
 
   I_LOVE_TR(7139, "I LOVE TR", 1, "https://storage.streamdps.com/iblock/84d/84d68e92c471e7da792aa98d856c824c/7728ac60043efb9c96e2ce0f77dbef31.webp"),
 
-  SHIBA_INU(5482, "Shiba Inu", 222, "https://storage.streamdps.com/iblock/a7e/a7ea6aebc44c52508dcbd85d8061af25/30b933d7c271571931f4e0d6788fd459.webp"),
+  SHIBA_INU(5482, "Shiba Inu", 222, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/ddbcee02f5b86b803b0ec34357cd82ec.png~tplv-obj.jpg"),
 
   SHIBA_INU_7839(7839, "Shiba Inu", 199, "https://storage.streamdps.com/iblock/3c4/3c40e306064bb00719cb77dec261891a/bc24ae9f8a52d13475897170332d546f.webp"),
 
@@ -773,6 +765,8 @@ public enum Gift {
 
   DEHYA(8298, "Dehya", 10, "https://storage.streamdps.com/iblock/c69/c6958678de541ee2bc86ca0705a092d6/d33c50b1f67560f9673724a34b01a63d.webp"),
 
+  PANETTONE(7814, "Panettone", 1, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/64ce2413a362442819b4551703b7b26c~tplv-obj.png"),
+
   BASKETBALL(6269, "Basketball", 1, "https://storage.streamdps.com/iblock/1e1/1e15c5768844b752893c47c9699ffa5e/ac594ceeb59aa16782bfa62a46d832d8.png"),
 
   SUNSET_IN_BALI(5835, "Sunset in Bali", 799, "https://storage.streamdps.com/iblock/970/97081f479a0fa7bfbd37eab0ce7109c1/9e17c532a2f217b1cd2f01e21783a3db.png"),
@@ -783,7 +777,9 @@ public enum Gift {
 
   MP3(6472, "Mp3", 100, "https://storage.streamdps.com/iblock/20a/20a06df8f2d9428df8fd690a7ce4bdaf/40a50efc8884f8c973a58a749350c9c3.png"),
 
-  PHOENIX(7319, "Phoenix", 25999, "https://storage.streamdps.com/iblock/7d2/7d238b81518ab1e340e06adeb88c7c1c/ca9c644b2653d8315db71237b6b955eb.webp"),
+  RHYTHMIC_BEAR(9468, "Rhythmic Bear", 2999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/16eacf541e4bd6816e88139d079519f5.png~tplv-obj.jpg"),
+
+  PHOENIX(7319, "Phoenix", 25999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/ef248375c4167d70c1642731c732c982~tplv-obj.jpg"),
 
   BOUQUET_FLOWER(5780, "Bouquet Flower", 30, "https://storage.streamdps.com/iblock/ceb/cebb5d5f7004d6ccf9336ae20281be88/5061b1767c2325fe6704eb08d97c5cb8.png"),
 
@@ -793,7 +789,7 @@ public enum Gift {
 
   PUG(6939, "Pug", 299, "https://storage.streamdps.com/iblock/367/367d7a870b489f203c084bd4338b5fba/6efbd5b994d91fa8a467bd338fcead92.webp"),
 
-  TIKTOK_STARS(8582, "TikTok Stars", 39999, "https://storage.streamdps.com/iblock/fb3/fb3c04af9d06b0cdf3df3da61f0c5705/b0f3fd913d2443626d8026eacef37a51.webp"),
+  TIKTOK_STARS(8582, "TikTok Stars", 39999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/b1667c891ed39fd68ba7252fff7a1e7c~tplv-obj.jpg"),
 
   CHILL(6704, "Chill", 5, "https://storage.streamdps.com/iblock/7df/7dfcee6b2702691bf9c8ca0966b3c4b1/144aa8fff9ce8c64aa7fcb507bf6c1cd.webp"),
 
@@ -809,7 +805,7 @@ public enum Gift {
 
   MISHKA_BEAR_7163(7163, "Mishka Bear", 100, "https://storage.streamdps.com/iblock/0cc/0ccd22056d7cd20351cfb11a8ec62bf1/4f7f3b65fad302160471f52bfc45fc34.webp"),
 
-  PRIVATE_JET(5767, "Private Jet", 4888, "https://storage.streamdps.com/iblock/a24/a246b6f08242ef1084e43708fcd4f4df/8bbe338da8052146506e3a802a3cd0d8.png"),
+  PRIVATE_JET(5767, "Private Jet", 4888, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/921c6084acaa2339792052058cbd3fd3~tplv-obj.jpg"),
 
   BALALAIKA(5927, "Balalaika", 100, "https://storage.streamdps.com/iblock/d88/d88bc38371769262c006dccbaa43c9ff/1e0f5adda0546879e07126492ba6001c.webp"),
 
@@ -817,7 +813,7 @@ public enum Gift {
 
   SPEEDSTER(8418, "Speedster", 15000, "https://storage.streamdps.com/iblock/96a/96a5a249a1701c3c03e0b2427bad3b2f/63fb5582c89c17f275fc99505505b719.webp"),
 
-  GEM_GUN(7122, "Gem Gun", 500, "https://storage.streamdps.com/iblock/939/9393cb0608187667ef6d5e377f1c0d69/9b5cb58300a50651228e505b7714fdea.webp"),
+  GEM_GUN(7122, "Gem Gun", 500, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/dd06007ade737f1001977590b11d3f61~tplv-obj.jpg"),
 
   KNOCKOUT(8415, "Knockout", 4999, "https://storage.streamdps.com/iblock/1a5/1a56926523c34ab3b553180c42f7bc55/7a6076446639aade9d5498df45ba7f9b.webp"),
 
@@ -837,7 +833,7 @@ public enum Gift {
 
   GORILLA(8602, "Gorilla", 30000, "https://storage.streamdps.com/iblock/1e2/1e29b9d1a0263f1487498dc556cdcbc1/bec227242f8c9b258855071aa050ac17.webp"),
 
-  THUMBS_UP(6246, "Thumbs Up", 1, "https://storage.streamdps.com/iblock/267/2675b04a24fc0d674ca25874493769c4/49252fd7c65b99a3acf3e2ee18af2d67.png"),
+  THUMBS_UP(6246, "Thumbs Up", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/570a663e27bdc460e05556fd1596771a~tplv-obj.jpg"),
 
   TOWARDS_THE_FUTURE(6625, "Towards the future", 28888, "https://storage.streamdps.com/iblock/b2f/b2f6915948e5eabce83a39c525eebe6f/005804958a7917fd06a09ddeb3f41a0e.png"),
 
@@ -861,11 +857,11 @@ public enum Gift {
 
   GUMMY(6126, "Gummy", 5, "https://storage.streamdps.com/iblock/c33/c338d672d2ccd9de8df40d7afe23e041/cf38b075df9389388a847e24a5af4a9e.png"),
 
-  LEON_THE_KITTEN(6646, "Leon the Kitten", 4888, "https://storage.streamdps.com/iblock/6db/6dbac11d1406b04bd70ef473fac91fb6/42a0a84bd8a818dbe2c98d84233f12fb.png"),
+  LEON_THE_KITTEN(6646, "Leon the Kitten", 4888, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a7748baba012c9e2d98a30dce7cc5a27~tplv-obj.jpg"),
 
-  STAR_THRONE(7764, "Star Throne", 7999, "https://storage.streamdps.com/iblock/af5/af5b1fac4d7a0b540057460e0ab0730a/864a37b3f4a8ad6d2e174bfa6e2e4f32.webp"),
+  STAR_THRONE(7764, "Star Throne", 7999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/30063f6bc45aecc575c49ff3dbc33831~tplv-obj.jpg"),
 
-  STAR_THRONE_8420(8420, "Star Throne", 7999, "https://storage.streamdps.com/iblock/cb8/cb8068130463628181f0b84a4408e871/2495b97f5f4868e9e71612120c4eded5.webp"),
+  STAR_THRONE_8420(8420, "Star Throne", 7999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/30063f6bc45aecc575c49ff3dbc33831~tplv-obj.jpg"),
 
   PLANET(5954, "Planet", 15000, "https://storage.streamdps.com/iblock/dc5/dc50bbe9b153d9f714919d386325a223/b296c2101cb24bc65e8abd2977d6c123.png"),
 
@@ -889,11 +885,11 @@ public enum Gift {
 
   TINY_DINY_7591(7591, "Tiny Diny", 10, "https://storage.streamdps.com/iblock/b24/b24309d4ea6722875678e492ae12fb3f/864ac7928a78b43be2d1ee93915a53f5.webp"),
 
-  CORGI(6267, "Corgi", 299, "https://storage.streamdps.com/iblock/5ad/5ada6717da571d87542b081113bddaa6/2fe60d73a96b698efc61a1a434b4f3ed.png"),
+  CORGI(6267, "Corgi", 299, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/148eef0884fdb12058d1c6897d1e02b9~tplv-obj.jpg"),
 
   DIAMOND_KING(5337, "Diamond King", 1500, "https://storage.streamdps.com/iblock/d7a/d7a7a3a0933ddead34a48a03d965f77a/bb50ca99cdfbdc705cacff9af43a1b20.png"),
 
-  LOCK_AND_KEY(5880, "Lock and Key", 199, "https://storage.streamdps.com/iblock/daf/daf918a2e001ce161e116e5c3a2a4cfb/f673b5dfc3bba9a9529425a4fa9e446f.png"),
+  LOCK_AND_KEY(5880, "Lock and Key", 199, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/2c9cec686b98281f7319b1a02ba2864a~tplv-obj.jpg"),
 
   TTEOKBOKKI(5645, "Tteokbokki", 5, "https://storage.streamdps.com/iblock/81c/81ca5954462f21f506095fe410dd2aaf/c07e9b0bb8d0559874b780495cc0e451.png"),
 
@@ -901,7 +897,7 @@ public enum Gift {
 
   GRAPES(7234, "Grapes", 1, "https://storage.streamdps.com/iblock/442/442580106ac8748b79ef450eb25b5981/df624c619c48b583adee184bca134c80.webp"),
 
-  SAM_THE_WHALE(8391, "Sam the Whale", 30000, "https://storage.streamdps.com/iblock/3e6/3e6b7b154146a376da3ec918eace0bf6/682a9a304ddd18ad08702f15236f4293.webp"),
+  SAM_THE_WHALE(8391, "Sam the Whale", 30000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/f48a1887eb88238738996bb997b31c0f.png~tplv-obj.jpg"),
 
   DIAMOND_TREE(7963, "Diamond Tree", 1088, "https://storage.streamdps.com/iblock/47a/47afc3c8563cacbff2ce13f2310a2fc4/84761a2a3e0431bda3bf3d2cc9d02b3f.webp"),
 
@@ -909,11 +905,11 @@ public enum Gift {
 
   LOVE_YOU_5919(5919, "Love you", 20, "https://storage.streamdps.com/iblock/728/728eb443836e4ea999aa2cf341f26561/69d6c2bce8f5523d186a03b7eef20e1b.png"),
 
-  LOVE_YOU_6890(6890, "Love you", 1, "https://storage.streamdps.com/iblock/0d9/0d984742e147a8bf2fd0f06b1421a825/c42e82a95ae799de0e860947971440ed.webp"),
+  LOVE_YOU_6890(6890, "Love you", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/ab0a7b44bfc140923bb74164f6f880ab~tplv-obj.jpg"),
 
-  HERE_WE_GO(8245, "Here We Go", 1799, "https://storage.streamdps.com/iblock/eb4/eb455b32af55203ea8eca269775cbe9e/9c39ed829f6bb4730b9fadc0d7dff5d3.webp"),
+  HERE_WE_GO(8245, "Here We Go", 1799, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/61b76a51a3757f0ff1cdc33b16c4d8ae~tplv-obj.jpg"),
 
-  CHASING_THE_DREAM(7467, "Chasing the Dream", 1500, "https://storage.streamdps.com/iblock/63a/63a21b726641e8bb50715bfe2e147d93/613bfe9574775d0c5b9be197cd96a745.webp"),
+  CHASING_THE_DREAM(7467, "Chasing the Dream", 1500, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/1ea8dbb805466c4ced19f29e9590040f~tplv-obj.jpg"),
 
   BIRD_WHISPERER(8344, "Bird Whisperer", 5000, "https://storage.streamdps.com/iblock/079/079bf5895816fb04293d01375eaf23a5/672128ca0f65deb0e75e2a9a690a79f0.webp"),
 
@@ -925,7 +921,7 @@ public enum Gift {
 
   COFFEE(5333, "Coffee", 1, "https://storage.streamdps.com/iblock/920/920b64634d946a2238950c353c16df81/0fe22d9bdee1bd6d9d77f66bcd8cf45a.png"),
 
-  COFFEE_5479(5479, "Coffee", 1, "https://storage.streamdps.com/iblock/c01/c01ca7de81469018ef06e3b0e09a2814/04bb6e747afdb5334e8c29074e24f474.webp"),
+  COFFEE_5479(5479, "Coffee", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/02492214b9bd50fee2d69fd0d089c025.png~tplv-obj.jpg"),
 
   COFFEE_5933(5933, "Coffee", 10, "https://storage.streamdps.com/iblock/6d7/6d7c47d7f1862904fb26bf7b8297befb/fe6a95bcfc5abe6545f44983045aae65.png"),
 
@@ -939,9 +935,9 @@ public enum Gift {
 
   GARDENING(8232, "Gardening", 500, "https://storage.streamdps.com/iblock/304/304792b9ecf0559337cbd177eac7d286/87a750e1dfaf6d811af3d9970a64501d.webp"),
 
-  GOLD_MINE(5587, "Gold Mine", 1000, "https://storage.streamdps.com/iblock/d76/d766ebb3d04903c05a2f2d5883fd1cd7/7c99a5f7fed51db01ce85151e55e313e.png"),
+  GOLD_MINE(5587, "Gold Mine", 1000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/58cbff1bd592ae4365a450c4bf767f3a.png~tplv-obj.jpg"),
 
-  HAND_HEARTS(5660, "Hand Hearts", 100, "https://storage.streamdps.com/iblock/9ae/9aed27eb6e8cea1b14e14c2e15eb7308/4ccd4fad65bab7a9b8f9c66a321476b2.png"),
+  HAND_HEARTS(5660, "Hand Hearts", 100, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/6cd022271dc4669d182cad856384870f~tplv-obj.jpg"),
 
   GUITAR(6723, "Guitar", 99, "https://storage.streamdps.com/iblock/95e/95e6348b4ebcc6a163b9be452f3ee3ff/84a43f426dabe8772de4d6002827b064.webp"),
 
@@ -949,7 +945,7 @@ public enum Gift {
 
   GUITAR_7883(7883, "Guitar", 99, "https://storage.streamdps.com/iblock/808/808c6a6e16e3ff0ee02479354102e337/ce5fe5c52bca407ac24c253361ec1968.webp"),
 
-  MIRROR_BLOOM(6200, "Mirror Bloom", 1000, "https://storage.streamdps.com/iblock/a68/a681c2ef079138e0e51cac719a2ec2b6/40f50e2272250dd118389987d09ab80b.png"),
+  MIRROR_BLOOM(6200, "Mirror Bloom", 1000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a9d0e9406230fa9a901d992a90574e39~tplv-obj.jpg"),
 
   CHEF_S_HAT(6725, "Chef's Hat", 199, "https://storage.streamdps.com/iblock/da8/da87653d13440ecbe3a6f04abb4e6314/08ab9e948762a6bb041bb1963cacf07f.webp"),
 
@@ -969,9 +965,11 @@ public enum Gift {
 
   TELEPHONE_BOX(6381, "Telephone Box", 2100, "https://storage.streamdps.com/iblock/a2e/a2ee002433a7295464359db46c025adf/5f026787f952abbffd3d7fc1b4cbe1c2.webp"),
 
-  BOXING_GLOVES(6007, "Boxing Gloves", 299, "https://storage.streamdps.com/iblock/e4a/e4ac69d94221b6157d4381b779b0c7a5/2fbb331b9697c6515c9bb1a4487153a6.png"),
+  BOXING_GLOVES(6007, "Boxing Gloves", 299, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/9f8bd92363c400c284179f6719b6ba9c~tplv-obj.jpg"),
 
-  FERRIS_WHEEL(5652, "Ferris Wheel", 3000, "https://storage.streamdps.com/iblock/210/21071962989420fb8d118a8d84684707/837718d3a337816f89652d44ef970a90.png"),
+  FRUIT_FRIENDS(9465, "Fruit Friends", 299, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/1153dd51308c556cb4fcc48c7d62209f.png~tplv-obj.jpg"),
+
+  FERRIS_WHEEL(5652, "Ferris Wheel", 3000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/3c7291ad4c2a6d4f70505c3e296ecebe~tplv-obj.jpg"),
 
   RUGBY_BALL(6249, "Rugby Ball", 10, "https://storage.streamdps.com/iblock/d53/d53d3efae1c69b949373db455da077cf/fa22f0507a304597b013268524a8573f.png"),
 
@@ -980,6 +978,8 @@ public enum Gift {
   ACROSS_THE_BOARD(8793, "Across the board", 450, "https://storage.streamdps.com/iblock/285/285070af9d4f72b74e7d74c22157f2d9/67d9fa3239a7f9a09ef78c832a66e624.webp"),
 
   GARDEN_GNOME(7002, "Garden Gnome", 1, "https://storage.streamdps.com/iblock/c1e/c1efcf386f4ffc5626e0be1ef1ecd93a/210fa9d66c1f0c1968608b40c4e698ea.webp"),
+
+  LILI_THE_LEOPARD(9467, "Lili the Leopard", 6599, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/7be03e1af477d1dbc6eb742d0c969372.png~tplv-obj.jpg"),
 
   MUSIC_BOX(5964, "Music Box", 2399, "https://storage.streamdps.com/iblock/f01/f01f2da5e18be863eb7e3a1375bb6206/499e06f8f76e5e90964184c25365cdec.png"),
 
@@ -999,7 +999,7 @@ public enum Gift {
 
   UNICORN_FANTASY_5475(5475, "Unicorn Fantasy", 5000, "https://storage.streamdps.com/iblock/b12/b129b116380a326df64aedb5a269b670/b1409c04e4d7490645dd39e76a078ae3.webp"),
 
-  UNICORN_FANTASY_5483(5483, "Unicorn Fantasy", 5000, "https://storage.streamdps.com/iblock/127/12778ef1e111b6342b11f778833bb346/ac4f70c4095012c8579e9cabef98e848.webp"),
+  UNICORN_FANTASY_5483(5483, "Unicorn Fantasy", 5000, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/483c644e67e9bb1dd5970f2df00b7576.png~tplv-obj.jpg"),
 
   UNICORN_FANTASY_7237(7237, "Unicorn Fantasy", 5000, "https://storage.streamdps.com/iblock/136/136dc4c068ddc7a89b10df8d9f4800d8/3b4f386e75506f3ad5519e4330888427.webp"),
 
@@ -1015,9 +1015,9 @@ public enum Gift {
 
   PIM_BEAR(9043, "Pim Bear", 1500, "https://storage.streamdps.com/iblock/204/2043f85b8f2e2ee638ff3a1799eda329/2319b052e0e64799842751d9fee4d438.webp"),
 
-  SIGNATURE_JET(7124, "Signature Jet", 4888, "https://storage.streamdps.com/iblock/681/6816084aca12a2bb0da2cf05174322f5/928ee6f6bfe12d363c1bbc7f8b03e7e0.webp"),
+  SIGNATURE_JET(7124, "Signature Jet", 4888, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/fe27eba54a50c0a687e3dc0f2c02067d~tplv-obj.jpg"),
 
-  CAP(6104, "Cap", 99, "https://storage.streamdps.com/iblock/349/349b158378b1b0f0fa447869c8f2e690/7a65e6037be114fa888bf04177a62f6a.png"),
+  CAP(6104, "Cap", 99, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/6c2ab2da19249ea570a2ece5e3377f04~tplv-obj.jpg"),
 
   BLUE_BEAD(5319, "Blue Bead", 5, "https://storage.streamdps.com/iblock/afe/afe8100602b9b735b74ab34365032ec7/d778bfcb66bff177989590909b969ef2.png"),
 
@@ -1026,6 +1026,8 @@ public enum Gift {
   CAT(6345, "Cat", 3999, "https://storage.streamdps.com/iblock/dfe/dfefcaf9c4bc67e2ee681ba16c646224/6a33ae8b701c16dc57ff97fac4d16eca.png"),
 
   STARS_SNAP(8581, "Stars Snap", 10, "https://storage.streamdps.com/iblock/318/318a8ce7e87f37f90bf5e3fbf773d827/e67f69439ae7c4bbf03bdaffd6e961a2.webp"),
+
+  BRAVO(7812, "Bravo", 1, "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/b25e72d59e9771b09da8c8c70f395f82~tplv-obj.png"),
 
   SUPERB_TEAM(8202, "Superb Team", 1, "https://storage.streamdps.com/iblock/e6e/e6e8cdd5e84f701dc627b8cc3e280d4c/29ce845878feb46152b20a75a3259d56.webp"),
 
@@ -1045,11 +1047,11 @@ public enum Gift {
 
   BUMPER_CARS(5996, "Bumper Cars", 1288, "https://storage.streamdps.com/iblock/53b/53b569311552b729d1b347268370e576/8f236deca90a65e7046f7576d69976af.png"),
 
-  CAKE_SLICE(6784, "Cake Slice", 1, "https://storage.streamdps.com/iblock/a1d/a1dfaa8ad7e0b7a164af7468971f8118/ad3a323fa40f3dd967e65049d2d0764f.webp"),
+  CAKE_SLICE(6784, "Cake Slice", 1, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/f681afb4be36d8a321eac741d387f1e2~tplv-obj.jpg"),
 
   CROCODILE(8740, "Crocodile", 10, "https://storage.streamdps.com/iblock/4e2/4e2d9df24c472158b8ed93546fc73b16/75722a173b75d601e0a80a679902529f.webp"),
 
-  LOVE_YOU_6671(6671, "Love You", 199, "https://storage.streamdps.com/iblock/e7a/e7a3ea587e77f417c83596ad2a729f4e/fc521ab0494eb35cef33fde0c2b51555.webp"),
+  LOVE_YOU_6671(6671, "Love You", 199, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/134e51c00f46e01976399883ca4e4798~tplv-obj.jpg"),
 
   NO_1_TEAM(8205, "No.1 Team", 5, "https://storage.streamdps.com/iblock/27f/27fe97cb0f1b8056fa0aedc918ea560e/966df61a39e36fe0f7237e55c3298117.webp"),
 
@@ -1063,7 +1065,7 @@ public enum Gift {
 
   M4_TROPHY(7544, "M4 Trophy", 450, "https://storage.streamdps.com/iblock/f40/f40a34a8e59806907deaa4f74df3462d/8deac28cb21517228bcd354645a987ea.webp"),
 
-  PERFUME(5658, "Perfume", 20, "https://storage.streamdps.com/iblock/8af/8af143c49ed92f431b6312185ea03b0a/cd5792b709a7f56cbb2b6669a0e13c29.png"),
+  PERFUME(5658, "Perfume", 20, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/20b8f61246c7b6032777bb81bf4ee055~tplv-obj.jpg"),
 
   KISS_YOUR_HEART(6661, "Kiss your Heart", 99, "https://storage.streamdps.com/iblock/13d/13d940df83e04a30523ca88c080ee8d8/213f06af314da4637a9ae8fc25bfaea3.webp"),
 
@@ -1085,7 +1087,7 @@ public enum Gift {
 
   JETSKI(5774, "Jetski", 2199, "https://storage.streamdps.com/iblock/b38/b38473c5d43c224d986556d4134342c2/db8aa2a8f093a3475ff18116e54dd5c7.png"),
 
-  CORAL(5731, "Coral", 499, "https://storage.streamdps.com/iblock/cbe/cbe961d32956be86339a542b76faed88/cd807cda047c9eaf69c24162916ff1fd.png"),
+  CORAL(5731, "Coral", 499, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/d4faa402c32bf4f92bee654b2663d9f1~tplv-obj.jpg"),
 
   PIRATE_S_SHIP(7598, "Pirate’s Ship", 15000, "https://storage.streamdps.com/iblock/475/4753e54cae562b34edbf1a157cd60b21/722409ec69cfaf707d611b0987799296.webp"),
 
@@ -1095,7 +1097,7 @@ public enum Gift {
 
   WELCOME(6350, "Welcome", 9, "https://storage.streamdps.com/iblock/dda/ddaf400cc8b931bf1f1b2cdad4a9f7b0/2239c73a8edc68cfe66d2fae426d83bc.png"),
 
-  THUNDER_FALCON(8651, "Thunder Falcon", 39999, "https://storage.streamdps.com/iblock/b5d/b5dd904138691d16f6378e1f215fbc00/80a7b0ef77670cf6b7eb31fcae76fe80.webp"),
+  THUNDER_FALCON(8651, "Thunder Falcon", 39999, "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/26f3fbcda383e6093a19b8e7351a164c~tplv-obj.jpg"),
 
   BALLOONS(5756, "Balloons", 10, "https://storage.streamdps.com/iblock/462/462490a4e0da5abad033f4a57564041c/fe0831b660748b851ffd0e5a74847105.png");
 

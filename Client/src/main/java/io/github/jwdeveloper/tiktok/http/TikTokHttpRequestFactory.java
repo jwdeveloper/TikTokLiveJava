@@ -59,22 +59,29 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
     @SneakyThrows
     public String get(String url) {
         var uri = URI.create(url);
-        var request = HttpRequest.newBuilder().GET();
+        var requestBuilder = HttpRequest.newBuilder().GET();
+
         for (var header : defaultHeaders.entrySet())
         {
             if(header.getKey().equals("Connection") || header.getKey().equals("Accept-Encoding"))
             {
                 continue;
             }
-            request.setHeader(header.getKey(), header.getValue());
+            requestBuilder.setHeader(header.getKey(), header.getValue());
         }
         if (query != null) {
             var baseUri = uri.toString();
             var requestUri = URI.create(baseUri + "?" + query);
-            request.uri(requestUri);
+            requestBuilder.uri(requestUri);
+        }
+        else
+        {
+            requestBuilder.uri(uri);
         }
 
-        return getContent(request.build());
+        var result = requestBuilder.build();
+
+        return getContent(result);
     }
 
     @SneakyThrows
