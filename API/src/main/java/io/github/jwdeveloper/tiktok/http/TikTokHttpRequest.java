@@ -31,4 +31,5 @@ public interface TikTokHttpRequest {
     String get(String url);
 
     String post(String url);
+
 }

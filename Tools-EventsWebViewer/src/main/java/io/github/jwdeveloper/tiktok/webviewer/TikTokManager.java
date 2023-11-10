@@ -40,15 +40,14 @@ public class TikTokManager {
     MessageCollector msgCollector;
 
     public TikTokManager() {
-        msgCollector = new MessageCollector("web");
+        msgCollector = new MessageCollector("ab");
     }
 
     public void connect(String name) throws SQLException {
         disconnect();
-        client = TikTokMessageCollectorClient.create(msgCollector, "web")
+        client = TikTokMessageCollectorClient.create(msgCollector, "ab")
                 .addOnBuilder(liveClientBuilder ->
                 {
-
 
                     liveClientBuilder.onGift((liveClient, event) ->
                     {

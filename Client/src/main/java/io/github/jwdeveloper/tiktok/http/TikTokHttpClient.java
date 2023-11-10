@@ -60,20 +60,22 @@ public class TikTokHttpClient {
         return get;
     }
 
-    public String postMessageToChat(Map<String,Object> parameters)
+    public JsonObject getJsonFromTikTokApi(String path, Map<String,Object> params)
     {
-        var get = postRequest(Constants.TIKTOK_URL_WEBCAST + "room/chat/", parameters);
-        return get;
+        var get = getRequest(Constants.TIKTOK_URL_WEB + path, params);
+        var json = JsonParser.parseString(get);
+        var jsonObject = json.getAsJsonObject();
+        return jsonObject;
     }
 
-    public JsonObject getJObjectFromWebcastAPI(String path, Map<String, Object> parameters) {
+    public JsonObject getJsonFromWebcastApi(String path, Map<String, Object> parameters) {
         var get = getRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         var json = JsonParser.parseString(get);
         var jsonObject = json.getAsJsonObject();
         return jsonObject;
     }
 
-    public WebcastResponse getSigningServerMessage(String path, Map<String, Object> parameters) {
+    public WebcastResponse getSigningServerResponse(String path, Map<String, Object> parameters) {
         var bytes = getSignRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
         try {
             return WebcastResponse.parseFrom(bytes);

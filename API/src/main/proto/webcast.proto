@@ -246,13 +246,13 @@ message WebcastEmoteChatMessage {
 message WebcastEnvelopeMessage {
   Common common = 1;
   EnvelopeInfo envelopeInfo = 2;
-  int64 display = 3; // @warning Enum not found, should be Display
+  EnvelopeDisplay display = 3; // @warning Enum not found, should be Display
 
   // @EnvelopeInfo
   // proto.webcast.im.EnvelopeMessage
   message EnvelopeInfo {
     string envelopeId = 1;
-    int64 businessType = 2; // @warning Enum not found, should be BusinessType
+    EnvelopeBusinessType businessType = 2;
     string envelopeIdc = 3;
     string sendUserName = 4;
     int32 diamondCount = 5;
@@ -262,7 +262,7 @@ message WebcastEnvelopeMessage {
     Image sendUserAvatar = 9;
     string createAt = 10;
     string roomId = 11;
-    int64 followShowStatus = 12; // @warning Enum not found, should be FollowShowStatus
+    EnvelopeFollowShowStatus followShowStatus = 12; // @warning Enum not found, should be FollowShowStatus
     int32 skinId = 13;
   }
 }

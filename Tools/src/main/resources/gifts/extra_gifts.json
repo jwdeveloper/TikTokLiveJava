@@ -1,0 +1,44 @@
+[
+  {
+    "id": 7812,
+    "name": "Bravo",
+    "diamondCost": 1,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/b25e72d59e9771b09da8c8c70f395f82~tplv-obj.png"
+  },
+  {
+    "id": 8239,
+    "name": "White Rose",
+    "diamondCost": 1,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/a2d81f3847457be9083a9c76a59b08cb~tplv-obj.png"
+  },
+  {
+    "id": 7813,
+    "name": "Health Potion",
+    "diamondCost": 1,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/13f6a46b763c496306ff541daf3021a4~tplv-obj.png"
+  },
+  {
+    "id": 7814,
+    "name": "Panettone",
+    "diamondCost": 1,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/64ce2413a362442819b4551703b7b26c~tplv-obj.png"
+  },
+  {
+    "id": 5631,
+    "name": "Power hug",
+    "diamondCost": 1,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/9578adce6e3da2d211583212bdfd1b0e~tplv-obj.png"
+  },
+  {
+    "id": 9463,
+    "name": "Fairy Wings",
+    "diamondCost": 1,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/e504dc2f313b8c6df9e99a848e1b3a99.png~tplv-obj.png"
+  },
+  {
+    "id": 9139,
+    "name": "Team Bracelet",
+    "diamondCost": 2,
+    "image": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/54cb1eeca369e5bea1b97707ca05d189.png~tplv-obj.png"
+  }
+]

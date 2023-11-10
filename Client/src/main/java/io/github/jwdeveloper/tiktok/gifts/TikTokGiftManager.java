@@ -28,18 +28,22 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import sun.misc.Unsafe;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class TikTokGiftManager implements GiftManager {
 
     private final Map<Integer, Gift> indexById;
     private final Map<String, Gift> indexByName;
+    private final Logger logger;
 
-    public TikTokGiftManager() {
+    public TikTokGiftManager(Logger logger)
+    {
         indexById = new HashMap<>();
         indexByName = new HashMap<>();
+        this.logger = logger;
         init();
     }
 
@@ -66,6 +70,17 @@ public class TikTokGiftManager implements GiftManager {
             field.set(enumInstance, name);
 
 
+            Arrays.stream(Gift.class.getSuperclass().getDeclaredFields()).toList().forEach(field1 ->
+            {
+                System.out.println(field1.getName()+" ");
+            });
+
+
+            field = Gift.class.getSuperclass().getDeclaredField("name");
+            field.setAccessible(true);
+            field.set(enumInstance,"dupa");
+
+         //   EnumSet
             field = Gift.class.getDeclaredField("diamondCost");
             field.setAccessible(true);
             field.set(enumInstance, diamondCost);

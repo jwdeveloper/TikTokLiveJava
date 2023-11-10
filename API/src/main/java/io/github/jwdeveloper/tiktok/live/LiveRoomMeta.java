@@ -28,10 +28,7 @@ import lombok.Data;
 public class LiveRoomMeta {
 
     private LiveRoomStatus status;
-
     private boolean ageRestricted;
-
-
 
     public enum LiveRoomStatus
     {

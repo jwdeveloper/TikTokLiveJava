@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
@@ -135,6 +136,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         }
 
 
+
     }
 
     public LiveClient build() {
@@ -148,7 +150,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var requestFactory = new TikTokHttpRequestFactory(cookieJar);
         var apiClient = new TikTokHttpClient(cookieJar, requestFactory);
         var apiService = new TikTokApiService(apiClient, logger, clientSettings);
-        var giftManager = new TikTokGiftManager();
+        var giftManager = new TikTokGiftManager(logger);
         var eventMapper = new TikTokGenericEventMapper();
         var giftHandler = new TikTokGiftEventHandler(giftManager);
 
@@ -187,6 +189,12 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     public TikTokLiveClientBuilder onUnhandledSocial(
             EventConsumer<TikTokUnhandledSocialEvent> event) {
         tikTokEventHandler.subscribe(TikTokUnhandledSocialEvent.class, event);
+        return this;
+    }
+
+    @Override
+    public LiveClientBuilder onChestOpen(EventConsumer<TikTokChestEvent> event) {
+        tikTokEventHandler.subscribe(TikTokChestEvent.class, event);
         return this;
     }
 

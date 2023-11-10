@@ -93,7 +93,7 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
         tiktokRoomInfo.setHostName(clientSettings.getHostName());
 
         var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
-        var giftManager = new TikTokGiftManager();
+        var giftManager = new TikTokGiftManager(logger);
         var requestFactory = new TikTokHttpRequestFactory(cookie);
         var apiClient = new TikTokHttpClient(cookie, requestFactory);
         var apiService = new ApiServiceMock(apiClient, logger, clientSettings);

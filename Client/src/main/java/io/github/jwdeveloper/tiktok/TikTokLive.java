@@ -23,12 +23,25 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.http.TikTokLiveOnlineChecker;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
+
+import java.util.concurrent.CompletableFuture;
 
 public class TikTokLive
 {
     public static LiveClientBuilder newClient(String hostName)
     {
         return new TikTokLiveClientBuilder(hostName);
+    }
+
+    public static boolean isLiveOnline(String hostName)
+    {
+       return new TikTokLiveOnlineChecker().isOnline(hostName);
+    }
+
+    public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName)
+    {
+        return new TikTokLiveOnlineChecker().isOnlineAsync(hostName);
     }
 }

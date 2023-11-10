@@ -111,3 +111,28 @@ enum BarrageType
   FansLevelEntrance = 11;
   GamePartnership = 12;
 }
+
+enum EnvelopeBusinessType
+{
+  BusinessTypeUnknown = 0;
+  BusinessTypeUserDiamond = 1;
+  BusinessTypePlatformDiamond = 2;
+  BusinessTypePlatformShell = 3;
+  BusinessTypePortal = 4;
+  BusinessTypePlatformMerch = 5;
+  BusinessTypeEoYDiamond = 6;
+  BusinessTypeFanClubGtM = 7;
+}
+enum EnvelopeFollowShowStatus
+{
+  EnvelopeFollowShowUnknown = 0;
+  EnvelopeFollowShow = 1;
+  EnvelopeFollowNotShow = 2;
+}
+
+enum EnvelopeDisplay
+{
+  EnvelopeDisplayUnknown = 0;
+  EnvelopeDisplayNew = 1;
+  EnvelopeDisplayHide = 2;
+}

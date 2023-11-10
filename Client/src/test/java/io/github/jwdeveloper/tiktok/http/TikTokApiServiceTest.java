@@ -84,21 +84,6 @@ public class TikTokApiServiceTest
         verify(tiktokHttpClient, times(1)).setSessionId("validSessionId");
     }
 
-    @Test
-    void sendMessage_EmptySessionId_ThrowsException() {
-        assertThrows(TikTokLiveException.class, () -> {
-            tikTokApiService.sendMessage("some message", "");
-        });
-    }
-
-    @Test
-    void sendMessage_NullRoomId_ThrowsException() {
-        when(clientSettings.getClientParameters()).thenReturn(new HashMap<>());
-
-        assertThrows(TikTokLiveException.class, () -> {
-            tikTokApiService.sendMessage("some message", "someSessionId");
-        });
-    }
 
    // @Test
     void fetchRoomId_ValidResponse_ReturnsRoomId() throws Exception {
@@ -128,7 +113,7 @@ public class TikTokApiServiceTest
         var expectedLiveRoomMeta = new LiveRoomMeta();  // Assume LiveRoomMeta is a simple POJO
 
         when(clientSettings.getClientParameters()).thenReturn(clientParameters);
-        when(tiktokHttpClient.getJObjectFromWebcastAPI(anyString(), any())).thenReturn(mockResponse);
+        when(tiktokHttpClient.getJsonFromWebcastApi(anyString(), any())).thenReturn(mockResponse);
         when(new LiveRoomMetaMapper().map(mockResponse)).thenReturn(expectedLiveRoomMeta);  // Assuming LiveRoomMetaMapper is a simple mapper class
 
         LiveRoomMeta liveRoomMeta = tikTokApiService.fetchRoomInfo();
@@ -138,7 +123,7 @@ public class TikTokApiServiceTest
 
 //    @Test
     void fetchRoomInfo_ExceptionThrown_ThrowsTikTokLiveRequestException() throws Exception {
-        when(tiktokHttpClient.getJObjectFromWebcastAPI(anyString(), any())).thenThrow(new Exception("some exception"));
+        when(tiktokHttpClient.getJsonFromWebcastApi(anyString(), any())).thenThrow(new Exception("some exception"));
 
         assertThrows(TikTokLiveRequestException.class, () -> {
             tikTokApiService.fetchRoomInfo();

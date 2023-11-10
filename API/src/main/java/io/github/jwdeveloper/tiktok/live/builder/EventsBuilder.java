@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
+import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomEvent;
@@ -51,6 +52,9 @@ public interface EventsBuilder<T> {
 
     T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
 
+
+
+
     T onGiftCombo(EventConsumer<TikTokGiftComboEvent> event);
     T onGift(EventConsumer<TikTokGiftEvent> event);
 
@@ -69,6 +73,8 @@ public interface EventsBuilder<T> {
     T onShare(EventConsumer<TikTokShareEvent> event);
     T onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event);
 
+    T onChestOpen(EventConsumer<TikTokChestEvent> event);
+
     T onLivePaused(EventConsumer<TikTokLivePausedEvent> event);
 
     T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> event);
@@ -80,8 +86,9 @@ public interface EventsBuilder<T> {
     T onDisconnected(EventConsumer<TikTokDisconnectedEvent> event);
 
     T onError(EventConsumer<TikTokErrorEvent> event);
-
     T onEvent(EventConsumer<TikTokEvent> event);
+
+
 
 
     // TODO Figure out how those events works

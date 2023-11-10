@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftDto;
+import io.github.jwdeveloper.tiktok.gifts.downloader.GiftExtraJson;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftOfficialJson;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftScraperJson;
 import io.github.jwdeveloper.tiktok.utils.FilesUtility;
@@ -46,7 +47,7 @@ public class GiftsDownloader {
     }
 
     public List<GiftDto> getGiftsFromFile() {
-        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output.json");
+        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output_1_0_4.json");
         Type mapType = new TypeToken<Map<Integer, GiftDto>>() {
         }.getType();
         var mapper = new Gson().fromJson(content, mapType);
@@ -66,6 +67,10 @@ public class GiftsDownloader {
         var officialGifts = officalGift.run();
         System.out.println("Official Gifts: " + officialGifts.size());
 
+        System.out.println("Downlooading Official Gifts");
+        var extraGiftsJson = new GiftExtraJson();
+        var extraGifts = extraGiftsJson.run();
+        System.out.println("Official Gifts: " + extraGifts.size());
 
         var outputHashMap = new TreeMap<Integer, GiftDto>();
         for (var gift : scraperGifts) {
@@ -74,10 +79,13 @@ public class GiftsDownloader {
         for (var gift : officialGifts) {
             outputHashMap.put(gift.getId(), gift);
         }
+        for (var gift : extraGifts) {
+            outputHashMap.put(gift.getId(), gift);
+        }
         var gson = new GsonBuilder().setPrettyPrinting()
                 .create();
         var json = gson.toJson(outputHashMap);
-        FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output.json", json);
+        FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output_1_0_4.json", json);
         System.out.println("Gifts saved to file!");
         return outputHashMap.values().stream().toList();
     }

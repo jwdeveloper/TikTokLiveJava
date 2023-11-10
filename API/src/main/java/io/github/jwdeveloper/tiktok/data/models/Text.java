@@ -29,6 +29,7 @@ import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Getter
@@ -43,6 +44,12 @@ public class Text {
         this.pattern = pattern;
         this.textPieces = textPieces;
         this.value = computeValue();
+    }
+
+
+    public <T extends TextPiece> Optional<TextPiece> getTextPiece(Class<T> type)
+    {
+        return textPieces.stream().filter(e -> e.getClass().equals(type)).findFirst();
     }
 
     public static Text map(io.github.jwdeveloper.tiktok.messages.data.Text input) {
@@ -98,6 +105,7 @@ public class Text {
         }
     }
 
+    @Value
     public static class UserTextPiece extends TextPiece {
         User user;
 

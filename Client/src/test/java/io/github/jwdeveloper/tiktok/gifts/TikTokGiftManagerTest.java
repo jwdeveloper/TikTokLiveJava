@@ -46,6 +46,7 @@ public class TikTokGiftManagerTest {
         var gifts = giftManager.getGifts();
         var optional = gifts.stream().filter(r -> r == fakeGift).findFirst();
         Assertions.assertTrue(optional.isPresent());
+        Assertions.assertNotNull(optional.get().name());
     }
 
     @Test
