@@ -73,7 +73,7 @@ public interface EventsBuilder<T> {
     T onShare(EventConsumer<TikTokShareEvent> event);
     T onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event);
 
-    T onChestOpen(EventConsumer<TikTokChestEvent> event);
+    T onChest(EventConsumer<TikTokChestEvent> event);
 
     T onLivePaused(EventConsumer<TikTokLivePausedEvent> event);
 

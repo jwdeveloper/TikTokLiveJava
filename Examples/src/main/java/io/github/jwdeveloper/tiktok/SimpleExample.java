@@ -22,8 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 
 import java.io.IOException;
@@ -39,6 +38,12 @@ public class SimpleExample
         // set tiktok username
 
         /*
+        Optional checking if host name is correct
+        if(TikTokLive.isHostNameValid(TIKTOK_HOSTNAME))
+        {
+            System.out.println("Live is online!");
+        }
+
         Optional checking if live is online
         if(TikTokLive.isLiveOnline(TIKTOK_HOSTNAME))
         {
@@ -90,7 +95,7 @@ public class SimpleExample
                 {
                     print(ConsoleColors.RED,"[Disconnected]");
                 })
-                .onChestOpen((liveClient, event) ->
+                .onChest((liveClient, event) ->
                 {
                     print(ConsoleColors.GREEN,"Chest has been open by ",event.getUser().getName());
                 })

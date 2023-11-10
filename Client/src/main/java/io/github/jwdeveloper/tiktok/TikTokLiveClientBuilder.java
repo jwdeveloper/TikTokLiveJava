@@ -193,7 +193,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
     @Override
-    public LiveClientBuilder onChestOpen(EventConsumer<TikTokChestEvent> event) {
+    public LiveClientBuilder onChest(EventConsumer<TikTokChestEvent> event) {
         tikTokEventHandler.subscribe(TikTokChestEvent.class, event);
         return this;
     }
