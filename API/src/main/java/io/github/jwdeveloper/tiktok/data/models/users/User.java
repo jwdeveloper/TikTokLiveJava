@@ -45,6 +45,8 @@ public class User {
     @Getter(AccessLevel.NONE)
     private Set<UserAttribute> attributes;
 
+
+
     public List<UserAttribute> getAttributes() {
         return attributes.stream().toList();
     }
@@ -101,6 +103,23 @@ public class User {
         this.id = userId;
         this.name = nickName;
         this.picture = profilePicture;
+        this.following = following;
+        this.followers = followers;
+        this.badges = badges;
+        this.attributes = new HashSet<>();
+    }
+
+    public User(Long id,
+                String name,
+                String profileName,
+                Picture picture,
+                long following,
+                long followers,
+                List<Badge> badges) {
+        this.id = id;
+        this.name = name;
+        this.profileName = profileName;
+        this.picture = picture;
         this.following = following;
         this.followers = followers;
         this.badges = badges;

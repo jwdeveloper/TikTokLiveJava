@@ -22,14 +22,31 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
+import io.github.jwdeveloper.tiktok.data.models.RankingUser;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
+
+import java.util.List;
 
 public interface LiveRoomInfo
 {
+     /**
+      *
+      * @return get current count of viewers of live
+      */
      int getViewersCount();
+
+     /**
+      *
+      * @return get total current count of viewers since beginning of live
+      */
+     int getTotalViewersCount();
      int getLikesCount();
      boolean isAgeRestricted();
      String getRoomId();
      String getHostName();
+     String getTitle();
+     User getHostUser();
+     List<RankingUser> getUsersRanking();
      ConnectionState getConnectionState();
 }

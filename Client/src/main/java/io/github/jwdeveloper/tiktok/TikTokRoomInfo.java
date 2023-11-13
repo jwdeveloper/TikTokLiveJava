@@ -23,34 +23,51 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.messages.data.User;
+import io.github.jwdeveloper.tiktok.data.models.RankingUser;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import lombok.Data;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Data
-public class TikTokRoomInfo implements LiveRoomInfo
-{
+public class TikTokRoomInfo implements LiveRoomInfo {
     private String roomId;
 
     private int likesCount;
 
     private int viewersCount;
 
+    private int totalViewersCount;
+
     private boolean ageRestricted;
 
     private User host;
 
-    private Picture picture;
-
-    private String description;
+    private List<RankingUser> usersRanking = new LinkedList<>();
 
     private String hostName;
 
+    private String title;
+
+    private String language = "en";
+
     private ConnectionState connectionState = ConnectionState.DISCONNECTED;
 
-    public boolean hasConnectionState(ConnectionState state)
-    {
+    public boolean hasConnectionState(ConnectionState state) {
         return connectionState == state;
     }
+
+    @Override
+    public User getHostUser() {
+        return null;
+    }
+
+    public void updateRanking(List<RankingUser> rankingUsers) {
+        usersRanking.clear();
+        usersRanking.addAll(rankingUsers);
+    }
+
 }

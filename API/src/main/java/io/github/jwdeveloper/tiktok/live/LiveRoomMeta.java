@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 import lombok.Data;
 
 @Data
@@ -29,6 +30,11 @@ public class LiveRoomMeta {
 
     private LiveRoomStatus status;
     private boolean ageRestricted;
+    private String titie;
+    private int likeCount;
+    private int totalViewers;
+    private int viewers;
+    private User host;
 
     public enum LiveRoomStatus
     {

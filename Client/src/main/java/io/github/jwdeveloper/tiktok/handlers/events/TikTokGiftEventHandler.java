@@ -53,11 +53,18 @@ public class TikTokGiftEventHandler {
         return handleGift(currentMessage);
     }
 
-    public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage)
-    {
+    public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage) {
         var userId = currentMessage.getUser().getId();
         var currentType = GiftSendType.fromNumber(currentMessage.getSendType());
         var containsPreviousMessage = giftsMessages.containsKey(userId);
+
+
+        //If gift is not streakable just return onGift event
+        if (currentMessage.getGift().getType() != 1) {
+            var comboEvent = getGiftComboEvent(currentMessage, GiftSendType.Finished);
+            var giftEvent = getGiftEvent(currentMessage);
+            return List.of(comboEvent, giftEvent);
+        }
 
         if (!containsPreviousMessage) {
             if (currentType == GiftSendType.Finished) {
@@ -89,7 +96,6 @@ public class TikTokGiftEventHandler {
     }
 
 
-
     private TikTokGiftEvent getGiftEvent(WebcastGiftMessage message) {
         var gift = getGiftObject(message);
         return new TikTokGiftEvent(gift, message);
@@ -100,15 +106,13 @@ public class TikTokGiftEventHandler {
         return new TikTokGiftComboEvent(gift, message, state);
     }
 
-    private Gift getGiftObject(WebcastGiftMessage giftMessage)
-    {
+    private Gift getGiftObject(WebcastGiftMessage giftMessage) {
         var giftId = (int) giftMessage.getGiftId();
         var gift = giftManager.findById(giftId);
         if (gift == Gift.UNDEFINED) {
             gift = giftManager.findByName(giftMessage.getGift().getName());
         }
-        if (gift == Gift.UNDEFINED)
-        {
+        if (gift == Gift.UNDEFINED) {
             gift = giftManager.registerGift(
                     giftId,
                     giftMessage.getGift().getName(),

@@ -22,8 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok.handlers.events;
 
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.messages.data.GiftStruct;
 import io.github.jwdeveloper.tiktok.messages.data.Image;
@@ -52,7 +54,20 @@ class TikTokGiftEventHandlerTest {
 
     @Test
     void shouldHandleGifts() {
-        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1);
+        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1,false);
+        var result = handler.handleGift(message);
+
+        Assertions.assertEquals(2, result.size());
+
+        var event = (TikTokGiftEvent) result.get(0);
+        var gift = event.getGift();
+        Assertions.assertEquals("image-new.png",gift.getPicture().getLink());
+        Assertions.assertEquals(123,gift.getId());
+    }
+
+    @Test
+    void shouldHandleStrakableGift() {
+        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1,true);
         var result = handler.handleGift(message);
 
         Assertions.assertEquals(1, result.size());
@@ -63,12 +78,35 @@ class TikTokGiftEventHandlerTest {
         Assertions.assertEquals(123,gift.getId());
     }
 
+    @Test
+    void shouldHandleStrike()
+    {
+        var message1 = getGiftMessage("example-new-name", 123, "image-new.png", 1, 1,true);
+        var message2 = getGiftMessage("example-new-name", 123, "image-new.png", 2, 1,true);
+        var message3 = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1,true);
+
+        var result1 = handler.handleGift(message1);
+        var result2 = handler.handleGift(message2);
+        var result3 = handler.handleGift(message3);
+
+        var event1 = (TikTokGiftComboEvent) result1.get(0);
+        var event2 = (TikTokGiftComboEvent) result2.get(0);
+
+        Assertions.assertEquals(2, result3.size());
+        var event3 = (TikTokGiftComboEvent) result3.get(0);
+
+        Assertions.assertEquals(GiftSendType.Begin,event1.getComboState());
+        Assertions.assertEquals(GiftSendType.Active,event2.getComboState());
+        Assertions.assertEquals(GiftSendType.Finished,event3.getComboState());
+    }
+
 
     public WebcastGiftMessage getGiftMessage(String giftName,
                                              int giftId,
                                              String giftImage,
                                              int sendType,
-                                             int userId) {
+                                             int userId,
+                                             boolean streakable) {
         var builder = WebcastGiftMessage.newBuilder();
         var giftBuilder = GiftStruct.newBuilder();
         var userBuilder = User.newBuilder();
@@ -77,6 +115,7 @@ class TikTokGiftEventHandlerTest {
         giftBuilder.setId(giftId);
         giftBuilder.setName(giftName);
         giftBuilder.setImage(Image.newBuilder().addUrlList(giftImage).build());
+        giftBuilder.setType(streakable?1:0);
         userBuilder.setId(userId);
 
         builder.setGiftId(giftId);

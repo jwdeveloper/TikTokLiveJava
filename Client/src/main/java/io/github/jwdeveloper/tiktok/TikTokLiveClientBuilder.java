@@ -28,9 +28,8 @@ import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomUserInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
@@ -43,6 +42,8 @@ import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.events.TikTokRoomInfoEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.events.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
@@ -131,8 +132,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         logger.setLevel(clientSettings.getLogLevel());
 
-        if (clientSettings.isPrintToConsole() && clientSettings.getLogLevel() == Level.OFF) {
-            logger.setLevel(Level.ALL);
+        if (!clientSettings.isPrintToConsole()) {
+            logger.setLevel(Level.OFF);
         }
 
 
@@ -152,12 +153,16 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var apiService = new TikTokApiService(apiClient, logger, clientSettings);
         var giftManager = new TikTokGiftManager(logger);
         var eventMapper = new TikTokGenericEventMapper();
+
         var giftHandler = new TikTokGiftEventHandler(giftManager);
+        var roomInfoHandler = new TikTokRoomInfoEventHandler(tiktokRoomInfo);
+        var socialHandler = new TikTokSocialMediaEventHandler(tiktokRoomInfo);
 
         var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler,
-                tiktokRoomInfo,
+                roomInfoHandler,
                 eventMapper,
-                giftHandler
+                giftHandler,
+                socialHandler
                 );
 
         var webSocketClient = new TikTokWebSocketClient(logger,
@@ -247,13 +252,22 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onRoom(EventConsumer<TikTokRoomEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRoomEvent.class, event);
+    @Override
+    public LiveClientBuilder onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event) {
+        tikTokEventHandler.subscribe(TikTokRoomInfoEvent.class, event);
         return this;
     }
 
+
+
     public TikTokLiveClientBuilder onLivePaused(EventConsumer<TikTokLivePausedEvent> event) {
         tikTokEventHandler.subscribe(TikTokLivePausedEvent.class, event);
+        return this;
+    }
+
+    @Override
+    public LiveClientBuilder onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> event) {
+        tikTokEventHandler.subscribe(TikTokLiveUnpausedEvent.class, event);
         return this;
     }
 
@@ -328,13 +342,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         tikTokEventHandler.subscribe(TikTokFollowEvent.class, event);
         return this;
     }
-
-    public TikTokLiveClientBuilder onRoomUserInfo(
-            EventConsumer<TikTokRoomUserInfoEvent> event) {
-        tikTokEventHandler.subscribe(TikTokRoomUserInfoEvent.class, event);
-        return this;
-    }
-
 
     public TikTokLiveClientBuilder onComment(EventConsumer<TikTokCommentEvent> event) {
         tikTokEventHandler.subscribe(TikTokCommentEvent.class, event);

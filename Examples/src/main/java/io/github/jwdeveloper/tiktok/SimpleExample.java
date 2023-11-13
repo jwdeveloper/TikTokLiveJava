@@ -31,7 +31,7 @@ import java.util.logging.Level;
 
 public class SimpleExample
 {
-    public static String TIKTOK_HOSTNAME = "seanfitzness";
+    public static String TIKTOK_HOSTNAME = "bangbetmenygy";
     public static void main(String[] args) throws IOException {
 
         showLogo();
@@ -59,7 +59,6 @@ public class SimpleExample
                     clientSettings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     clientSettings.setLogLevel(Level.ALL); // Log level
                     clientSettings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
-                    clientSettings.setHandleExistingEvents(true); // Invokes all TikTok events that had occurred before connection
                     clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
 
@@ -95,9 +94,9 @@ public class SimpleExample
                 {
                     print(ConsoleColors.RED,"[Disconnected]");
                 })
-                .onRoom((liveClient, event) ->
+                .onRoomInfo((liveClient, event) ->
                 {
-
+                    var info = event.getRoomInfo();
                 })
                 .onFollow((liveClient, event) ->
                 {

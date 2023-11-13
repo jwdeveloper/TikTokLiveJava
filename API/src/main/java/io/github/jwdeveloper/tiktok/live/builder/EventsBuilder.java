@@ -24,11 +24,9 @@ package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
-import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomUserInfoEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
@@ -40,9 +38,7 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandl
 
 public interface EventsBuilder<T> {
 
-    T onRoom(EventConsumer<TikTokRoomEvent> event);
-
-    T onRoomUserInfo(EventConsumer<TikTokRoomUserInfoEvent> event);
+    T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event);
 
     T onComment(EventConsumer<TikTokCommentEvent> event);
 
@@ -51,8 +47,6 @@ public interface EventsBuilder<T> {
     T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> event);
 
     T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
-
-
 
 
     T onGiftCombo(EventConsumer<TikTokGiftComboEvent> event);
@@ -71,11 +65,12 @@ public interface EventsBuilder<T> {
     T onJoin(EventConsumer<TikTokJoinEvent> event);
 
     T onShare(EventConsumer<TikTokShareEvent> event);
-    T onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event);
 
   //  T onChest(EventConsumer<TikTokChestEvent> event);
 
     T onLivePaused(EventConsumer<TikTokLivePausedEvent> event);
+
+    T onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> event);
 
     T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> event);
 

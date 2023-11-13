@@ -28,6 +28,8 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
 import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.events.TikTokRoomInfoEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.events.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
@@ -98,9 +100,10 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
         var apiClient = new TikTokHttpClient(cookie, requestFactory);
         var apiService = new ApiServiceMock(apiClient, logger, clientSettings);
         var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler,
-                tiktokRoomInfo,
+                new TikTokRoomInfoEventHandler(tiktokRoomInfo),
                 new TikTokGenericEventMapper(),
-                new TikTokGiftEventHandler(giftManager));
+                new TikTokGiftEventHandler(giftManager),
+                new TikTokSocialMediaEventHandler(tiktokRoomInfo));
         var webSocketClient = new WebsocketClientMock(logger, responses, webResponseHandler);
 
         return new LiveClientMock(tiktokRoomInfo,
