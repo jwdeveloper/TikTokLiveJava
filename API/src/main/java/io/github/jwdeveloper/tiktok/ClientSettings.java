@@ -53,11 +53,6 @@ public class ClientSettings {
     private Duration retryConnectionTimeout;
 
     /**
-     * Whether to handle Events received from Room when Connecting
-     */
-    private boolean handleExistingEvents;
-
-    /**
      * Whether to print Logs to Console
      */
 

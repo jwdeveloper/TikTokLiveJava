@@ -57,7 +57,6 @@ public class Constants {
         var clientSettings = new ClientSettings();
         clientSettings.setTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT));
         clientSettings.setClientLanguage("en-US");
-        clientSettings.setHandleExistingEvents(true);
         clientSettings.setRetryOnConnectionFailure(false);
         clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1));
         clientSettings.setPrintToConsole(false);

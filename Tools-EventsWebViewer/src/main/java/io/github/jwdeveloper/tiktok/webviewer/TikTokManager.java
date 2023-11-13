@@ -39,16 +39,21 @@ public class TikTokManager {
     TikTokMessagessCollectorBuilder client;
     MessageCollector msgCollector;
 
+    public static String dbName= "ab";
+
     public TikTokManager() {
-        msgCollector = new MessageCollector("ab");
+        msgCollector = new MessageCollector(dbName);
     }
 
     public void connect(String name) throws SQLException {
         disconnect();
-        client = TikTokMessageCollectorClient.create(msgCollector, "ab")
+        client = TikTokMessageCollectorClient.create(msgCollector, dbName)
                 .addOnBuilder(liveClientBuilder ->
                 {
+                    liveClientBuilder.onRoomInfo((liveClient, event) ->
+                    {
 
+                    });
                     liveClientBuilder.onGift((liveClient, event) ->
                     {
 

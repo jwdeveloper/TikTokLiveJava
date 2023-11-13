@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.tools.collector.client.TikTokMessageCollecto
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class RunCollector {
 
@@ -38,22 +39,38 @@ public class RunCollector {
     public static void main(String[] args) throws SQLException, IOException {
 
         TikTokMessageCollectorClient.create("giftsCollector")
-                .addUser("crece.sara")
-                .addUser("moniczkka")
+                //.addUser("crece.sara")
+                //.addUser("moniczkka")
+                .addUser("valeria.viral")
                // .addUser("cbcgod")
                 //   .addUser("psychotropnazywo")
                 //  .addUser("accordionistka")
-                .addEventFilter(WebcastGiftMessage.class)
+                //.addEventFilter(WebcastGiftMessage.class)
                 .addOnBuilder(liveClientBuilder ->
                 {
+                    liveClientBuilder.onGiftCombo((liveClient, event) ->
+                    {
+                        liveClient.getLogger().setLevel(Level.OFF);
+                        var gifts  = liveClient.getGiftManager().getGifts();
+
+                        var sb = new StringBuilder();
+                        sb.append("GIFT COMBO User: " + event.getUser().getProfileName()+" ");
+                        sb.append("Name: " + event.getGift().getName() + " ");
+                        sb.append("Combo: " + event.getCombo() + " ");
+                        sb.append("COST: " + event.getGift().getDiamondCost() + " ");
+                        sb.append("STATE: " + event.getComboState() + " ");
+                        System.out.println(sb.toString());
+                    });
 
                     liveClientBuilder.onGift((liveClient, event) ->
                     {
+                        liveClient.getLogger().setLevel(Level.OFF);
                         var gifts  = liveClient.getGiftManager().getGifts();
 
                         var sb = new StringBuilder();
                         sb.append("GIFT User: " + event.getUser().getProfileName()+" ");
                         sb.append("Name: " + event.getGift().getName() + " ");
+                        sb.append("COST: " + event.getGift().getDiamondCost() + " ");
                         sb.append("Combo: " + event.getCombo() + " ");
                         System.out.println(sb.toString());
                     });

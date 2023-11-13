@@ -54,6 +54,13 @@ public class CodeExample {
                 {
                     System.out.println(event.getComboState()+ " " + event.getCombo() + " " + event.getGift().getName());
                 })
+                .onRoomInfo((liveClient, event) ->
+                {
+                    var roomInfo = event.getRoomInfo();
+                    System.out.println("Room Id: "+roomInfo.getRoomId());
+                    System.out.println("Likes: "+roomInfo.getLikesCount());
+                    System.out.println("Viewers: "+roomInfo.getViewersCount());
+                })
                 .onJoin((liveClient, event) ->
                 {
                     System.out.println(event.getUser().getProfileName() + "Hello on my stream! ");
@@ -80,7 +87,6 @@ public class CodeExample {
                     settings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     settings.setLogLevel(Level.ALL); // Log level
                     settings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
-                    settings.setHandleExistingEvents(true); // Invokes all TikTok events that had occurred before connection
                     settings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     settings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
 

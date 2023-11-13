@@ -70,6 +70,7 @@ public class TikTokHttpClient {
 
     public JsonObject getJsonFromWebcastApi(String path, Map<String, Object> parameters) {
         var get = getRequest(Constants.TIKTOK_URL_WEBCAST + path, parameters);
+
         var json = JsonParser.parseString(get);
         var jsonObject = json.getAsJsonObject();
         return jsonObject;

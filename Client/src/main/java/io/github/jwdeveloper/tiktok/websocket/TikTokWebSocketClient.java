@@ -74,10 +74,7 @@ public class TikTokWebSocketClient implements SocketClient {
         }
 
         try {
-            if (clientSettings.isHandleExistingEvents()) {
-                logger.info("Handling existing events");
-                webResponseHandler.handle(tikTokLiveClient, webcastResponse);
-            }
+            webResponseHandler.handle(tikTokLiveClient, webcastResponse);
             var url = getWebSocketUrl(webcastResponse);
             webSocketClient = startWebSocket(url, tikTokLiveClient);
             webSocketClient.connect();
@@ -85,7 +82,8 @@ public class TikTokWebSocketClient implements SocketClient {
             pingingTask = new TikTokWebSocketPingingTask();
             pingingTask.run(webSocketClient);
             isConnected = true;
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             isConnected = false;
             throw new TikTokLiveException("Failed to connect to the websocket", e);
         }

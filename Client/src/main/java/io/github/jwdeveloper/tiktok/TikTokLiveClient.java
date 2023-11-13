@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
@@ -138,14 +139,24 @@ public class TikTokLiveClient implements LiveClient {
         }
 
 
-        var roomData = apiService.fetchRoomInfo();
-        if (roomData.getStatus() != LiveRoomMeta.LiveRoomStatus.HostOnline)  {
-            throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found. Is the Host online?");
+        var liveRoomMeta = apiService.fetchRoomInfo();
+        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostNotFound)  {
+            throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found.");
         }
+        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostOffline)  {
+            throw new TikTokLiveOfflineHostException("LiveStream for not be found, is the Host offline?");
+        }
+
+        liveRoomInfo.setTitle(liveRoomMeta.getTitie());
+        liveRoomInfo.setViewersCount(liveRoomMeta.getViewers());
+        liveRoomInfo.setTotalViewersCount(liveRoomMeta.getTotalViewers());
+        liveRoomInfo.setAgeRestricted(liveRoomMeta.isAgeRestricted());
+        liveRoomInfo.setHost(liveRoomMeta.getHost());
 
         var clientData = apiService.fetchClientData();
         webSocketClient.start(clientData, this);
         setState(ConnectionState.CONNECTED);
+        tikTokEventHandler.publish(this,new TikTokRoomInfoEvent(liveRoomInfo));
     }
 
 
