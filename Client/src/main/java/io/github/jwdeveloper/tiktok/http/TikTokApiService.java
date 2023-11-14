@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.ClientSettings;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.data.dto.TikTokUserInfo;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
@@ -57,62 +57,43 @@ public class TikTokApiService {
     }
 
     public String fetchRoomId(String userName) {
-        var roomId = fetchRoomIdFromTiktokApi(userName);
-        clientSettings.getClientParameters().put("room_id", roomId);
-        logger.info("RoomID -> " + roomId);
-        return roomId;
+        var userInfo = fetchUserInfoFromTikTokApi(userName);
+        clientSettings.getClientParameters().put("room_id", userInfo.getRoomId());
+        logger.info("RoomID -> " + userInfo.getRoomId());
+        return userInfo.getRoomId();
     }
 
-    private String fetchRoomIdFromTikTokPage(String userName)
-    {
-           /*  var roomId = RequestChain.<String>create()
-                .then(() -> fetchRoomIdFromTikTokPage(userName))
-                .then(() -> fetchRoomIdFromTiktokApi(userName))
-                .run();*/
-        logger.info("Fetching room ID");
-        String html;
-        try {
-            html = tiktokHttpClient.getLivestreamPage(userName);
-        } catch (Exception e) {
-            throw new TikTokLiveRequestException("Failed to fetch room id from WebCast, see stacktrace for more info.", e);
-        }
-
-        var firstPattern = Pattern.compile("room_id=([0-9]*)");
-        var firstMatcher = firstPattern.matcher(html);
-        var id = "";
-
-        if (firstMatcher.find()) {
-            id = firstMatcher.group(1);
-        } else {
-            var secondPattern = Pattern.compile("\"roomId\":\"([0-9]*)\"");
-            var secondMatcher = secondPattern.matcher(html);
-
-            if (secondMatcher.find()) {
-                id = secondMatcher.group(1);
-            }
-        }
-
-        if (id.isEmpty()) {
-            throw new TikTokLiveOfflineHostException("Unable to fetch room ID, live host could be offline or name is misspelled");
-        }
-
-
-        return id;
-    }
-
-    private String fetchRoomIdFromTiktokApi(String userName) {
+    public TikTokUserInfo fetchUserInfoFromTikTokApi(String userName) {
 
         var params = new HashMap<>(clientSettings.getClientParameters());
         params.put("uniqueId", userName);
         params.put("sourceType", 54);
         var roomData = tiktokHttpClient.getJsonFromTikTokApi("api-live/user/room/", params);
 
+        var message = roomData.get("message").getAsString();
+
+        if (message.equals("params_error")) {
+            throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact with developer");
+        }
+        if (message.equals("user_not_found")) {
+            return new TikTokUserInfo(TikTokUserInfo.UserStatus.NotFound, "");
+        }
+        //live -> status 2
+        //live paused -> 3
+        //not live -> status 4
         var data = roomData.getAsJsonObject("data");
-        var user =data.getAsJsonObject("user");
+        var user = data.getAsJsonObject("user");
         var roomId = user.get("roomId").getAsString();
+        var status = user.get("status").getAsInt();
 
+        var statusEnum = switch (status) {
+            case 2 ->  TikTokUserInfo.UserStatus.Live;
+            case 3 -> TikTokUserInfo.UserStatus.LivePaused;
+            case 4 -> TikTokUserInfo.UserStatus.Offline;
+            default -> TikTokUserInfo.UserStatus.NotFound;
+        };
 
-        return roomId;
+        return new TikTokUserInfo(statusEnum, roomId);
     }
 
 
