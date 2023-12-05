@@ -198,7 +198,7 @@ need to also include it to interface `EventsBuilder`
 
 
 
-Finally we are good to go, out event has been included!
+Finally we are good to go, our event has been included!
 
 ![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/36ad6f1f-b38c-4cf7-93bd-b4cc0638cba0)
 
