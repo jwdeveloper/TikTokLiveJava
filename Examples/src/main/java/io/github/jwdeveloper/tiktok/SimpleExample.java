@@ -31,25 +31,25 @@ import java.util.logging.Level;
 
 public class SimpleExample
 {
-    public static String TIKTOK_HOSTNAME = "bangbetmenygy";
+    public static String TIKTOK_HOSTNAME = "adasdsadadadasdasdsadasdasad";
     public static void main(String[] args) throws IOException {
 
         showLogo();
         // set tiktok username
 
-        /*
-        Optional checking if host name is correct
+
+        //Optional checking if host name is correct
         if(TikTokLive.isHostNameValid(TIKTOK_HOSTNAME))
         {
-            System.out.println("Live is online!");
+            System.out.println("user name exists!");
         }
 
-        Optional checking if live is online
+        //Optional checking if live is online
         if(TikTokLive.isLiveOnline(TIKTOK_HOSTNAME))
         {
             System.out.println("Live is online!");
         }
-        */
+
 
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->

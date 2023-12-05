@@ -93,8 +93,7 @@ public class TikTokLiveClient implements LiveClient {
     public void connect() {
         try {
             tryConnect();
-        } catch (TikTokLiveException e)
-        {
+        } catch (TikTokLiveException e) {
             setState(ConnectionState.DISCONNECTED);
             tikTokEventHandler.publish(this, new TikTokErrorEvent(e));
             tikTokEventHandler.publish(this, new TikTokDisconnectedEvent());
@@ -109,6 +108,10 @@ public class TikTokLiveClient implements LiveClient {
                 this.connect();
             }
             throw e;
+        } catch (Exception e) {
+            logger.info("Unhandled exception report this bug to github https://github.com/jwdeveloper/TikTokLiveJava/issues");
+            this.disconnect();
+            e.printStackTrace();
         }
     }
 
@@ -140,10 +143,10 @@ public class TikTokLiveClient implements LiveClient {
 
 
         var liveRoomMeta = apiService.fetchRoomInfo();
-        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostNotFound)  {
+        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostNotFound) {
             throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found.");
         }
-        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostOffline)  {
+        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostOffline) {
             throw new TikTokLiveOfflineHostException("LiveStream for not be found, is the Host offline?");
         }
 
@@ -156,7 +159,7 @@ public class TikTokLiveClient implements LiveClient {
         var clientData = apiService.fetchClientData();
         webSocketClient.start(clientData, this);
         setState(ConnectionState.CONNECTED);
-        tikTokEventHandler.publish(this,new TikTokRoomInfoEvent(liveRoomInfo));
+        tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(liveRoomInfo));
     }
 
 
