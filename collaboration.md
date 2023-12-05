@@ -36,8 +36,8 @@ Are you willing to help or improve TikTokLiveJava?
    - Mapping TikTok data to events
       at this point we have TikTok data inside protocol-buffer classes now we want
       to map it to TikTokLiveJava events. Why? because `protocol-buffer classes` might
-      be changed at any point, but we want to keep library code structure keep consistent
-      so for example  `WebcastGiftMessage` is mapped manually to `TikTokGiftEvent`
+      be changed at any point, but we want to keep library code structure consistent
+      so for example  `WebcastGiftMessage` is mapped to `TikTokGiftEvent`
        
    - trigger events 
       when the events objects are done last step is to trigger then and that's it
