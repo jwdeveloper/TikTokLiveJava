@@ -55,8 +55,9 @@ Do you prefer other programming languages?
 
 ## Getting started
 
-1. Install the package via Maven
+1. Install the package 
 
+Maven
 ```xml
    <repositories>
         <repository>
@@ -73,6 +74,21 @@ Do you prefer other programming languages?
             <scope>compile</scope>
         </dependency>
    </dependencies>
+```
+
+Gradle
+```gradle
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+dependencies {
+	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.0.6-Release'
+	}
 ```
 
 2. Create your first chat connection
