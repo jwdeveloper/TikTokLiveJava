@@ -92,3 +92,111 @@ Are you willing to help or improve TikTokLiveJava?
    
   #### Tools-ReadmeGenerator
    Generates readme file from template
+
+
+
+
+### How to add new Event?
+
+First step is to create class that represends event. Remember, all the events classes must be located in the `io.github.jwdeveloper.tiktok.data.events` package
+
+```java
+package io.github.jwdeveloper.tiktok.data.events;
+
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
+import io.github.jwdeveloper.tiktok.messages.data.User;
+import lombok.Data;
+
+
+@Data //lombok annotation
+@EventMeta(eventType = EventType.Message) //this annotation is used by readme generater code
+public class CustomEvent extends TikTokHeaderEvent
+{
+    private final User user;
+    private final String title;
+
+    public CustomEvent(User user,String title)
+    {
+         this.user = user;
+         this.title = title;
+    }
+}
+```
+Now we can jump to the `io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration` class. It is used 
+to define mappings from incoming protocolbuffer data to Events. 
+Note that all classes that starts with `Webcast` represents protocolbuffer data that is coming from tiktok
+Note all `Webcast` classes are generated from `proto` file that is defined in `API/src/main/proto/webcast.proto` I recommand to use `protocolbuffer` plugin for inteliji  
+
+
+For this example we registered new mapping that is triggered every time `WebcastGiftMessage` is comming 
+from TikTok. 
+
+```java
+ public void init() {
+
+        registerMapping(WebcastGiftMessage.class, bytes ->
+        {
+            try {
+                WebcastGiftMessage tiktokData = WebcastGiftMessage.parseFrom(bytes);
+
+                io.github.jwdeveloper.tiktok.messages.data.User tiktokProtocolBufferUser = tiktokData.getUser();
+                io.github.jwdeveloper.tiktok.data.models.users.User tiktokLiveJavaUser = User.map(tiktokProtocolBufferUser);
+
+                return new CustomEvent(tiktokLiveJavaUser, "hello word");
+            } catch (Exception e) {
+                throw new TikTokLiveException("Unable to parse our custom event", e);
+            }
+        });
+         
+        //ConnectionEvents events
+        registerMapping(WebcastControlMessage.class, this::handleWebcastControlMessage);
+
+        //Room status events
+        registerMapping(WebcastLiveIntroMessage.class, roomInfoHandler::handleIntro);
+        registerMapping(WebcastRoomUserSeqMessage.class, roomInfoHandler::handleUserRanking);
+
+        registerMapping(WebcastCaptionMessage.class, TikTokCaptionEvent.class);
+        //... more mappings down there
+}
+```
+![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/b4e410c9-c363-43ed-a0c0-8220ed50a387)
+
+
+
+Next step is to open `TikTokLiveClientBuilder` and method for handling our new event
+
+``` java
+
+  public LiveClientBuilder onCustomEvent(EventConsumer<CustomEvent> event) {
+        tikTokEventHandler.subscribe(CustomEvent.class, event);
+        return this;
+    }
+
+```
+![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/b22d2044-d565-4b2d-944b-df6a6b75083a)
+
+
+
+To make this method visible from `TikTokLive.newClient("asds").onCustomEvent()` we 
+need to also add it to interface `EventsBuilder`
+
+``` java
+ T onCustomEvent(EventConsumer<CustomEvent> event);
+```
+
+![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/547f5d16-83fa-48ab-909e-993bf9af1a8e)
+
+
+Finally we are good to go, out event has been included!
+
+![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/36ad6f1f-b38c-4cf7-93bd-b4cc0638cba0)
+
+
+
+
+
+
+
+   
