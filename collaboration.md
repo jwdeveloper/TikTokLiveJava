@@ -165,7 +165,7 @@ from TikTok.
 
 
 
-Next step is to open `TikTokLiveClientBuilder` and method for handling our new event
+Next step is to open `TikTokLiveClientBuilder` and add method for handling our new event
 
 ``` java
 
@@ -179,14 +179,20 @@ Next step is to open `TikTokLiveClientBuilder` and method for handling our new e
 
 
 
-To make this method visible from `TikTokLive.newClient("asds").onCustomEvent()` we 
-need to also add it to interface `EventsBuilder`
+To make `onCustomEvent` method visible from `TikTokLive.newClient("asds").onCustomEvent()` we 
+need to also include it to interface `EventsBuilder`
 
 ``` java
  T onCustomEvent(EventConsumer<CustomEvent> event);
 ```
 
 ![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/547f5d16-83fa-48ab-909e-993bf9af1a8e)
+
+
+
+
+
+
 
 
 Finally we are good to go, out event has been included!
