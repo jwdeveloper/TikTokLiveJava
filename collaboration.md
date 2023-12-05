@@ -67,8 +67,8 @@ Are you willing to help or improve TikTokLiveJava?
    - `TikTokLiveClientBuilder` preparing `TikTokLiveClient` class
    - `TikTokApiService` use for Http requests to TikTok/Sign API 
    - `TikTokWebSocketClient` receiving all ProtocolBuffer messages from TikTok
-   - `TikTokMessageHandler` **heart of libraryt** finds suitable mapping for incoming data and trigger its mapping handler as result list of events
-      is created. check out `TikTokMessageHandler.handleSingleMessage`
+   - `TikTokMessageHandler` **heart of library** it finds suitable mapping for incoming data and trigger its mapping handler as result list of events
+      is created and published. check out `TikTokMessageHandler.handleSingleMessage`
    - `TikTokMessageHandlerRegistration` register all mappings TikTok data -> TikTokLiveJava events
    - `TikTokEventObserver` used to register and trigger TikTok events
 
