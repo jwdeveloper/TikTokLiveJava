@@ -19,77 +19,78 @@ Are you willing to help or improve TikTokLiveJava?
 
   We can divide working of library to 4 important parts
 
-   - Getting info about live from TikTok
-     Library is making 3 https
+   - Getting info about live from TikTok. Library is making 3 https requests
      - first for getting live `Room_ID`
      - second for getting more specific live metadata such as live title, host name...
      - third to `Sign API` that returns access token that is later use for connecting 
        to TikTok websocket
    - Connecting to TikTok websocket (PushServer)
-        After successful connection TikTok starts to send `ProtocolBuffer`
-        messages in binary format. This is very important to understand `ProtocolBuffer`
-        it is not complicated :). All the proto files are included under `API/src/main/proto`
-        After using `Maven compile` command on project, java classes are generated from 
-        those files. so then we can easily map incoming bytes to class, for examples
+     
+        After successful connection to TikTok, `pushServer` starts to send `ProtocolBuffer`
+        messages in binary format. This is very important to understand `ProtocolBuffer. Don't worry it is not complicated :).
+        All the proto files are included under `API/src/main/proto` After using `Maven compile` command on project, java classes are generated from 
+        those files. so then we can easily map incoming bytes to classes, for examples
         `WebcastGiftMessage message = WebcastGiftMessage.parseFrom(incomingBytesArray)`
         
    - Mapping TikTok data to events
-      at this point we have TikTok data inside protocol-buffer classes now we want
-      to map it to TikTokLiveJava events. Why? because `protocol-buffer classes` might
-      be changed at any point, but we want to keep library code structure consistent
+     
+      At this point we have TikTok data inside protocol-buffer classes now we want
+      to map it to events. Why? because `protocol-buffer classes` might be changed at any point,
+      but we want to keep library code structure consistent across versions.
       so for example  `WebcastGiftMessage` is mapped to `TikTokGiftEvent`
        
-   - trigger events 
-      when the events objects are done last step is to trigger then and that's it
+   - trigger events
+     
+      When the events objects are done last step is to trigger them. And that's it!
       `tikTokEventObserver.publish(liveClient, tiktokGiftEvent)`
   
 
 
 ### Project structure 
-   project is made from few modules the most important one are
+   Project is made from few modules the most important one are
 
   #### API
         
-   Contains interfaces and data classes, all code that is ment 
-   to be visible and use for the Library user should be included
-   in this project
+   Contains interfaces and data classes. All code included in this 
+   project is ment to be visible to people that are using library.
+   
 
    - All the events can be found user `io.github.jwdeveloper.tiktok.data.events` 
    - All the class data that are used in events is under `io.github.jwdeveloper.tiktok.data.models`
- 
+   - All the protocol-buffer classes will be generated at namespack `io.github.jwdeveloper.tiktok.messages` they are at location `API\target\classes\io\github\jwdeveloper\tiktok\messages`
 
   #### Client
 
    Contains implementation of `API` modules interfaces and all the code
    important classes
 
-   - `TikTokLiveClient` core class that is use to connect/disconnect from TikTok
-   - `TikTokLiveClientBuilder` preparing `TikTokLiveClient` class
+   - `TikTokLiveClient` core class that is use to mangae connection disconnection
+   - `TikTokLiveClientBuilder` preparing and creating `TikTokLiveClient` class
    - `TikTokApiService` use for Http requests to TikTok/Sign API 
    - `TikTokWebSocketClient` receiving all ProtocolBuffer messages from TikTok
-   - `TikTokMessageHandler` **heart of library** it finds suitable mapping for incoming data and trigger its mapping handler as result list of events
-      is created and published. check out `TikTokMessageHandler.handleSingleMessage`
-   - `TikTokMessageHandlerRegistration` register all mappings TikTok data -> TikTokLiveJava events
+   - `TikTokMessageHandler` **heart of library** it finds suitable mapper for incoming data and triggers its mapping handler as result list of events
+      is created and published. **check out** `TikTokMessageHandler.handleSingleMessage`
+   - `TikTokMessageHandlerRegistration` register all mappings `protol-buffer` classes -> `events`
    - `TikTokEventObserver` used to register and trigger TikTok events
 
-  There are also few more modules made purely for testing and debbuging code
+
+  ### There are also few more modules made purely for testing and debbuging code
 
   #### Examples
-   Project made to show up new features and present basic 
-   example for library. While developing new features you 
-   can use it as playground 
+   Project is made to show up new features and present basic 
+   example of library. While developing you can use it this project as playground 
    
   #### Tools
-   Project that contains code generators for automation teadios boilder plate
-   It contains very useful class `GenerateGiftsEnum` that download gifts json from TikTok
+   Project that contains code generators.
+   The most useful one is class `GenerateGiftsEnum` that download gifts json from TikTok
    and generates code for `Gift` enum that is later added to `API` module at path `io.github.jwdeveloper.tiktok.data.models.gifts.Gift`
    
   #### Tools-EventsCollector
-   Tool that can be used to store all events from live to sqlLite database or Json file
-   It is very handy for later debuging events data
+   Tool that can be used to store all `protocol-buffer` and `events` from live to `sqlLite` database or `Json` file
+   It is very handy for later debuging `protocol-buffer` and `events` data
    
   #### Tools-EventsWebViewer
-   Tools that runs website that collects and display pure data from TikTok incoming events
+   Tools that runs website that collects and display pure data from TikTok
    very useful for debuging
    
   #### Tools-ReadmeGenerator
