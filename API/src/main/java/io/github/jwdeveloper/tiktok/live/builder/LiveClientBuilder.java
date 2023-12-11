@@ -23,20 +23,60 @@
 package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.ClientSettings;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
-    LiveClientBuilder configure(Consumer<ClientSettings> consumer);
 
+    /**
+     * This method is triggered after default mappings are registered
+     * It could be used to OVERRIDE behaviour of mappings and implement custom behaviour
+     *
+     * Be aware if for example you override WebcastGiftEvent, onGiftEvent() will not be working
+     *
+     * @param onCustomMappings lambda method
+     * @return
+     */
+    LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings);
+
+
+    /**
+     * Configuration of client settings
+     * @see ClientSettings
+     * @param onConfigure
+     * @return
+     */
+    LiveClientBuilder configure(Consumer<ClientSettings> onConfigure);
+
+    /**
+     * @see TikTokEventListener
+     * Adding events listener class, its fancy way to register events without using lamda method
+     * but actual method in class that implements TikTokEventListener
+     * @return
+     */
     LiveClientBuilder addListener(TikTokEventListener listener);
 
+    /**
+     *
+     * @return LiveClient object
+     */
     LiveClient build();
 
+    /**
+     *
+     * @return LiveClient object and connects to TikTok live
+     */
     LiveClient buildAndConnect();
 
+    /**
+     *
+     * @return LiveClient object and connects to TikTok live asynchronously
+     */
     CompletableFuture<LiveClient> buildAndConnectAsync();
 }

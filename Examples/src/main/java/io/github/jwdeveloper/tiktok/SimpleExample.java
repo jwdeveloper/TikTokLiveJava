@@ -26,7 +26,9 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokSubNotifyEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
+import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -42,6 +44,8 @@ public class SimpleExample {
         // set tiktok username
 
 
+
+
         /*
         //Optional checking if host name is correct
         if(TikTokLive.isHostNameValid(TIKTOK_HOSTNAME))
@@ -50,14 +54,33 @@ public class SimpleExample {
         }
          */
 
-       // Optional checking if live is online
-        if(TikTokLive.isLiveOnline(TIKTOK_HOSTNAME))
-        {
+        // Optional checking if live is online
+        if (TikTokLive.isLiveOnline(TIKTOK_HOSTNAME)) {
             System.out.println("Live is online!");
         }
 
 
-
+        TikTokLive.newClient("test")
+                .onWebsocketResponse((liveClient, event) ->
+                {
+                    var response = event.getResponse();
+                    for (var message : response.getMessagesList()) {
+                        var name = message.getMethod();
+                        var binaryData = message.getPayload();
+                        System.out.println("Event name: " + name);
+                        if (name.equals("WebcastGiftEvent")) {
+                            try {
+                                WebcastGiftMessage giftMessage = WebcastGiftMessage.parseFrom(binaryData);
+                                var giftName = giftMessage.getGift().getName();
+                                var giftId = giftMessage.getGiftId();
+                                var userName = giftMessage.getUser().getNickname();
+                                System.out.println("Gift: "+giftName+" id: "+giftId+" from user: "+userName);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Mapping error", e);
+                            }
+                        }
+                    }
+                }).buildAndConnect();
 
 
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
@@ -96,9 +119,8 @@ public class SimpleExample {
 
 
                     var tiktokLiveEvent = event.getEvent();
-                    if(tiktokLiveEvent instanceof TikTokSubNotifyEvent e)
-                    {
-                       System.out.println("it was subscrible event");
+                    if (tiktokLiveEvent instanceof TikTokSubNotifyEvent e) {
+                        System.out.println("it was subscrible event");
                     }
 
                 })

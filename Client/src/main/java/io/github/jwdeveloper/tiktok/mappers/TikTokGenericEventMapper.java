@@ -74,7 +74,7 @@ public class TikTokGenericEventMapper {
         }
     }
 
-    private Method getParsingMethod(Class<?> input) throws NoSuchMethodException {
+    public Method getParsingMethod(Class<?> input) throws NoSuchMethodException {
         if (methodCache.containsKey(input)) {
             return methodCache.get(input);
         }

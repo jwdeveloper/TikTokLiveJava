@@ -26,10 +26,10 @@ import io.github.jwdeveloper.tiktok.TikTokLiveClientBuilder;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
-import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
-import io.github.jwdeveloper.tiktok.handlers.events.TikTokRoomInfoEventHandler;
-import io.github.jwdeveloper.tiktok.handlers.events.TikTokSocialMediaEventHandler;
+import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
+import io.github.jwdeveloper.tiktok.mappers.events.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.events.TikTokRoomInfoEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.events.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
@@ -99,12 +99,9 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
         var requestFactory = new TikTokHttpRequestFactory(cookie);
         var apiClient = new TikTokHttpClient(cookie, requestFactory);
         var apiService = new ApiServiceMock(apiClient, logger, clientSettings);
-        var webResponseHandler = new TikTokMessageHandlerRegistration(tikTokEventHandler,
-                new TikTokRoomInfoEventHandler(tiktokRoomInfo),
-                new TikTokGenericEventMapper(),
-                new TikTokGiftEventHandler(giftManager),
-                new TikTokSocialMediaEventHandler(tiktokRoomInfo));
-        var webSocketClient = new WebsocketClientMock(logger, responses, webResponseHandler);
+        var mapper = createMapper(giftManager, tiktokRoomInfo);
+        var handler = new TikTokMessageHandler(tikTokEventHandler, mapper);
+        var webSocketClient = new WebsocketClientMock(logger, responses, handler);
 
         return new LiveClientMock(tiktokRoomInfo,
                 apiService,

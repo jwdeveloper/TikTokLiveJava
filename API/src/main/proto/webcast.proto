@@ -177,6 +177,8 @@ message WebcastCaptionMessage {
   }
 }
 
+
+
 // Comment sent by User
 //@WebcastChatMessage
 message WebcastChatMessage {

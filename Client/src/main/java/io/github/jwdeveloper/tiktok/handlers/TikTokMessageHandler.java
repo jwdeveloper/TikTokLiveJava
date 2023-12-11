@@ -25,46 +25,28 @@ package io.github.jwdeveloper.tiktok.handlers;
 
 import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
+import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.Stopwatch;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 
-public abstract class TikTokMessageHandler {
+public class TikTokMessageHandler {
 
-    private final Map<String, io.github.jwdeveloper.tiktok.handler.TikTokMessageHandler> handlers;
     private final TikTokEventObserver tikTokEventHandler;
-    protected final TikTokGenericEventMapper mapper;
+    private final TikTokLiveMapper mapper;
 
-    public TikTokMessageHandler(TikTokEventObserver tikTokEventHandler, TikTokGenericEventMapper mapper) {
-        handlers = new HashMap<>();
+    public TikTokMessageHandler(TikTokEventObserver tikTokEventHandler, TikTokLiveMapper mapper) {
         this.tikTokEventHandler = tikTokEventHandler;
         this.mapper = mapper;
     }
 
-    public void registerMapping(Class<?> clazz, Function<byte[], TikTokEvent> func) {
-        handlers.put(clazz.getSimpleName(), messagePayload -> List.of(func.apply(messagePayload)));
-    }
-
-    public void registerMappings(Class<?> clazz, Function<byte[], List<TikTokEvent>> func) {
-        handlers.put(clazz.getSimpleName(), func::apply);
-    }
-
-    public void registerMapping(Class<?> input, Class<?> output) {
-        registerMapping(input, (e) -> mapper.mapToEvent(input, output, e));
-    }
 
     public void handle(LiveClient client, WebcastResponse webcastResponse) {
         tikTokEventHandler.publish(client, new TikTokWebsocketResponseEvent(webcastResponse));
@@ -80,14 +62,13 @@ public abstract class TikTokMessageHandler {
 
     public void handleSingleMessage(LiveClient client, WebcastResponse.Message message) throws Exception {
         var messageClassName = message.getMethod();
-        if (!handlers.containsKey(messageClassName)) {
+        if (!mapper.isRegistered(messageClassName)) {
             tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
             return;
         }
-        var handler = handlers.get(messageClassName);
         var stopwatch = new Stopwatch();
         stopwatch.start();
-        var events = handler.handle(message.getPayload().toByteArray());
+        var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
         var handlingTimeInMs = stopwatch.stop();
         var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
 

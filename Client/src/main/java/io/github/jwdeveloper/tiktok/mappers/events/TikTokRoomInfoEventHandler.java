@@ -20,17 +20,24 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.handlers.events;
+package io.github.jwdeveloper.tiktok.mappers.events;
 
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
+import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokUnhandledMemberEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.data.models.RankingUser;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLiveIntroMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomUserSeqMessage;
 import lombok.SneakyThrows;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -75,5 +82,34 @@ public class TikTokRoomInfoEventHandler {
             }
             tikTokRoomInfo.setLanguage(language);
         });
+    }
+
+    @SneakyThrows
+    public List<TikTokEvent> handleMemberMessage(byte[] msg) {
+        var message = WebcastMemberMessage.parseFrom(msg);
+
+        var event = switch (message.getAction()) {
+            case JOINED -> new TikTokJoinEvent(message);
+            case SUBSCRIBED -> new TikTokSubscribeEvent(message);
+            default -> new TikTokUnhandledMemberEvent(message);
+        };
+
+        var roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->
+        {
+            tikTokRoomInfo.setViewersCount(message.getMemberCount());
+        });
+
+        return List.of(event, roomInfoEvent);
+    }
+    @SneakyThrows
+    public List<TikTokEvent> handleLike(byte[] msg)
+    {
+        var message = WebcastLikeMessage.parseFrom(msg);
+        var event = new TikTokLikeEvent(message);
+        var roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->
+        {
+            tikTokRoomInfo.setLikesCount(event.getTotalLikes());
+        });
+        return List.of(event, roomInfoEvent);
     }
 }
