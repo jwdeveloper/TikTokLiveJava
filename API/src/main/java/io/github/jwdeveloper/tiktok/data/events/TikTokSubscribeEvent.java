@@ -26,7 +26,9 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.data.models.users.UserAttribute;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSubNotifyMessage;
 import lombok.Getter;
 
 /**
@@ -34,16 +36,20 @@ import lombok.Getter;
  */
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokSubscribeEvent extends TikTokHeaderEvent {
-  private User user;
+public class TikTokSubscribeEvent extends TikTokHeaderEvent
+{
+    private final User user;
 
-  public TikTokSubscribeEvent(WebcastMemberMessage msg) {
-    super(msg.getCommon());
-
-    if(msg.hasUser())
-    {
-      user = new User(msg.getUser());
+    public TikTokSubscribeEvent(WebcastMemberMessage msg) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        user.addAttribute(UserAttribute.Subscriber);
     }
-  }
+
+    public TikTokSubscribeEvent(WebcastSubNotifyMessage msg) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        user.addAttribute(UserAttribute.Subscriber);
+    }
 
 }

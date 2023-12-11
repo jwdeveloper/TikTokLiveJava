@@ -24,11 +24,9 @@ package io.github.jwdeveloper.tiktok.websocket;
 
 
 import io.github.jwdeveloper.tiktok.ClientSettings;
-import io.github.jwdeveloper.tiktok.Constants;
-import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
+import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
 import io.github.jwdeveloper.tiktok.http.HttpUtils;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
@@ -44,7 +42,7 @@ public class TikTokWebSocketClient implements SocketClient {
     private final Logger logger;
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
-    private final TikTokMessageHandlerRegistration webResponseHandler;
+    private final TikTokMessageHandler messageHandler;
     private final TikTokEventObserver tikTokEventHandler;
     private WebSocketClient webSocketClient;
     private TikTokWebSocketPingingTask pingingTask;
@@ -53,12 +51,12 @@ public class TikTokWebSocketClient implements SocketClient {
     public TikTokWebSocketClient(Logger logger,
                                  TikTokCookieJar tikTokCookieJar,
                                  ClientSettings clientSettings,
-                                 TikTokMessageHandlerRegistration webResponseHandler,
+                                 TikTokMessageHandler messageHandler,
                                  TikTokEventObserver tikTokEventHandler) {
         this.logger = logger;
         this.tikTokCookieJar = tikTokCookieJar;
         this.clientSettings = clientSettings;
-        this.webResponseHandler = webResponseHandler;
+        this.messageHandler = messageHandler;
         this.tikTokEventHandler = tikTokEventHandler;
         isConnected = false;
     }
@@ -74,7 +72,7 @@ public class TikTokWebSocketClient implements SocketClient {
         }
 
         try {
-            webResponseHandler.handle(tikTokLiveClient, webcastResponse);
+            messageHandler.handle(tikTokLiveClient, webcastResponse);
             var url = getWebSocketUrl(webcastResponse);
             webSocketClient = startWebSocket(url, tikTokLiveClient);
             webSocketClient.connect();
@@ -107,7 +105,7 @@ public class TikTokWebSocketClient implements SocketClient {
         return new TikTokWebSocketListener(url,
                 headers,
                 3000,
-                webResponseHandler,
+                messageHandler,
                 tikTokEventHandler,
                 liveClient);
     }

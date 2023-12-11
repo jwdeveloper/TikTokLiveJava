@@ -39,4 +39,9 @@ public class TikTokWebsocketUnhandledMessageEvent extends TikTokUnhandledEvent<W
     public TikTokWebsocketUnhandledMessageEvent(WebcastResponse.Message data) {
         super(data);
     }
+
+    public WebcastResponse.Message getMessage()
+    {
+        return this.getData();
+    }
 }

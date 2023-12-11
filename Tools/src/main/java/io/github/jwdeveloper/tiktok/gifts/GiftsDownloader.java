@@ -47,7 +47,8 @@ public class GiftsDownloader {
     }
 
     public List<GiftDto> getGiftsFromFile() {
-        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output_1_0_4.json");
+        var version = "";
+        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output.json");
         Type mapType = new TypeToken<Map<Integer, GiftDto>>() {
         }.getType();
         var mapper = new Gson().fromJson(content, mapType);
@@ -85,7 +86,7 @@ public class GiftsDownloader {
         var gson = new GsonBuilder().setPrettyPrinting()
                 .create();
         var json = gson.toJson(outputHashMap);
-        FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output_1_0_4.json", json);
+        FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output.json", json);
         System.out.println("Gifts saved to file!");
         return outputHashMap.values().stream().toList();
     }

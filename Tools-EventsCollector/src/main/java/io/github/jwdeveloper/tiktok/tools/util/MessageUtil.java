@@ -26,9 +26,9 @@ import com.google.protobuf.ByteString;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
+import io.github.jwdeveloper.tiktok.utils.ProtocolUtils;
 
-public class MessageUtil
-{
+public class MessageUtil {
     public static String getContent(WebcastResponse.Message message) {
         try {
             var methodName = message.getMethod();
@@ -38,7 +38,7 @@ public class MessageUtil
             return JsonUtil.messageToJson(deserialized);
         } catch (Exception ex) {
 
-            return ConsoleColors.RED+ "Can not find mapper for "+message.getMethod();
+            return ConsoleColors.RED + "Can not find mapper for " + message.getMethod();
         }
     }
 
@@ -49,11 +49,13 @@ public class MessageUtil
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", byte[].class);
             var deserialized = parseMethod.invoke(null, bytes);
             return JsonUtil.messageToJson(deserialized);
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             var sb = new StringBuilder();
-            sb.append("Can not find mapper for "+methodName);
+            sb.append("Can not find protocolbuffer file message representation for " + methodName);
             sb.append("\n");
+            var structure = ProtocolUtils.getProtocolBufferStructure(bytes);
+            var json =structure.toJson();
+            sb.append(json);
             //String jsonString = JsonFormat.printToString(protobufData);
             return sb.toString();
         }

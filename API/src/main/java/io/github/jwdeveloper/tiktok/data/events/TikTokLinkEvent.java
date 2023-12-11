@@ -34,18 +34,10 @@ import java.util.List;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokLinkEvent extends TikTokHeaderEvent {
-    private final String token;
 
-    private User user;
-
-    private final List<User> otherUsers;
 
     public TikTokLinkEvent(WebcastLinkMessage msg) {
         super(msg.getCommon());
-        token = msg.getToken();
-        if (msg.getUser().getUser().hasUser()) {
-            user = new User(msg.getUser().getUser().getUser());
-        }
-        otherUsers = msg.getUser().getOtherUsersList().stream().map(e -> new User(e.getUser())).toList();
+
     }
 }

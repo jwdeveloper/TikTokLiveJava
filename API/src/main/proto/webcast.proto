@@ -177,6 +177,8 @@ message WebcastCaptionMessage {
   }
 }
 
+
+
 // Comment sent by User
 //@WebcastChatMessage
 message WebcastChatMessage {
@@ -608,7 +610,7 @@ message WebcastUnauthorizedMemberMessage {
   string nickName = 4;
   Text enterText = 5;
 }
-
+S
 //@WebcastMsgDetectMessage
 message WebcastMsgDetectMessage {
   Common common = 1;
@@ -681,29 +683,33 @@ message WebcastSystemMessage {
 //@WebcastLinkMessage
 message WebcastLinkMessage {
   Common common = 1;
-  uint32 data1 = 2;
-  uint64 data2 = 3;
-  uint32 data3 = 4;
-  LinkMessageData data = 18;
-  LinkMessageUserContainer user = 20;
-  string token = 200;
-
-  message LinkMessageData {
-    DataContainer data = 1; // index 1 is an Id
-  }
-
-  message LinkMessageUserContainer {
-    LinkMessageUser user = 1;
-    repeated LinkMessageUser otherUsers = 2;
-
-    message LinkMessageUser {
-      User user = 1;
-      uint64 timeStamp = 2;
-      uint32 data1 = 4;
-      string idString = 5;
-      uint32 data2 = 7;
-    }
-  }
+  int64 MessageType = 2;
+  int64 LinkerId = 3;
+  int64 Scene = 4;
+  LinkerInviteContent InviteContent = 5;
+  LinkerReplyContent ReplyContent = 6;
+  LinkerCreateContent CreateContent = 7;
+  LinkerCloseContent CloseContent = 8;
+  LinkerEnterContent EnterContent = 9;
+  LinkerLeaveContent LeaveContent = 10;
+  LinkerCancelContent CancelContent = 11;
+  LinkerKickOutContent KickOutContent = 12;
+  LinkerLinkedListChangeContent LinkedListChangeContent = 13;
+  LinkerUpdateUserContent UpdateUserContent = 14;
+  LinkerWaitingListChangeContent WaitingListChangeContent = 15;
+  LinkerMuteContent MuteContent = 16;
+  LinkerRandomMatchContent RandomMatchContent = 17;
+  LinkerUpdateUserSettingContent UpdateUserSettingContent = 18;
+  LinkerMicIdxUpdateContent MicIdxUpdateContent = 19;
+  LinkerListChangeContent ListChangeContent = 20;
+ // CohostListChangeContent CohostListChangeContent = 21;
+  LinkerMediaChangeContent MediaChangeContent = 22;
+  LinkerAcceptNoticeContent ReplyAcceptNoticeContent = 23;
+  LinkerSysKickOutContent SysKickOutContent = 101;
+ // LinkmicUserToastContent UserToastContent = 102;
+  string Extra = 200;
+  int64 ExpireTimestamp = 201;
+  string TransferExtra = 202;
 }
 
 //@WebcastLinkLayerMessage

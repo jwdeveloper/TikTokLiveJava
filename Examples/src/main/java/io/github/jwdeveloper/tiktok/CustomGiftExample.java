@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 
 public class CustomGiftExample {
     /**
@@ -38,7 +39,20 @@ public class CustomGiftExample {
                 {
                     liveClient.disconnect();
                 })
+                .onWebsocketResponse((liveClient, event) ->
+                {
+                    var packets =event.getResponse().getMessagesList();
+                    for(var packet : packets)
+                    {
+                        var name = packet.getMethod();
+                        var data = packet.getPayload();
+                        if(name.equals("WebcastGiftMessage"))
+                        {
+                         //   var message = WebcastGiftMessage.parseFrom(data);
 
+                        }
+                    }
+                })
                 .onGift((liveClient, event) ->
                 {
                     liveClient.getLogger().info(event.getGift().getName());

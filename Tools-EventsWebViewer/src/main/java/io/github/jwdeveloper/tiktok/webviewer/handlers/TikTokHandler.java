@@ -49,12 +49,12 @@ public class TikTokHandler {
         context.status(200);
     }
 
-    public void disconnect(Context context) throws SQLException {
+    public void disconnect(Context context){
         tikTokManager.disconnect();
         context.status(200);
     }
 
-    public void events(Context context) throws SQLException {
+    public void events(Context context)  {
         var events = tikTokManager.getEventsNames();
         var gson = getGson();
         var result = gson.toJson(events);

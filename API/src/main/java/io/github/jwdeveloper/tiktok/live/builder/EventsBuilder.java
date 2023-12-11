@@ -38,6 +38,13 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandl
 
 public interface EventsBuilder<T> {
 
+    /**
+     *  Method used to register own custom events
+     * @param eventClazz event class
+     * @param event action
+     */
+    <E extends TikTokEvent> T onCustomEvent(Class<E> eventClazz, EventConsumer<E> event);
+
     T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event);
 
     T onComment(EventConsumer<TikTokCommentEvent> event);
@@ -50,6 +57,7 @@ public interface EventsBuilder<T> {
 
 
     T onGiftCombo(EventConsumer<TikTokGiftComboEvent> event);
+
     T onGift(EventConsumer<TikTokGiftEvent> event);
 
     T onQuestion(EventConsumer<TikTokQuestionEvent> event);
@@ -66,7 +74,7 @@ public interface EventsBuilder<T> {
 
     T onShare(EventConsumer<TikTokShareEvent> event);
 
-  //  T onChest(EventConsumer<TikTokChestEvent> event);
+    //  T onChest(EventConsumer<TikTokChestEvent> event);
 
     T onLivePaused(EventConsumer<TikTokLivePausedEvent> event);
 
@@ -81,9 +89,8 @@ public interface EventsBuilder<T> {
     T onDisconnected(EventConsumer<TikTokDisconnectedEvent> event);
 
     T onError(EventConsumer<TikTokErrorEvent> event);
+
     T onEvent(EventConsumer<TikTokEvent> event);
-
-
 
 
     // TODO Figure out how those events works

@@ -25,8 +25,10 @@ package io.github.jwdeveloper.tiktok.utils;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
+import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 
 import java.awt.*;
+import java.time.Duration;
 import java.util.ArrayList;
 
 public class JsonUtil {
@@ -34,13 +36,25 @@ public class JsonUtil {
         return new GsonBuilder()
                 .addSerializationExclusionStrategy(new ExclusionStrategy() {
                     @Override
-                    public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+                    public boolean shouldSkipField(FieldAttributes fieldAttributes)
+                    {
+
                         return false;
                     }
 
                     @Override
-                    public boolean shouldSkipClass(Class<?> aClass) {
-                        return aClass.equals(Image.class);
+                    public boolean shouldSkipClass(Class<?> aClass)
+                    {
+                        if(aClass.equals(Image.class))
+                        {
+                            return true;
+                        }
+                        if(aClass.equals(MessageMetaData.class))
+                        {
+                            return true;
+                        }
+
+                        return false;
                     }
                 })
                 .disableHtmlEscaping()

@@ -28,7 +28,7 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandlerRegistration;
+import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPushFrame;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
@@ -44,32 +44,21 @@ import java.util.Optional;
 
 public class TikTokWebSocketListener extends WebSocketClient {
 
-    private final TikTokMessageHandlerRegistration webResponseHandler;
+    private final TikTokMessageHandler messageHandler;
     private final TikTokEventObserver tikTokEventHandler;
     private final LiveClient tikTokLiveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
                                    int connectTimeout,
-                                   TikTokMessageHandlerRegistration webResponseHandler,
+                                   TikTokMessageHandler messageHandler,
                                    TikTokEventObserver tikTokEventHandler,
                                    LiveClient tikTokLiveClient) {
         super(serverUri, new Draft_6455(), httpHeaders,connectTimeout);
-        this.webResponseHandler = webResponseHandler;
+        this.messageHandler = messageHandler;
         this.tikTokEventHandler = tikTokEventHandler;
         this.tikTokLiveClient = tikTokLiveClient;
     }
-
-
-    @Override
-    public void onOpen(ServerHandshake serverHandshake) {
-        tikTokEventHandler.publish(tikTokLiveClient,new TikTokConnectedEvent());
-        if(isNotClosing())
-        {
-            sendPing();
-        }
-    }
-
 
     @Override
     public void onMessage(ByteBuffer bytes)
@@ -84,6 +73,19 @@ public class TikTokWebSocketListener extends WebSocketClient {
             sendPing();
         }
     }
+
+
+    @Override
+    public void onOpen(ServerHandshake serverHandshake) {
+        tikTokEventHandler.publish(tikTokLiveClient,new TikTokConnectedEvent());
+        if(isNotClosing())
+        {
+            sendPing();
+        }
+    }
+
+
+
 
     @Override
     public void onClose(int i, String s, boolean b) {
@@ -114,7 +116,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
            // sendAckId(webResponse.getFetchInterval());
         }
 
-        webResponseHandler.handle(tikTokLiveClient, webResponse);
+        messageHandler.handle(tikTokLiveClient, webResponse);
     }
 
     private Optional<WebcastPushFrame> getWebcastWebsocketMessage(byte[] buffer) {

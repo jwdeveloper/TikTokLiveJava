@@ -22,33 +22,65 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.data.events.TikTokSubNotifyEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
+import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.logging.Level;
 
-public class SimpleExample
-{
-    public static String TIKTOK_HOSTNAME = "adasdsadadadasdasdsadasdasad";
+public class SimpleExample {
+    public static String TIKTOK_HOSTNAME = "bangbetmenygy";
+
     public static void main(String[] args) throws IOException {
 
         showLogo();
         // set tiktok username
 
 
+
+
+        /*
         //Optional checking if host name is correct
         if(TikTokLive.isHostNameValid(TIKTOK_HOSTNAME))
         {
             System.out.println("user name exists!");
         }
+         */
 
-        //Optional checking if live is online
-        if(TikTokLive.isLiveOnline(TIKTOK_HOSTNAME))
-        {
+        // Optional checking if live is online
+        if (TikTokLive.isLiveOnline(TIKTOK_HOSTNAME)) {
             System.out.println("Live is online!");
         }
+
+
+        TikTokLive.newClient("test")
+                .onWebsocketResponse((liveClient, event) ->
+                {
+                    var response = event.getResponse();
+                    for (var message : response.getMessagesList()) {
+                        var name = message.getMethod();
+                        var binaryData = message.getPayload();
+                        System.out.println("Event name: " + name);
+                        if (name.equals("WebcastGiftEvent")) {
+                            try {
+                                WebcastGiftMessage giftMessage = WebcastGiftMessage.parseFrom(binaryData);
+                                var giftName = giftMessage.getGift().getName();
+                                var giftId = giftMessage.getGiftId();
+                                var userName = giftMessage.getUser().getNickname();
+                                System.out.println("Gift: "+giftName+" id: "+giftId+" from user: "+userName);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Mapping error", e);
+                            }
+                        }
+                    }
+                }).buildAndConnect();
 
 
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
@@ -73,18 +105,42 @@ public class SimpleExample
 
                     //clientSettings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
+                .onConnected((liveClient, event) ->
+                {
+                    for (var gift : liveClient.getGiftManager().getGifts()) {
+                        gift.getPicture().downloadImageAsync().thenAccept(image ->
+                        {
+
+                        });
+                    }
+                })
+                .onWebsocketMessage((liveClient, event) ->
+                {
+
+
+                    var tiktokLiveEvent = event.getEvent();
+                    if (tiktokLiveEvent instanceof TikTokSubNotifyEvent e) {
+                        System.out.println("it was subscrible event");
+                    }
+
+                })
+                .onWebsocketResponse((liveClient, event) ->
+                {
+                    event.getResponse();
+                })
                 .onGift((liveClient, event) ->
                 {
                     switch (event.getGift()) {
                         case ROSE -> print(ConsoleColors.RED, "Rose!");
                         case GG -> print(ConsoleColors.YELLOW, " GOOD GAME!");
-                        case TIKTOK -> print(ConsoleColors.CYAN,"Thanks for TikTok");
-                        default -> print(ConsoleColors.GREEN, "[Thanks for gift] ", ConsoleColors.YELLOW, event.getGift().getName(), "x", event.getCombo());
+                        case TIKTOK -> print(ConsoleColors.CYAN, "Thanks for TikTok");
+                        default ->
+                                print(ConsoleColors.GREEN, "[Thanks for gift] ", ConsoleColors.YELLOW, event.getGift().getName(), "x", event.getCombo());
                     }
                 })
                 .onGiftCombo((liveClient, event) ->
                 {
-                    print(ConsoleColors.RED,"GIFT COMBO",event.getGift().getName(),event.getCombo());
+                    print(ConsoleColors.RED, "GIFT COMBO", event.getGift().getName(), event.getCombo());
                 })
                 .onConnected((client, event) ->
                 {
@@ -92,7 +148,7 @@ public class SimpleExample
                 })
                 .onDisconnected((liveClient, event) ->
                 {
-                    print(ConsoleColors.RED,"[Disconnected]");
+                    print(ConsoleColors.RED, "[Disconnected]");
                 })
                 .onRoomInfo((liveClient, event) ->
                 {
@@ -130,9 +186,8 @@ public class SimpleExample
         System.out.println(sb);
     }
 
-    private static void showLogo()
-    {
-        System.out.println(ConsoleColors.GREEN+"""
+    private static void showLogo() {
+        System.out.println(ConsoleColors.GREEN + """
                                 
                  _____ _ _    _____     _    _     _          \s
                 |_   _(_) | _|_   _|__ | | _| |   (_)_   _____\s

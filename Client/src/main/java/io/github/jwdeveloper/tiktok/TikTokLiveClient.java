@@ -131,6 +131,7 @@ public class TikTokLiveClient implements LiveClient {
 
         setState(ConnectionState.CONNECTING);
 
+
         apiService.updateSessionId();
 
         if (clientSettings.getRoomId() != null) {

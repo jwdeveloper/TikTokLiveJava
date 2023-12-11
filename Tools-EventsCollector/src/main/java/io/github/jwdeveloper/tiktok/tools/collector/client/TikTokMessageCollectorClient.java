@@ -31,6 +31,6 @@ public class TikTokMessageCollectorClient
 
     public static TikTokMessagessCollectorBuilder create(MessageCollector messageCollector, String outputName)
     {
-        return new TikTokMessagessCollectorBuilder(outputName);
+        return new TikTokMessagessCollectorBuilder(messageCollector,outputName);
     }
 }

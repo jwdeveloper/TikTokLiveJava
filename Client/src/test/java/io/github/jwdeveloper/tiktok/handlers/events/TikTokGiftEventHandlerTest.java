@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
+import io.github.jwdeveloper.tiktok.mappers.events.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.messages.data.GiftStruct;
 import io.github.jwdeveloper.tiktok.messages.data.Image;
 import io.github.jwdeveloper.tiktok.messages.data.User;
@@ -124,5 +125,7 @@ class TikTokGiftEventHandlerTest {
         builder.setGift(giftBuilder);
         return builder.build();
     }
+
+
 
 }
