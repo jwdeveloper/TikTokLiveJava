@@ -610,7 +610,7 @@ message WebcastUnauthorizedMemberMessage {
   string nickName = 4;
   Text enterText = 5;
 }
-S
+
 //@WebcastMsgDetectMessage
 message WebcastMsgDetectMessage {
   Common common = 1;
