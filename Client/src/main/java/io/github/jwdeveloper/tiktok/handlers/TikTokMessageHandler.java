@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.handlers;
 
 
+import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
@@ -88,10 +89,10 @@ public abstract class TikTokMessageHandler {
         stopwatch.start();
         var events = handler.handle(message.getPayload().toByteArray());
         var handlingTimeInMs = stopwatch.stop();
-        var metadata = new TikTokWebsocketMessageEvent.MetaData(Duration.ofNanos(handlingTimeInMs));
+        var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
 
         for (var event : events) {
-            tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(event, message, metadata));
+            tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(message, event, metadata));
             tikTokEventHandler.publish(client, event);
         }
     }

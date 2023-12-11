@@ -27,8 +27,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 
-public class MessageUtil
-{
+public class MessageUtil {
     public static String getContent(WebcastResponse.Message message) {
         try {
             var methodName = message.getMethod();
@@ -38,7 +37,7 @@ public class MessageUtil
             return JsonUtil.messageToJson(deserialized);
         } catch (Exception ex) {
 
-            return ConsoleColors.RED+ "Can not find mapper for "+message.getMethod();
+            return ConsoleColors.RED + "Can not find mapper for " + message.getMethod();
         }
     }
 
@@ -49,11 +48,41 @@ public class MessageUtil
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", byte[].class);
             var deserialized = parseMethod.invoke(null, bytes);
             return JsonUtil.messageToJson(deserialized);
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             var sb = new StringBuilder();
-            sb.append("Can not find mapper for "+methodName);
+            sb.append("Can not find mapper for " + methodName);
             sb.append("\n");
+            try {
+                var files = com.google.protobuf.UnknownFieldSet.parseFrom(bytes);
+                for (var field : files.asMap().entrySet())
+                {
+                    var value = field.getValue();
+                    if(!value.getLengthDelimitedList().isEmpty())
+                    {
+                        sb.append(field.getKey()+" LengthDelimited "+value.getLengthDelimitedList()+" \n");
+                    }
+                    if(!value.getFixed32List().isEmpty())
+                    {
+                        sb.append(field.getKey()+" fixed32 "+value.getFixed32List()+" \n");
+                    }
+                    if(!value.getFixed64List().isEmpty())
+                    {
+                        sb.append(field.getKey()+" fixed64 "+value.getFixed64List()+" \n");
+                    }
+                    if(!value.getGroupList().isEmpty())
+                    {
+                        sb.append(field.getKey()+" group "+value.getGroupList()+" \n");
+                    }
+                    if(!value.getVarintList().isEmpty())
+                    {
+                        sb.append(field.getKey()+" varint "+value.getVarintList()+" \n");
+                    }
+                }
+            } catch (Exception e) {
+               sb.append("Error while getting unknown fileds "+e.getMessage());
+            }
+
+
             //String jsonString = JsonFormat.printToString(protobufData);
             return sb.toString();
         }

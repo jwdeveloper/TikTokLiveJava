@@ -39,7 +39,7 @@ public class TikTokManager {
     TikTokMessagessCollectorBuilder client;
     MessageCollector msgCollector;
 
-    public static String dbName= "ab";
+    public static String dbName= "log";
 
     public TikTokManager() {
         msgCollector = new MessageCollector(dbName);
@@ -58,6 +58,11 @@ public class TikTokManager {
                     {
 
                     });
+                    liveClientBuilder.onWebsocketUnhandledMessage((liveClient, event) ->
+                    {
+                       System.out.println("UNHANDLED MESSAGE! "+event.getMessage().getMethod());
+                    });
+
                 })
                 .addUser(name);
         client.buildAndRun();

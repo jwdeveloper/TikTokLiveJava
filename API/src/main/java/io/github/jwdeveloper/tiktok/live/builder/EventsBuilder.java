@@ -38,6 +38,8 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandl
 
 public interface EventsBuilder<T> {
 
+    T onCustomEvent(EventConsumer<CustomEvent> event);
+
     T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event);
 
     T onComment(EventConsumer<TikTokCommentEvent> event);

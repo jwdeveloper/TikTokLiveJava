@@ -191,6 +191,12 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return build().connectAsync();
     }
 
+    public LiveClientBuilder onCustomEvent(EventConsumer<CustomEvent> event) {
+        tikTokEventHandler.subscribe(CustomEvent.class, event);
+        return this;
+    }
+
+
     public TikTokLiveClientBuilder onUnhandledSocial(
             EventConsumer<TikTokUnhandledSocialEvent> event) {
         tikTokEventHandler.subscribe(TikTokUnhandledSocialEvent.class, event);
@@ -202,6 +208,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         tikTokEventHandler.subscribe(TikTokChestEvent.class, event);
         return this;
     }
+
 
     public TikTokLiveClientBuilder onLinkMicFanTicket(
             EventConsumer<TikTokLinkMicFanTicketEvent> event) {

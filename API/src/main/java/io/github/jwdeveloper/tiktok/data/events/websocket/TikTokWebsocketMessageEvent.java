@@ -24,7 +24,9 @@ package io.github.jwdeveloper.tiktok.data.events.websocket;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,22 +36,32 @@ import java.time.Duration;
 
 
 /**
- * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
+ * Triggered every time TikTok sends data. Data incoming as protobuf message.
+ * You can deserialize the binary object depending on the use case.
  */
 @Getter
 @AllArgsConstructor
 @EventMeta(eventType = EventType.Debug)
-public class TikTokWebsocketMessageEvent extends TikTokEvent
-{
-    private TikTokEvent event;
+public class TikTokWebsocketMessageEvent extends TikTokEvent {
 
+    /*
+     * Original message that is coming from TikTok
+     *  message.method - Name of message type, for example "WebcastGiftMessage"
+     *  message.payload - Bytes array that contains actual data of message.
+     *                    Example of parsing, WebcastGiftMessage giftMessage = WebcastGiftMessage.parseFrom(message.getPayload());
+     */
     private WebcastResponse.Message message;
 
-    private MetaData metaData;
+    /*
+     * TikTokLiveJava event that was created from TikTok message data
+     * Example: TikTokGiftEvent
+     */
+    private TikTokEvent event;
 
-    @Value
-    public static class MetaData
-    {
-        Duration handlingTime;
-    }
+    /*
+     * Metadata information about mapping message to event, such as time and stuff
+     */
+    private MessageMetaData metaData;
+
+
 }

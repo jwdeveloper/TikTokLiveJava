@@ -33,6 +33,8 @@ import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.data.models.chest.Chest;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.handlers.events.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.handlers.events.TikTokRoomInfoEventHandler;
 import io.github.jwdeveloper.tiktok.handlers.events.TikTokSocialMediaEventHandler;
@@ -63,6 +65,21 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
     }
 
     public void init() {
+
+
+        registerMapping(WebcastGiftMessage.class, bytes ->
+        {
+            try {
+                WebcastGiftMessage tiktokData = WebcastGiftMessage.parseFrom(bytes);
+
+                io.github.jwdeveloper.tiktok.messages.data.User tiktokProtocolBufferUser = tiktokData.getUser();
+                io.github.jwdeveloper.tiktok.data.models.users.User tiktokLiveJavaUser = User.map(tiktokProtocolBufferUser);
+
+                return new CustomEvent(tiktokLiveJavaUser, "hello word");
+            } catch (Exception e) {
+                throw new TikTokLiveException("Unable to parse our custom event", e);
+            }
+        });
 
         //ConnectionEvents events
         registerMapping(WebcastControlMessage.class, this::handleWebcastControlMessage);
@@ -105,7 +122,7 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
         registerMapping(WebcastImDeleteMessage.class, TikTokIMDeleteEvent.class);
         registerMapping(WebcastQuestionNewMessage.class, TikTokQuestionEvent.class);
         registerMappings(WebcastEnvelopeMessage.class, this::handleEnvelop);
-        registerMapping(WebcastSubNotifyMessage.class, TikTokSubNotifyEvent.class);
+        registerMapping(WebcastSubNotifyMessage.class, TikTokSubscribeEvent.class);
         registerMapping(WebcastEmoteChatMessage.class, TikTokEmoteEvent.class);
     }
 
@@ -120,6 +137,9 @@ public class TikTokMessageHandlerRegistration extends TikTokMessageHandler {
             default -> new TikTokUnhandledControlEvent(message);
         };
     }
+
+
+
 
 
     @SneakyThrows

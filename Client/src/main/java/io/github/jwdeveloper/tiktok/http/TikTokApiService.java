@@ -22,6 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.data.dto.TikTokUserInfo;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
@@ -68,7 +71,14 @@ public class TikTokApiService {
         var params = new HashMap<>(clientSettings.getClientParameters());
         params.put("uniqueId", userName);
         params.put("sourceType", 54);
-        var roomData = tiktokHttpClient.getJsonFromTikTokApi("api-live/user/room/", params);
+        JsonObject roomData = null;
+        try {
+            roomData = tiktokHttpClient.getJsonFromTikTokApi("api-live/user/room/", params);
+        } catch (Exception e) {
+
+
+            throw new TikTokLiveRequestException("Failed to fetch  pre connection room information, it happens when TikTok temporary blocks you. Try to connect again in few minutes");
+        }
 
         var message = roomData.get("message").getAsString();
 
@@ -87,7 +97,7 @@ public class TikTokApiService {
         var status = user.get("status").getAsInt();
 
         var statusEnum = switch (status) {
-            case 2 ->  TikTokUserInfo.UserStatus.Live;
+            case 2 -> TikTokUserInfo.UserStatus.Live;
             case 3 -> TikTokUserInfo.UserStatus.LivePaused;
             case 4 -> TikTokUserInfo.UserStatus.Offline;
             default -> TikTokUserInfo.UserStatus.NotFound;
@@ -101,12 +111,18 @@ public class TikTokApiService {
         logger.info("Fetching RoomInfo");
         try {
             var response = tiktokHttpClient.getJsonFromWebcastApi("room/info/", clientSettings.getClientParameters());
+            if (!response.has("data")) {
+                var gson = new GsonBuilder().setPrettyPrinting().create();
+                var json = gson.toJson(response);
+                throw new TikTokLiveRequestException("room info response does not contains data field: \n"+ json);
+            }
+
             var mapper = new LiveRoomMetaMapper();
             var liveRoomMeta = mapper.map(response);
             logger.info("RoomInfo status -> " + liveRoomMeta.getStatus());
             return liveRoomMeta;
         } catch (Exception e) {
-            throw new TikTokLiveRequestException("Failed to fetch room info from WebCast, see stacktrace for more info.", e);
+            throw new TikTokLiveRequestException("Failed to fetch room info from WebCast server, see stacktrace for more info.", e);
         }
     }
 
@@ -119,7 +135,7 @@ public class TikTokApiService {
             clientSettings.getClientParameters().put("internal_ext", response.getInternalExt());
             return response;
         } catch (Exception e) {
-            throw new TikTokLiveRequestException("Failed to fetch client data", e);
+            throw new TikTokLiveRequestException("Failed to fetch live websocket connection data", e);
         }
     }
 }
