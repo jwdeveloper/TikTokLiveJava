@@ -442,7 +442,7 @@ message WebcastMemberMessage {
 //@WebcastPollMessage
 message WebcastPollMessage {
   Common common = 1;
-  int32 messageType = 2;
+  MessageType messageType = 2;
   int64 pollId = 3;
   PollStartContent startContent = 4;
   PollEndContent endContent = 5;
@@ -576,7 +576,7 @@ message WebcastLinkMicFanTicketMethod {
 //@WebcastLinkMicMethod
 message WebcastLinkMicMethod {
   Common common = 1;
-  int64 messageType = 2;
+  MessageType messageType = 2;
   string accessKey = 3;
   int64 anchorLinkmicId = 4;
   int64 userId = 5;
@@ -683,9 +683,9 @@ message WebcastSystemMessage {
 //@WebcastLinkMessage
 message WebcastLinkMessage {
   Common common = 1;
-  int64 MessageType = 2;
+  MessageType MessageType = 2;
   int64 LinkerId = 3;
-  int64 Scene = 4;
+  Scene Scene = 4;
   LinkerInviteContent InviteContent = 5;
   LinkerReplyContent ReplyContent = 6;
   LinkerCreateContent CreateContent = 7;
@@ -712,14 +712,34 @@ message WebcastLinkMessage {
   string TransferExtra = 202;
 }
 
-//@WebcastLinkLayerMessage
+
+// @WebcastLinkLayerMessage
 message WebcastLinkLayerMessage {
   Common common = 1;
-  LinkLayerMessageType messageType = 2;
+  MessageType messageType = 2; // Enum
   int64 channelId = 3;
+  Scene scene = 4; // Enum
+  CreateChannelContent createChannelContent = 100;
+  ListChangeContent listChangeContent = 102;
+  InviteContent inviteContent = 103;
+  ApplyContent applyContent = 104;
+  PermitApplyContent permitApplyContent = 105;
+  ReplyInviteContent replyInviteContent = 106;
+  KickOutContent kickOutContent = 107;
+  CancelApplyContent cancelApplyContent = 108;
+  CancelInviteContent cancelInviteContent = 109;
+  LeaveContent leaveContent = 110;
+  FinishChannelContent finishContent = 111;
+  JoinDirectContent joinDirectContent = 112;
+  JoinGroupContent joinGroupContent = 113;
+  PermitJoinGroupContent permitGroupContent = 114;
+  CancelJoinGroupContent cancelGroupContent = 115;
+  LeaveJoinGroupContent leaveGroupContent = 116;
+  P2PGroupChangeContent p2pGroupChangeContent = 117;
+  BusinessContent businessContent = 200;
 }
 
-
+// @RoomVerifyMessage
 message RoomVerifyMessage {
   Common common = 1;
   int32 action = 2;
