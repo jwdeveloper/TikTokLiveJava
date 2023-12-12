@@ -1000,7 +1000,7 @@ message LinkerCreateContent {
 
 message LinkerEnterContent {
   repeated User LinkedUsersList = 1;
-  //LinkmicMultiLiveEnum AnchorMultiLiveEnum = 2;
+ // LinkmicMultiLiveEnum AnchorMultiLiveEnum = 2;
  // Data.LinkmicUserSettingInfo AnchorSettingInfo = 3;
 }
 
@@ -1129,4 +1129,388 @@ message LinkerUpdateUserSettingContent {
 
 message LinkerWaitingListChangeContent {
 
+}
+
+
+message LinkmicUserSettingInfo {
+  int64 userId = 1;
+  int64 layout = 2; // @warning Enum not found, should be Layout
+  int64 fixMicNum = 3; // @warning Enum not found, should be FixMicNum
+  int64 allowRequestFromUser = 4; // @warning Enum not found, should be AllowRequestFromUser
+  int64 allowRequestFromFollowerOnly = 5; // @warning Enum not found, should be AllowRequestFromFollowerOnly
+  LinkmicApplierSortSetting applierSortSetting = 7; // Enum
+}
+
+
+message Player {
+  int64 roomId = 1;
+  int64 userId = 2;
+}
+
+message AllListUser {
+  repeated LinkLayerListUser linkedList = 2;
+  repeated LinkLayerListUser appliedList = 3;
+  repeated LinkLayerListUser invitedList = 4;
+  repeated LinkLayerListUser readyList = 5;
+}
+
+message LinkLayerListUser {
+  User user = 1;
+  string linkmicId = 2;
+  Position pos = 3;
+  int64 linkedTimeNano = 4;
+  string appVersion = 5;
+}
+
+message Position {
+  int32 type = 1;
+  LinkPosition link = 2;
+}
+
+message LinkPosition {
+  int32 position = 1;
+  int32 opt = 2;
+}
+
+message GroupPlayer {
+  int64 channelId = 1;
+  User user = 2;
+}
+
+message DSLConfig {
+  int32 sceneVersion = 1;
+  string layoutId = 2;
+}
+
+message GroupChannelAllUser {
+  int64 groupChannelId = 1;
+  repeated GroupChannelUser userList = 2;
+}
+
+message GroupChannelUser {
+  int64 channelId = 1;
+  GroupStatus status = 2; // Enum
+  TextType type = 3; // Enum
+  AllListUser allUser = 4;
+  int64 joinTime = 5;
+  int64 linkedTime = 6;
+  GroupPlayer ownerUser = 7;
+}
+
+message RTCExtraInfo {
+  RTCEngineConfig liveRtcEngineConfig = 1;
+  repeated RTCLiveVideoParam liveRtcVideoParamList = 2;
+  RTCBitrateMap rtcBitrateMap = 3;
+  int32 rtcFps = 4;
+  string rtcBusinessId = 8;
+  int32 interactClientType = 10;
+
+  message RTCEngineConfig {
+    string rtcAppId = 1;
+    string rtcUserId = 2;
+    string rtcToken = 3;
+    int64 rtcChannelId = 4;
+  }
+
+  message RTCLiveVideoParam {
+    int32 strategyId = 1;
+    RTCVideoParam params = 2;
+  }
+
+  message RTCVideoParam {
+    int32 width = 1;
+    int32 height = 2;
+    int32 fps = 3;
+    int32 bitrateKbps = 4;
+  }
+
+  message RTCBitrateMap {
+    int32 xx1 = 1;
+    int32 xx2 = 2;
+    int32 xx3 = 3;
+    int32 xx4 = 4;
+  }
+}
+
+message CreateChannelContent {
+  Player  owner = 1;
+  string ownerLinkMicId = 2;
+}
+
+message ListChangeContent {
+  TextType type = 1; // Enum
+  AllListUser list = 2;
+}
+
+message MultiLiveContent {
+  InviteBizContent inviteBizContent = 2;
+  ReplyBizContent replyBizContent = 3;
+  PermitBizContent permitBizContent = 4;
+  KickOutBizContent kickOutBizContent = 6;
+
+
+  message InviteBizContent {
+    LinkmicUserSettingInfo anchorSettingInfo = 1;
+    int64 inviteSource = 2; // @warning Enum not found, should be InviteSource
+    User operatorUserInfo = 3;
+    int64 operatorLinkAdminType = 4; // @warning Enum not found, should be OperatorLinkAdminType
+    User inviteeUserInfo = 5;
+  }
+
+
+  message ReplyBizContent {
+    int32 linkType = 1;
+    int32 isTurnOffInvitation = 2;
+    User replyUserInfo = 3;
+  }
+
+  message PermitBizContent {
+    LinkmicUserSettingInfo anchorSettingInfo = 1;
+    int64 expireTimestamp = 2;
+    User operatorUserInfo = 3;
+    int64 operatorLinkAdminType = 4; // @warning Enum not found, should be OperatorLinkAdminType
+  }
+
+  message KickOutBizContent {
+    User operatorUserInfo = 1;
+    int64 operatorLinkAdminType = 2; // @warning Enum not found, should be OperatorLinkAdminType
+    User kickPlayerUserInfo = 3;
+  }
+
+}
+
+
+message InviteContent {
+  Player  invitor = 1;
+  RTCExtraInfo inviteeRtcExtInfo = 2;
+  string invitorLinkMicId = 3;
+  string inviteeLinkMicId = 4;
+  bool isOwner = 5;
+  Position pos = 6;
+  DSLConfig dsl = 7;
+  User invitee = 8;
+  User operator = 9;
+}
+
+
+// @ApplyContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message ApplyContent {
+  Player  applier = 1;
+  string applierLinkMicId = 2;
+}
+
+
+// @PermitApplyContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message PermitApplyContent {
+  Player  permiter = 1;
+  string permiterLinkMicId = 2;
+  Position applierPos = 3;
+  ReplyStatus replyStatus = 4; // Enum
+  DSLConfig dsl = 5;
+  User applier = 6;
+  User operator = 7;
+  string applierLinkMicId = 8;
+}
+
+
+// @ReplyInviteContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message ReplyInviteContent {
+  Player  invitee = 1;
+  ReplyStatus replyStatus = 2; // Enum
+  string inviteeLinkMicId = 3;
+  Position inviteePos = 4;
+  Player  inviteOperatorUser = 5;
+}
+
+
+// @KickOutContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message KickOutContent {
+  Player  offliner = 1;
+  KickoutReason kickoutReason = 2; // Enum
+}
+
+
+// @CancelApplyContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message CancelApplyContent {
+  Player  applier = 1;
+  string applierLinkMicId = 2;
+}
+
+
+// @CancelInviteContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message CancelInviteContent {
+  Player  invitor = 1;
+  string invitorLinkMicId = 2;
+  string inviteeLinkMicId = 3;
+  int64 inviteSeqId = 4;
+  Player  invitee = 5;
+}
+
+
+// @LeaveContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message LeaveContent {
+  Player  leaver = 1;
+  int64 leaveReason = 2;
+}
+
+
+// @FinishChannelContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message FinishChannelContent {
+  Player  owner = 1;
+  int64 finishReason = 2;
+}
+
+
+// @JoinDirectContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message JoinDirectContent {
+  LinkLayerListUser joiner = 1;
+  AllListUser allUsers = 2;
+}
+
+
+// @LeaveJoinGroupContent
+// proto.webcast.im
+// C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+message LeaveJoinGroupContent {
+  GroupPlayer operator = 1;
+  int64 groupChannelId = 2;
+  string leaveSource = 3;
+}
+
+
+// @PermitJoinGroupContent
+// proto.webcast.im
+message PermitJoinGroupContent {
+  GroupPlayer approver = 1;
+  AgreeStatus agreeStatus = 2; // Enum
+  TextType type = 3; // Enum
+  repeated RTCExtraInfo groupExtInfoList = 4;
+  GroupChannelAllUser groupUser = 5;
+}
+
+
+// @CancelJoinGroupContent
+// proto.webcast.im
+message CancelJoinGroupContent {
+  repeated GroupPlayer leaverList = 1;
+  GroupPlayer operator = 2;
+  TextType type = 3; // Enum
+}
+
+
+
+message P2PGroupChangeContent {
+  repeated RTCExtraInfo groupExtInfoList = 1;
+  GroupChannelAllUser groupUser = 2;
+}
+
+
+message BusinessContent {
+  int64 overLength = 1;
+  MultiLiveContent multiLiveContent = 100;
+  CohostContent cohostContent = 200;
+
+  message CohostContent {
+    JoinGroupBizContent joinGroupBizContent = 1;
+
+  }
+
+  message JoinGroupBizContent {
+    int32 fromRoomAgeRestricted = 1;
+    Tag fromTag = 2;
+    PerceptionDialogInfo dialog = 3;
+    PunishEventInfo punishInfo = 4;
+    JoinGroupMessageExtra joinGroupMsgExtra = 101;
+  }
+
+  message Tag {
+    int32 tagType = 1;
+    string tagValue = 2;
+    string tagText = 3;
+  }
+
+  message PerceptionDialogInfo {
+    int64 iconType = 1; // @warning Enum not found, should be IconType
+    Text title = 2;
+    Text subTitle = 3;
+    Text adviceActionText = 4;
+    Text defaultActionText = 5;
+    string violationDetailUrl = 6;
+    int32 scene = 7;
+    int64 targetUserId = 8;
+    int64 targetRoomId = 9;
+    int64 countDownTime = 10;
+    bool showFeedback = 11;
+    repeated PerceptionFeedbackOption feedbackOptionsList = 12;
+    int64 policyTip = 13;
+  }
+
+  message PerceptionFeedbackOption {
+    int64 id = 1;
+    string contentKey = 2;
+  }
+
+  message JoinGroupMessageExtra {
+    int64 sourceType = 1;
+    RivalExtra extra = 2;
+    repeated RivalExtra otherUsersList = 3;
+
+
+    // @RivalExtra
+    // proto.webcast.im.JoinGroupMessageExtra
+    // C:\Users\ja\RiderProjects\TikTokProBufferGenerator\Application\output\sources\test.js
+    message RivalExtra {
+      int64 userCount = 4;
+      Image avatarThumb = 5;
+      string displayId = 6;
+      AuthenticationInfo authenticationInfo = 7;
+      string nickname = 8;
+      int64 followStatus = 9;
+      Hashtag hashtag = 10;
+      TopHostInfo topHostInfo = 11;
+      int64 userId = 12;
+      bool isBestTeammate = 13;
+
+      message AuthenticationInfo {
+        string customVerify = 1;
+        string enterpriseVerifyReason = 2;
+        Image authenticationBadge = 3;
+      }
+    }
+  }
+  message Hashtag {
+    int64 id = 1;
+    string title = 2;
+    Image image = 3;
+    HashtagNamespace namespace = 4; // Enum
+  }
+
+  message TopHostInfo {
+    string rankType = 1;
+    int64 topIndex = 2;
+  }
+}
+
+message JoinGroupContent {
+  GroupChannelAllUser groupUser = 1;
+  GroupPlayer joinUser = 2;
+  TextType type = 3; // Enum
 }
