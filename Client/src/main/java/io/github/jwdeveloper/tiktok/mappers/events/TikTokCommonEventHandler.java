@@ -65,9 +65,9 @@ public class TikTokCommonEventHandler
     public TikTokEvent handlePollEvent(byte[] msg) {
         var poolMessage = WebcastPollMessage.parseFrom(msg);
         return switch (poolMessage.getMessageType()) {
-            case 0 -> new TikTokPollStartEvent(poolMessage);
-            case 1 -> new TikTokPollEndEvent(poolMessage);
-            case 2 -> new TikTokPollUpdateEvent(poolMessage);
+            case MESSAGETYPE_SUBSUCCESS -> new TikTokPollStartEvent(poolMessage);
+            case MESSAGETYPE_ANCHORREMINDER -> new TikTokPollEndEvent(poolMessage);
+            case MESSAGETYPE_ENTERROOMEXPIRESOON -> new TikTokPollUpdateEvent(poolMessage);
             default -> new TikTokPollEvent(poolMessage);
         };
     }
