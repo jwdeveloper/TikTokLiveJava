@@ -73,7 +73,7 @@ Maven
          <dependency>
             <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
             <artifactId>Client</artifactId>
-             <version>1.0.7-Release</version>
+             <version>1.0.8-Release</version>
             <scope>compile</scope>
         </dependency>
    </dependencies>
@@ -90,7 +90,7 @@ dependencyResolutionManagement {
 	}
 
 dependencies {
-	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.0.7-Release'
+	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.0.8-Release'
 	}
 ```
 
