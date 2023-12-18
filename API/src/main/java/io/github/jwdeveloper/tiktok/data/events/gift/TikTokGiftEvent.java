@@ -33,7 +33,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
 
-/*
+/**
  * Triggered when user sends gifts that has
  *  no combo (most of expensive gifts)
  *  or if combo has finished
@@ -43,11 +43,13 @@ import lombok.Getter;
 public class TikTokGiftEvent extends TikTokHeaderEvent {
     private final Gift gift;
     private final User user;
+    private final User toUser;
     private final int combo;
     public TikTokGiftEvent(Gift gift, WebcastGiftMessage msg) {
         super(msg.getCommon());
         this.gift = gift;
         user = User.map(msg.getUser(), msg.getUserIdentity());
+        toUser = User.map(msg.getToUser());
         combo = msg.getComboCount();
     }
 }
