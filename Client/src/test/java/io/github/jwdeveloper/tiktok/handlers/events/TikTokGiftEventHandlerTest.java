@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.handlers.events;
 
+import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
@@ -49,42 +50,43 @@ class TikTokGiftEventHandlerTest {
     @BeforeAll
     public void before() {
         var manager = new TikTokGiftManager(Logger.getLogger("x"));
+        var info = new TikTokRoomInfo();
+        info.setHost(new io.github.jwdeveloper.tiktok.data.models.users.User(123L, "test", new Picture("")));
         manager.registerGift(123, "example", 123, new Picture("image.webp"));
-        handler = new TikTokGiftEventHandler(manager);
+        handler = new TikTokGiftEventHandler(manager, info);
     }
 
     @Test
     void shouldHandleGifts() {
-        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1,false);
+        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1, false);
         var result = handler.handleGift(message);
 
         Assertions.assertEquals(2, result.size());
 
         var event = (TikTokGiftEvent) result.get(0);
         var gift = event.getGift();
-        Assertions.assertEquals("image-new.png",gift.getPicture().getLink());
-        Assertions.assertEquals(123,gift.getId());
+        Assertions.assertEquals("image-new.png", gift.getPicture().getLink());
+        Assertions.assertEquals(123, gift.getId());
     }
 
     @Test
     void shouldHandleStrakableGift() {
-        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1,true);
+        var message = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1, true);
         var result = handler.handleGift(message);
 
         Assertions.assertEquals(1, result.size());
 
         var event = (TikTokGiftEvent) result.get(0);
         var gift = event.getGift();
-        Assertions.assertEquals("image-new.png",gift.getPicture().getLink());
-        Assertions.assertEquals(123,gift.getId());
+        Assertions.assertEquals("image-new.png", gift.getPicture().getLink());
+        Assertions.assertEquals(123, gift.getId());
     }
 
     @Test
-    void shouldHandleStrike()
-    {
-        var message1 = getGiftMessage("example-new-name", 123, "image-new.png", 1, 1,true);
-        var message2 = getGiftMessage("example-new-name", 123, "image-new.png", 2, 1,true);
-        var message3 = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1,true);
+    void shouldHandleStrike() {
+        var message1 = getGiftMessage("example-new-name", 123, "image-new.png", 1, 1, true);
+        var message2 = getGiftMessage("example-new-name", 123, "image-new.png", 2, 1, true);
+        var message3 = getGiftMessage("example-new-name", 123, "image-new.png", 0, 1, true);
 
         var result1 = handler.handleGift(message1);
         var result2 = handler.handleGift(message2);
@@ -96,9 +98,9 @@ class TikTokGiftEventHandlerTest {
         Assertions.assertEquals(2, result3.size());
         var event3 = (TikTokGiftComboEvent) result3.get(0);
 
-        Assertions.assertEquals(GiftSendType.Begin,event1.getComboState());
-        Assertions.assertEquals(GiftSendType.Active,event2.getComboState());
-        Assertions.assertEquals(GiftSendType.Finished,event3.getComboState());
+        Assertions.assertEquals(GiftSendType.Begin, event1.getComboState());
+        Assertions.assertEquals(GiftSendType.Active, event2.getComboState());
+        Assertions.assertEquals(GiftSendType.Finished, event3.getComboState());
     }
 
 
@@ -116,7 +118,7 @@ class TikTokGiftEventHandlerTest {
         giftBuilder.setId(giftId);
         giftBuilder.setName(giftName);
         giftBuilder.setImage(Image.newBuilder().addUrlList(giftImage).build());
-        giftBuilder.setType(streakable?1:0);
+        giftBuilder.setType(streakable ? 1 : 0);
         userBuilder.setId(userId);
 
         builder.setGiftId(giftId);
@@ -125,7 +127,6 @@ class TikTokGiftEventHandlerTest {
         builder.setGift(giftBuilder);
         return builder.build();
     }
-
 
 
 }
