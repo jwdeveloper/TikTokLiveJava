@@ -47,6 +47,9 @@ public interface TikTokMapper {
 
     TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, Function<byte[], TikTokEvent> onMapping);
 
+    TikTokMapperModel forAnyMessage();
+
+
     boolean isRegistered(String mapperName);
 
     <T extends GeneratedMessageV3> boolean isRegistered(Class<T> mapperName);

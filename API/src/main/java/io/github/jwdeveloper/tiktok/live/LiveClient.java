@@ -57,7 +57,7 @@ public interface LiveClient {
 
 
     /**
-     * You to manually trigger event
+     * Use to manually invoke event
      */
      void publishEvent(TikTokEvent event);
 
