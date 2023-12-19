@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 
@@ -54,6 +55,11 @@ public interface LiveClient {
      */
     void disconnect();
 
+
+    /**
+     * You to manually trigger event
+     */
+     void publishEvent(TikTokEvent event);
 
     /**
      * Get information about gifts

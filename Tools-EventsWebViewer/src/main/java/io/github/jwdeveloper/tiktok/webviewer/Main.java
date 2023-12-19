@@ -22,13 +22,35 @@
  */
 package io.github.jwdeveloper.tiktok.webviewer;
 
+import io.github.jwdeveloper.tiktok.tools.db.TikTokDatabase;
 import io.github.jwdeveloper.tiktok.webviewer.handlers.TikTokHandler;
+import io.github.jwdeveloper.tiktok.webviewer.services.TikTokCollectorService;
+import io.github.jwdeveloper.tiktok.webviewer.services.TikTokDatabaseService;
 import io.javalin.Javalin;
 
-public class Main {
-    public static void main(String[] args) {
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
-        var manager = new TikTokManager();
+public class Main {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException, IOException {
+        var settings = new Settings();
+        settings.setUserName("szalonamoniaxx");
+        settings.setSessionTag("battle");
+        settings.setDbName("db-battle");
+        settings.setPort(8002);
+
+        var db = new TikTokDatabase(settings.getDbName());
+        db.connect();
+
+        var service = new TikTokDatabaseService(db);
+        var collectorService = new TikTokCollectorService(settings, db);
+        var handler = new TikTokHandler(service, settings, collectorService);
+        //  var manager = new TikTokManager(service);
         var app = Javalin.create(config ->
         {
             config.plugins.enableCors(corsContainer ->
@@ -39,13 +61,19 @@ public class Main {
                 });
             });
             config.staticFiles.add("/public");
-        }).start(8001);
+        }).start(settings.getPort());
 
-        var handler = new TikTokHandler(manager);
+        app.get("/tiktok/status", handler::connectionStatus);
         app.get("/tiktok/connect", handler::connect);
         app.get("/tiktok/disconnect", handler::disconnect);
-        app.get("/tiktok/events", handler::events);
-        app.get("/tiktok/events/pages", handler::eventPages);
-        app.get("/tiktok/events/message", handler::eventMessage);
+
+        app.get("/tiktok/data/pages", handler::getDataPages);
+        app.get("/tiktok/data/names", handler::getDataNames);
+        app.get("/tiktok/data", handler::getData);
+
+        app.get("/tiktok/update", handler::updateSearch);
+        app.get("/tiktok/sessions", handler::getUserSessionTags);
+        app.get("/tiktok/users", handler::getUsers);
+        app.get("/tiktok/data-types", handler::getDataTypes);
     }
 }

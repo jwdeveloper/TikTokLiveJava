@@ -56,7 +56,7 @@ public class ClientSettings {
      * Whether to print Logs to Console
      */
 
-    private boolean printToConsole;
+    private boolean printToConsole = true;
     /**
      * LoggingLevel for Logs
      */
@@ -64,7 +64,7 @@ public class ClientSettings {
 
 
     /**
-     *  Optional: Use it if you need to change TikTok live hostname in builder
+     * Optional: Use it if you need to change TikTok live hostname in builder
      */
     private String hostName;
 

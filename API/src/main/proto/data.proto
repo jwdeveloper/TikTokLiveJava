@@ -64,8 +64,8 @@ message Text {
     string stringValue = 11;
     oneof textPieceType
     {
-        TextPieceUser userValue = 21;
-        TextPieceGift giftValue = 22;
+      TextPieceUser userValue = 21;
+      TextPieceGift giftValue = 22;
     }
     TextPiecePatternRef patternRefValue = 24;
   }
@@ -155,7 +155,7 @@ message BadgeStruct {
 
   message ProfileCardPanel {
     bool useNewProfileCardStyle = 1;
-  //  BadgeTextPosition badgeTextPosition = 2; // Enum
+    //  BadgeTextPosition badgeTextPosition = 2; // Enum
     ProjectionConfig projectionConfig = 3;
     ProfileContent profileContent = 4;
   }
@@ -1000,8 +1000,8 @@ message LinkerCreateContent {
 
 message LinkerEnterContent {
   repeated User LinkedUsersList = 1;
- // LinkmicMultiLiveEnum AnchorMultiLiveEnum = 2;
- // Data.LinkmicUserSettingInfo AnchorSettingInfo = 3;
+  // LinkmicMultiLiveEnum AnchorMultiLiveEnum = 2;
+  // Data.LinkmicUserSettingInfo AnchorSettingInfo = 3;
 }
 
 message LinkerInviteContent {
@@ -1018,15 +1018,15 @@ message LinkerInviteContent {
   //Data.LinkmicMultiLiveEnum AnchorMultiLiveEnum = 11;
   //Data.LinkmicUserSettingInfo AnchorSettingInfo = 12;
   string InviterLinkmicIdStr = 13;
-//  InviteTopHostInfo FromTopHostInfo = 16;
+  //  InviteTopHostInfo FromTopHostInfo = 16;
   int64 ActionId = 17;
- // repeated LinkmicUserInfo LinkedUsersList = 18;
- // Data.PerceptionDialogInfo Dialog = 19;
- // Data.PunishEventInfo PunishInfo = 20;
+  // repeated LinkmicUserInfo LinkedUsersList = 18;
+  // Data.PerceptionDialogInfo Dialog = 19;
+  // Data.PunishEventInfo PunishInfo = 20;
   int32 FromRoomAgeRestricted = 21;
- // Data.Tag FromTag = 22;
- // repeated Data.CohostABTestSetting AbTestSettingList = 23;
- // Data.LinkerInviteMessageExtra LinkerInviteMsgExtra = 101;
+  // Data.Tag FromTag = 22;
+  // repeated Data.CohostABTestSetting AbTestSettingList = 23;
+  // Data.LinkerInviteMessageExtra LinkerInviteMsgExtra = 101;
 }
 
 message LinkerKickOutContent {
@@ -1046,17 +1046,17 @@ message LinkerLinkedListChangeContent {
 }
 
 message LinkerListChangeContent {
-  repeated User LinkedUsersList = 1;
-  repeated User AppliedUsersList = 2;
-  repeated User ConnectingUsersList = 3;
+  repeated LinkLayerListUser LinkedUsersList = 1;
+  repeated LinkLayerListUser AppliedUsersList = 2;
+  repeated LinkLayerListUser ConnectingUsersList = 3;
 }
 
 message LinkerMediaChangeContent {
- // MicIdxOperation Op = 1;
+  // MicIdxOperation Op = 1;
   int64 ToUserId = 2;
   int64 AnchorId = 3;
   int64 RoomId = 4;
- // LinkerSceneType ChangeScene = 5;
+  // LinkerSceneType ChangeScene = 5;
 }
 
 message LinkerMicIdxUpdateContent {
@@ -1064,14 +1064,14 @@ message LinkerMicIdxUpdateContent {
 }
 
 message LinkerMicIdxUpdateInfo {
- // MicIdxOperation Op = 1;
+  // MicIdxOperation Op = 1;
   int64 UserId = 2;
   int64 MicIdx = 3;
 }
 
 message LinkerMuteContent {
   int64 UserId = 1;
- // Data.MuteStatus Status = 2;
+  // Data.MuteStatus Status = 2;
 }
 
 message LinkerRandomMatchContent {
@@ -1085,9 +1085,9 @@ message LinkerRandomMatchContent {
 message LinkerReplyContent {
   int64 FromUserId = 1;
   int64 FromRoomId = 2;
- // LinkmicInfo FromUserLinkmicInfo = 3;
+  // LinkmicInfo FromUserLinkmicInfo = 3;
   int64 ToUserId = 4;
-//  LinkmicInfo ToUserLinkmicInfo = 5;
+  //  LinkmicInfo ToUserLinkmicInfo = 5;
   int64 LinkType = 6;
   int64 ReplyStatus = 7;
   LinkerSetting LinkerSetting = 8;
@@ -1096,10 +1096,10 @@ message LinkerReplyContent {
   map<int64, string> RtcExtInfoMap = 11;
   LinkerMicIdxUpdateInfo InviteeMicIdxUpdateInfo = 12;
   map<int64, int64> ApplierMicIdxInfoMap = 13;
-//  Data.LinkmicMultiLiveEnum AnchorMultiLiveEnum = 14;
-//  Data.LinkmicUserSettingInfo AnchorSettingInfo = 15;
+  //  Data.LinkmicMultiLiveEnum AnchorMultiLiveEnum = 14;
+  //  Data.LinkmicUserSettingInfo AnchorSettingInfo = 15;
   int64 ActionId = 16;
- // repeated LinkmicUserInfo LinkedUsersList = 17;
+  // repeated LinkmicUserInfo LinkedUsersList = 17;
   int64 SourceType = 18;
 }
 
@@ -1124,7 +1124,7 @@ message LinkerUpdateUserContent {
 }
 
 message LinkerUpdateUserSettingContent {
- // Data.LinkmicUserSettingInfo UpdateUserSettingInfo = 1;
+  // Data.LinkmicUserSettingInfo UpdateUserSettingInfo = 1;
 }
 
 message LinkerWaitingListChangeContent {
@@ -1156,10 +1156,11 @@ message AllListUser {
 
 message LinkLayerListUser {
   User user = 1;
-  string linkmicId = 2;
+  int64 linkmicId = 2;
   Position pos = 3;
   int64 linkedTimeNano = 4;
   string appVersion = 5;
+  int64 magicNumber1 = 7;
 }
 
 message Position {

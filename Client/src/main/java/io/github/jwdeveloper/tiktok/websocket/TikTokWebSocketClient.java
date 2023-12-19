@@ -39,7 +39,6 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 public class TikTokWebSocketClient implements SocketClient {
-    private final Logger logger;
     private final ClientSettings clientSettings;
     private final TikTokCookieJar tikTokCookieJar;
     private final TikTokMessageHandler messageHandler;
@@ -48,12 +47,11 @@ public class TikTokWebSocketClient implements SocketClient {
     private TikTokWebSocketPingingTask pingingTask;
     private boolean isConnected;
 
-    public TikTokWebSocketClient(Logger logger,
+    public TikTokWebSocketClient(
                                  TikTokCookieJar tikTokCookieJar,
                                  ClientSettings clientSettings,
                                  TikTokMessageHandler messageHandler,
                                  TikTokEventObserver tikTokEventHandler) {
-        this.logger = logger;
         this.tikTokCookieJar = tikTokCookieJar;
         this.clientSettings = clientSettings;
         this.messageHandler = messageHandler;
