@@ -1,9 +1,9 @@
 package io.github.jwdeveloper.tiktok.mappers;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.mappers.events.AfterMappingAction;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingAction;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.data.AfterMappingAction;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingAction;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 
 import java.util.List;
 import java.util.function.Function;

@@ -32,7 +32,7 @@ import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.data.models.RankingUser;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLiveIntroMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;

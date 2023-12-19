@@ -6,10 +6,10 @@ import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
 import io.github.jwdeveloper.tiktok.utils.ProtocolUtils;
 
-public class TikTokLiveMapperUtils implements TikTokMapperHelper {
+public class TikTokLiveMapperHelper implements TikTokMapperHelper {
     private final TikTokGenericEventMapper genericMapper;
 
-    public TikTokLiveMapperUtils(TikTokGenericEventMapper genericMapper) {
+    public TikTokLiveMapperHelper(TikTokGenericEventMapper genericMapper) {
         this.genericMapper = genericMapper;
     }
 

@@ -24,8 +24,8 @@ package io.github.jwdeveloper.tiktok.mappers;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingAction;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingAction;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 
 import java.util.function.Function;
 

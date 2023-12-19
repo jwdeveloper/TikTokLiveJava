@@ -54,9 +54,9 @@ import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
 import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
-import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapperUtils;
+import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapperHelper;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokCommonEventHandler;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokRoomInfoEventHandler;
@@ -188,7 +188,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     public TikTokLiveMapper createMapper(GiftManager giftManager, TikTokRoomInfo roomInfo) {
         var eventMapper = new TikTokGenericEventMapper();
-        var mapper = new TikTokLiveMapper(new TikTokLiveMapperUtils(eventMapper));
+        var mapper = new TikTokLiveMapper(new TikTokLiveMapperHelper(eventMapper));
 
         //ConnectionEvents events
         var commonHandler = new TikTokCommonEventHandler();

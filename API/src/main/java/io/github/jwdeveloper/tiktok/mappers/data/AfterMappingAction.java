@@ -1,4 +1,4 @@
-package io.github.jwdeveloper.tiktok.mappers.events;
+package io.github.jwdeveloper.tiktok.mappers.data;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 

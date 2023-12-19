@@ -31,7 +31,7 @@ import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
-import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
