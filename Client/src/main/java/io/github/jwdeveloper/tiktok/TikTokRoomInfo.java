@@ -62,7 +62,7 @@ public class TikTokRoomInfo implements LiveRoomInfo {
 
     @Override
     public User getHostUser() {
-        return null;
+        return host;
     }
 
     public void updateRanking(List<RankingUser> rankingUsers) {

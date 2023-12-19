@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.http.TikTokHttpResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
@@ -41,23 +42,25 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
-import io.github.jwdeveloper.tiktok.live.GiftManager;
-import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
-import io.github.jwdeveloper.tiktok.mappers.events.TikTokCommonEventHandler;
-import io.github.jwdeveloper.tiktok.mappers.events.TikTokGiftEventHandler;
-import io.github.jwdeveloper.tiktok.mappers.events.TikTokRoomInfoEventHandler;
-import io.github.jwdeveloper.tiktok.mappers.events.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
+import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
+import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
+import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapperUtils;
+import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
+import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokCommonEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokRoomInfoEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
@@ -88,11 +91,11 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         };
     }
 
-
     public LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings) {
         this.onCustomMappings = onCustomMappings;
         return this;
     }
+
 
     public TikTokLiveClientBuilder configure(Consumer<ClientSettings> onConfigure) {
         onConfigure.accept(clientSettings);
@@ -159,7 +162,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
         var cookieJar = new TikTokCookieJar();
-        var requestFactory = new TikTokHttpRequestFactory(cookieJar);
+        var requestFactory = new TikTokHttpRequestFactory(cookieJar, tikTokEventHandler);
         var apiClient = new TikTokHttpClient(cookieJar, requestFactory);
         var apiService = new TikTokApiService(apiClient, logger, clientSettings);
         var giftManager = new TikTokGiftManager(logger);
@@ -167,7 +170,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var messageHandler = new TikTokMessageHandler(tikTokEventHandler, eventsMapper);
 
 
-        var webSocketClient = new TikTokWebSocketClient(logger,
+        var webSocketClient = new TikTokWebSocketClient(
                 cookieJar,
                 clientSettings,
                 messageHandler,
@@ -185,7 +188,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     public TikTokLiveMapper createMapper(GiftManager giftManager, TikTokRoomInfo roomInfo) {
         var eventMapper = new TikTokGenericEventMapper();
-        var mapper = new TikTokLiveMapper(eventMapper);
+        var mapper = new TikTokLiveMapper(new TikTokLiveMapperUtils(eventMapper));
 
         //ConnectionEvents events
         var commonHandler = new TikTokCommonEventHandler();
@@ -193,48 +196,77 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var roomInfoHandler = new TikTokRoomInfoEventHandler(roomInfo);
         var socialHandler = new TikTokSocialMediaEventHandler(roomInfo);
 
-        mapper.bytesToEvent(WebcastControlMessage.class, commonHandler::handleWebcastControlMessage);
+
+        mapper.forMessage(WebcastControlMessage.class, commonHandler::handleWebcastControlMessage);
 
         //Room status events
-        mapper.bytesToEvent(WebcastLiveIntroMessage.class, roomInfoHandler::handleIntro);
-        mapper.bytesToEvent(WebcastRoomUserSeqMessage.class, roomInfoHandler::handleUserRanking);
+        mapper.forMessage(WebcastLiveIntroMessage.class, roomInfoHandler::handleIntro);
+        mapper.forMessage(WebcastRoomUserSeqMessage.class, roomInfoHandler::handleUserRanking);
+        mapper.forMessage(WebcastCaptionMessage.class, (inputBytes, messageName, mapperHelper) ->
+        {
+            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastCaptionMessage.class);
+            return MappingResult.of(messageObject, new TikTokCaptionEvent(messageObject));
+        });
 
-        mapper.webcastObjectToConstructor(WebcastCaptionMessage.class, TikTokCaptionEvent.class);
 
         //User Interactions events
-        mapper.webcastObjectToConstructor(WebcastChatMessage.class, TikTokCommentEvent.class);
-        mapper.bytesToEvents(WebcastLikeMessage.class, roomInfoHandler::handleLike);
-        mapper.bytesToEvents(WebcastGiftMessage.class, giftHandler::handleGift);
-        mapper.bytesToEvent(WebcastSocialMessage.class, socialHandler::handle);
-        mapper.bytesToEvents(WebcastMemberMessage.class, roomInfoHandler::handleMemberMessage);
+        mapper.forMessage(WebcastChatMessage.class, (inputBytes, messageName, mapperHelper) ->
+        {
+            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
+            return MappingResult.of(messageObject, new TikTokCommentEvent(messageObject));
+        });
+        mapper.forMessage(WebcastSubNotifyMessage.class, (inputBytes, messageName, mapperHelper) ->
+        {
+            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastSubNotifyMessage.class);
+            return MappingResult.of(messageObject, new TikTokSubscribeEvent(messageObject));
+        });
+        mapper.forMessage(WebcastEmoteChatMessage.class, (inputBytes, messageName, mapperHelper) ->
+        {
+            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastEmoteChatMessage.class);
+            return MappingResult.of(messageObject, new TikTokEmoteEvent(messageObject));
+        });
+        mapper.forMessage(WebcastQuestionNewMessage.class, (inputBytes, messageName, mapperHelper) ->
+        {
+            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastQuestionNewMessage.class);
+            return MappingResult.of(messageObject, new TikTokQuestionEvent(messageObject));
+        });
+
+        mapper.forMessage(WebcastLikeMessage.class, roomInfoHandler::handleLike);
+        mapper.forMessage(WebcastGiftMessage.class, giftHandler::handleGifts);
+        mapper.forMessage(WebcastSocialMessage.class, socialHandler::handle);
+        mapper.forMessage(WebcastMemberMessage.class, roomInfoHandler::handleMemberMessage);
+
 
         //Host Interaction events
-        mapper.bytesToEvent(WebcastPollMessage.class, commonHandler::handlePollEvent);
-        mapper.bytesToEvent(WebcastRoomPinMessage.class, commonHandler::handlePinMessage);
-        mapper.webcastObjectToConstructor(WebcastGoalUpdateMessage.class, TikTokGoalUpdateEvent.class);
+        mapper.forMessage(WebcastPollMessage.class, commonHandler::handlePollEvent);
+        mapper.forMessage(WebcastRoomPinMessage.class, commonHandler::handlePinMessage);
+        mapper.forMessage(WebcastChatMessage.class, (inputBytes, messageName, mapperHelper) ->
+        {
+            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
+            return MappingResult.of(messageObject, new TikTokCommentEvent(messageObject));
+        });
+
 
         //LinkMic events
-        mapper.webcastObjectToConstructor(WebcastLinkMicBattle.class, TikTokLinkMicBattleEvent.class);
-        mapper.webcastObjectToConstructor(WebcastLinkMicArmies.class, TikTokLinkMicArmiesEvent.class);
-        mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
-        mapper.webcastObjectToConstructor(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
+        // mapper.webcastObjectToConstructor(WebcastLinkMicBattle.class, TikTokLinkMicBattleEvent.class);
+        //  mapper.webcastObjectToConstructor(WebcastLinkMicArmies.class, TikTokLinkMicArmiesEvent.class);
+        //  mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
 
         //Rank events
-        mapper.webcastObjectToConstructor(WebcastRankTextMessage.class, TikTokRankTextEvent.class);
-        mapper.webcastObjectToConstructor(WebcastRankUpdateMessage.class, TikTokRankUpdateEvent.class);
-        mapper.webcastObjectToConstructor(WebcastHourlyRankMessage.class, TikTokRankUpdateEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastRankTextMessage.class, TikTokRankTextEvent.class);
+        //  mapper.webcastObjectToConstructor(WebcastRankUpdateMessage.class, TikTokRankUpdateEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastHourlyRankMessage.class, TikTokRankUpdateEvent.class);
 
         //Others events
-        mapper.webcastObjectToConstructor(WebcastInRoomBannerMessage.class, TikTokInRoomBannerEvent.class);
-        mapper.webcastObjectToConstructor(WebcastMsgDetectMessage.class, TikTokDetectEvent.class);
-        mapper.webcastObjectToConstructor(WebcastBarrageMessage.class, TikTokBarrageEvent.class);
-        mapper.webcastObjectToConstructor(WebcastUnauthorizedMemberMessage.class, TikTokUnauthorizedMemberEvent.class);
-        mapper.webcastObjectToConstructor(WebcastOecLiveShoppingMessage.class, TikTokShopEvent.class);
-        mapper.webcastObjectToConstructor(WebcastImDeleteMessage.class, TikTokIMDeleteEvent.class);
-        mapper.webcastObjectToConstructor(WebcastQuestionNewMessage.class, TikTokQuestionEvent.class);
-        mapper.bytesToEvents(WebcastEnvelopeMessage.class, commonHandler::handleEnvelop);
-        mapper.webcastObjectToConstructor(WebcastSubNotifyMessage.class, TikTokSubscribeEvent.class);
-        mapper.webcastObjectToConstructor(WebcastEmoteChatMessage.class, TikTokEmoteEvent.class);
+        //  mapper.webcastObjectToConstructor(WebcastInRoomBannerMessage.class, TikTokInRoomBannerEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastMsgDetectMessage.class, TikTokDetectEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastBarrageMessage.class, TikTokBarrageEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastUnauthorizedMemberMessage.class, TikTokUnauthorizedMemberEvent.class);
+        //  mapper.webcastObjectToConstructor(WebcastOecLiveShoppingMessage.class, TikTokShopEvent.class);
+        //   mapper.webcastObjectToConstructor(WebcastImDeleteMessage.class, TikTokIMDeleteEvent.class);
+        //  mapper.bytesToEvents(WebcastEnvelopeMessage.class, commonHandler::handleEnvelop);
+
 
         onCustomMappings.accept(mapper);
         return mapper;
@@ -315,8 +347,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
     @Override
-    public <E extends TikTokEvent> LiveClientBuilder onCustomEvent(Class<E> eventClazz, EventConsumer<E> event) {
-        tikTokEventHandler.subscribe(eventClazz, event);
+    public <E extends TikTokEvent> LiveClientBuilder onEvent(Class<E> eventClass, EventConsumer<E> event) {
+        tikTokEventHandler.subscribe(eventClass, event);
         return this;
     }
 
@@ -413,6 +445,12 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     public TikTokLiveClientBuilder onComment(EventConsumer<TikTokCommentEvent> event) {
         tikTokEventHandler.subscribe(TikTokCommentEvent.class, event);
+        return this;
+    }
+
+    @Override
+    public LiveClientBuilder onHttpResponse(EventConsumer<TikTokHttpResponseEvent> action) {
+        tikTokEventHandler.subscribe(TikTokHttpResponseEvent.class, action);
         return this;
     }
 

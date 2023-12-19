@@ -91,7 +91,6 @@ public class TikTokHttpClient {
         if (parameters == null) {
             parameters = new HashMap<>();
         }
-        System.out.println("RomMID: "+parameters.get("room_id"));
         var request = requestFactory.setQueries(parameters);
         return request.post(url);
     }

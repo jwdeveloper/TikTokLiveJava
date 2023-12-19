@@ -27,6 +27,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import io.github.jwdeveloper.tiktok.Constants;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
 import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
@@ -78,7 +79,7 @@ public class GiftOfficialJson {
 
     public static JsonArray getJsonGifts() {
         var jar = new TikTokCookieJar();
-        var tiktokHttpClient = new TikTokHttpClient(jar, new TikTokHttpRequestFactory(jar));
+        var tiktokHttpClient = new TikTokHttpClient(jar, new TikTokHttpRequestFactory(jar, new TikTokEventObserver()));
         var settings = Constants.DefaultClientSettings();
 
 

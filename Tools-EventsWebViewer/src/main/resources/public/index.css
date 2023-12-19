@@ -1,0 +1,135 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+
+    color: whitesmoke;
+}
+.header {
+    margin-bottom: 20px;
+}
+
+.connect-btn
+{
+    width: 100%;
+}
+.dropdown
+{
+    width: 100%;
+}
+.dropdown-toggle
+{
+    background-color: #2c2c2c;
+    border-color: #2c2c2c;
+    width: 100%;
+
+
+}
+
+.btn-primary
+{
+    background-color: #2c2c2c;
+    border-color:  #2c2c2c;
+}
+.btn-primary:hover
+{
+    background-color: #474747;
+    border-color:  #474747;
+}
+.margin
+{
+    margin-top: 2em;
+}
+.form
+{
+
+    padding: 1em;
+
+    border-bottom: 2px solid #676767
+}
+.form-label
+{
+    color: whitesmoke;
+}
+.editor-parent
+{
+    height: 2000px;
+}
+.editor-container
+{
+    resize: vertical;
+    overflow: auto;
+}
+.list-group-item:hover
+{
+    background-color: #474747;
+    color: azure;
+    cursor: pointer;
+}
+
+
+.list-group-item
+{
+    background-color: #2c2c2c;
+    color: azure;
+    border-color:  #252424;
+}
+.margin-left
+{
+    margin-right: 0.2em;
+}
+.content {
+    flex-grow: 1; /* Takes up the remaining space */
+    display: flex;
+}
+.col-md-10, .col-md-2 {
+    padding: 0; /* Remove default padding */
+    height: 100%;
+}
+.scrollable-element {
+
+    overflow-y: scroll; /* Enable vertical scrollbar */
+    /* Other styles as needed */
+    scrollbar-width: thin;
+    height: 800px;
+    scrollbar-color: #275c9c #000000; /* thumb and track color */
+}
+.dropdown-menu
+{
+    width: 100%;
+    background-color: #414040;
+    color: whitesmoke;
+}
+.dropdown-item
+{
+    -webkit-user-select: none; /* For webkit browsers */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Microsoft browsers */
+    user-select: none; /* Standard syntax */
+    color: whitesmoke;
+}
+
+.dropdown-item:hover
+{
+    background-color: #696868;
+    color: whitesmoke;
+}
+
+.dropdown-item:hover
+{
+    cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    width: 10px; /* Set width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e23; /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #123054; /* Thumb color */
+    border-radius: 5px; /* Rounded corners */
+}

@@ -23,8 +23,8 @@
 package io.github.jwdeveloper.tiktok.tools.tester;
 
 import com.google.gson.JsonParser;
-import io.github.jwdeveloper.tiktok.mockClient.TikTokClientMock;
-import io.github.jwdeveloper.tiktok.mockClient.mocks.LiveClientMock;
+import io.github.jwdeveloper.tiktok.tools.tester.mockClient.TikTokLiveMock;
+import io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks.LiveClientMock;
 import io.github.jwdeveloper.tiktok.tools.util.MessageUtil;
 
 import java.io.FileReader;
@@ -37,7 +37,7 @@ public class RunJsonTester {
 
     public static void main(String[] args) throws IOException {
         var messages = getMessages();
-        var client =(LiveClientMock) TikTokClientMock.create()
+        var client =(LiveClientMock) TikTokLiveMock.create()
                 .onWebsocketUnhandledMessage((liveClient, event) ->
                 {
                     var sb = new StringBuilder();

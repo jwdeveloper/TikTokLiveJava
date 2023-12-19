@@ -42,16 +42,16 @@ public class MessageUtil {
         }
     }
 
-    public static String getContent(String methodName, byte[] bytes) {
+    public static String getContent(String messageName, byte[] bytes) {
         try {
 
-            var inputClazz = Class.forName("io.github.jwdeveloper.tiktok.messages.webcast." + methodName);
+            var inputClazz = Class.forName("io.github.jwdeveloper.tiktok.messages.webcast." + messageName);
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", byte[].class);
             var deserialized = parseMethod.invoke(null, bytes);
             return JsonUtil.messageToJson(deserialized);
         } catch (Exception ex) {
             var sb = new StringBuilder();
-            sb.append("Can not find protocolbuffer file message representation for " + methodName);
+            sb.append("Can not find protocol-buffer file message representation for " + messageName);
             sb.append("\n");
             var structure = ProtocolUtils.getProtocolBufferStructure(bytes);
             var json =structure.toJson();

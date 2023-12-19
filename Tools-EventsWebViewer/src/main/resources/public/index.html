@@ -3,252 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Bootstrap Styled Javalin App</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" type="text/javascript" charset="utf-8"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" type="text/javascript"
+            charset="utf-8"></script>
 
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/loader.min.js"></script>
 
 
-   
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css">
+    <link rel="stylesheet" , href="index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/loader.min.js"></script>
+    <script>
+        require.config({
+            paths: {'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs'}
+        });
+    </script>
+    <script>
+        var editor;
+        var editor2;
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: [
+                    'Hello world!',
+                ].join('\n'),
+                language: 'json',
+                theme: 'vs-dark',
+                automaticLayout: true
+            });
 
-    <style>
-         body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            background-color: #121212; /* Dark background */
-        }
-        #app {
-            height: 100vh; /* 100% of the viewport height */
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            margin-bottom: 20px;
-        }
-        .btn-primary
-        {
-            background-color: #2c2c2c;
-            border-color:  #2c2c2c;
-        }
-        .btn-primary:hover
-        {
-            background-color: #474747;
-            border-color:  #474747;
-        }
-      
-        #editor {
-    overflow-y: auto;
-    white-space: pre-wrap; 
-    height: 100%;
-    overflow-y: auto;
-}
-.editor-container
-{
- 
-  padding: 10em;
-}
-        .list-group-item:hover
-        {
-            background-color: #474747;
-            color: azure;
-            cursor: pointer;
-        }
-        .list-group-item
-        {
-            background-color: #2c2c2c;
-            color: azure;
-            border-color:  #252424;
-        }
-        .content {
-            flex-grow: 1; /* Takes up the remaining space */
-            display: flex;
-        }
-        .col-md-10, .col-md-2 {
-            padding: 0; /* Remove default padding */
-            height: 100%;
-        }
-    </style>
-  
-
-
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css">
-
-  <!-- Load Monaco Editor's main loader script -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/loader.min.js"></script>
-
-  <!-- Configure the loader -->
-  <script>
-      require.config({
-          paths: {'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs'}
-      });
-  </script>
-
-  <!-- Load the editor -->
-  <script>
-     var editor;
-      require(['vs/editor/editor.main'], function() {
-          editor = monaco.editor.create(document.getElementById('editor'), {
-              value: [
-                  'function x() {',
-                  '\tconsole.log("Hello world!");',
-                  '}'
-              ].join('\n'),
-              language: 'json',
-              theme: 'vs-dark' 
-          });
-          editor.onDidChangeModelContent(function () {
-                console.log("hello")
-          });
-          
-      });
-  </script>
-
-
+            editor2 = monaco.editor.create(document.getElementById('editor2'), {
+                value: [
+                    'Hello world!',
+                ].join('\n'),
+                language: 'json',
+                theme: 'vs-dark',
+               automaticLayout: true
+           });
+        });
+    </script>
 </head>
-<body class="bg-dark">
-   
-<div id="app" class="container-fluid mt-5">
-    <div >
-            <div class="mb-3">
-                <label for="name" class="form-label">Name:</label>
-                <input type="text" id="name" name="name" class="form-control">
+<body class="container-fluid  bg-dark">
+
+
+<div class="row ">
+    <div class="col-2 ">
+        <div class="form margin">
+            <h5 >Data collector</h5>
+            <div class="form-group ">
+                <label for="name" class="form-label">TikTok username</label>
+                <input type="text" id="name" class="form-control">
             </div>
-            <button type="button" onclick="connect()" class="btn btn-primary">Connect</button>
-            <button type="button" onclick="disconnect()" class="btn btn-primary">Disconnect</button>
-            <button onclick="showEvents()" class="btn btn-primary">Show Events</button>
-    </div>
-   
-    <div class="content row mt-5">
-   
-        <div class="col-md-2 ">
-            <ul id="eventList" class="list-group" style="max-height: 100%; overflow-y: auto;">
-                <!-- List items will be added dynamically -->
+            <div class="form-group ">
+                <label class="form-label">SessionTag</label>
+                <input type="text" id="sessionTag" class="form-control">
+            </div>
+            <button id="connectionButton" type="button" class="btn btn-primary mt-3 connect-btn">Connect </button>
+
+        </div>
+
+        <div>
+            <div class="dropdown mt-3" id="usersDropDown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="usersDropDownButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    User
+                </button>
+                <div id="userDropdownContent" class="dropdown-menu" aria-labelledby="usersDropDownButton">
+
+                </div>
+            </div>
+
+            <div class="dropdown mt-3" id="sessionTagDropDown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="sessionTagDropDownButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    SessionTag
+                </button>
+                <div class="dropdown-menu" aria-labelledby="sessionTagDropDownButton">
+
+                </div>
+            </div>
+
+            <div class="dropdown mt-3" id="dataTypeDropDown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Data Type
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <ul id="dataList" class="list-group scrollable-element">
             </ul>
         </div>
-        <div class="col-md-10 editor-container ">
-            <nav aria-label="Page navigation example">
-                <ul id="pages" class="pagination">
-                  <li class="page-item btn-primary"><a class="page-link" href="#">Previous</a></li>
-                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-              </nav>
-            <div id="editor"></div>
-        </div>
     </div>
-</div>
-</div>
 
-
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-           
+    <div class="col-10 margin">
+        <nav aria-label="Page navigation example">
+            <ul id="pages" class="pagination">
+            </ul>
+        </nav>
+        <div class="row editor-parent">
+            <div class="col-6 editor-container" id="editor"></div>
+            <div class="col-6 editor-container" id="editor2"></div>
         </div>
+
+
     </div>
 </div>
 
 
-
-<script>
-        async function connect() {
-            let name = document.getElementById('name').value;
-          //  name = "bangbetmenygy"
-            let response = await fetch(`http://localhost:8001/tiktok/connect?name=${name}`);
-            let greeting = await response.text();
-            console.log("connect",greeting);
-            connected = true;
-        }
-        async function disconnect() {
-            let response = await fetch(`http://localhost:8001/tiktok/disconnect`);
-            let greeting = await response.text();
-            console.log("disconnect",greeting);
-            connected = false;
-        }
-
-        async function loadMessage(event)
-        {
-            let response = await fetch(`http://localhost:8001/tiktok/events/message?eventName=${event}`);
-            let json = await response.text();
-            let root= JSON.parse(json);
-            editor.setValue(root.content);
-        }
-
-        async function loadMessageLink(link)
-        {
-            let response = await fetch(link);
-            let json = await response.text();
-            let root= JSON.parse(json);
-            editor.setValue(root.content);
-        }
-
-        async function loadPagination(event)
-        {
-            let response = await fetch(`http://localhost:8001/tiktok/events/pages?eventName=${event}`);
-            let json = await response.text();
-            let object = JSON.parse(json);
-            let pages = object.links;
-            console.log("PAGES: ",pages)
-            $("#pages").empty();
-                $.each(pages, function(index, element) {
-                    let content = $('<button>',{
-                        class: 'btn btn-primary',
-                        text: index
-                    }).click(async function() 
-                    { 
-                        await loadMessageLink(element);
-                        console.log(editor)
-                     });
-                    $("#pages").append(content);
-                });
-        }
-
-        async function showEvents() {
-            let response = await fetch(`http://localhost:8001/tiktok/events`);
-            let json = await response.text();
-            console.log("events:",json);
-            let events= JSON.parse(json);
-
-            $("#eventList").empty();
-                $.each(events, function(index, event) {
-                    let listItem = $('<li>', {
-                        class: 'list-group-item',
-                        text: event
-                    }).click(async function() 
-                    { 
-                        await loadMessage(event);
-                        await loadPagination(event);
-                     });
-                    $("#eventList").append(listItem);
-                });
-        }
-
-        async function loop()
-        {
-            if(!connected)
-            {
-               return;
-            }
-            console.log("updating");
-            await showEvents();
-        }
-
-        var connected = false;
-        var paginationIndex = 0;
-        var maxPages = 10;
-        var pages = [];
-        setInterval(loop, 1000)
-        showEvents()
-
-    </script>
-
-
+<script src="index.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

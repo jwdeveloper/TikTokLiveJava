@@ -24,72 +24,32 @@ package io.github.jwdeveloper.tiktok.mappers;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.mappers.events.MappingAction;
+import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
 
-import java.util.List;
 import java.util.function.Function;
 
 public interface TikTokMapper {
 
-
     /**
-     * Triggered when `sourceClass` is mapped,
-     * input is bytes that are coming from TikTok in `sourceClass` packet
-     * output is TikTok event we want to create
-     * <p>
-     * bytesToEvent(WebcastGiftMessage.class, bytes ->
-     * {
-     * var giftMessage = WebcastGiftMessage.parseFrom(bytes);
-     * var giftName = giftMessage.getGift().getName();
-     * return new TikTokEvent(Gift.ROSE, giftMessage);
-     * })
+     * * if mapper is not found for messageName, TikTokLiveException is thrown
      *
-     * @param sourceClass protocol buffer webcast class
-     * @param onMapping   lambda function that is triggered on mapping. takes as input ProtocolBuffer object and as output TikTokEvent
+     * @param messageName
+     * @return TikTokMapperModel
      */
-    void bytesToEvent(Class<? extends GeneratedMessageV3> sourceClass, Function<byte[], TikTokEvent> onMapping);
+    TikTokMapperModel forMessage(String messageName);
 
-    void bytesToEvents(Class<? extends GeneratedMessageV3> sourceClass, Function<byte[], List<TikTokEvent>> onMapping);
+    TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName);
 
+    TikTokMapperModel forMessage(String mapperName, MappingAction<MappingResult> onMapping);
 
-    /**
-     * In case you found some TikTok message that has not Webcast class use this method
-     *
-     * @param messageName Name of TikTok data event
-     * @param onMapping   lambda function that is triggered on mapping. takes as input ProtocolBuffer object and as output TikTokEvent
-     */
-    void bytesToEvent(String messageName, Function<byte[], TikTokEvent> onMapping);
+    TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, MappingAction<MappingResult> onMapping);
 
-    void bytesToEvents(String messageName, Function<byte[], List<TikTokEvent>> onMapping);
+    TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, Function<byte[], TikTokEvent> onMapping);
 
+    boolean isRegistered(String mapperName);
 
-    /**
-     * This method can be used to override default mapping for
-     * certain TikTok incoming data message. For this example
-     * we are overriding WebcastGiftMessage and retuning CustomGiftEvent
-     * instead of TikTokGiftEvent
-     * <p>
-     * webcastObjectToEvent(WebcastGiftMessage.class, webcastGiftMessage ->
-     * {
-     * var giftName = webcastGiftMessage.getGift().getName();
-     * var user = webcastGiftMessage.getUser().getNickname();
-     * return new CustomGiftEvent(giftName, user);
-     * })
-     *
-     * @param sourceClass ProtocolBuffer class that represent incoming custom data, hint class should starts with Webcast prefix
-     * @param onMapping   lambda function that is triggered on mapping. takes as input ProtocolBuffer object and as output TikTokEvent
-     */
-    <T extends GeneratedMessageV3> void webcastObjectToEvent(Class<T> sourceClass, Function<T, TikTokEvent> onMapping);
+    <T extends GeneratedMessageV3> boolean isRegistered(Class<T> mapperName);
 
-    <T extends GeneratedMessageV3> void webcastObjectToEvents(Class<T> sourceClass, Function<T, List<TikTokEvent>> onMapping);
-
-    /**
-     * Triggered when `sourceClass` is mapped,
-     * looking for constructor in `outputClass` with one parameter that is of type `sourceClass`
-     * and created instance of object from this constructor
-     *
-     * @param sourceClass protocol buffer webcast class
-     * @param outputClass TikTok event class
-     */
-    void webcastObjectToConstructor(Class<? extends GeneratedMessageV3> sourceClass, Class<? extends TikTokEvent> outputClass);
 
 }

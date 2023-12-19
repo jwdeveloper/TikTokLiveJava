@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.http.TikTokHttpResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
@@ -39,61 +40,140 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandl
 public interface EventsBuilder<T> {
 
     /**
-     *  Method used to register own custom events
-     * @param eventClazz event class
-     * @param event action
+     * Invoked whenever specified event is triggered
+     *
+     * @param eventClass event class
+     * @param action     action
      */
-    <E extends TikTokEvent> T onCustomEvent(Class<E> eventClazz, EventConsumer<E> event);
-
-    T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event);
-
-    T onComment(EventConsumer<TikTokCommentEvent> event);
-
-    T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> event);
-
-    T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> event);
-
-    T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> event);
+    <E extends TikTokEvent> T onEvent(Class<E> eventClass, EventConsumer<E> action);
 
 
-    T onGiftCombo(EventConsumer<TikTokGiftComboEvent> event);
+    /**
+     * Invoked whenever any event is triggered
+     *
+     * @param action
+     * @return
+     */
+    T onEvent(EventConsumer<TikTokEvent> action);
 
-    T onGift(EventConsumer<TikTokGiftEvent> event);
+    /**
+     * Invoked when information about room (live) got updated such as viewer count, etc..
+     *
+     * @param action
+     * @return
+     */
+    T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> action);
 
-    T onQuestion(EventConsumer<TikTokQuestionEvent> event);
+    /**
+     * Invoked when someone send message to chat
+     *
+     * @param action
+     * @return
+     */
+    T onComment(EventConsumer<TikTokCommentEvent> action);
 
-    T onSubscribe(EventConsumer<TikTokSubscribeEvent> event);
 
-    T onFollow(EventConsumer<TikTokFollowEvent> event);
+    /**
+     * Invoked when TikTokLiveJava makes http request and getting response
+     *
+     * @param action
+     * @return
+     */
+    T onHttpResponse(EventConsumer<TikTokHttpResponseEvent> action);
 
-    T onLike(EventConsumer<TikTokLikeEvent> event);
+    /**
+     * Invoked when TikTok protocolBuffer data "message" was successfully mapped to event
+     * events contains protocol-buffer "Message"  and  TikTokLiveJava "Event"
+     *
+     * @param action
+     * @return
+     */
+    T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> action);
 
-    T onEmote(EventConsumer<TikTokEmoteEvent> event);
+    /**
+     * Invoked when there was not found event mapper for TikTok protocolBuffer data "message"
+     *
+     * @param action
+     * @return
+     */
+    T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> action);
 
-    T onJoin(EventConsumer<TikTokJoinEvent> event);
+    /**
+     * Invoked every time TikTok sends protocolBuffer data to websocket
+     * Response contains list of messages that are later mapped to events
+     * @param action
+     * @return
+     */
+    T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> action);
 
-    T onShare(EventConsumer<TikTokShareEvent> event);
 
-    //  T onChest(EventConsumer<TikTokChestEvent> event);
+    /**
+     * Invoked for gifts that has no combo, or when combo finishes
+     * @param action
+     * @return
+     */
+    T onGift(EventConsumer<TikTokGiftEvent> action);
 
-    T onLivePaused(EventConsumer<TikTokLivePausedEvent> event);
+    /**
+     * Invoked for gifts that has combo options such as roses
+     * @param action
+     * @return
+     */
+    T onGiftCombo(EventConsumer<TikTokGiftComboEvent> action);
 
-    T onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> event);
 
-    T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> event);
+    T onQuestion(EventConsumer<TikTokQuestionEvent> action);
 
-    T onConnected(EventConsumer<TikTokConnectedEvent> event);
+    T onSubscribe(EventConsumer<TikTokSubscribeEvent> action);
 
-    T onReconnecting(EventConsumer<TikTokReconnectingEvent> event);
+    T onFollow(EventConsumer<TikTokFollowEvent> action);
 
-    T onDisconnected(EventConsumer<TikTokDisconnectedEvent> event);
+    T onLike(EventConsumer<TikTokLikeEvent> action);
 
-    T onError(EventConsumer<TikTokErrorEvent> event);
+    T onEmote(EventConsumer<TikTokEmoteEvent> action);
 
-    T onEvent(EventConsumer<TikTokEvent> event);
+    T onJoin(EventConsumer<TikTokJoinEvent> action);
+
+    T onShare(EventConsumer<TikTokShareEvent> action);
+
+    T onLivePaused(EventConsumer<TikTokLivePausedEvent> action);
+
+    T onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> action);
+
+    T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> action);
+
+    /**
+     * Invoked when client has been successfully connected to live
+     * @param action
+     * @return
+     */
+    T onConnected(EventConsumer<TikTokConnectedEvent> action);
+
+    /**
+     * Invoked when client tries to reconnect
+     * @param action
+     * @return
+     */
+    T onReconnecting(EventConsumer<TikTokReconnectingEvent> action);
+
+    /**
+     * Invoked when client disconnected
+     * @param action
+     * @return
+     */
+    T onDisconnected(EventConsumer<TikTokDisconnectedEvent> action);
+
+    /**
+     * Invoked when exception was throed inside client or event handler
+     * @param action
+     * @return
+     */
+    T onError(EventConsumer<TikTokErrorEvent> action);
 
 
     // TODO Figure out how those events works
+    //  T onChest(EventConsumer<TikTokChestEvent> event);
+
     //T onLinkMicFanTicket(TikTokEventConsumer<TikTokLinkMicFanTicketEvent> event);
 
     //T onEnvelope(TikTokEventConsumer<TikTokEnvelopeEvent> event);

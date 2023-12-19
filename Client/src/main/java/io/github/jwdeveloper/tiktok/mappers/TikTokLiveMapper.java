@@ -24,7 +24,8 @@ package io.github.jwdeveloper.tiktok.mappers;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
+import io.github.jwdeveloper.tiktok.mappers.events.MappingAction;
+import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,79 +33,68 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class TikTokLiveMapper implements TikTokMapper {
-    private final Map<String, Function<byte[], List<TikTokEvent>>> mappers;
-    private final TikTokGenericEventMapper genericMapper;
 
-    public TikTokLiveMapper(TikTokGenericEventMapper genericMapper) {
+    private final Map<String, TikTokLiveMapperModel> mappers;
+    private final TikTokMapperHelper mapperUtils;
+
+    public TikTokLiveMapper(TikTokMapperHelper mapperUtils) {
         this.mappers = new HashMap<>();
-        this.genericMapper = genericMapper;
+        this.mapperUtils = mapperUtils;
     }
 
     @Override
-    public void bytesToEvent(String messageName, Function<byte[], TikTokEvent> onMapping) {
-        mappers.put(messageName, messagePayload -> List.of(onMapping.apply(messagePayload)));
+    public TikTokMapperModel forMessage(String messageName) {
+        if (!isRegistered(messageName)) {
+            var model = new TikTokLiveMapperModel(messageName);
+            mappers.put(messageName, model);
+        }
+        return mappers.get(messageName);
     }
 
     @Override
-    public void bytesToEvents(String messageName, Function<byte[], List<TikTokEvent>> onMapping) {
-        mappers.put(messageName, onMapping::apply);
-    }
-
-    public void bytesToEvent(Class<? extends GeneratedMessageV3> clazz, Function<byte[], TikTokEvent> onMapping) {
-        mappers.put(clazz.getSimpleName(), messagePayload -> List.of(onMapping.apply(messagePayload)));
-    }
-
-
-
-    public void bytesToEvents(Class<? extends GeneratedMessageV3> clazz, Function<byte[], List<TikTokEvent>> onMapping) {
-        mappers.put(clazz.getSimpleName(), onMapping::apply);
+    public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName) {
+        return forMessage(mapperName.getSimpleName());
     }
 
     @Override
-    public void webcastObjectToConstructor(Class<? extends GeneratedMessageV3> sourceClass, Class<? extends TikTokEvent> outputClass) {
-        bytesToEvent(sourceClass, (e) -> genericMapper.mapToEvent(sourceClass, outputClass, e));
+    public TikTokMapperModel forMessage(String mapperName, MappingAction<MappingResult> onMapping) {
+        var model = forMessage(mapperName);
+        model.onMapping(onMapping);
+        return model;
+    }
+
+
+    @Override
+    public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, MappingAction<MappingResult> onMapping) {
+        var model = forMessage(mapperName);
+        model.onMapping(onMapping);
+        return model;
     }
 
     @Override
-    public <T extends GeneratedMessageV3> void webcastObjectToEvent(Class<T> source, Function<T, TikTokEvent> onMapping) {
-        bytesToEvent(source, (bytes) ->
-        {
-            try {
-                var parsingMethod = genericMapper.getParsingMethod(source);
-                var sourceObject = parsingMethod.invoke(null, bytes);
-                var event = onMapping.apply((T) sourceObject);
-                return event;
-            } catch (Exception e) {
-                throw new TikTokMessageMappingException(source, "can't find parsing method", e);
-            }
-        });
+    public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, Function<byte[], TikTokEvent> onMapping) {
+        return forMessage(mapperName, (inputBytes, messageName, mapperHelper) -> MappingResult.of(inputBytes, onMapping.apply(inputBytes)));
     }
 
-    @Override
-    public <T extends GeneratedMessageV3> void webcastObjectToEvents(Class<T> source, Function<T, List<TikTokEvent>> onMapping) {
-        bytesToEvents(source, (bytes) ->
-        {
-            try {
-                var parsingMethod = genericMapper.getParsingMethod(source);
-                var sourceObject = parsingMethod.invoke(null, bytes);
-                var event = onMapping.apply((T) sourceObject);
-                return event;
-            } catch (Exception e) {
-                throw new TikTokMessageMappingException(source, "can't find parsing method", e);
-            }
-        });
+
+    public boolean isRegistered(String mapperName) {
+        return mappers.containsKey(mapperName);
     }
 
-    public boolean isRegistered(String input) {
-        return mappers.containsKey(input);
+    public <T extends GeneratedMessageV3> boolean isRegistered(Class<T> mapperName) {
+        return mappers.containsKey(mapperName.getSimpleName());
     }
-
-    public List<TikTokEvent> handleMapping(String input, byte[] bytes) {
-        if (!isRegistered(input)) {
+    public List<TikTokEvent> handleMapping(String messageName, byte[] bytes) {
+        if (!isRegistered(messageName)) {
             return List.of();
         }
-        var mapper = mappers.get(input);
-        var events = mapper.apply(bytes);
-        return events;
+        var mapperModel = mappers.get(messageName);
+
+        var inputBytes = mapperModel.getOnBeforeMapping().onMapping(bytes, messageName, mapperUtils);
+
+        var mappingResult = mapperModel.getOnMapping().onMapping(inputBytes, messageName, mapperUtils);
+
+        var afterMappingResult = mapperModel.getOnAfterMapping().apply(mappingResult);
+        return afterMappingResult;
     }
 }

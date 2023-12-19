@@ -23,11 +23,10 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 
-import io.github.jwdeveloper.tiktok.annotations.TikTokEventHandler;
+import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 
@@ -37,10 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TikTokListenersManager implements ListenersManager {
-    private final TikTokEventObserver eventObserver;
+    private final io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver eventObserver;
     private final List<ListenerBindingModel> bindingModels;
 
-    public TikTokListenersManager(List<TikTokEventListener> listeners, TikTokEventObserver tikTokEventHandler) {
+    public TikTokListenersManager(List<TikTokEventListener> listeners, io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver tikTokEventHandler) {
         this.eventObserver = tikTokEventHandler;
         this.bindingModels = new ArrayList<>(listeners.size());
         for (var listener : listeners) {
@@ -93,7 +92,7 @@ public class TikTokListenersManager implements ListenersManager {
         var clazz = listener.getClass();
         var methods = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
                 m.getParameterCount() == 2 &&
-                        m.isAnnotationPresent(TikTokEventHandler.class)).toList();
+                        m.isAnnotationPresent(TikTokEventObserver.class)).toList();
         var eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
         for (var method : methods) {
             var eventClazz = method.getParameterTypes()[1];

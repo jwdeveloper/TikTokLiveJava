@@ -68,7 +68,6 @@ message WebcastGiftMessage {
   int32 repeatCount = 5;
   int32 comboCount = 6;
   User user = 7;
-  User toUser = 8;
   int32 repeatEnd = 9;
   int64 groupId = 11;
   int64 incomeTaskgifts = 12;
@@ -81,6 +80,13 @@ message WebcastGiftMessage {
   bool isFirstSent = 25;
   string orderId = 28;
   UserIdentity userIdentity = 32;
+  UserGiftReciever userGiftReciever = 23;
+
+  message UserGiftReciever
+  {
+      int64 userId =1;
+      string deviceName = 10;
+  }
 
   message GiftIMPriority {
     repeated int64 queueSizesList = 1;
@@ -507,6 +513,9 @@ message WebcastHourlyRankMessage {
   }
 }
 
+
+//<Battles>
+
 //@WebcastLinkMicArmies
 message WebcastLinkMicArmies {
   Common common = 1;
@@ -522,6 +531,45 @@ message WebcastLinkMicArmies {
   Image Image = 11;
   uint32 data4 = 12;
   uint32 data5 = 13;
+}
+//@WebcastLinkMicBattlePunishFinish
+message WebcastLinkMicBattlePunishFinish {
+  Common Header = 1;
+  uint64 Id1 = 2;
+  uint64 Timestamp = 3;
+  uint32 Data4 = 4;
+  uint64 Id2 = 5;
+  LinkMicBattlePunishFinishData Data6 = 6;
+
+  message LinkMicBattlePunishFinishData {
+    uint64 Id2 = 1; // Same as Id2 in outer object (loser?)
+    uint64 Timestamp = 2;
+    uint32 Data3 = 3;
+    uint64 Id1 = 4; // Same as Id1 in outer object (winner?)
+    uint32 Data5 = 5;
+    uint32 Data6 = 6;
+    uint32 Data8 = 8;
+  }
+}
+
+//@WebcastLinkmicBattleTaskMessage
+message WebcastLinkmicBattleTaskMessage {
+  Common Header = 1;
+  uint32 Data2 = 2;
+  LinkmicBattleTaskData Data3 = 3;
+  LinkmicBattleTaskData2 Data5 = 5;
+
+  message LinkmicBattleTaskData {
+    BattleTaskData Data1 = 1;
+  }
+  message BattleTaskData {
+    uint32 Data1 = 1;
+  }
+
+  message LinkmicBattleTaskData2 {
+    uint32 Data1 = 1;
+    uint32 Data2 = 2;
+  }
 }
 
 //@WebcastLinkMicBattle
@@ -572,7 +620,6 @@ message WebcastLinkMicFanTicketMethod {
   Common common = 1;
   FanTicketRoomNoticeContent FanTicketRoomNotice = 2;
 }
-
 //@WebcastLinkMicMethod
 message WebcastLinkMicMethod {
   Common common = 1;
@@ -589,6 +636,8 @@ message WebcastLinkMicMethod {
   string theme = 12;
   int64 inviteUid = 13;
 }
+
+//<Battles>
 
 //@WebcastLiveIntroMessage
 message WebcastLiveIntroMessage {

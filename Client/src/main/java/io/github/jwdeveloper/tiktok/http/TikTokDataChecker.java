@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.Constants;
 import io.github.jwdeveloper.tiktok.data.dto.TikTokUserInfo;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
+import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
@@ -54,7 +55,7 @@ public class TikTokDataChecker {
 
     public TikTokApiService getApiService() {
         var jar = new TikTokCookieJar();
-        var factory = new TikTokHttpRequestFactory(jar);
+        var factory = new TikTokHttpRequestFactory(jar,new TikTokEventObserver());
         var client = new TikTokHttpClient(jar, factory);
         var settings = new ClientSettings();
         settings.setClientParameters(Constants.DefaultClientParams());

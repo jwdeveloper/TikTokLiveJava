@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
@@ -189,4 +190,8 @@ public class TikTokLiveClient implements LiveClient {
         liveRoomInfo.setConnectionState(connectionState);
     }
 
+    public void publishEvent(TikTokEvent event)
+    {
+        tikTokEventHandler.publish(this, event);
+    }
 }

@@ -22,55 +22,64 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
+import io.github.jwdeveloper.tiktok.mappers.events.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastChatMessage;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
-import io.github.jwdeveloper.tiktok.utils.ProtocolUtils;
 
 public class CustomMappingExample {
 
     public static void main(String[] args) {
-        TikTokLive.newClient("vadimpyrography")
-                .onCustomEvent(CustomChatEvent.class, (liveClient, event) ->
+        TikTokLive.newClient("saszareznikow")
+                .onMapping(mapper ->
                 {
-                    System.out.println("hello world!");
+                    mapper.forMessage(WebcastChatMessage.class)
+                            .onBeforeMapping((inputBytes, messageName, mapperHelper) ->
+                            {
+                                System.out.println("===============================");
+                                System.out.println("OnBefore mapping: " + messageName);
+                                return inputBytes;
+                            })
+                            .onMapping((inputBytes, messageName, mapperHelper) ->
+                            {
+                                System.out.println("onMapping mapping: " + messageName);
+                                var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
+                                var language = message.getContentLanguage();
+                                var userName = message.getUser().getNickname();
+                                var content = message.getContent();
+                                var event = new CustomChatEvent(language, userName, content);
+                                return MappingResult.of(message, event);
+                            })
+                            .onAfterMapping(mappingResult ->
+                            {
+                                var source = mappingResult.getSource();
+                                var events = mappingResult.getEvents();
+                                System.out.println("onAfter mapping, " + source.getClass().getSimpleName() + " was mapped to " + events.size() + " events");
+                                return events;
+                            });
+
+                    /*
+                      There might be cast that we don't have Webcast class for incoming message from TikTok
+                      `mapperHelper.bytesToProtoBufferStructure` but you can still investigate message structure
+                       by using helper methods
+                     */
+                    mapper.forMessage("WebcastMemberMessage")
+                            .onBeforeMapping((inputBytes, messageName, mapperHelper) ->
+                            {
+                                if (mapperHelper.isMessageHasProtoClass(messageName)) {
+                                    var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, messageName);
+                                    //    System.out.println(mapperHelper.toJson(messageObject));
+                                } else {
+                                    var structure = mapperHelper.bytesToProtoBufferStructure(inputBytes);
+                                    //     System.out.println(structure.toJson());
+                                }
+                                return inputBytes;
+                            });
                 })
                 .onError((liveClient, event) ->
                 {
                     event.getException().printStackTrace();
                 })
-                .onMapping(mapper ->
-                {
-                    mapper.webcastObjectToEvent(WebcastChatMessage.class, chatMessage ->
-                    {
-                        var language = chatMessage.getContentLanguage();
-                        var userName = chatMessage.getUser().getNickname();
-                        var message = chatMessage.getContent();
-                        return new CustomChatEvent(language, userName, message);
-                    });
-                    mapper.bytesToEvent("WebcastGiftMessage", bytes ->
-                    {
-                        try
-                        {
-                            var event = WebcastGiftMessage.parseFrom(bytes);
-                            return new TikTokGiftEvent(Gift.ROSA, event);
-                        } catch (Exception e) {
-                            throw new TikTokMessageMappingException("unable to map gift message!", e);
-                        }
-                    });
-
-                    mapper.bytesToEvent("WebcastMemberMessage",bytes ->
-                    {
-                        //displaying unknown messages from tiktok
-                        var structure = ProtocolUtils.getProtocolBufferStructure(bytes);
-                        System.out.println(structure.toJson());
-                        return new TikTokErrorEvent(new RuntimeException("Message not implemented"));
-                    });
-                }).buildAndConnect();
+                .buildAndConnect();
 
     }
 
