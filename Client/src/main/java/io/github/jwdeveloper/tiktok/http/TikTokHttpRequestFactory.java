@@ -141,7 +141,7 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
     private String getContent(HttpRequest request) throws Exception {
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        var event = new TikTokHttpResponseEvent(response.uri().toString(), HttpData.map(request), HttpData.map(response));
+        var event = new TikTokHttpResponseEvent(response.uri().toString(), HttpData.map(response), HttpData.map(request));
         eventHandler.publish(null, event);
         if (response.statusCode() == 404) {
             throw new TikTokLiveRequestException("Request responded with 404 NOT_FOUND");

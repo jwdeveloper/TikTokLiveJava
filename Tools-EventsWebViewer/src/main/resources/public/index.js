@@ -25,7 +25,6 @@ var data =
     }
 
 
-
 dropDown("usersDropDown", () => `${baseUrl}/tiktok/users`, async (e) => {
     data.user = e;
     update();
@@ -51,28 +50,15 @@ function update() {
 }
 
 async function updateAsync() {
-    console.log(data);
+    console.log("Updating", data);
     await updateConnectionButton()
     await updateDataNamesList(async (dataName) => {
         data.dataName = dataName;
         data.page = 0;
-        await updateContent();
+        await updateContent(`${baseUrl}/tiktok/data?name=${data.dataName}&type=${data.dataType}&page=${data.page}`);
         await updatePagination(async (page, link) => {
             data.page = page;
-            let response = await fetch(link);
-            let json = await response.text();
-            console.log(link)
-            let root = JSON.parse(json);
-            editor.setValue(root.content);
-
-            if(data.dataType === 'message')
-            {
-                console.log("sending proto version")
-                let response2 = await fetch(`${link}&asProto=true`);
-                let json2 = await response2.text();
-                let root2 = JSON.parse(json2);
-                editor2.setValue(root2.content);
-            }
+            await updateContent(link)
         });
     });
     await fetch(`${baseUrl}/tiktok/update?user=${data.user}&session=${data.sessionTag}`);
@@ -100,21 +86,30 @@ async function updatePagination(onSelect) {
     });
 }
 
-async function updateContent() {
+async function updateContent(link) {
     console.log("updating content", data)
-    let response = await fetch(`${baseUrl}/tiktok/data?name=${data.dataName}&type=${data.dataType}&page=${data.page}`);
+    let response = await fetch(link);
     let json = await response.text();
+    console.log(link)
     let root = JSON.parse(json);
     editor.setValue(root.content);
-
-
-    if(data.dataType === 'message')
-    {
+    $("#editor2").hide()
+    if (data.dataType === 'message') {
         console.log("sending proto version")
-        let response2 = await fetch(`${baseUrl}/tiktok/data?name=${data.dataName}&type=${data.dataType}&page=${data.page}&asProto=true`);
+        let response2 = await fetch(`${link}&asProto=true`);
         let json2 = await response2.text();
         let root2 = JSON.parse(json2);
         editor2.setValue(root2.content);
+        $("#editor2").show()
+    }
+
+    if (data.dataType === 'response' && data.dataName === 'Http') {
+
+        var content = JSON.parse(root.content);
+        var body = JSON.parse(content.request.body)
+        var asJson = JSON.stringify(body, null, 2)
+        editor2.setValue(asJson);
+        $("#editor2").show()
     }
 
 }
@@ -194,9 +189,9 @@ async function updateConnectionButton() {
 
 async function connect() {
     let name = document.getElementById('name').value;
-    let session =  document.getElementById('sessionTag').value;
+    let session = document.getElementById('sessionTag').value;
     data.collector.name = name
-    data.collector.sessionTag =session
+    data.collector.sessionTag = session
 
     let response = await fetch(`${baseUrl}/tiktok/connect?name=${data.collector.name}&session=${data.collector.sessionTag}`);
     let greeting = await response.text();

@@ -18,7 +18,7 @@ message WebcastPushFrame {
   uint64 LogId = 2;
   uint64 Service = 3;
   uint64 Method = 4;
-  map<string,string> headers = 5;
+  map<string, string> headers = 5;
   string PayloadEncoding = 6;
   string PayloadType = 7;
   bytes Payload = 8;
@@ -68,6 +68,7 @@ message WebcastGiftMessage {
   int32 repeatCount = 5;
   int32 comboCount = 6;
   User user = 7;
+  User toUser = 8;
   int32 repeatEnd = 9;
   int64 groupId = 11;
   int64 incomeTaskgifts = 12;
@@ -84,8 +85,8 @@ message WebcastGiftMessage {
 
   message UserGiftReciever
   {
-      int64 userId =1;
-      string deviceName = 10;
+    int64 userId = 1;
+    string deviceName = 10;
   }
 
   message GiftIMPriority {
@@ -203,7 +204,7 @@ message WebcastChatMessage {
   int32 quickChatScene = 16;
   int32 communityFlaggedStatus = 17;
   UserIdentity UserIdentity = 18;
-  map<int32,string> CommentQualityScores = 19;
+  map<int32, string> CommentQualityScores = 19;
 
   // @EmoteWithIndex
   // proto.webcast.im.ChatMessage
@@ -283,14 +284,14 @@ message WebcastGoalUpdateMessage {
   int64 contributorId = 4;
   Image contributorAvatar = 5;
   string contributorDisplayId = 6;
-//  SubGoal contributeSubgoal = 7;
+  //  SubGoal contributeSubgoal = 7;
   int64 contributeCount = 9;
   int64 contributeScore = 10;
   int64 giftRepeatCount = 11;
   string contributorIdStr = 12;
   bool pin = 13;
   bool unpin = 14;
- // GoalPinInfo pinInfo = 15;
+  // GoalPinInfo pinInfo = 15;
 }
 
 // Message related to Chat-moderation?
@@ -354,7 +355,7 @@ message WebcastSocialMessage {
 message WebcastSubNotifyMessage {
   Common common = 1;
   User user = 2;
-//  ExhibitionType exhibitionType = 3; // Enum
+  //  ExhibitionType exhibitionType = 3; // Enum
   int64 subMonth = 4;
   SubscribeType subscribeType = 5; // Enum
   OldSubscribeStatus oldSubscribeStatus = 6; // Enum
@@ -681,7 +682,7 @@ message WebcastMsgDetectMessage {
     bool detectP2PMsg = 3;
     bool detectRoomMsg = 4;
     bool httpOptimize = 5;
-}
+  }
 }
 
 //@WebcastOecLiveShoppingMessage
@@ -751,11 +752,11 @@ message WebcastLinkMessage {
   LinkerUpdateUserSettingContent UpdateUserSettingContent = 18;
   LinkerMicIdxUpdateContent MicIdxUpdateContent = 19;
   LinkerListChangeContent ListChangeContent = 20;
- // CohostListChangeContent CohostListChangeContent = 21;
+  // CohostListChangeContent CohostListChangeContent = 21;
   LinkerMediaChangeContent MediaChangeContent = 22;
   LinkerAcceptNoticeContent ReplyAcceptNoticeContent = 23;
   LinkerSysKickOutContent SysKickOutContent = 101;
- // LinkmicUserToastContent UserToastContent = 102;
+  // LinkmicUserToastContent UserToastContent = 102;
   string Extra = 200;
   int64 ExpireTimestamp = 201;
   string TransferExtra = 202;

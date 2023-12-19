@@ -192,7 +192,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //ConnectionEvents events
         var commonHandler = new TikTokCommonEventHandler();
-        var giftHandler = new TikTokGiftEventHandler(giftManager);
+        var giftHandler = new TikTokGiftEventHandler(giftManager, roomInfo);
         var roomInfoHandler = new TikTokRoomInfoEventHandler(roomInfo);
         var socialHandler = new TikTokSocialMediaEventHandler(roomInfo);
 

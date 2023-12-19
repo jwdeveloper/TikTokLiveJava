@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers.handlers;
 
+import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -43,17 +44,19 @@ import java.util.Map;
 public class TikTokGiftEventHandler {
     private final GiftManager giftManager;
     private final Map<Long, WebcastGiftMessage> giftsMessages;
+    private final TikTokRoomInfo tikTokRoomInfo;
 
-    public TikTokGiftEventHandler(GiftManager giftManager) {
+    public TikTokGiftEventHandler(GiftManager giftManager, TikTokRoomInfo tikTokRoomInfo) {
         this.giftManager = giftManager;
         giftsMessages = new HashMap<>();
+        this.tikTokRoomInfo = tikTokRoomInfo;
     }
 
     @SneakyThrows
     public MappingResult handleGifts(byte[] msg, String name, TikTokMapperHelper helper) {
         var currentMessage = WebcastGiftMessage.parseFrom(msg);
         var gifts = handleGift(currentMessage);
-        return MappingResult.of(currentMessage,gifts);
+        return MappingResult.of(currentMessage, gifts);
     }
 
     public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage) {
@@ -101,12 +104,12 @@ public class TikTokGiftEventHandler {
 
     private TikTokGiftEvent getGiftEvent(WebcastGiftMessage message) {
         var gift = getGiftObject(message);
-        return new TikTokGiftEvent(gift, message);
+        return new TikTokGiftEvent(gift, tikTokRoomInfo.getHost(), message);
     }
 
     private TikTokGiftEvent getGiftComboEvent(WebcastGiftMessage message, GiftSendType state) {
         var gift = getGiftObject(message);
-        return new TikTokGiftComboEvent(gift, message, state);
+        return new TikTokGiftComboEvent(gift, tikTokRoomInfo.getHost(), message, state);
     }
 
     private Gift getGiftObject(WebcastGiftMessage giftMessage) {
