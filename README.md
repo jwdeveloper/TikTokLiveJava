@@ -1,7 +1,6 @@
 <div align="center" >
 <a target="blank" >
 <img src="https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/develop-1_0_0/Tools-ReadmeGenerator/src/main/resources/logo.svg" width="15%" >
-</img>
 </a>
 </div>
 <div align="center" >
@@ -12,18 +11,15 @@
 <div align="center" >
 <a href="https://jitpack.io/#jwdeveloper/TikTok-Live-Java" target="blank" >
 <img src="https://jitpack.io/v/jwdeveloper/TikTok-Live-Java.svg" width="20%" >
-</img>
 </a>
 
 
 <a href="https://discord.gg/e2XwPNTBBr" target="blank" >
 <img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" >
-</img>
 </a>
 
 <a target="blank" >
 <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white" >
-</img>
 </a>
 </div>
 </div>
@@ -33,7 +29,7 @@ A Java library inspired by [TikTokLive](https://github.com/isaackogan/TikTokLive
 The library includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers.
 No credentials are required. Events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked.
 
-# Contributors 
+# Contributors
 [Library documentation for contributors](https://github.com/jwdeveloper/TikTokLiveJava/wiki)
 
 <div align="center">
@@ -58,7 +54,7 @@ Do you prefer other programming languages?
 
 ## Getting started
 
-1. Install the package 
+1. Install the package
 
 Maven
 ```xml
@@ -73,7 +69,7 @@ Maven
          <dependency>
             <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
             <artifactId>Client</artifactId>
-             <version>1.0.7-Release</version>
+             <version>1.0.8-Release</version>
             <scope>compile</scope>
         </dependency>
    </dependencies>
@@ -90,7 +86,7 @@ dependencyResolutionManagement {
 	}
 
 dependencies {
-	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.0.7-Release'
+	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.0.8-Release'
 	}
 ```
 
@@ -438,9 +434,9 @@ Triggered every time gift is sent
   <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
   <p>Combo: 4 -> comboState = GiftSendType.Active</p>
   <p>Combo: 8 -> comboState = GiftSendType.Active</p>
-  <p>Combo: 12 -> comboState = GiftSendType.Finsihed</p>
+  <p>Combo: 12 -> comboState = GiftSendType.Finished</p>
 
-Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
+Remember if comboState is Finished both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
 
 
 ```java

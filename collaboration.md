@@ -27,7 +27,7 @@ Are you willing to help or improve TikTokLiveJava?
    - Connecting to TikTok websocket (PushServer)
      
         After successful connection to TikTok, `pushServer` starts to send `ProtocolBuffer`
-        messages in binary format. This is very important to understand `ProtocolBuffer. Don't worry it is not complicated :).
+        messages in binary format. This is very important to understand `ProtocolBuffer`. Don't worry it is not complicated :).
         All the proto files are included under `API/src/main/proto` After using `Maven compile` command on project, java classes are generated from 
         those files. so then we can easily map incoming bytes to classes, for examples
         `WebcastGiftMessage message = WebcastGiftMessage.parseFrom(incomingBytesArray)`
@@ -201,11 +201,3 @@ need to also include it to interface `EventsBuilder`
 Finally we are good to go, our event has been included!
 
 ![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/36ad6f1f-b38c-4cf7-93bd-b4cc0638cba0)
-
-
-
-
-
-
-
-   
