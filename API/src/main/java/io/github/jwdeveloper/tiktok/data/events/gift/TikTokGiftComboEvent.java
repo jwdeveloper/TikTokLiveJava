@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
@@ -40,7 +41,7 @@ import lombok.Getter;
  * <p>Combo: 4 -> comboState = GiftSendType.Active</p>
  * <p>Combo: 8 -> comboState = GiftSendType.Active</p>
  * <p>Combo: 12 -> comboState = GiftSendType.Finsihed</p>
- *
+ * <p>
  * Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
  */
 @EventMeta(eventType = EventType.Message)
@@ -48,8 +49,8 @@ import lombok.Getter;
 public class TikTokGiftComboEvent extends TikTokGiftEvent {
     private final GiftSendType comboState;
 
-    public TikTokGiftComboEvent(Gift gift, WebcastGiftMessage msg, GiftSendType comboState) {
-        super(gift, msg);
+    public TikTokGiftComboEvent(Gift gift, User host, WebcastGiftMessage msg, GiftSendType comboState) {
+        super(gift, host, msg);
         this.comboState = comboState;
     }
 }

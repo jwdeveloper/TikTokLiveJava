@@ -49,11 +49,15 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
     private final User toUser;
     private final int combo;
 
-    public TikTokGiftEvent(Gift gift, WebcastGiftMessage msg) {
+    public TikTokGiftEvent(Gift gift, User liveHost, WebcastGiftMessage msg) {
         super(msg.getCommon());
         this.gift = gift;
         user = User.map(msg.getUser(), msg.getUserIdentity());
-        toUser = new User(msg.getUserGiftReciever().getUserId(), "", "", new Picture(""), 0, 0, new ArrayList<>());
+        if (msg.getToUser().getNickname().isEmpty()) {
+            toUser = liveHost;
+        } else {
+            toUser = User.map(msg.getToUser());
+        }
         combo = msg.getComboCount();
     }
 }
