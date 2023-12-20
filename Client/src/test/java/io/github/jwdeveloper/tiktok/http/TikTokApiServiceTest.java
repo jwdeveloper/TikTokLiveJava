@@ -24,7 +24,6 @@ package io.github.jwdeveloper.tiktok.http;
 
 import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.ClientSettings;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
@@ -82,28 +81,6 @@ public class TikTokApiServiceTest
         tikTokApiService.updateSessionId();
 
         verify(tiktokHttpClient, times(1)).setSessionId("validSessionId");
-    }
-
-
-   // @Test
-    void fetchRoomId_ValidResponse_ReturnsRoomId() throws Exception {
-        String expectedRoomId = "123456";
-        String htmlResponse = "room_id=" + expectedRoomId ;
-        when(tiktokHttpClient.getLivestreamPage(anyString())).thenReturn(htmlResponse);
-
-        String roomId = tikTokApiService.fetchRoomId("username");
-
-        assertEquals(expectedRoomId, roomId);
-        verify(clientSettings.getClientParameters()).put("room_id", expectedRoomId);
-    }
-
-   // @Test
-    void fetchRoomId_ExceptionThrown_ThrowsTikTokLiveRequestException() throws Exception {
-        when(tiktokHttpClient.getLivestreamPage(anyString())).thenThrow(new Exception("some exception"));
-
-        assertThrows(TikTokLiveRequestException.class, () -> {
-            tikTokApiService.fetchRoomId("username");
-        });
     }
 
     //@Test

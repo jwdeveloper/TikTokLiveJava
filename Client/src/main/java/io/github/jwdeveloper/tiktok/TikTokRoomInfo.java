@@ -22,11 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.RankingUser;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import lombok.Data;
 
 import java.util.LinkedList;
@@ -41,6 +40,8 @@ public class TikTokRoomInfo implements LiveRoomInfo {
     private int viewersCount;
 
     private int totalViewersCount;
+
+    private long startTime;
 
     private boolean ageRestricted;
 
@@ -69,5 +70,4 @@ public class TikTokRoomInfo implements LiveRoomInfo {
         usersRanking.clear();
         usersRanking.addAll(rankingUsers);
     }
-
 }

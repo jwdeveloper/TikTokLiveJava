@@ -33,6 +33,8 @@ public class TikTokUserInfo
 
     String roomId;
 
+    long startTime;
+
     public enum UserStatus
     {
         NotFound,

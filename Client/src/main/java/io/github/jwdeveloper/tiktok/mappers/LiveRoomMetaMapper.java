@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.mappers;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.users.User;

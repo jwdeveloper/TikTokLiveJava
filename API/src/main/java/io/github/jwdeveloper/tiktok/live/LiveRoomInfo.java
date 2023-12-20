@@ -42,6 +42,7 @@ public interface LiveRoomInfo
       */
      int getTotalViewersCount();
      int getLikesCount();
+     long getStartTime();
      boolean isAgeRestricted();
      String getRoomId();
      String getHostName();

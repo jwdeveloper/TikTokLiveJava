@@ -22,12 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import io.github.jwdeveloper.tiktok.ClientSettings;
 import io.github.jwdeveloper.tiktok.data.dto.TikTokUserInfo;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.mappers.LiveRoomMetaMapper;
@@ -35,7 +32,6 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 public class TikTokApiService {
     private final TikTokHttpClient tiktokHttpClient;
@@ -48,7 +44,6 @@ public class TikTokApiService {
         this.clientSettings = clientSettings;
     }
 
-
     public void updateSessionId() {
         if (clientSettings.getSessionId() == null) {
             return;
@@ -59,24 +54,19 @@ public class TikTokApiService {
         tiktokHttpClient.setSessionId(clientSettings.getSessionId());
     }
 
-    public String fetchRoomId(String userName) {
-        var userInfo = fetchUserInfoFromTikTokApi(userName);
-        clientSettings.getClientParameters().put("room_id", userInfo.getRoomId());
-        logger.info("RoomID -> " + userInfo.getRoomId());
-        return userInfo.getRoomId();
+    public void updateRoomId(String roomId)
+    {
+        clientSettings.getClientParameters().put("room_id", roomId);
     }
 
     public TikTokUserInfo fetchUserInfoFromTikTokApi(String userName) {
-
         var params = new HashMap<>(clientSettings.getClientParameters());
         params.put("uniqueId", userName);
         params.put("sourceType", 54);
-        JsonObject roomData = null;
+        JsonObject roomData;
         try {
             roomData = tiktokHttpClient.getJsonFromTikTokApi("api-live/user/room/", params);
         } catch (Exception e) {
-
-
             throw new TikTokLiveRequestException("Failed to fetch  pre connection room information, it happens when TikTok temporary blocks you. Try to connect again in few minutes");
         }
 
@@ -86,7 +76,7 @@ public class TikTokApiService {
             throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact with developer");
         }
         if (message.equals("user_not_found")) {
-            return new TikTokUserInfo(TikTokUserInfo.UserStatus.NotFound, "");
+            return new TikTokUserInfo(TikTokUserInfo.UserStatus.NotFound, "", -1);
         }
         //live -> status 2
         //live paused -> 3
@@ -96,6 +86,9 @@ public class TikTokApiService {
         var roomId = user.get("roomId").getAsString();
         var status = user.get("status").getAsInt();
 
+        var liveRoom = data.getAsJsonObject("liveRoom");
+        long startTime = liveRoom.get("startTime").getAsLong();
+
         var statusEnum = switch (status) {
             case 2 -> TikTokUserInfo.UserStatus.Live;
             case 3 -> TikTokUserInfo.UserStatus.LivePaused;
@@ -103,7 +96,7 @@ public class TikTokApiService {
             default -> TikTokUserInfo.UserStatus.NotFound;
         };
 
-        return new TikTokUserInfo(statusEnum, roomId);
+        return new TikTokUserInfo(statusEnum, roomId, startTime);
     }
 
 
