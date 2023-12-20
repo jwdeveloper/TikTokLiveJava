@@ -113,12 +113,12 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
             clientSettings.setTimeout(Duration.ofSeconds(Constants.DEFAULT_TIMEOUT));
         }
 
-        if (clientSettings.getClientLanguage() == null || clientSettings.getClientLanguage().equals("")) {
+        if (clientSettings.getClientLanguage() == null || clientSettings.getClientLanguage().isEmpty()) {
             clientSettings.setClientLanguage(Constants.DefaultClientSettings().getClientLanguage());
         }
 
 
-        if (clientSettings.getHostName() == null || clientSettings.getHostName().equals("")) {
+        if (clientSettings.getHostName() == null || clientSettings.getHostName().isEmpty()) {
             throw new TikTokLiveException("HostName can not be null");
         }
 
@@ -553,10 +553,3 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 }
-
-
-
-
-
-
-

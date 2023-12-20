@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.data.dto.TikTokUserInfo;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
@@ -135,13 +136,15 @@ public class TikTokLiveClient implements LiveClient {
 
         apiService.updateSessionId();
 
+        TikTokUserInfo info = apiService.fetchUserInfoFromTikTokApi(liveRoomInfo.getHostName());
+        liveRoomInfo.setStartTime(info.getStartTime());
         if (clientSettings.getRoomId() != null) {
             liveRoomInfo.setRoomId(clientSettings.getRoomId());
             logger.info("Using roomID from settings: " + clientSettings.getRoomId());
         } else {
-            var roomId = apiService.fetchRoomId(liveRoomInfo.getHostName());
-            liveRoomInfo.setRoomId(roomId);
+            liveRoomInfo.setRoomId(info.getRoomId());
         }
+        apiService.updateRoomId(liveRoomInfo.getRoomId());
 
 
         var liveRoomMeta = apiService.fetchRoomInfo();
