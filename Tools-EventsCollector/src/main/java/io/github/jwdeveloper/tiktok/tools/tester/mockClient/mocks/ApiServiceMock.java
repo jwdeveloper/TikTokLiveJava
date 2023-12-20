@@ -54,10 +54,4 @@ public class ApiServiceMock extends TikTokApiService {
     public WebcastResponse fetchClientData() {
         return WebcastResponse.newBuilder().build();
     }
-
-
-    @Override
-    public String fetchRoomId(String userName) {
-        return "mock-room-id";
-    }
 }
