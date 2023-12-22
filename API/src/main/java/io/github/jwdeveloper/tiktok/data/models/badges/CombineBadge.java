@@ -24,19 +24,22 @@ package io.github.jwdeveloper.tiktok.data.models.badges;
 
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.messages.data.BadgeStruct;
+import lombok.Getter;
 
+@Getter
 public class CombineBadge extends Badge {
     private final Picture picture;
     private final String text;
     private final String subText;
 
-
     public CombineBadge(BadgeStruct.CombineBadge combineBadge) {
-
         picture = Picture.map(combineBadge.getIcon());
         text = combineBadge.getText().getDefaultPattern();
         subText = combineBadge.getStr();
     }
 
-
+    @Override
+    public String toString() {
+        return "CombineBadge{picture=" + picture +", text='" + text + "', subText='" + subText + "'}";
+    }
 }

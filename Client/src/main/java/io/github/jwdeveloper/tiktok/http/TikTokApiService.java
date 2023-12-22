@@ -73,7 +73,7 @@ public class TikTokApiService {
         var message = roomData.get("message").getAsString();
 
         if (message.equals("params_error")) {
-            throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact with developer");
+            throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact the developer");
         }
         if (message.equals("user_not_found")) {
             return new TikTokUserInfo(TikTokUserInfo.UserStatus.NotFound, "", -1);
@@ -81,7 +81,11 @@ public class TikTokApiService {
         //live -> status 2
         //live paused -> 3
         //not live -> status 4
-        var data = roomData.getAsJsonObject("data");
+        var element = roomData.get("data");
+        if (element.isJsonNull()) {
+            return new TikTokUserInfo(TikTokUserInfo.UserStatus.NotFound, "", -1);
+        }
+        var data = element.getAsJsonObject();
         var user = data.getAsJsonObject("user");
         var roomId = user.get("roomId").getAsString();
         var status = user.get("status").getAsInt();

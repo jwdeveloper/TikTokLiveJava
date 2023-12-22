@@ -24,12 +24,18 @@ package io.github.jwdeveloper.tiktok.data.models.badges;
 
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.messages.data.BadgeStruct;
+import lombok.Getter;
 
+@Getter
 public class PictureBadge extends Badge {
-
     private final Picture picture;
-    public PictureBadge(BadgeStruct.ImageBadge imageBadge) {
 
+    public PictureBadge(BadgeStruct.ImageBadge imageBadge) {
         picture = Picture.map(imageBadge.getImage());
+    }
+
+    @Override
+    public String toString() {
+        return "PictureBadge{picture=" + picture + "}";
     }
 }
