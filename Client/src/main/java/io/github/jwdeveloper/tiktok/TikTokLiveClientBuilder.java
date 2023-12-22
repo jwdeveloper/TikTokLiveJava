@@ -136,10 +136,12 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         handler.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord record) {
-				return ConsoleColors.GREEN + "[" + record.getLoggerName() + "] " +
-					ConsoleColors.GREEN + "[" + record.getLevel() + "]: " +
-					ConsoleColors.WHITE_BRIGHT + record.getMessage() +
-					ConsoleColors.RESET + "\n";
+                var sb = new StringBuilder();
+                sb.append(ConsoleColors.GREEN).append("[").append(record.getLoggerName()).append("] ");
+                sb.append(ConsoleColors.GREEN).append("[").append(record.getLevel()).append("]: ");
+                sb.append(ConsoleColors.WHITE_BRIGHT).append(record.getMessage());
+                sb.append(ConsoleColors.RESET).append("\n");
+                return sb.toString();
             }
         });
         logger.setUseParentHandlers(false);

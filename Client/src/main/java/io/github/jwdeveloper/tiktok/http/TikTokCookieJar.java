@@ -40,6 +40,9 @@ public class TikTokCookieJar {
     }
 
     public String parseCookies() {
-		return cookies.entrySet().stream().map(entry -> entry.getKey()+"="+entry.getValue()+";").collect(Collectors.joining());
+		return cookies.entrySet()
+            .stream()
+            .map(entry -> entry.getKey()+"="+entry.getValue()+";")
+            .collect(Collectors.joining());
     }
 }
