@@ -22,9 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TikTokCookieJar {
     private final Map<String, String> cookies;
@@ -40,13 +39,7 @@ public class TikTokCookieJar {
         cookies.put(key, value);
     }
 
-    public String parseCookies()
-    {
-        var sb = new StringBuilder();
-        for(var entry : cookies.entrySet())
-        {
-            sb.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
-        }
-        return sb.toString();
+    public String parseCookies() {
+		return cookies.entrySet().stream().map(entry -> entry.getKey()+"="+entry.getValue()+";").collect(Collectors.joining());
     }
 }

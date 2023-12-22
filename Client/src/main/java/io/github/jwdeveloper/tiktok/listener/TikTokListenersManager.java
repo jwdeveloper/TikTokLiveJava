@@ -115,7 +115,7 @@ public class TikTokListenersManager implements ListenersManager {
                     throw new TikTokEventListenerMethodException(e);
                 }
             };
-            eventsMap.computeIfAbsent(eventClazz, (a) -> new ArrayList<EventConsumer<?>>()).add(eventMethodRef);
+            eventsMap.computeIfAbsent(eventClazz, (a) -> new ArrayList<>()).add(eventMethodRef);
         }
         return new ListenerBindingModel(listener, eventsMap);
     }

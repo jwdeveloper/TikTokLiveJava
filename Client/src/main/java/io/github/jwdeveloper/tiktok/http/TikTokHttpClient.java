@@ -45,8 +45,7 @@ public class TikTokHttpClient {
         this.tikTokCookieJar = tikTokCookieJar;
     }
 
-    public void setSessionId(String sessionId)
-    {
+    public void setSessionId(String sessionId) {
         tikTokCookieJar.set("sessionid", sessionId);
         tikTokCookieJar.set("sessionid_ss", sessionId);
         tikTokCookieJar.set("sid_tt", sessionId);
@@ -54,14 +53,12 @@ public class TikTokHttpClient {
 
 
     public String getLivestreamPage(String userName) {
-
         var url = Constants.TIKTOK_URL_WEB + "@" + userName + "/live/";
         var get = getRequest(url, null);
         return get;
     }
 
-    public JsonObject getJsonFromTikTokApi(String path, Map<String,Object> params)
-    {
+    public JsonObject getJsonFromTikTokApi(String path, Map<String,Object> params) {
         var get = getRequest(Constants.TIKTOK_URL_WEB + path, params);
         var json = JsonParser.parseString(get);
         var jsonObject = json.getAsJsonObject();
@@ -117,7 +114,6 @@ public class TikTokHttpClient {
             {
                 var split = cookie.split(";")[0].split("=");
 
-
                 var key = split[0];
                 var value = split[1];
                 tikTokCookieJar.set(key, value);
@@ -133,7 +129,6 @@ public class TikTokHttpClient {
 
 
     private String getSignedUrl(String url, Map<String, Object> parameters) {
-
         var fullUrl = HttpUtils.parseParameters(url,parameters);
         var signParams = new TreeMap<String,Object>();
         signParams.put("client", "ttlive-java");
@@ -142,7 +137,6 @@ public class TikTokHttpClient {
 
         var request = requestFactory.setQueries(signParams);
         var content = request.get(Constants.TIKTOK_SIGN_API);
-
 
         try {
             var json = JsonParser.parseString(content);

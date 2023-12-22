@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class TikTokHttpRequestFactory implements TikTokHttpRequest {
     private final CookieManager cookieManager;
@@ -122,18 +123,16 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
     public TikTokHttpRequest setQueries(Map<String, Object> queries) {
         if (queries == null)
             return this;
-        var testMap = new TreeMap<String, Object>(queries);
-        query = String.join("&", testMap.entrySet().stream().map(x ->
-        {
+        var testMap = new TreeMap<>(queries);
+        query = testMap.entrySet().stream().map(x -> {
             var key = x.getKey();
-            var value = "";
             try {
-                value = URLEncoder.encode(x.getValue().toString(), StandardCharsets.UTF_8);
+                return key+"="+URLEncoder.encode(x.getValue().toString(), StandardCharsets.UTF_8);
             } catch (Exception e) {
                 e.printStackTrace();
+				return key + "=";
             }
-            return key + "=" + value;
-        }).toList());
+        }).collect(Collectors.joining("&"));
         return this;
     }
 
@@ -162,10 +161,7 @@ public class TikTokHttpRequestFactory implements TikTokHttpRequest {
             var map = new HashMap<String, List<String>>();
             map.put(key, List.of(value));
             cookieManager.put(uri, map);
-
         }
         return response.body();
     }
-
-
 }
