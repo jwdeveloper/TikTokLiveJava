@@ -23,12 +23,18 @@
 package io.github.jwdeveloper.tiktok.data.models.badges;
 
 import io.github.jwdeveloper.tiktok.messages.data.BadgeStruct;
+import lombok.Getter;
 
+@Getter
 public class StringBadge extends Badge {
+    private final String text;
 
-    public String text;
     public StringBadge(BadgeStruct.StringBadge stringBadge) {
-
         this.text = stringBadge.getStr();
+    }
+
+    @Override
+    public String toString() {
+        return "StringBadge{text='" + text + "'}";
     }
 }
