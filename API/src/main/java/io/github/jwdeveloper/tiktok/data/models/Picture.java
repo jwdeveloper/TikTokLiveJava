@@ -28,14 +28,9 @@ import lombok.Getter;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
 
 public class Picture {
 
@@ -49,7 +44,6 @@ public class Picture {
     }
 
     public static Picture map(io.github.jwdeveloper.tiktok.messages.data.Image profilePicture) {
-
         var index = profilePicture.getUrlListCount() - 1;
         if (index < 0) {
             return new Picture("");
@@ -74,12 +68,11 @@ public class Picture {
         return CompletableFuture.supplyAsync(this::downloadImage);
     }
 
-    private BufferedImage download(String urlString)
-    {
-        if(urlString.isEmpty())
-        {
+    private BufferedImage download(String urlString) {
+        if (urlString.isEmpty()) {
             return null;
         }
+
         var baos = new ByteArrayOutputStream();
         try (var is = new URL(urlString).openStream()) {
             var byteChunk = new byte[4096];
@@ -102,5 +95,10 @@ public class Picture {
 
     public static Picture Empty() {
         return new Picture("");
+    }
+
+    @Override
+    public String toString() {
+        return "Picture{link='" + link + "', image=" + image + "}";
     }
 }

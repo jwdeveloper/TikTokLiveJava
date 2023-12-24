@@ -37,6 +37,4 @@ public class Badge {
     public static Badge empty() {
         return new Badge();
     }
-
-
 }
