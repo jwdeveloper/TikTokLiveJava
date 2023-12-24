@@ -22,14 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import sun.misc.Unsafe;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -89,23 +87,17 @@ public class TikTokGiftManager implements GiftManager {
     }
 
     public Gift findById(int giftId) {
-        if (!indexById.containsKey(giftId)) {
-            return Gift.UNDEFINED;
-        }
-        return indexById.get(giftId);
+        Gift gift = indexById.get(giftId);
+        return gift == null ? Gift.UNDEFINED : gift;
     }
 
     public Gift findByName(String giftName) {
-        if (!indexByName.containsKey(giftName)) {
-            return Gift.UNDEFINED;
-        }
-        return indexByName.get(giftName);
+        Gift gift = indexByName.get(giftName);
+        return gift == null ? Gift.UNDEFINED : gift;
     }
 
     @Override
-    public List<Gift> getGifts()
-    {
+    public List<Gift> getGifts() {
         return indexById.values().stream().toList();
     }
-
 }
