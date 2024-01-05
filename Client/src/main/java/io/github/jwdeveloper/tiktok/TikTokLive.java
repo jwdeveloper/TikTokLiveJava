@@ -23,8 +23,11 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
+
+import java.util.concurrent.CompletableFuture;
 
 public class TikTokLive {
 
@@ -37,6 +40,52 @@ public class TikTokLive {
         return new TikTokLiveClientBuilder(hostName);
     }
 
+    /**
+     *
+     * @param hostName profile name of Tiktok user could be found in profile link
+     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
+     * @return true if live is Online, false if is offline
+     */
+    public static boolean isLiveOnline(String hostName)
+    {
+		LiveUserData.UserStatus status = requests().fetchLiveUserData(hostName).getUserStatus();
+        return status == LiveUserData.UserStatus.Live || status == LiveUserData.UserStatus.LivePaused;
+    }
+
+
+    /**
+     *
+     * @param hostName profile name of Tiktok user could be found in profile link
+     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
+     * @return true if live is Online, false if is offline
+     */
+    public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName)
+    {
+        return CompletableFuture.supplyAsync(()-> isLiveOnline(hostName));
+    }
+
+    /**
+     *
+     * @param hostName profile name of Tiktok user could be found in profile link
+     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
+     * @return true is hostName name is valid and exists, false if not
+     */
+    public static boolean isHostNameValid(String hostName)
+    {
+        LiveUserData.UserStatus status = requests().fetchLiveUserData(hostName).getUserStatus();
+        return status != LiveUserData.UserStatus.NotFound;
+    }
+
+    /**
+     *
+     * @param hostName profile name of Tiktok user could be found in profile link
+     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
+     * @return true is hostName name is valid and exists, false if not
+     */
+    public static CompletableFuture<Boolean> isHostNameValidAsync(String hostName)
+    {
+        return CompletableFuture.supplyAsync(()-> isHostNameValid(hostName));
+    }
 
     /**
      * Use to get some data from TikTok about users are lives
@@ -44,9 +93,6 @@ public class TikTokLive {
      * @return LiveHttpClient
      */
     public static LiveHttpClient requests() {
-
-
         return new TikTokLiveHttpClient();
     }
-
 }
