@@ -50,14 +50,14 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
     private final HttpClientFactory httpFactory;
     private final LiveUserDataMapper liveUserDataMapper;
     private final LiveDataMapper liveDataMapper;
-    private final SignServerResponseMapper singServerResponseMapper;
+    private final SignServerResponseMapper signServerResponseMapper;
     private final GiftsDataMapper giftsDataMapper;
 
     public TikTokLiveHttpClient(HttpClientFactory factory) {
         this.httpFactory = factory;
         liveUserDataMapper = new LiveUserDataMapper();
         liveDataMapper = new LiveDataMapper();
-        singServerResponseMapper = new SignServerResponseMapper();
+        signServerResponseMapper = new SignServerResponseMapper();
         giftsDataMapper = new GiftsDataMapper();
     }
 
@@ -180,7 +180,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         }
 
         var json = optional.get();
-        return singServerResponseMapper.map(json);
+        return signServerResponseMapper.map(json);
     }
 
     HttpResponse<byte[]> getWebsocketCredentialsResponse(String signedUrl) {
