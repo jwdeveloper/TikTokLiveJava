@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
+import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -41,12 +42,12 @@ import static org.mockito.Mockito.verify;
 
 class TikTokListenersManagerTest {
 
-    private io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver eventObserver;
+    private TikTokLiveEventHandler eventObserver;
     private TikTokListenersManager tikTokListenersManager;
 
     @BeforeEach
     void setUp() {
-        eventObserver = Mockito.mock(io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver.class);
+        eventObserver = Mockito.mock(TikTokLiveEventHandler.class);
         List<TikTokEventListener> listeners = new ArrayList<>();
         tikTokListenersManager = new TikTokListenersManager(listeners, eventObserver);
     }

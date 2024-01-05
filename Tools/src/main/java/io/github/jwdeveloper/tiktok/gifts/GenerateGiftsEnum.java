@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.gifts;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
+import io.github.jwdeveloper.tiktok.TikTokLive;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.gifts.downloader.GiftDto;
 import lombok.Getter;
@@ -32,6 +33,7 @@ import lombok.Getter;
 import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,10 +44,17 @@ public class GenerateGiftsEnum {
     public static void main(String args[]) throws IOException {
 
 
+
+        TikTokLive.newClient("X")
+                .configure(liveClientSettings ->
+                {
+                   var httpSetting = liveClientSettings.getHttpSettings();
+                    httpSetting.setTimeout(Duration.ofSeconds(12));
+                });
+
         var downloader = new GiftsDownloader();
         var gifts = downloader.getGiftsFromFile();
-        for(var link : gifts)
-        {
+        for (var link : gifts) {
             System.out.println(link.getImage());
         }
         var groupedByName = gifts.stream().collect(Collectors.groupingBy(GiftDto::getName));
@@ -105,8 +114,15 @@ public class GenerateGiftsEnum {
                     .replace("'", "_")
                     .replace(".", "_")
                     .replace("-", "_")
-                    .replace("!","_")
+                    .replace("&", "_")
+                    .replace("!", "_")
                     .toUpperCase();
+
+
+            boolean startsWithNumber = name.matches("^[0-9].*");
+            if (startsWithNumber) {
+                name = "_" + name;
+            }
 
             if (isNumeric(name)) {
                 name = "_" + name;
@@ -141,8 +157,7 @@ public class GenerateGiftsEnum {
         }
     }
 
-    public static TypeSpec addGift(int id, String name, int diamond, String picture)
-    {
+    public static TypeSpec addGift(int id, String name, int diamond, String picture) {
         return TypeSpec.anonymousClassBuilder(
                         "$L, $S, $L, $S",
                         id,

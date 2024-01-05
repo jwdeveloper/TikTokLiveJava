@@ -26,14 +26,10 @@ import io.github.jwdeveloper.tiktok.TikTokLiveClientBuilder;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
-import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
-import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
-import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
+import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
+import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks.ApiServiceMock;
 import io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks.LiveClientMock;
 import io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks.WebsocketClientMock;
 
@@ -87,21 +83,17 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
     public LiveClientMock build() {
         validate();
 
-        var cookie = new TikTokCookieJar();
         var tiktokRoomInfo = new TikTokRoomInfo();
         tiktokRoomInfo.setHostName(clientSettings.getHostName());
 
         var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
         var giftManager = new TikTokGiftManager(logger);
-        var requestFactory = new TikTokHttpRequestFactory(cookie, new TikTokEventObserver());
-        var apiClient = new TikTokHttpClient(cookie, requestFactory);
-        var apiService = new ApiServiceMock(apiClient, logger, clientSettings);
         var mapper = createMapper(giftManager, tiktokRoomInfo);
-        var handler = new TikTokMessageHandler(tikTokEventHandler, mapper);
+        var handler = new TikTokLiveMessageHandler(tikTokEventHandler, mapper);
         var webSocketClient = new WebsocketClientMock(logger, responses, handler);
 
         return new LiveClientMock(tiktokRoomInfo,
-                apiService,
+                new TikTokLiveHttpClient(),
                 webSocketClient,
                 giftManager,
                 tikTokEventHandler,

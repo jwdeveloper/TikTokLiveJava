@@ -37,7 +37,8 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException, IOException {
+    public static void main(String[] args) throws SQLException
+    {
         var settings = new Settings();
         settings.setUserName("szalonamoniaxx");
         settings.setSessionTag("battle");

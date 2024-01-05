@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.TikTokSubNotifyEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
+import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
@@ -31,56 +32,20 @@ import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.logging.Level;
 
 public class SimpleExample {
-    public static String TIKTOK_HOSTNAME = "bangbetmenygy";
+    public static String TIKTOK_HOSTNAME = "dash4214";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         showLogo();
-        // set tiktok username
-
-
-
-
-        /*
-        //Optional checking if host name is correct
-        if(TikTokLive.isHostNameValid(TIKTOK_HOSTNAME))
-        {
-            System.out.println("user name exists!");
-        }
-         */
-
-        // Optional checking if live is online
-        if (TikTokLive.isLiveOnline(TIKTOK_HOSTNAME)) {
-            System.out.println("Live is online!");
-        }
-
-
-        TikTokLive.newClient("test")
-                .onWebsocketResponse((liveClient, event) ->
-                {
-                    var response = event.getResponse();
-                    for (var message : response.getMessagesList()) {
-                        var name = message.getMethod();
-                        var binaryData = message.getPayload();
-                        System.out.println("Event name: " + name);
-                        if (name.equals("WebcastGiftEvent")) {
-                            try {
-                                WebcastGiftMessage giftMessage = WebcastGiftMessage.parseFrom(binaryData);
-                                var giftName = giftMessage.getGift().getName();
-                                var giftId = giftMessage.getGiftId();
-                                var userName = giftMessage.getUser().getNickname();
-                                System.out.println("Gift: "+giftName+" id: "+giftId+" from user: "+userName);
-                            } catch (Exception e) {
-                                throw new RuntimeException("Mapping error", e);
-                            }
-                        }
-                    }
-                }).buildAndConnect();
 
 
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
@@ -88,11 +53,13 @@ public class SimpleExample {
                 {
                     clientSettings.setHostName(SimpleExample.TIKTOK_HOSTNAME); // This method is useful in case you want change hostname later
                     clientSettings.setClientLanguage("en"); // Language
-                    clientSettings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     clientSettings.setLogLevel(Level.ALL); // Log level
                     clientSettings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
                     clientSettings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
                     clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1)); // Timeout before next reconnection
+
+
+                    clientSettings.getHttpSettings();
 
                     //Optional: Sometimes not every message from chat are send to TikTokLiveJava to fix this issue you can set sessionId
                     // documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
@@ -105,15 +72,6 @@ public class SimpleExample {
 
                     //clientSettings.setRoomId("XXXXXXXXXXXXXXXXX");
                 })
-                .onConnected((liveClient, event) ->
-                {
-                    for (var gift : liveClient.getGiftManager().getGifts()) {
-                        gift.getPicture().downloadImageAsync().thenAccept(image ->
-                        {
-
-                        });
-                    }
-                })
                 .onWebsocketMessage((liveClient, event) ->
                 {
 
@@ -124,9 +82,14 @@ public class SimpleExample {
                     }
 
                 })
-                .onWebsocketResponse((liveClient, event) ->
+                .onEvent((liveClient, event) ->
                 {
-                    event.getResponse();
+                    if (event instanceof TikTokGiftEvent giftEvent) {
+                        System.out.println("1");
+                    }
+                    if (event instanceof TikTokChestEvent chestEvent) {
+                        System.out.println("2");
+                    }
                 })
                 .onGift((liveClient, event) ->
                 {
@@ -142,7 +105,7 @@ public class SimpleExample {
                 {
                     print(ConsoleColors.RED, "GIFT COMBO", event.getGift().getName(), event.getCombo());
                 })
-                .onConnected((client, event) ->
+                .onConnected((liveClient, event) ->
                 {
                     print(ConsoleColors.GREEN, "[Connected]");
                 })
@@ -158,19 +121,19 @@ public class SimpleExample {
                 {
                     print(ConsoleColors.BLUE, "Follow:", ConsoleColors.WHITE_BRIGHT, event.getUser().getName());
                 })
-                .onJoin((client, event) ->
+                .onJoin((liveClient, event) ->
                 {
                     print(ConsoleColors.WHITE, "Join:", ConsoleColors.WHITE_BRIGHT, event.getUser().getName());
                 })
-                .onComment((client, event) ->
+                .onComment((liveClient, event) ->
                 {
                     print(ConsoleColors.GREEN, event.getUser().getName(), ":", ConsoleColors.WHITE_BRIGHT, event.getText());
                 })
-                .onEvent((client, event) ->
+                .onEvent((liveClient, event) ->
                 {
                     //System.out.println("Event: " +event.getClass().getSimpleName());
                 })
-                .onError((client, event) ->
+                .onError((liveClient, event) ->
                 {
                     event.getException().printStackTrace();
                 })

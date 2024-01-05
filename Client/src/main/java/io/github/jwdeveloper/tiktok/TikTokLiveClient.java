@@ -22,24 +22,24 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.dto.TikTokUserInfo;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
+import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
+import io.github.jwdeveloper.tiktok.data.requests.LiveData;
+import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.http.TikTokApiService;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
-import io.github.jwdeveloper.tiktok.live.LiveRoomMeta;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
 
 import java.util.concurrent.CompletableFuture;
@@ -49,24 +49,24 @@ import java.util.logging.Logger;
 public class TikTokLiveClient implements LiveClient {
     private final TikTokRoomInfo liveRoomInfo;
     private final TikTokGiftManager tikTokGiftManager;
-    private final TikTokApiService apiService;
+    private final TikTokLiveHttpClient httpClient;
     private final SocketClient webSocketClient;
-    private final TikTokEventObserver tikTokEventHandler;
-    private final ClientSettings clientSettings;
+    private final TikTokLiveEventHandler tikTokEventHandler;
+    private final LiveClientSettings clientSettings;
     private final TikTokListenersManager listenersManager;
     private final Logger logger;
 
     public TikTokLiveClient(TikTokRoomInfo tikTokLiveMeta,
-                            TikTokApiService tikTokApiService,
+                            TikTokLiveHttpClient tiktokHttpClient,
                             SocketClient webSocketClient,
                             TikTokGiftManager tikTokGiftManager,
-                            TikTokEventObserver tikTokEventHandler,
-                            ClientSettings clientSettings,
+                            TikTokLiveEventHandler tikTokEventHandler,
+                            LiveClientSettings clientSettings,
                             TikTokListenersManager listenersManager,
                             Logger logger) {
         this.liveRoomInfo = tikTokLiveMeta;
         this.tikTokGiftManager = tikTokGiftManager;
-        this.apiService = tikTokApiService;
+        this.httpClient = tiktokHttpClient;
         this.webSocketClient = webSocketClient;
         this.tikTokEventHandler = tikTokEventHandler;
         this.clientSettings = clientSettings;
@@ -82,7 +82,9 @@ public class TikTokLiveClient implements LiveClient {
             onConnection.accept(this);
             return this;
         });
+
     }
+
 
     public CompletableFuture<LiveClient> connectAsync() {
         return CompletableFuture.supplyAsync(() ->
@@ -117,6 +119,51 @@ public class TikTokLiveClient implements LiveClient {
         }
     }
 
+    public void tryConnect() {
+        if (!liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
+        {
+            throw new TikTokLiveException("Already connected");
+        }
+
+        setState(ConnectionState.CONNECTING);
+
+
+        var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
+        var userData = httpClient.fetchLiveUserData(userDataRequest);
+        liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
+        liveRoomInfo.setRoomId(userData.getRoomId());
+        if (userData.getUserStatus() == LiveUserData.UserStatus.Offline) {
+            throw new TikTokLiveOfflineHostException("User is offline: "+liveRoomInfo.getHostUser());
+        }
+        if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound) {
+            throw new TikTokLiveOfflineHostException("User not found: "+liveRoomInfo.getHostUser());
+        }
+
+
+        var liveDataRequest = new LiveData.Request(userData.getRoomId());
+        var liveData = httpClient.fetchLiveData(liveDataRequest);
+        if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound) {
+            throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found.");
+        }
+        if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline) {
+            throw new TikTokLiveOfflineHostException("LiveStream for not be found, is the Host offline?");
+        }
+
+        liveRoomInfo.setTitle(liveData.getTitle());
+        liveRoomInfo.setViewersCount(liveData.getViewers());
+        liveRoomInfo.setTotalViewersCount(liveData.getTotalViewers());
+        liveRoomInfo.setAgeRestricted(liveData.isAgeRestricted());
+        liveRoomInfo.setHost(liveData.getHost());
+
+
+        var liveConnectionRequest =new LiveConnectionData.Request(userData.getRoomId());
+        var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
+        webSocketClient.start(liveConnectionData, this);
+
+        setState(ConnectionState.CONNECTED);
+        tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(liveRoomInfo));
+    }
+
     public void disconnect() {
         if (liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
             return;
@@ -125,46 +172,13 @@ public class TikTokLiveClient implements LiveClient {
         setState(ConnectionState.DISCONNECTED);
     }
 
-    public void tryConnect() {
-        if (liveRoomInfo.hasConnectionState(ConnectionState.CONNECTED))
-            throw new TikTokLiveException("Already connected");
-        if (liveRoomInfo.hasConnectionState(ConnectionState.CONNECTING))
-            throw new TikTokLiveException("Already connecting");
+    private void setState(ConnectionState connectionState) {
+        logger.info("TikTokLive client state: " + connectionState.name());
+        liveRoomInfo.setConnectionState(connectionState);
+    }
 
-        setState(ConnectionState.CONNECTING);
-
-
-        apiService.updateSessionId();
-
-        TikTokUserInfo info = apiService.fetchUserInfoFromTikTokApi(liveRoomInfo.getHostName());
-        liveRoomInfo.setStartTime(info.getStartTime());
-        if (clientSettings.getRoomId() != null) {
-            liveRoomInfo.setRoomId(clientSettings.getRoomId());
-            logger.info("Using roomID from settings: " + clientSettings.getRoomId());
-        } else {
-            liveRoomInfo.setRoomId(info.getRoomId());
-        }
-        apiService.updateRoomId(liveRoomInfo.getRoomId());
-
-
-        var liveRoomMeta = apiService.fetchRoomInfo();
-        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostNotFound) {
-            throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found.");
-        }
-        if (liveRoomMeta.getStatus() == LiveRoomMeta.LiveRoomStatus.HostOffline) {
-            throw new TikTokLiveOfflineHostException("LiveStream for not be found, is the Host offline?");
-        }
-
-        liveRoomInfo.setTitle(liveRoomMeta.getTitie());
-        liveRoomInfo.setViewersCount(liveRoomMeta.getViewers());
-        liveRoomInfo.setTotalViewersCount(liveRoomMeta.getTotalViewers());
-        liveRoomInfo.setAgeRestricted(liveRoomMeta.isAgeRestricted());
-        liveRoomInfo.setHost(liveRoomMeta.getHost());
-
-        var clientData = apiService.fetchClientData();
-        webSocketClient.start(clientData, this);
-        setState(ConnectionState.CONNECTED);
-        tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(liveRoomInfo));
+    public void publishEvent(TikTokEvent event) {
+        tikTokEventHandler.publish(this, event);
     }
 
 
@@ -188,13 +202,4 @@ public class TikTokLiveClient implements LiveClient {
     }
 
 
-    private void setState(ConnectionState connectionState) {
-        logger.info("TikTokLive client state: " + connectionState.name());
-        liveRoomInfo.setConnectionState(connectionState);
-    }
-
-    public void publishEvent(TikTokEvent event)
-    {
-        tikTokEventHandler.publish(this, event);
-    }
 }

@@ -22,15 +22,13 @@
  */
 package io.github.jwdeveloper.tiktok.live.builder;
 
-import io.github.jwdeveloper.tiktok.ClientSettings;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
 
@@ -48,11 +46,11 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
 
     /**
      * Configuration of client settings
-     * @see ClientSettings
+     * @see LiveClientSettings
      * @param onConfigure
      * @return
      */
-    LiveClientBuilder configure(Consumer<ClientSettings> onConfigure);
+    LiveClientBuilder configure(Consumer<LiveClientSettings> onConfigure);
 
     /**
      * @see TikTokEventListener
