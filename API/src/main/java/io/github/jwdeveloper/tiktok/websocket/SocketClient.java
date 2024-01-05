@@ -22,11 +22,11 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
+import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 public interface SocketClient {
-    void start(WebcastResponse webcastResponse, LiveClient tikTokLiveClient);
-
+    void start(LiveConnectionData.Response webcastResponse, LiveClient tikTokLiveClient);
     void stop();
 }

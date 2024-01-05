@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.tools.util;
 
 import com.google.protobuf.ByteString;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
@@ -34,8 +35,8 @@ public class MessageUtil {
             var methodName = message.getMethod();
             var inputClazz = Class.forName("io.github.jwdeveloper.tiktok.messages.webcast." + methodName);
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", ByteString.class);
-            var deserialized = parseMethod.invoke(null, message.getPayload());
-            return JsonUtil.messageToJson(deserialized);
+            var webcastObject = parseMethod.invoke(null, message.getPayload());
+            return JsonUtil.messageToJson(webcastObject);
         } catch (Exception ex) {
 
             return ConsoleColors.RED + "Can not find mapper for " + message.getMethod();
@@ -48,6 +49,7 @@ public class MessageUtil {
             var inputClazz = Class.forName("io.github.jwdeveloper.tiktok.messages.webcast." + messageName);
             var parseMethod = inputClazz.getDeclaredMethod("parseFrom", byte[].class);
             var deserialized = parseMethod.invoke(null, bytes);
+
             return JsonUtil.messageToJson(deserialized);
         } catch (Exception ex) {
             var sb = new StringBuilder();

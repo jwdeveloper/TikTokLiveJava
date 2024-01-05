@@ -25,10 +25,6 @@ message WebcastPushFrame {
 
 }
 
-message WebcastWebsocketAck {
-  uint64 Id = 1;
-  string Type = 2;
-}
 
 
 //@WebcastResponse
@@ -733,7 +729,7 @@ message WebcastSystemMessage {
 //@WebcastLinkMessage
 message WebcastLinkMessage {
   Common common = 1;
-  MessageType MessageType = 2;
+  LinkMessageType MessageType = 2;
   int64 LinkerId = 3;
   Scene Scene = 4;
   LinkerInviteContent InviteContent = 5;
@@ -752,14 +748,14 @@ message WebcastLinkMessage {
   LinkerUpdateUserSettingContent UpdateUserSettingContent = 18;
   LinkerMicIdxUpdateContent MicIdxUpdateContent = 19;
   LinkerListChangeContent ListChangeContent = 20;
-  // CohostListChangeContent CohostListChangeContent = 21;
+  CohostListChangeContent CohostListChangeContent = 21;
   LinkerMediaChangeContent MediaChangeContent = 22;
   LinkerAcceptNoticeContent ReplyAcceptNoticeContent = 23;
   LinkerSysKickOutContent SysKickOutContent = 101;
-  // LinkmicUserToastContent UserToastContent = 102;
-  string Extra = 200;
-  int64 ExpireTimestamp = 201;
-  string TransferExtra = 202;
+  LinkmicUserToastContent UserToastContent = 102;
+  string extra = 200;
+  int64 expireTimestamp = 201;
+  string transferExtra = 202;
 }
 
 

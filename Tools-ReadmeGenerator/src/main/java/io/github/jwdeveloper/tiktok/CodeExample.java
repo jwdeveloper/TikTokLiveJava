@@ -84,7 +84,6 @@ public class CodeExample {
                 {
                     settings.setHostName("bangbetmenygy"); // This method is useful in case you want change hostname later
                     settings.setClientLanguage("en"); // Language
-                    settings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     settings.setLogLevel(Level.ALL); // Log level
                     settings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
                     settings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline

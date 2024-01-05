@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 
+import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
@@ -36,10 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TikTokListenersManager implements ListenersManager {
-    private final io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver eventObserver;
+    private final TikTokLiveEventHandler eventObserver;
     private final List<ListenerBindingModel> bindingModels;
 
-    public TikTokListenersManager(List<TikTokEventListener> listeners, io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver tikTokEventHandler) {
+    public TikTokListenersManager(List<TikTokEventListener> listeners, TikTokLiveEventHandler tikTokEventHandler) {
         this.eventObserver = tikTokEventHandler;
         this.bindingModels = new ArrayList<>(listeners.size());
         for (var listener : listeners) {

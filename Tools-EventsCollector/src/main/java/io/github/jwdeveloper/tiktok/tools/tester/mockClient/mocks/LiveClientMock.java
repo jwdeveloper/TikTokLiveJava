@@ -22,12 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks;
 
-import io.github.jwdeveloper.tiktok.ClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.http.TikTokApiService;
+import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
@@ -37,16 +37,18 @@ public class LiveClientMock extends TikTokLiveClient {
 
     private final WebsocketClientMock websocketClientMock;
 
-    public LiveClientMock(TikTokRoomInfo tikTokLiveMeta,
-                          TikTokApiService tikTokApiService,
-                          WebsocketClientMock webSocketClient,
-                          TikTokGiftManager tikTokGiftManager,
-                          TikTokEventObserver tikTokEventHandler,
-                          ClientSettings clientSettings,
-                          TikTokListenersManager listenersManager,
-                          Logger logger) {
-        super(tikTokLiveMeta,
-                tikTokApiService,
+    public LiveClientMock(
+            TikTokRoomInfo tikTokLiveMeta,
+            TikTokLiveHttpClient httpClient,
+            WebsocketClientMock webSocketClient,
+            TikTokGiftManager tikTokGiftManager,
+            TikTokLiveEventHandler tikTokEventHandler,
+            LiveClientSettings clientSettings,
+            TikTokListenersManager listenersManager,
+            Logger logger) {
+        super(
+                tikTokLiveMeta,
+                httpClient,
                 webSocketClient,
                 tikTokGiftManager,
                 tikTokEventHandler,
@@ -56,7 +58,6 @@ public class LiveClientMock extends TikTokLiveClient {
         this.websocketClientMock = webSocketClient;
         websocketClientMock.setClient(this);
     }
-
 
 
     public void publishMessage(String type, String base64) {

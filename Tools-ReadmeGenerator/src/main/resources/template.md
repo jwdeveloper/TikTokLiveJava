@@ -83,6 +83,17 @@ Do you prefer other programming languages?
 
 {{events-content}}
 
+{{for item of data }} 
+
+{{if item is 2}}
+
+my name is {{item.name}}
+
+{{else}}
+
+{{end}}
+
+{{end}}
 <br>
 
 ## Listeners
