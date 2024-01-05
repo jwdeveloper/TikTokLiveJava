@@ -68,10 +68,10 @@ public class GiftsDownloader {
         var officialGifts = officalGift.run();
         System.out.println("Official Gifts: " + officialGifts.size());
 
-        System.out.println("Downlooading Official Gifts");
+        System.out.println("Downlooading GiftExtraJson Gifts");
         var extraGiftsJson = new GiftExtraJson();
         var extraGifts = extraGiftsJson.run();
-        System.out.println("Official Gifts: " + extraGifts.size());
+        System.out.println("GiftExtraJson Gifts: " + extraGifts.size());
 
         var outputHashMap = new TreeMap<Integer, GiftDto>();
         for (var gift : scraperGifts) {
@@ -86,7 +86,7 @@ public class GiftsDownloader {
         var gson = new GsonBuilder().setPrettyPrinting()
                 .create();
         var json = gson.toJson(outputHashMap);
-        FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output.json", json);
+        FilesUtility.saveFile("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools\\src\\main\\resources\\gifts\\output_1_0_15.json", json);
         System.out.println("Gifts saved to file!");
         return outputHashMap.values().stream().toList();
     }

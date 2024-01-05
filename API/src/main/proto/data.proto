@@ -976,131 +976,146 @@ message FanTicketRoomNoticeContent {
 }
 
 message LinkerAcceptNoticeContent {
-  int64 FromUserId = 1;
-  int64 FromRoomId = 2;
-  int64 ToUserId = 3;
+  int64 fromUserId = 1;
+  int64 fromRoomId = 2;
+  int64 toUserId = 3;
 }
 
 message LinkerCancelContent {
-  int64 FromUserId = 1;
-  int64 ToUserId = 2;
-  int64 CancelType = 3;
-  int64 ActionId = 4;
+  int64 fromUserId = 1;
+  int64 toUserId = 2;
+  int64 cancelType = 3;
+  int64 actionId = 4;
 }
 
+message ListUser {
+  User user = 1;
+  int64 linkmicId = 2;
+  string linkmicIdStr = 3;
+  int64 linkStatus = 4; // Enum
+  LinkType linkType = 5; // Enum
+  int32 userPosition = 6;
+  int32 silenceStatus = 7; // Enum
+  int64 modifyTime = 8;
+  int64 linkerId = 9;
+  int32 roleType = 10; // Enum
+
+  enum LinkType {
+    LINK_UNKNOWN = 0;
+    AUDIO = 1;
+    VIDEO = 2;
+  }
+}
+
+
+//it is just empty
 message LinkerCloseContent {
 
 }
 
 message LinkerCreateContent {
-  int64 OwnerId = 1;
-  int64 OwnerRoomId = 2;
-  int64 LinkType = 3;
+  int64 ownerId = 1;
+  int64 ownerRoomId = 2;
+  int64 linkType = 3;
 }
 
+
+
 message LinkerEnterContent {
-  repeated User LinkedUsersList = 1;
-  // LinkmicMultiLiveEnum AnchorMultiLiveEnum = 2;
-  // Data.LinkmicUserSettingInfo AnchorSettingInfo = 3;
+  repeated ListUser linkedUsersList = 1;
+  int32 anchorMultiLiveEnum = 2; // Enum
+  LinkmicUserSettingInfo anchorSettingInfo = 3;;
 }
 
 message LinkerInviteContent {
-  int64 FromUserId = 1;
-  int64 FromRoomId = 2;
-  string ToRtcExtInfo = 3;
-  bool RtcJoinChannel = 4;
-  int64 Vendor = 5;
-  string SecFromUserId = 6;
-  string ToLinkmicIdStr = 7;
-  User FromUser = 8;
-  int64 RequiredMicIdx = 9;
-  map<int64, string> RtcExtInfoMap = 10;
-  //Data.LinkmicMultiLiveEnum AnchorMultiLiveEnum = 11;
-  //Data.LinkmicUserSettingInfo AnchorSettingInfo = 12;
-  string InviterLinkmicIdStr = 13;
-  //  InviteTopHostInfo FromTopHostInfo = 16;
-  int64 ActionId = 17;
-  // repeated LinkmicUserInfo LinkedUsersList = 18;
-  // Data.PerceptionDialogInfo Dialog = 19;
-  // Data.PunishEventInfo PunishInfo = 20;
-  int32 FromRoomAgeRestricted = 21;
-  // Data.Tag FromTag = 22;
-  // repeated Data.CohostABTestSetting AbTestSettingList = 23;
-  // Data.LinkerInviteMessageExtra LinkerInviteMsgExtra = 101;
+  int64 fromUserId = 1;
+  int64 fromRoomId = 2;
+  string toRtcExtInfo = 3;
+  bool rtcJoinChannel = 4;
+  int64 vendor = 5;
+  string secFromUserId = 6;
+  string toLinkmicIdStr = 7;
+  User fromUser = 8;
+  int64 requiredMicIdx = 9;
 }
 
 message LinkerKickOutContent {
-  int64 FromUserId = 1;
-  //LinkMic.KickoutReason KickoutReason = 2;
+  int64 fromUserId = 1;
+  KickoutReason kickoutReason = 2; // Enum
 }
 
 message LinkerLeaveContent {
-  int64 UserId = 1;
-  string LinkmicIdStr = 2;
-  int64 SendLeaveUid = 3;
-  int64 LeaveReason = 4;
+  int64 userId = 1;
+  string linkmicIdStr = 2;
+  int64 sendLeaveUid = 3;
+  int64 leaveReason = 4;
 }
 
+//Empty
 message LinkerLinkedListChangeContent {
-  repeated User LinkedUsersList = 1;
+
 }
+//Empty
+message CohostListChangeContent {
+}
+
 
 message LinkerListChangeContent {
-  repeated LinkLayerListUser LinkedUsersList = 1;
-  repeated LinkLayerListUser AppliedUsersList = 2;
-  repeated LinkLayerListUser ConnectingUsersList = 3;
+  repeated ListUser linkedUsersList = 1;
+  repeated ListUser appliedUsersList = 2;
+  repeated ListUser connectingUsersList = 3;
 }
 
 message LinkerMediaChangeContent {
-  // MicIdxOperation Op = 1;
-  int64 ToUserId = 2;
-  int64 AnchorId = 3;
-  int64 RoomId = 4;
-  // LinkerSceneType ChangeScene = 5;
+  int64 op = 1; // Enum
+  int64 toUserId = 2;
+  int64 anchorId = 3;
+  int64 roomId = 4;
+  int64 changeScene = 5; // Enum
 }
 
+//Empty
 message LinkerMicIdxUpdateContent {
-  LinkerMicIdxUpdateInfo MicIdxUpdateInfo = 1;
+
 }
 
-message LinkerMicIdxUpdateInfo {
-  // MicIdxOperation Op = 1;
-  int64 UserId = 2;
-  int64 MicIdx = 3;
-}
 
 message LinkerMuteContent {
-  int64 UserId = 1;
-  // Data.MuteStatus Status = 2;
+  int64 userId = 1;
+  int64 status = 2; // Enum
 }
 
 message LinkerRandomMatchContent {
-  User User = 1;
-  int64 RoomId = 2;
-  int64 InviteType = 3;
-  string MatchId = 4;
-  int64 InnerChannelId = 5;
+  User user = 1;
+  int64 roomId = 2;
+  int64 inviteType = 3;
+  string matchId = 4;
+  int64 innerChannelId = 5;
 }
 
 message LinkerReplyContent {
-  int64 FromUserId = 1;
-  int64 FromRoomId = 2;
-  // LinkmicInfo FromUserLinkmicInfo = 3;
-  int64 ToUserId = 4;
-  //  LinkmicInfo ToUserLinkmicInfo = 5;
-  int64 LinkType = 6;
-  int64 ReplyStatus = 7;
-  LinkerSetting LinkerSetting = 8;
-  User FromUser = 9;
-  User ToUser = 10;
-  map<int64, string> RtcExtInfoMap = 11;
-  LinkerMicIdxUpdateInfo InviteeMicIdxUpdateInfo = 12;
-  map<int64, int64> ApplierMicIdxInfoMap = 13;
-  //  Data.LinkmicMultiLiveEnum AnchorMultiLiveEnum = 14;
-  //  Data.LinkmicUserSettingInfo AnchorSettingInfo = 15;
-  int64 ActionId = 16;
-  // repeated LinkmicUserInfo LinkedUsersList = 17;
-  int64 SourceType = 18;
+  int64 fromUserId = 1;
+  int64 fromRoomId = 2;
+  LinkmicInfo fromUserLinkmicInfo = 3;
+  int64 toUserId = 4;
+  LinkmicInfo toUserLinkmicInfo = 5;
+  int64 linkType = 6;
+  int64 replyStatus = 7;
+  LinkerSetting linkerSetting = 8;
+  User fromUser = 9;
+  User toUser = 10;
+
+  message LinkmicInfo {
+    string accessKey = 1;
+    int64 linkMicId = 2;
+    bool joinable = 3;
+    int32 confluenceType = 4;
+    string rtcExtInfo = 5;
+    string rtcAppId = 6;
+    string rtcAppSign = 7;
+    string linkmicIdStr = 8;
+    int64 vendor = 9;
+  }
 }
 
 message LinkerSetting {
@@ -1113,20 +1128,27 @@ message LinkerSetting {
 }
 
 message LinkerSysKickOutContent {
-  int64 UserId = 1;
-  string LinkmicIdStr = 2;
+  int64 userId = 1;
+  string linkmicIdStr = 2;
+}
+
+message LinkmicUserToastContent {
+  int64 userId = 1;
+  int64 roomId = 2;
+  Text displayText = 3;
 }
 
 message LinkerUpdateUserContent {
-  int64 FromUserId = 1;
-  int64 ToUserId = 2;
-  map<string, string> UpdateInfoMap = 3;
+  int64 fromUserId = 1;
+  int64 toUserId = 2;
 }
 
+//Empty
 message LinkerUpdateUserSettingContent {
-  // Data.LinkmicUserSettingInfo UpdateUserSettingInfo = 1;
+
 }
 
+//Empty
 message LinkerWaitingListChangeContent {
 
 }

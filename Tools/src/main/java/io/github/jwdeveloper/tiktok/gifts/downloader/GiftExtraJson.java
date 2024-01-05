@@ -23,15 +23,8 @@
 package io.github.jwdeveloper.tiktok.gifts.downloader;
 
 import com.google.gson.*;
-import io.github.jwdeveloper.tiktok.Constants;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
-import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
-import io.github.jwdeveloper.tiktok.http.TikTokHttpClient;
-import io.github.jwdeveloper.tiktok.http.TikTokHttpRequestFactory;
 import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 

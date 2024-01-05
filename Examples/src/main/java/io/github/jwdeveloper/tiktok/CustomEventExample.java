@@ -42,6 +42,11 @@ public class CustomEventExample {
 
     public static void main(String[] args) {
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+                .configure(clientSettings ->
+                {
+                    clientSettings.setPrintToConsole(true);
+                })
+
                 .onGift((liveClient, event) ->
                 {
                     if (event.getGift().getDiamondCost() > 100)
@@ -49,14 +54,14 @@ public class CustomEventExample {
                     else
                         liveClient.publishEvent(new CheapGiftEvent(event.getGift()));
                 })
-                .onEvent(CheapGiftEvent.class,(liveClient, event) ->
+                .onEvent(CheapGiftEvent.class, (liveClient, event) ->
                 {
                     System.out.println("Thanks for cheap gift");
                 })
-                .onEvent(ExpensiveGiftEvent.class,(liveClient, event) ->
+                .onEvent(ExpensiveGiftEvent.class, (liveClient, event) ->
                 {
                     System.out.println("Thanks for expensive gift!");
                 })
-                .build();
+                .buildAndConnect();
     }
 }

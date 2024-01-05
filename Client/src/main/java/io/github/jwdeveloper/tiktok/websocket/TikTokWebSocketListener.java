@@ -27,12 +27,11 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
+import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPushFrame;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastWebsocketAck;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
@@ -44,82 +43,81 @@ import java.util.Optional;
 
 public class TikTokWebSocketListener extends WebSocketClient {
 
-    private final TikTokMessageHandler messageHandler;
-    private final TikTokEventObserver tikTokEventHandler;
+    private final TikTokLiveMessageHandler messageHandler;
+    private final TikTokLiveEventHandler tikTokEventHandler;
     private final LiveClient tikTokLiveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
                                    int connectTimeout,
-                                   TikTokMessageHandler messageHandler,
-                                   TikTokEventObserver tikTokEventHandler,
+                                   TikTokLiveMessageHandler messageHandler,
+                                   TikTokLiveEventHandler tikTokEventHandler,
                                    LiveClient tikTokLiveClient) {
-        super(serverUri, new Draft_6455(), httpHeaders,connectTimeout);
+        super(serverUri, new Draft_6455(), httpHeaders, connectTimeout);
         this.messageHandler = messageHandler;
         this.tikTokEventHandler = tikTokEventHandler;
         this.tikTokLiveClient = tikTokLiveClient;
     }
 
     @Override
-    public void onMessage(ByteBuffer bytes)
-    {
+    public void onMessage(ByteBuffer bytes) {
         try {
             handleBinary(bytes.array());
         } catch (Exception e) {
             tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(e));
         }
-        if(isNotClosing())
-        {
-            sendPing();
-        }
-    }
-
-
-    @Override
-    public void onOpen(ServerHandshake serverHandshake) {
-        tikTokEventHandler.publish(tikTokLiveClient,new TikTokConnectedEvent());
-        if(isNotClosing())
-        {
-            sendPing();
-        }
-    }
-
-
-
-
-    @Override
-    public void onClose(int i, String s, boolean b) {
-        tikTokEventHandler.publish(tikTokLiveClient,new TikTokDisconnectedEvent());
-    }
-
-    @Override
-    public void onError(Exception error)
-    {
-        tikTokEventHandler.publish(tikTokLiveClient,new TikTokErrorEvent(error));
-        if(isNotClosing())
-        {
+        if (isNotClosing()) {
             sendPing();
         }
     }
 
     private void handleBinary(byte[] buffer) {
-        var websocketMessageOptional = getWebcastWebsocketMessage(buffer);
-        if (websocketMessageOptional.isEmpty()) {
+        var websocketPushFrameOptional = getWebcastPushFrame(buffer);
+        if (websocketPushFrameOptional.isEmpty()) {
             return;
         }
-        var websocketMessage = websocketMessageOptional.get();
-        var webResponse = getWebResponseMessage(websocketMessage.getPayload());
+        var websocketPushFrame = websocketPushFrameOptional.get();
+        var webcastResponse = getWebResponseMessage(websocketPushFrame.getPayload());
 
-        if(webResponse.getNeedsAck())
-        {
-            //For some reason while send ack id, server get disconnected
-           // sendAckId(webResponse.getFetchInterval());
+        if (webcastResponse.getNeedsAck()) {
+            var pushFrameBuilder = WebcastPushFrame.newBuilder();
+            pushFrameBuilder.setPayloadType("ack");
+            pushFrameBuilder.setLogId(websocketPushFrame.getLogId());
+            pushFrameBuilder.setPayload(webcastResponse.getInternalExtBytes());
+            if (isNotClosing())
+            {
+              this.send(pushFrameBuilder.build().toByteArray());
+            }
         }
-
-        messageHandler.handle(tikTokLiveClient, webResponse);
+        messageHandler.handle(tikTokLiveClient, webcastResponse);
     }
 
-    private Optional<WebcastPushFrame> getWebcastWebsocketMessage(byte[] buffer) {
+
+    @Override
+    public void onOpen(ServerHandshake serverHandshake) {
+        tikTokEventHandler.publish(tikTokLiveClient, new TikTokConnectedEvent());
+        if (isNotClosing()) {
+            sendPing();
+        }
+    }
+
+
+    @Override
+    public void onClose(int i, String s, boolean b) {
+        tikTokEventHandler.publish(tikTokLiveClient, new TikTokDisconnectedEvent());
+    }
+
+    @Override
+    public void onError(Exception error) {
+        tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(error));
+        if (isNotClosing()) {
+            sendPing();
+        }
+    }
+
+
+
+    private Optional<WebcastPushFrame> getWebcastPushFrame(byte[] buffer) {
         try {
             var websocketMessage = WebcastPushFrame.parseFrom(buffer);
             if (websocketMessage.getPayload().isEmpty()) {
@@ -139,24 +137,9 @@ public class TikTokWebSocketListener extends WebSocketClient {
         }
     }
 
-    private boolean isNotClosing()
-    {
+    private boolean isNotClosing() {
         return !isClosed() && !isClosing();
     }
-
-    private void sendAckId(long id) {
-        var serverInfo = WebcastWebsocketAck
-                .newBuilder()
-                .setType("ack")
-                .setId(id)
-                .build();
-        if(isNotClosing())
-        {
-            System.out.println("SEND ICK ID "+id);
-            send(serverInfo.toByteArray());
-        }
-    }
-
 
 
     @Override

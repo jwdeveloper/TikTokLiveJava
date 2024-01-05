@@ -23,69 +23,30 @@
 package io.github.jwdeveloper.tiktok;
 
 
-import io.github.jwdeveloper.tiktok.http.TikTokDataChecker;
+import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
-import java.util.concurrent.CompletableFuture;
-
-public class TikTokLive
-{
+public class TikTokLive {
 
     /**
-     *
      * @param hostName profile name of Tiktok user could be found in profile link
-     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
+     *                 example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
      * @return LiveClientBuilder
      */
-    public static LiveClientBuilder newClient(String hostName)
-    {
+    public static LiveClientBuilder newClient(String hostName) {
         return new TikTokLiveClientBuilder(hostName);
     }
 
 
     /**
+     * Use to get some data from TikTok about users are lives
      *
-     * @param hostName profile name of Tiktok user could be found in profile link
-     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
-     * @return true if live is Online, false if is offline
+     * @return LiveHttpClient
      */
-    public static boolean isLiveOnline(String hostName)
-    {
-       return new TikTokDataChecker().isOnline(hostName);
-    }
+    public static LiveHttpClient requests() {
 
 
-    /**
-     *
-     * @param hostName profile name of Tiktok user could be found in profile link
-     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
-     * @return true if live is Online, false if is offline
-     */
-    public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName)
-    {
-        return new TikTokDataChecker().isOnlineAsync(hostName);
-    }
-
-    /**
-     *
-     * @param hostName profile name of Tiktok user could be found in profile link
-     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
-     * @return true is hostName name is valid and exists, false if not
-     */
-    public static boolean isHostNameValid(String hostName)
-    {
-        return new TikTokDataChecker().isHostNameValid(hostName);
-    }
-
-    /**
-     *
-     * @param hostName profile name of Tiktok user could be found in profile link
-     *    example: https://www.tiktok.com/@dostawcavideo  hostName would be dostawcavideo
-     * @return true is hostName name is valid and exists, false if not
-     */
-    public static CompletableFuture<Boolean> isHostNameValidAsync(String hostName)
-    {
-        return new TikTokDataChecker().isHostNameValidAsync(hostName);
+        return new TikTokLiveHttpClient();
     }
 
 }

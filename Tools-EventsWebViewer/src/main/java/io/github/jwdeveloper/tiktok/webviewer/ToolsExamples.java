@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.webviewer;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkLayerMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
@@ -32,11 +33,11 @@ import java.io.IOException;
 
 public class ToolsExamples {
 
-    private static final String tiktokUser = "debb.cl";
+    private static final String tiktokUser = "k.peaks";
 
-    private static final String db = "db-battle";
+    private static final String db = "a";
 
-    private static final String sessionTag = "gifts";
+    private static final String sessionTag = "a";
 
     public static void main(String[] args) throws IOException {
         // runCollector();
@@ -53,6 +54,7 @@ public class ToolsExamples {
     //WebcastLinkMicBattlePunishFinish end of battle?
     //WebcastLinkLayerMessage send after end of battle
     // send after LinkLayer -> WebcastLinkMessage
+
     private static void runCollector() {
         TikTokLiveTools.createCollector(db)
                 .addUser(tiktokUser)
@@ -60,15 +62,17 @@ public class ToolsExamples {
                 .configureLiveClient(liveClientBuilder ->
                 {
                     liveClientBuilder.configure(clientSettings ->
-                    {
-                        clientSettings.setPrintToConsole(true);
-                    });
-                    liveClientBuilder.onWebsocketResponse((liveClient, event) ->
-                    {
-                        for (var msg : event.getResponse().getMessagesList()) {
-                            System.out.println(msg.getMethod());
-                        }
-                    });
+                            {
+                                clientSettings.setPrintToConsole(true);
+                            })
+                            .onComment((liveClient, event) ->
+                            {
+                                System.out.println("Chat message: " + event.getUser().getName() + " " + event.getText());
+                            })
+                            .onWebsocketUnhandledMessage((liveClient, event) ->
+                            {
+                                liveClient.getLogger().info(event.getMessage().getMethod());
+                            });
                     liveClientBuilder.onConnected((liveClient, event) ->
                     {
                         liveClient.getLogger().info("Connected");

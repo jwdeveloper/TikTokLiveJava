@@ -23,60 +23,54 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
 
-import io.github.jwdeveloper.tiktok.ClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
-import io.github.jwdeveloper.tiktok.http.HttpUtils;
-import io.github.jwdeveloper.tiktok.http.TikTokCookieJar;
+import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
+import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import org.java_websocket.client.WebSocketClient;
 
-import java.net.URI;
 import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.logging.Logger;
 
 public class TikTokWebSocketClient implements SocketClient {
-    private final ClientSettings clientSettings;
-    private final TikTokCookieJar tikTokCookieJar;
-    private final TikTokMessageHandler messageHandler;
-    private final TikTokEventObserver tikTokEventHandler;
+    private final LiveClientSettings clientSettings;
+    private final TikTokLiveMessageHandler messageHandler;
+    private final TikTokLiveEventHandler tikTokEventHandler;
     private WebSocketClient webSocketClient;
-    private TikTokWebSocketPingingTask pingingTask;
     private boolean isConnected;
 
     public TikTokWebSocketClient(
-                                 TikTokCookieJar tikTokCookieJar,
-                                 ClientSettings clientSettings,
-                                 TikTokMessageHandler messageHandler,
-                                 TikTokEventObserver tikTokEventHandler) {
-        this.tikTokCookieJar = tikTokCookieJar;
+            LiveClientSettings clientSettings,
+            TikTokLiveMessageHandler messageHandler,
+            TikTokLiveEventHandler tikTokEventHandler) {
         this.clientSettings = clientSettings;
         this.messageHandler = messageHandler;
         this.tikTokEventHandler = tikTokEventHandler;
         isConnected = false;
     }
+    @Override
+    public void start(LiveConnectionData.Response connectionData, LiveClient liveClient)
+    {
 
-    public void start(WebcastResponse webcastResponse, LiveClient tikTokLiveClient) {
         if (isConnected) {
             stop();
         }
 
-        if (webcastResponse.getPushServer().isEmpty() || webcastResponse.getRouteParamsMapMap().isEmpty())
+        messageHandler.handle(liveClient, connectionData.getWebcastResponse());
+
+        var headers = new HashMap<String, String>();
+        headers.put("Cookie", connectionData.getWebsocketCookies());
+        webSocketClient = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
+                headers,
+                clientSettings.getHttpSettings().getTimeout().toMillisPart(),
+                messageHandler,
+                tikTokEventHandler,
+                liveClient);
+
+        try
         {
-            throw new TikTokLiveException("Could not find Room");
-        }
-
-        try {
-            messageHandler.handle(tikTokLiveClient, webcastResponse);
-            var url = getWebSocketUrl(webcastResponse);
-            webSocketClient = startWebSocket(url, tikTokLiveClient);
             webSocketClient.connect();
-
-            pingingTask = new TikTokWebSocketPingingTask();
-            pingingTask.run(webSocketClient);
             isConnected = true;
         } catch (Exception e)
         {
@@ -85,36 +79,15 @@ public class TikTokWebSocketClient implements SocketClient {
         }
     }
 
-    private URI getWebSocketUrl(WebcastResponse webcastResponse) {
-        var tiktokAccessKey = webcastResponse.getRouteParamsMapMap();
 
-        var parameters = new TreeMap<>(clientSettings.getClientParameters());
-        parameters.putAll(tiktokAccessKey);
 
-        var url = webcastResponse.getPushServer();
-        var parsed = HttpUtils.parseParametersEncode(url, parameters);
-        return URI.create(parsed);
-    }
 
-    private WebSocketClient startWebSocket(URI url, LiveClient liveClient) {
-        var cookie = tikTokCookieJar.parseCookies();
-        var headers = new HashMap<String, String>();
-        headers.put("Cookie", cookie);
-        return new TikTokWebSocketListener(url,
-                headers,
-                3000,
-                messageHandler,
-                tikTokEventHandler,
-                liveClient);
-    }
-    public void stop()
-    {
+
+    public void stop() {
         if (isConnected && webSocketClient != null) {
             webSocketClient.closeConnection(0, "");
-            pingingTask.stop();
         }
         webSocketClient = null;
-        pingingTask = null;
         isConnected = false;
     }
 }

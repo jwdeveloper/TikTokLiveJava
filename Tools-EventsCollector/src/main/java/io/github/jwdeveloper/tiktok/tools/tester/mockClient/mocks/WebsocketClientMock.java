@@ -22,10 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks;
 
-import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
-import io.github.jwdeveloper.tiktok.handlers.TikTokMessageHandler;
+import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
+import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
@@ -40,7 +38,7 @@ public class WebsocketClientMock implements SocketClient {
     Logger logger;
     Stack<WebcastResponse> responses;
     Stack<MsgStruct> messages;
-    TikTokMessageHandler messageHandler;
+    TikTokLiveMessageHandler messageHandler;
 
     LiveClient client;
 
@@ -58,7 +56,7 @@ public class WebsocketClientMock implements SocketClient {
         byte[] messageValue;
     }
 
-    public WebsocketClientMock(Logger logger, Stack<WebcastResponse> responses, TikTokMessageHandler messageHandler) {
+    public WebsocketClientMock(Logger logger, Stack<WebcastResponse> responses, TikTokLiveMessageHandler messageHandler) {
         this.logger = logger;
         this.responses = responses;
         this.messageHandler = messageHandler;
@@ -91,8 +89,9 @@ public class WebsocketClientMock implements SocketClient {
     }
 
 
+
     @Override
-    public void start(WebcastResponse webcastResponse, LiveClient tikTokLiveClient) {
+    public void start(LiveConnectionData.Response webcastResponse, LiveClient tikTokLiveClient) {
         logger.info("Running message: " + responses.size());
 
 
@@ -110,7 +109,6 @@ public class WebsocketClientMock implements SocketClient {
         });
         isRunning = true;
         thread.start();
-
     }
 
     @Override

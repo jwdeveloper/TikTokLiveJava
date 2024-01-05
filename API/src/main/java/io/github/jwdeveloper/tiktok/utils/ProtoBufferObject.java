@@ -36,6 +36,11 @@ public class ProtoBufferObject {
         this.fields = new TreeMap<>();
     }
 
+    public Object getField(int index)
+    {
+        return fields.get(index);
+    }
+
     public void addField(int index, String type, Object value) {
         fields.put(index, new ProtoBufferField(type, value));
     }
