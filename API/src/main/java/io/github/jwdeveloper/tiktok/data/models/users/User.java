@@ -43,13 +43,12 @@ public class User {
     private long followers;
     private List<Badge> badges;
     @Getter(AccessLevel.NONE)
-    private Set<UserAttribute> attributes;
-
-
+    private final Set<UserAttribute> attributes = new HashSet<>();
 
     public List<UserAttribute> getAttributes() {
         return attributes.stream().toList();
     }
+
     public boolean hasAttribute(UserAttribute userFlag) {
         return attributes.contains(userFlag);
     }
@@ -106,7 +105,6 @@ public class User {
         this.following = following;
         this.followers = followers;
         this.badges = badges;
-        this.attributes = new HashSet<>();
     }
 
     public User(Long id,
@@ -123,14 +121,12 @@ public class User {
         this.following = following;
         this.followers = followers;
         this.badges = badges;
-        this.attributes = new HashSet<>();
     }
 
     public User(Long userId,
                 String nickName) {
         this.id = userId;
         this.name = nickName;
-        this.attributes = new HashSet<>();
     }
 
     public User(Long userId,
