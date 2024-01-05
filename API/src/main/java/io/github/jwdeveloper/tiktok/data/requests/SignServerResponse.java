@@ -27,7 +27,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SingServerResponse
+public class SignServerResponse
 {
     private String signedUrl;
 
