@@ -159,7 +159,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         }
     }
 
-    SingServerResponse getSignedUrl(String roomId) {
+    SignServerResponse getSignedUrl(String roomId) {
         var urlToSign = httpFactory
                 .client(TikTokLiveHttpClient.TIKTOK_URL_WEBCAST + "im/fetch")
                 .withParam("room_id", roomId)
