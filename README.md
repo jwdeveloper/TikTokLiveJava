@@ -40,6 +40,7 @@ Join the support [discord](https://discord.gg/e2XwPNTBBr) and visit the `#java-s
 
 Do you prefer other programming languages?
 - **Node** orginal: [TikTok-Live-Connector](https://github.com/isaackogan/TikTok-Live-Connector) by [@zerodytrash](https://github.com/zerodytrash)
+- **Rust** rewrite: [TikTokLiveRust](https://github.com/jwdeveloper/TikTokLiveRust)
 - **Python** rewrite: [TikTokLive](https://github.com/isaackogan/TikTokLive) by [@isaackogan](https://github.com/isaackogan)
 - **Go** rewrite: [GoTikTokLive](https://github.com/Davincible/gotiktoklive) by [@Davincible](https://github.com/Davincible)
 - **C#** rewrite: [TikTokLiveSharp](https://github.com/frankvHoof93/TikTokLiveSharp) by [@frankvHoof93](https://github.com/frankvHoof93)
