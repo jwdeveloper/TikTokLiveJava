@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.*;
 
 public class HttpClientFactory {
     private final LiveClientSettings liveClientSettings;
@@ -37,6 +37,9 @@ public class HttpClientFactory {
 
     //Does not contains default httpClientSettings, Params, headers, etd
     public HttpClientBuilder clientEmpty(String url) {
-        return new HttpClientBuilder(url);
+
+        var settings = new HttpClientSettings();
+        settings.setProxyClientSettings(liveClientSettings.getHttpSettings().getProxyClientSettings());
+        return new HttpClientBuilder(url,settings);
     }
 }

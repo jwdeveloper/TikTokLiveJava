@@ -39,8 +39,7 @@ public class ProxyClientSettings implements Iterator<ProxyData>
     private int index = 0;
     private boolean autoDiscard = true;
     private Proxy.Type type = Proxy.Type.DIRECT;
-    private Consumer<ProxyData> onProxyUpdated = (x)->{};
-
+    private Consumer<ProxyData> onProxyUpdated = x -> {};
 
     public boolean addProxy(String addressPort) {
         return proxyList.add(ProxyData.map(addressPort));
@@ -66,19 +65,17 @@ public class ProxyClientSettings implements Iterator<ProxyData>
     @Override
     public ProxyData next()
     {
-       var nextProxy = switch (rotation)
+        var nextProxy = switch (rotation)
         {
             case CONSECUTIVE -> {
                 index = (index+1) % proxyList.size();
-                yield  proxyList.get(index).clone();
+                yield proxyList.get(index).clone();
             }
             case RANDOM -> {
                 index = new Random().nextInt(proxyList.size());
                 yield proxyList.get(index).clone();
             }
-            default -> {
-                yield proxyList.get(index).clone();
-            }
+            case NONE -> proxyList.get(index).clone();
         };
         onProxyUpdated.accept(nextProxy);
         return nextProxy;
@@ -98,13 +95,14 @@ public class ProxyClientSettings implements Iterator<ProxyData>
             this.index = index;
         }
     }
-
-    public ProxyClientSettings clone() {
+    public ProxyClientSettings clone()
+    {
         ProxyClientSettings settings = new ProxyClientSettings();
         settings.setEnabled(enabled);
         settings.setRotation(rotation);
         settings.setIndex(index);
         settings.setType(type);
+        settings.setOnProxyUpdated(onProxyUpdated);
         proxyList.forEach(proxyData -> settings.addProxy(proxyData.getAddress(), proxyData.getPort()));
         return settings;
     }

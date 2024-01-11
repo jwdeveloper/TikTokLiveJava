@@ -46,6 +46,7 @@ public class HttpClientSettings {
     final Map<String, String> cookies;
 
     @Getter
+    @Setter
     ProxyClientSettings proxyClientSettings;
 
     @Getter
@@ -104,7 +105,7 @@ public class HttpClientSettings {
         newSettings.getHeaders().putAll(new TreeMap<>(this.headers));
         newSettings.getCookies().putAll(new TreeMap<>(this.cookies));
         newSettings.getParams().putAll(new TreeMap<>(this.params));
-        newSettings.proxyClientSettings = this.proxyClientSettings.clone();
+        newSettings.proxyClientSettings = this.proxyClientSettings;
 
         return newSettings;
     }
