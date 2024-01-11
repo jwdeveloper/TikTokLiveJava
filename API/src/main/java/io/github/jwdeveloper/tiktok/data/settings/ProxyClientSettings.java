@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 @Setter
 public class ProxyClientSettings implements Iterator<ProxyData>
 {
-    private boolean enabled;
+    private boolean enabled, lastSuccess;
     private Rotation rotation = Rotation.CONSECUTIVE;
     private final List<ProxyData> proxyList = new ArrayList<>();
     private int index = 0;
@@ -65,6 +65,8 @@ public class ProxyClientSettings implements Iterator<ProxyData>
     @Override
     public ProxyData next()
     {
+        if (lastSuccess)
+            return proxyList.get(index);
         var nextProxy = switch (rotation)
         {
             case CONSECUTIVE -> {

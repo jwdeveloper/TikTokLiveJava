@@ -31,7 +31,9 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import org.java_websocket.client.WebSocketClient;
 
+import javax.net.ssl.*;
 import java.net.Proxy;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
 public class TikTokWebSocketClient implements SocketClient {
@@ -68,11 +70,11 @@ public class TikTokWebSocketClient implements SocketClient {
                 tikTokEventHandler,
                 liveClient);
 
-        ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
-
-        if (proxyClientSettings.isEnabled())
-            connectProxy(proxyClientSettings);
-		else
+        // ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        //
+        // if (proxyClientSettings.isEnabled())
+        //     connectProxy(proxyClientSettings);
+		// else
             connectDefault();
     }
 
@@ -105,6 +107,15 @@ public class TikTokWebSocketClient implements SocketClient {
     public boolean tryProxyConnection(ProxyClientSettings proxySettings, ProxyData proxyData) {
         webSocketClient.setProxy(new Proxy(proxySettings.getType(), proxyData.toSocketAddress()));
         try {
+            if (proxySettings.getType() == Proxy.Type.SOCKS) {
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, new TrustManager[]{new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+                    public X509Certificate[] getAcceptedIssuers() { return null; }
+                }}, null);
+                webSocketClient.setSocketFactory(sc.getSocketFactory());
+            }
             webSocketClient.connect();
             return true;
         } catch (Exception e)
@@ -114,7 +125,7 @@ public class TikTokWebSocketClient implements SocketClient {
     }
 
     public void stop() {
-        if (isConnected && webSocketClient != null) {
+        if (isConnected && webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.closeConnection(0, "");
         }
         webSocketClient = null;
