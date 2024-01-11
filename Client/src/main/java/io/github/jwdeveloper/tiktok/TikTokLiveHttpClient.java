@@ -182,7 +182,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         var optionalResponse = httpFactory
                 .clientEmpty(signedUrl)
                 .build()
-                .toResponse(HttpResponse.BodyHandlers.ofByteArray());
+                .toResponse();
         if (optionalResponse.isEmpty()) {
             throw new TikTokSignServerException("Unable to get websocket connection credentials");
         }
