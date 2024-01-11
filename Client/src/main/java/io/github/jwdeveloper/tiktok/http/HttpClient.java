@@ -39,7 +39,7 @@ public class HttpClient {
     protected final String url;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
-    public <T> Optional<HttpResponse<T>> toResponse(HttpResponse.BodyHandler<T> bodyHandler) {
+    public  Optional<HttpResponse<byte[]>> toResponse() {
         var client = prepareClient();
         var request = prepareGetRequest();
         try {
@@ -55,14 +55,15 @@ public class HttpClient {
     }
 
     public Optional<String> toJsonResponse() {
-        var optional = toResponse(HttpResponse.BodyHandlers.ofString());
+        var optional = toResponse();
         if (optional.isEmpty()) {
             return Optional.empty();
         }
 
         var response = optional.get();
         var body = response.body();
-        return Optional.of(body);
+        var charset = charsetFrom(response.headers());
+        return Optional.of(new String(body,charset));
     }
 
     private Charset charsetFrom(HttpHeaders headers) {
@@ -80,7 +81,7 @@ public class HttpClient {
     }
 
     public Optional<byte[]> toBinaryResponse() {
-        var optional = toResponse(HttpResponse.BodyHandlers.ofByteArray());
+        var optional = toResponse();
         if (optional.isEmpty()) {
             return Optional.empty();
         }
