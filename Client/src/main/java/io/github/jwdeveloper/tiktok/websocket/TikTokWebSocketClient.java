@@ -23,14 +23,15 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
 
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
-import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
+import io.github.jwdeveloper.tiktok.*;
+import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
+import io.github.jwdeveloper.tiktok.data.settings.*;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import org.java_websocket.client.WebSocketClient;
 
+import java.net.Proxy;
 import java.util.HashMap;
 
 public class TikTokWebSocketClient implements SocketClient {
@@ -52,7 +53,6 @@ public class TikTokWebSocketClient implements SocketClient {
     @Override
     public void start(LiveConnectionData.Response connectionData, LiveClient liveClient)
     {
-
         if (isConnected) {
             stop();
         }
@@ -68,8 +68,16 @@ public class TikTokWebSocketClient implements SocketClient {
                 tikTokEventHandler,
                 liveClient);
 
-        try
-        {
+        ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+
+        if (proxyClientSettings.isEnabled())
+            connectProxy(proxyClientSettings);
+		else
+            connectDefault();
+    }
+
+    private void connectDefault() {
+        try {
             webSocketClient.connect();
             isConnected = true;
         } catch (Exception e)
@@ -79,9 +87,31 @@ public class TikTokWebSocketClient implements SocketClient {
         }
     }
 
+    public void connectProxy(ProxyClientSettings proxySettings) {
+        while (proxySettings.hasNext()) {
+            ProxyData proxyData = proxySettings.next();
+            if (!tryProxyConnection(proxySettings, proxyData)) {
+                if (proxySettings.isAutoDiscard())
+                    proxySettings.remove();
+                continue;
+            }
+            isConnected = true;
+            break;
+        }
+        if (!isConnected)
+            throw new TikTokLiveException("Failed to connect to the websocket");
+    }
 
-
-
+    public boolean tryProxyConnection(ProxyClientSettings proxySettings, ProxyData proxyData) {
+        webSocketClient.setProxy(new Proxy(proxySettings.getType(), proxyData.toSocketAddress()));
+        try {
+            webSocketClient.connect();
+            return true;
+        } catch (Exception e)
+        {
+            return false;
+        }
+    }
 
     public void stop() {
         if (isConnected && webSocketClient != null) {

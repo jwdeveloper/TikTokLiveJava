@@ -74,7 +74,7 @@ public class HttpClientSettings {
      * @param consumer Use to configure proxy settings for http client
      */
     public void configureProxy(Consumer<ProxyClientSettings> consumer) {
-        proxyClientSettings.setUseProxy(true);
+        proxyClientSettings.setEnabled(true);
         consumer.accept(proxyClientSettings);
     }
 
