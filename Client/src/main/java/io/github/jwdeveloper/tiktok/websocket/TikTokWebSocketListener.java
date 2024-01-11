@@ -23,23 +23,18 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.*;
+import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
-import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
-import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPushFrame;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class TikTokWebSocketListener extends WebSocketClient {
 
@@ -103,8 +98,9 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
 
     @Override
-    public void onClose(int i, String s, boolean b) {
+    public void onClose(int code, String reason, boolean remote) {
         tikTokEventHandler.publish(tikTokLiveClient, new TikTokDisconnectedEvent());
+        tikTokLiveClient.disconnect();
     }
 
     @Override
@@ -144,6 +140,6 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onMessage(String s) {
-
+        System.err.println(s);
     }
 }

@@ -40,7 +40,7 @@ public class ProxyExample
             return new AbstractMap.SimpleEntry<>(split[0], Integer.parseInt(split[1]));
         }).toList());
 
-        TikTokLive.newClient("boost_grow_live_qc")
+        TikTokLive.newClient("dash4214")
             .configure(clientSettings ->
             {
                 clientSettings.setPrintToConsole(true);
@@ -53,14 +53,23 @@ public class ProxyExample
                     entries.forEach(entry -> proxySettings.addProxy(entry.getKey(), entry.getValue()));
                 });
             })
+            .onComment((liveClient, event) -> {
+                liveClient.getLogger().info(event.getUser().getName()+": "+event.getText());
+            })
             .onConnected((liveClient, event) ->
             {
                 liveClient.getLogger().info("Hello world!");
+            })
+            .onDisconnected((liveClient, event) ->
+            {
+                liveClient.getLogger().info("Goodbye world!");
             })
             .onError((liveClient, event) ->
             {
                 event.getException().printStackTrace();
             })
-                .buildAndConnect();
+            .buildAndConnect();
+
+        System.in.read();
     }
 }

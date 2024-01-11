@@ -66,12 +66,15 @@ public class HttpProxyClient extends HttpClient
 
 				var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 				if (response.statusCode() != 200) {
+					proxySettings.setLastSuccess(false);
 					continue;
 				}
+				proxySettings.setLastSuccess(true);
 				return Optional.of(response);
 			} catch (HttpConnectTimeoutException | ConnectException e) {
 				if (proxySettings.isAutoDiscard())
 					proxySettings.remove();
+				proxySettings.setLastSuccess(false);
 			} catch (Exception e) {
 				throw new TikTokLiveRequestException(e);
 			}
@@ -92,10 +95,9 @@ public class HttpProxyClient extends HttpClient
 
 			while (proxySettings.hasNext()) {
 				try {
-					var proxyData = proxySettings.next();
-					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxyData.toSocketAddress());
+					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxySettings.next().toSocketAddress());
 
-					System.err.println("Attempting connection to "+ url +" with proxy: "+proxyData);
+					System.err.println("Connecting to "+ url);
 					HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection(proxy);
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
 					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
@@ -113,11 +115,13 @@ public class HttpProxyClient extends HttpClient
 
 					var response = createHttpResponse(body, toUrl(), responseInfo);
 
+					proxySettings.setLastSuccess(true);
 					return Optional.of(response);
 				} catch (SocketException | SocketTimeoutException e) {
 					e.printStackTrace();
 					if (proxySettings.isAutoDiscard())
 						proxySettings.remove();
+					proxySettings.setLastSuccess(false);
 				} catch (Exception e) {
 					throw new TikTokLiveRequestException(e);
 				}
