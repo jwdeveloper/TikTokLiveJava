@@ -45,11 +45,11 @@ public class ProxyExample
             {
                 clientSettings.setPrintToConsole(true);
                 clientSettings.getHttpSettings().configureProxy(proxySettings -> {
-                    proxySettings.setType(Proxy.Type.SOCKS);
                     proxySettings.setOnProxyUpdated(proxyData ->
                     {
-                        System.out.println("Next proxy! "+proxyData.toString());
+                        System.err.println("Next proxy: "+proxyData.toString());
                     });
+                    proxySettings.setType(Proxy.Type.SOCKS);
                     entries.forEach(entry -> proxySettings.addProxy(entry.getKey(), entry.getValue()));
                 });
             })

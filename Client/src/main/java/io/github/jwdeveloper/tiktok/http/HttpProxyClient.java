@@ -92,8 +92,10 @@ public class HttpProxyClient extends HttpClient
 
 			while (proxySettings.hasNext()) {
 				try {
-					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxySettings.next().toSocketAddress());
+					var proxyData = proxySettings.next();
+					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxyData.toSocketAddress());
 
+					System.err.println("Attempting connection to "+ url +" with proxy: "+proxyData);
 					HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection(proxy);
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
 					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
@@ -113,6 +115,7 @@ public class HttpProxyClient extends HttpClient
 
 					return Optional.of(response);
 				} catch (SocketException | SocketTimeoutException e) {
+					e.printStackTrace();
 					if (proxySettings.isAutoDiscard())
 						proxySettings.remove();
 				} catch (Exception e) {
