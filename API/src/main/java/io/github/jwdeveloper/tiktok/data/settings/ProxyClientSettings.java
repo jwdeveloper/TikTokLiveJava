@@ -22,19 +22,100 @@
  */
 package io.github.jwdeveloper.tiktok.data.settings;
 
-import lombok.Getter;
-import lombok.Setter;
+import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
+import lombok.*;
 
-//TODO proxy implementation
+import java.net.*;
+import java.util.*;
+import java.util.function.Consumer;
+
 @Getter
-public class ProxyClientSettings
+@Setter
+public class ProxyClientSettings implements Iterator<ProxyData>
 {
-    @Setter
-    private boolean useProxy;
+    private boolean enabled;
+    private Rotation rotation = Rotation.CONSECUTIVE;
+    private final List<ProxyData> proxyList = new ArrayList<>();
+    private int index = 0;
+    private boolean autoDiscard = true;
+    private Proxy.Type type = Proxy.Type.DIRECT;
+    private Consumer<ProxyData> onProxyUpdated = (x)->{};
 
 
-    public ProxyClientSettings clone()
+    public boolean addProxy(String addressPort) {
+        return proxyList.add(ProxyData.map(addressPort));
+    }
+
+    public boolean addProxy(String address, int port) {
+        return addProxy(new InetSocketAddress(address, port));
+    }
+
+    public boolean addProxy(InetSocketAddress inetAddress) {
+        return proxyList.add(new ProxyData(inetAddress.getHostString(), inetAddress.getPort()));
+    }
+
+    public void addProxies(List<String> list) {
+        list.forEach(this::addProxy);
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !proxyList.isEmpty();
+    }
+
+    @Override
+    public ProxyData next()
     {
-        return new ProxyClientSettings();
+       var nextProxy = switch (rotation)
+        {
+            case CONSECUTIVE -> {
+                index = (index+1) % proxyList.size();
+                yield  proxyList.get(index).clone();
+            }
+            case RANDOM -> {
+                index = new Random().nextInt(proxyList.size());
+                yield proxyList.get(index).clone();
+            }
+            default -> {
+                yield proxyList.get(index).clone();
+            }
+        };
+        onProxyUpdated.accept(nextProxy);
+        return nextProxy;
+    }
+
+    @Override
+    public void remove() {
+        proxyList.remove(index);
+    }
+
+    public void setIndex(int index) {
+        if (index == 0 && proxyList.isEmpty())
+            this.index = 0;
+        else {
+            if (index < 0 || index >= proxyList.size())
+                throw new IndexOutOfBoundsException("Index " + index + " exceeds list of size: " + proxyList.size());
+            this.index = index;
+        }
+    }
+
+    public ProxyClientSettings clone() {
+        ProxyClientSettings settings = new ProxyClientSettings();
+        settings.setEnabled(enabled);
+        settings.setRotation(rotation);
+        settings.setIndex(index);
+        settings.setType(type);
+        proxyList.forEach(proxyData -> settings.addProxy(proxyData.getAddress(), proxyData.getPort()));
+        return settings;
+    }
+
+    public enum Rotation
+    {
+        /** Rotate addresses consecutively, from proxy 0 -> 1 -> 2 -> ...etc. */
+        CONSECUTIVE,
+        /** Rotate addresses randomly, from proxy 0 -> 69 -> 420 -> 1 -> ...etc. */
+        RANDOM,
+        /** Don't rotate addresses at all, pin to the indexed address. */
+        NONE
     }
 }

@@ -77,11 +77,9 @@ public class HttpClientBuilder {
         return this;
     }
 
-
     public HttpClient build() {
-
+        if (httpClientSettings.getProxyClientSettings().isEnabled())
+            return new HttpProxyClient(httpClientSettings, url);
         return new HttpClient(httpClientSettings, url);
     }
-
-
 }
