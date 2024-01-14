@@ -22,54 +22,29 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import java.net.*;
-import java.net.http.*;
-import java.util.*;
-import java.util.stream.Stream;
+import java.net.Proxy;
 
 public class ProxyExample
 {
     public static void main(String[] args) throws Exception {
-        // TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
-
-        HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks4,socks5&timeout=10000&country=us")).GET().build();
-        HttpResponse<Stream<String>> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofLines());
-
-        List<AbstractMap.SimpleEntry<String, Integer>> entries = new ArrayList<>(response.body().map(s -> {
-            String[] split = s.split(":");
-            return new AbstractMap.SimpleEntry<>(split[0], Integer.parseInt(split[1]));
-        }).toList());
-
-        TikTokLive.newClient("dash4214")
-            .configure(clientSettings ->
-            {
+        TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+            .configure(clientSettings -> {
                 clientSettings.setPrintToConsole(true);
                 clientSettings.getHttpSettings().configureProxy(proxySettings -> {
-                    proxySettings.setOnProxyUpdated(proxyData ->
-                    {
-                        System.err.println("Next proxy: "+proxyData.toString());
-                    });
+                    proxySettings.setOnProxyUpdated(proxyData -> System.err.println("Next proxy: " + proxyData.toString()));
                     proxySettings.setType(Proxy.Type.SOCKS);
-                    entries.forEach(entry -> proxySettings.addProxy(entry.getKey(), entry.getValue()));
+                    proxySettings.addProxy("localhost", 8080);
                 });
             })
-            .onComment((liveClient, event) -> {
-                liveClient.getLogger().info(event.getUser().getName()+": "+event.getText());
-            })
             .onConnected((liveClient, event) ->
-            {
-                liveClient.getLogger().info("Hello world!");
-            })
+                liveClient.getLogger().info("Connected "+liveClient.getRoomInfo().getHostName()))
             .onDisconnected((liveClient, event) ->
-            {
-                liveClient.getLogger().info("Goodbye world!");
-            })
+                liveClient.getLogger().info("Disconnect reason: "+event.getReason()))
+            .onLiveEnded((liveClient, event) ->
+                liveClient.getLogger().info("Live Ended"))
             .onError((liveClient, event) ->
-            {
-                event.getException().printStackTrace();
-            })
+                event.getException().printStackTrace())
             .buildAndConnect();
-
         System.in.read();
     }
 }

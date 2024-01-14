@@ -20,24 +20,30 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
-import lombok.Getter;
+package io.github.jwdeveloper.tiktok.exceptions;
 
-/**
- * Triggered when the connection gets disconnected. In that case you can call connect() again to have a reconnect logic.
- * Note that you should wait a little bit before attempting a reconnect to to avoid being rate-limited.
+
+/*
+ * Happens while bad response from http proxy request to TikTok
  */
-@EventMeta(eventType = EventType.Control)
-public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
-	@Getter private final String reason;
-	public TikTokDisconnectedEvent(String reason) {
-		this.reason = reason.isBlank() ? "None" : reason;
-	}
+public class TikTokProxyRequestException extends TikTokLiveException
+{
+    public TikTokProxyRequestException() {
+    }
 
-	public TikTokDisconnectedEvent() {
-		this("None");
-	}
+    public TikTokProxyRequestException(String message) {
+        super(message);
+    }
+
+    public TikTokProxyRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public TikTokProxyRequestException(Throwable cause) {
+        super(cause);
+    }
+
+    public TikTokProxyRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

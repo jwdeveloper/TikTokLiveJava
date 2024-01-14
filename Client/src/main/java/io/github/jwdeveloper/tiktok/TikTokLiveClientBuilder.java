@@ -156,7 +156,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
 
         var httpClientFactory = new HttpClientFactory(clientSettings);
-        var tikTokLiveHttpClient = new TikTokLiveHttpClient(httpClientFactory);
+        var tikTokLiveHttpClient = new TikTokLiveHttpClient(httpClientFactory, clientSettings);
 
         var webSocketClient = new TikTokWebSocketClient(
                 clientSettings,
@@ -346,7 +346,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
 
     @Override
-    public LiveClientBuilder onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event) {
+    public TikTokLiveClientBuilder onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event) {
         tikTokEventHandler.subscribe(TikTokRoomInfoEvent.class, event);
         return this;
     }
@@ -358,7 +358,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
     @Override
-    public LiveClientBuilder onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> event) {
+    public TikTokLiveClientBuilder onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> event) {
         tikTokEventHandler.subscribe(TikTokLiveUnpausedEvent.class, event);
         return this;
     }
