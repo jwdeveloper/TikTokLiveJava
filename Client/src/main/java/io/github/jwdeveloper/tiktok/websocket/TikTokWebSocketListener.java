@@ -81,12 +81,11 @@ public class TikTokWebSocketListener extends WebSocketClient {
             pushFrameBuilder.setPayload(webcastResponse.getInternalExtBytes());
             if (isNotClosing())
             {
-              this.send(pushFrameBuilder.build().toByteArray());
+                this.send(pushFrameBuilder.build().toByteArray());
             }
         }
         messageHandler.handle(tikTokLiveClient, webcastResponse);
     }
-
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
@@ -96,10 +95,9 @@ public class TikTokWebSocketListener extends WebSocketClient {
         }
     }
 
-
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        tikTokEventHandler.publish(tikTokLiveClient, new TikTokDisconnectedEvent());
+        tikTokEventHandler.publish(tikTokLiveClient, new TikTokDisconnectedEvent(reason));
         tikTokLiveClient.disconnect();
     }
 
@@ -110,8 +108,6 @@ public class TikTokWebSocketListener extends WebSocketClient {
             sendPing();
         }
     }
-
-
 
     private Optional<WebcastPushFrame> getWebcastPushFrame(byte[] buffer) {
         try {
@@ -137,9 +133,8 @@ public class TikTokWebSocketListener extends WebSocketClient {
         return !isClosed() && !isClosing();
     }
 
-
     @Override
     public void onMessage(String s) {
-        System.err.println(s);
+        // System.err.println(s);
     }
 }

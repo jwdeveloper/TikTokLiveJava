@@ -76,19 +76,15 @@ public class TikTokLiveClient implements LiveClient {
 
 
     public void connectAsync(Consumer<LiveClient> onConnection) {
-        CompletableFuture.supplyAsync(() ->
-        {
+        CompletableFuture.runAsync(() -> {
             connect();
             onConnection.accept(this);
-            return this;
         });
-
     }
 
 
     public CompletableFuture<LiveClient> connectAsync() {
-        return CompletableFuture.supplyAsync(() ->
-        {
+        return CompletableFuture.supplyAsync(() -> {
             connect();
             return this;
         });
@@ -105,8 +101,7 @@ public class TikTokLiveClient implements LiveClient {
             if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
                 try {
                     Thread.sleep(clientSettings.getRetryConnectionTimeout().toMillis());
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
                 logger.info("Reconnecting");
                 tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
                 this.connect();
@@ -120,13 +115,11 @@ public class TikTokLiveClient implements LiveClient {
     }
 
     public void tryConnect() {
-        if (!liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
-        {
+        if (!liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
             throw new TikTokLiveException("Already connected");
         }
 
         setState(ConnectionState.CONNECTING);
-
 
         var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
@@ -138,7 +131,6 @@ public class TikTokLiveClient implements LiveClient {
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound) {
             throw new TikTokLiveOfflineHostException("User not found: "+liveRoomInfo.getHostUser());
         }
-
 
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
@@ -154,7 +146,6 @@ public class TikTokLiveClient implements LiveClient {
         liveRoomInfo.setTotalViewersCount(liveData.getTotalViewers());
         liveRoomInfo.setAgeRestricted(liveData.isAgeRestricted());
         liveRoomInfo.setHost(liveData.getHost());
-
 
         var liveConnectionRequest =new LiveConnectionData.Request(userData.getRoomId());
         var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
@@ -181,7 +172,6 @@ public class TikTokLiveClient implements LiveClient {
         tikTokEventHandler.publish(this, event);
     }
 
-
     public LiveRoomInfo getRoomInfo() {
         return liveRoomInfo;
     }
@@ -200,6 +190,4 @@ public class TikTokLiveClient implements LiveClient {
     public GiftManager getGiftManager() {
         return tikTokGiftManager;
     }
-
-
 }

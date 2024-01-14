@@ -63,10 +63,11 @@ public class ProxyClientSettings implements Iterator<ProxyData>
     }
 
     @Override
-    public ProxyData next()
-    {
-        if (lastSuccess)
-            return proxyList.get(index);
+    public ProxyData next() {
+		return lastSuccess ? proxyList.get(index) : rotate();
+	}
+
+    public ProxyData rotate() {
         var nextProxy = switch (rotation)
         {
             case CONSECUTIVE -> {

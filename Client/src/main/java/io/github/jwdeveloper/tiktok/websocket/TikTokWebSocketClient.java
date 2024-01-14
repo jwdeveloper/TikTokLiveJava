@@ -52,6 +52,7 @@ public class TikTokWebSocketClient implements SocketClient {
         this.tikTokEventHandler = tikTokEventHandler;
         isConnected = false;
     }
+
     @Override
     public void start(LiveConnectionData.Response connectionData, LiveClient liveClient)
     {
@@ -71,7 +72,6 @@ public class TikTokWebSocketClient implements SocketClient {
                 liveClient);
 
         // ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
-        //
         // if (proxyClientSettings.isEnabled())
         //     connectProxy(proxyClientSettings);
 		// else
