@@ -24,13 +24,14 @@ package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.github.jwdeveloper.tiktok.data.requests.*;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.*;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.http.*;
 import io.github.jwdeveloper.tiktok.http.mappers.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.net.http.HttpResponse;
+import java.util.Optional;
 
 public class TikTokLiveHttpClient implements LiveHttpClient {
 
@@ -43,13 +44,15 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
 
     private final HttpClientFactory httpFactory;
+    private final LiveClientSettings clientSettings;
     private final LiveUserDataMapper liveUserDataMapper;
     private final LiveDataMapper liveDataMapper;
     private final SignServerResponseMapper signServerResponseMapper;
     private final GiftsDataMapper giftsDataMapper;
 
-    public TikTokLiveHttpClient(HttpClientFactory factory) {
+    public TikTokLiveHttpClient(HttpClientFactory factory, LiveClientSettings settings) {
         this.httpFactory = factory;
+        clientSettings = settings;
         liveUserDataMapper = new LiveUserDataMapper();
         liveDataMapper = new LiveDataMapper();
         signServerResponseMapper = new SignServerResponseMapper();
@@ -57,7 +60,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
     }
 
     public TikTokLiveHttpClient() {
-        this(new HttpClientFactory(LiveClientSettings.createDefault()));
+        this(new HttpClientFactory(LiveClientSettings.createDefault()), LiveClientSettings.createDefault());
     }
 
 
@@ -82,7 +85,26 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
     @Override
     public LiveUserData.Response fetchLiveUserData(LiveUserData.Request request) {
+        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled()) {
+            while (proxyClientSettings.hasNext()) {
+                try {
+                    var url = TIKTOK_URL_WEB + "api-live/user/room";
+                    var optional = httpFactory.client(url)
+                        .withParam("uniqueId", request.getUserName())
+                        .withParam("sourceType", "54")
+                        .build()
+                        .toJsonResponse();
 
+                    if (optional.isEmpty()) {
+                        throw new TikTokLiveRequestException("Unable to get information's about user");
+                    }
+
+                    var json = optional.get();
+                    return liveUserDataMapper.map(json);
+                } catch (TikTokProxyRequestException ignored) {}
+            }
+        }
         var url = TIKTOK_URL_WEB + "api-live/user/room";
         var optional = httpFactory.client(url)
                 .withParam("uniqueId", request.getUserName())
@@ -105,7 +127,25 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
     @Override
     public LiveData.Response fetchLiveData(LiveData.Request request) {
+        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled()) {
+            while (proxyClientSettings.hasNext()) {
+                try {
+                    var url = TIKTOK_URL_WEBCAST + "room/info";
+                    var optional = httpFactory.client(url)
+                        .withParam("room_id", request.getRoomId())
+                        .build()
+                        .toJsonResponse();
 
+                    if (optional.isEmpty()) {
+                        throw new TikTokLiveRequestException("Unable to get info about live room");
+                    }
+
+                    var json = optional.get();
+                    return liveDataMapper.map(json);
+                } catch (TikTokProxyRequestException ignored) {}
+            }
+        }
         var url = TIKTOK_URL_WEBCAST + "room/info";
         var optional = httpFactory.client(url)
                 .withParam("room_id", request.getRoomId())
@@ -127,14 +167,15 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
     @Override
     public LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request) {
-
-        var signServerResponse = getSignedUrl(request.getRoomId());
-        var credentialsResponse = getWebsocketCredentialsResponse(signServerResponse.getSignedUrl());
+		HttpResponse<byte[]> credentialsResponse = getOptionalProxyResponse(request).orElseGet(()-> {
+            SignServerResponse signServerResponse = getSignedUrl(request.getRoomId());
+            return getWebsocketCredentialsResponse(signServerResponse.getSignedUrl());
+        });
 
         try {
             var optionalHeader = credentialsResponse.headers().firstValue("set-cookie");
             if (optionalHeader.isEmpty()) {
-                throw new TikTokSignServerException("Sign server does not returned set-cookie header");
+                throw new TikTokSignServerException("Sign server did not return the set-cookie header");
             }
             var websocketCookie = optionalHeader.get();
             var webcastResponse = WebcastResponse.parseFrom(credentialsResponse.body());
@@ -189,4 +230,18 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         return optionalResponse.get();
     }
 
+    Optional<HttpResponse<byte[]>> getOptionalProxyResponse(LiveConnectionData.Request request) {
+        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled()) {
+            while (proxyClientSettings.hasNext()) {
+                try {
+                    SignServerResponse signServerResponse = getSignedUrl(request.getRoomId());
+                    HttpResponse<byte[]> credentialsResponse = getWebsocketCredentialsResponse(signServerResponse.getSignedUrl());
+                    clientSettings.getHttpSettings().getProxyClientSettings().rotate();
+                    return Optional.of(credentialsResponse);
+                } catch (TikTokProxyRequestException | TikTokSignServerException ignored) {}
+            }
+        }
+        return Optional.empty();
+    }
 }

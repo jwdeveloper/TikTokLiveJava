@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok;
 
 
-import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
@@ -48,8 +47,7 @@ public class TikTokLive {
      */
     public static boolean isLiveOnline(String hostName)
     {
-		LiveUserData.UserStatus status = requests().fetchLiveUserData(hostName).getUserStatus();
-        return status == LiveUserData.UserStatus.Live || status == LiveUserData.UserStatus.LivePaused;
+        return requests().fetchLiveUserData(hostName).isLiveOnline();
     }
 
 
@@ -72,8 +70,7 @@ public class TikTokLive {
      */
     public static boolean isHostNameValid(String hostName)
     {
-        LiveUserData.UserStatus status = requests().fetchLiveUserData(hostName).getUserStatus();
-        return status != LiveUserData.UserStatus.NotFound;
+        return requests().fetchLiveUserData(hostName).isHostNameValid();
     }
 
     /**

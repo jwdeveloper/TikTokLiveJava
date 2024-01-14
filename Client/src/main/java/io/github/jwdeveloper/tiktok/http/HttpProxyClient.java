@@ -23,12 +23,14 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.data.settings.*;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
+import io.github.jwdeveloper.tiktok.exceptions.*;
 
 import javax.net.ssl.*;
+import java.io.IOException;
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpResponse.ResponseInfo;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,7 +95,7 @@ public class HttpProxyClient extends HttpClient
 
 			URL url = toUrl().toURL();
 
-			while (proxySettings.hasNext()) {
+			if (proxySettings.hasNext()) {
 				try {
 					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxySettings.next().toSocketAddress());
 
@@ -117,19 +119,22 @@ public class HttpProxyClient extends HttpClient
 
 					proxySettings.setLastSuccess(true);
 					return Optional.of(response);
-				} catch (SocketException | SocketTimeoutException e) {
-					e.printStackTrace();
+				} catch (IOException e) {
 					if (proxySettings.isAutoDiscard())
 						proxySettings.remove();
 					proxySettings.setLastSuccess(false);
+					throw new TikTokProxyRequestException(e);
 				} catch (Exception e) {
 					throw new TikTokLiveRequestException(e);
 				}
 			}
 			throw new TikTokLiveRequestException("No more proxies available!");
-		} catch (Exception e) {
+		} catch (NoSuchAlgorithmException | MalformedURLException | KeyManagementException e) {
 			// Should never be reached!
 			System.out.println("handleSocksProxyRequest()! If you see this message, reach us on discord!");
+			e.printStackTrace();
+			return Optional.empty();
+		} catch (TikTokLiveRequestException e) {
 			e.printStackTrace();
 			return Optional.empty();
 		}

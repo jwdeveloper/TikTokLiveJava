@@ -26,12 +26,10 @@ import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 
-public class LiveUserDataMapper {
-
-
+public class LiveUserDataMapper
+{
     public LiveUserData.Response map(String json) {
-        var parsedJson = JsonParser.parseString(json);
-        var jsonObject = parsedJson.getAsJsonObject();
+        var jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
         var message = jsonObject.get("message").getAsString();
 
@@ -64,6 +62,5 @@ public class LiveUserDataMapper {
         };
 
         return new LiveUserData.Response(json, statusEnum, roomId, startTime);
-
     }
 }
