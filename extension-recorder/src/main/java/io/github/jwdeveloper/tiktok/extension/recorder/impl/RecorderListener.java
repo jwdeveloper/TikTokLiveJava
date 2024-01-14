@@ -42,6 +42,7 @@ import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.RunProcessFunction;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
 import java.util.List;
@@ -126,31 +127,37 @@ public class RecorderListener implements LiveRecorder {
             }
         });
 */
-        var factory = new HttpClientFactory(LiveClientSettings.createDefault());
-        var builder = factory.client(downloadData.getFullUrl());
-
-        /*
-          var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
-                 var file = new File(path);
-                 file.getParentFile().mkdirs();
-         */
 
         liveDownloadThread = new Thread(() ->
         {
-            var bufferSize = 1024;
-            try (var in = new BufferedInputStream(new URL(downloadData.getFullUrl()).openStream(), bufferSize)) {
-                var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
-                var file = new File(path);
-                file.getParentFile().mkdirs();
-                var fileOutputStream = new FileOutputStream(file);
-                byte dataBuffer[] = new byte[bufferSize];
-                int bytesRead;
-                while ((bytesRead = in.read(dataBuffer, 0, bufferSize)) != -1) {
-                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+            try {
+                var bufferSize = 1024;
+                var url = new URL(downloadData.getFullUrl());
+                HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection();
+                var headers = LiveClientSettings.DefaultRequestHeaders();
+                for (var entry : headers.entrySet()) {
+                    socksConnection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
-            } catch (IOException e) {
+
+                System.out.println(socksConnection.getResponseCode());
+                try (var in = new BufferedInputStream(socksConnection.getInputStream())) {
+                    var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
+                    var file = new File(path);
+                    file.getParentFile().mkdirs();
+                    var fileOutputStream = new FileOutputStream(file);
+                    byte dataBuffer[] = new byte[bufferSize];
+                    int bytesRead;
+                    while ((bytesRead = in.read(dataBuffer, 0, bufferSize)) != -1) {
+                        fileOutputStream.write(dataBuffer, 0, bytesRead);
+                    }
+                } catch (IOException e) {
+                    throw e;
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
+                ;
             }
+
         });
 
 

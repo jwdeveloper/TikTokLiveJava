@@ -30,7 +30,7 @@ public class RecorderExample {
 
     public static void main(String[] args) {
 
-        TikTokLive.newClient("dash4214")
+        TikTokLive.newClient("bangbetmenygy")
                 .configure(liveClientSettings ->
                 {
                     liveClientSettings.setPrintToConsole(true);
@@ -43,7 +43,7 @@ public class RecorderExample {
                 {
                     recorderSettings.setFfmpegPath("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\libs\\ffmpeg.exe");
                     recorderSettings.setOutputPath("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\out");
-                    recorderSettings.setOutputFileName("test.mp4");
+                    recorderSettings.setOutputFileName("test.flv");
                 }))
                 .onEvent(TikTokLiveRecorderStartedEvent.class, (liveClient, event) ->
                 {
