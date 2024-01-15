@@ -50,7 +50,6 @@ public class TikTokLive {
         return requests().fetchLiveUserData(hostName).isLiveOnline();
     }
 
-
     /**
      *
      * @param hostName profile name of Tiktok user could be found in profile link
