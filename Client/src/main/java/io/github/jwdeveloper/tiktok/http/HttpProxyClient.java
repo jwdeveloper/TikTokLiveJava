@@ -99,7 +99,6 @@ public class HttpProxyClient extends HttpClient
 				try {
 					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxySettings.next().toSocketAddress());
 
-					System.err.println("Connecting to "+ url);
 					HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection(proxy);
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
 					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
