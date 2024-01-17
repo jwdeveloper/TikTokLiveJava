@@ -38,10 +38,12 @@ public class ProxyExample
             })
             .onConnected((liveClient, event) ->
                 liveClient.getLogger().info("Connected "+liveClient.getRoomInfo().getHostName()))
+            .onComment((liveClient, event) -> liveClient.getLogger().info(event.getUser().getName()+": "+event.getText()))
+            .onLike((liveClient, event) -> liveClient.getLogger().info(event.getUser().getName()+" sent "+event.getLikes()+"x likes!"))
             .onDisconnected((liveClient, event) ->
                 liveClient.getLogger().info("Disconnect reason: "+event.getReason()))
             .onLiveEnded((liveClient, event) ->
-                liveClient.getLogger().info("Live Ended"))
+                liveClient.getLogger().info("Live Ended: "+liveClient.getRoomInfo().getHostName()))
             .onError((liveClient, event) ->
                 event.getException().printStackTrace())
             .buildAndConnect();

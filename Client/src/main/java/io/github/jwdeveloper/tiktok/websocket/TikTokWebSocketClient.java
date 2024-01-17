@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
-
 import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
@@ -105,7 +104,6 @@ public class TikTokWebSocketClient implements SocketClient {
     }
 
     public boolean tryProxyConnection(ProxyClientSettings proxySettings, ProxyData proxyData) {
-        webSocketClient.setProxy(new Proxy(proxySettings.getType(), proxyData.toSocketAddress()));
         try {
             if (proxySettings.getType() == Proxy.Type.SOCKS) {
                 SSLContext sc = SSLContext.getInstance("SSL");
@@ -116,6 +114,7 @@ public class TikTokWebSocketClient implements SocketClient {
                 }}, null);
                 webSocketClient.setSocketFactory(sc.getSocketFactory());
             }
+            webSocketClient.setProxy(new Proxy(proxySettings.getType(), proxyData.toSocketAddress()));
             webSocketClient.connect();
             return true;
         } catch (Exception e)
