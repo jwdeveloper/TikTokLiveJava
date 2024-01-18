@@ -24,27 +24,34 @@ package io.github.jwdeveloper.tiktok;
 
 import java.net.Proxy;
 
-public class ProxyExample
-{
+public class ProxyExample {
     public static void main(String[] args) throws Exception {
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
-            .configure(clientSettings -> {
-                clientSettings.setPrintToConsole(true);
-                clientSettings.getHttpSettings().configureProxy(proxySettings -> {
-                    proxySettings.setOnProxyUpdated(proxyData -> System.err.println("Next proxy: " + proxyData.toString()));
-                    proxySettings.setType(Proxy.Type.SOCKS);
-                    proxySettings.addProxy("localhost", 8080);
-                });
-            })
-            .onConnected((liveClient, event) ->
-                liveClient.getLogger().info("Connected "+liveClient.getRoomInfo().getHostName()))
-            .onDisconnected((liveClient, event) ->
-                liveClient.getLogger().info("Disconnect reason: "+event.getReason()))
-            .onLiveEnded((liveClient, event) ->
-                liveClient.getLogger().info("Live Ended"))
-            .onError((liveClient, event) ->
-                event.getException().printStackTrace())
-            .buildAndConnect();
+                .configure(clientSettings -> {
+                    clientSettings.setPrintToConsole(true);
+                    clientSettings.getHttpSettings().configureProxy(proxySettings -> {
+                        proxySettings.setOnProxyUpdated(proxyData -> System.err.println("Next proxy: " + proxyData.toString()));
+                        proxySettings.setType(Proxy.Type.SOCKS);
+                        proxySettings.addProxy("localhost", 8080);
+                    });
+                })
+                .onConnected((liveClient, event) ->
+                {
+                    liveClient.getLogger().info("Connected " + liveClient.getRoomInfo().getHostName());
+                })
+                .onDisconnected((liveClient, event) ->
+                {
+                    liveClient.getLogger().info("Disconnect reason: " + event.getReason());
+                })
+                .onLiveEnded((liveClient, event) ->
+                {
+                    liveClient.getLogger().info("Live Ended");
+                })
+                .onError((liveClient, event) ->
+                {
+                    event.getException().printStackTrace();
+                })
+                .buildAndConnect();
         System.in.read();
     }
 }

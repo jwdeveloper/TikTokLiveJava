@@ -30,16 +30,24 @@ import java.util.List;
 import java.util.Map;
 
 public class CollectorExample {
+
+
+    private static String mongoUser;
+
+    private static String mongoPassword;
+
+    private static String mongoDatabase;
+
     public static void main(String[] args) throws IOException {
 
         var collector = TikTokLiveCollector.use(settings ->
         {
-            settings.setConnectionUrl("mongodb+srv://jwoln:qaz123456@jwdatabase.a15gw.mongodb.net/?retryWrites=true&w=majority");
+            settings.setConnectionUrl("mongodb+srv://" + mongoUser + ":" + mongoPassword + "@" + mongoDatabase + "/?retryWrites=true&w=majority");
             settings.setDatabaseName("tiktok");
         });
         collector.connectDatabase();
 
-        var users = List.of("tehila_723", "dino123597", "domaxyzx", "dash4214","obserwacje_live");
+        var users = List.of("tehila_723", "dino123597", "domaxyzx", "dash4214", "obserwacje_live");
         var sessionTag = "Dupa";
         for (var user : users) {
             TikTokLive.newClient(user)
@@ -51,10 +59,9 @@ public class CollectorExample {
                     {
                         event.getException().printStackTrace();
                     })
-                    .addListener(collector.newListener(Map.of("sessionTag", sessionTag),document ->
+                    .addListener(collector.newListener(Map.of("sessionTag", sessionTag), document ->
                     {
-                        if(document.get("dataType") == "message")
-                        {
+                        if (document.get("dataType") == "message") {
                             return false;
                         }
                         return true;
