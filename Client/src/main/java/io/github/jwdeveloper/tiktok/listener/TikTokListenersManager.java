@@ -111,6 +111,7 @@ public class TikTokListenersManager implements ListenersManager {
             EventConsumer eventMethodRef = (liveClient, event) ->
             {
                 try {
+                    method.setAccessible(true);
                     method.invoke(listener, liveClient, event);
                 } catch (Exception e) {
                     throw new TikTokEventListenerMethodException(e);

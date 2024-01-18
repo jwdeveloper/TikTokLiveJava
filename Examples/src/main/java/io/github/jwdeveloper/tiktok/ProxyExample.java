@@ -24,8 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 import java.net.Proxy;
 
-public class ProxyExample
-{
+public class ProxyExample {
     public static void main(String[] args) throws Exception {
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
             .configure(clientSettings -> {
@@ -47,6 +46,7 @@ public class ProxyExample
             .onError((liveClient, event) ->
                 event.getException().printStackTrace())
             .buildAndConnect();
+
         System.in.read();
     }
 }

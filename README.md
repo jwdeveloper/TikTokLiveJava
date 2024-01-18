@@ -652,24 +652,24 @@ public static void main(String[] args) throws IOException {
 
 public static class CustomListener implements TikTokEventListener {
 
-    @TikTokEventHandler
+    @TikTokEventObserver
     public void onLike(LiveClient liveClient, TikTokLikeEvent event) {
         System.out.println(event.toString());
     }
 
-    @TikTokEventHandler
+    @TikTokEventObserver
     public void onError(LiveClient liveClient, TikTokErrorEvent event) {
         //  event.getException().printStackTrace();
     }
 
-    @TikTokEventHandler
+    @TikTokEventObserver
     public void onComment(LiveClient liveClient, TikTokCommentEvent event) {
         var userName = event.getUser().getName();
         var text = event.getText();
         liveClient.getLogger().info(userName + ": " + text);
     }
 
-    @TikTokEventHandler
+    @TikTokEventObserver
     public void onGift(LiveClient liveClient, TikTokGiftEvent event) {
         var message = switch (event.getGift()) {
             case ROSE -> "Thanks :)";
