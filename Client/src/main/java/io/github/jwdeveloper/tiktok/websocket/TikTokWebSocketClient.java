@@ -41,7 +41,7 @@ public class TikTokWebSocketClient implements SocketClient {
     private final TikTokLiveEventHandler tikTokEventHandler;
     private WebSocketClient webSocketClient;
 
-    private TikTokWebSocketPingingTask pingingTask;
+    private final TikTokWebSocketPingingTask pingingTask;
     private boolean isConnected;
 
     public TikTokWebSocketClient(

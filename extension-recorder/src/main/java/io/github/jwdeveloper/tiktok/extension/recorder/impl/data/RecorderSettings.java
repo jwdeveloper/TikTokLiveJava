@@ -29,25 +29,6 @@ import lombok.Setter;
 
 import java.util.function.Function;
 
-/**
- * self,
- * path: str,
- * duration: Optional[int] = None,
- * quality: Optional[VideoQuality] = None,
- * verbose: bool = True,
- * loglevel: str = "error",
- * global_options: Set[str] = set(),
- * inputs: Dict[str, str] = dict(),
- * outputs: Dict[str, str] = dict()
- * :param loglevel: Set the FFmpeg log level
- * :param outputs: Pass custom params to FFmpeg outputs
- * :param inputs: Pass custom params to FFmpeg inputs
- * :param global_options: Pass custom params to FFmpeg global options
- * :param path: The path to download the livestream video to
- * :param duration: If duration is None or less than 1, download will go forever
- * :param quality: If quality is None, download quality will auto
- * :param verbose: Whether to log info about the download in console
- */
 @Getter
 @Setter
 public class RecorderSettings {
@@ -63,17 +44,8 @@ public class RecorderSettings {
         return new RecorderSettings();
     }
 
-    public void setQuality(String format) {
-        this.format = format;
-    }
-
     public void setQuality(LiveQuality quality) {
         this.quality = quality.name();
-    }
-
-
-    public void setFormat(String format) {
-        this.format = format;
     }
 
     public void setFormat(LiveFormat format) {
