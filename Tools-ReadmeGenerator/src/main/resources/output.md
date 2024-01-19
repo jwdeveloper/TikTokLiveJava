@@ -126,7 +126,6 @@ TikTokLive.newClient("bangbetmenygy")
                 {
                     settings.setHostName("bangbetmenygy"); // This method is useful in case you want change hostname later
                     settings.setClientLanguage("en"); // Language
-                    settings.setTimeout(Duration.ofSeconds(2)); // Connection timeout
                     settings.setLogLevel(Level.ALL); // Log level
                     settings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF
                     settings.setRetryOnConnectionFailure(true); // Reconnecting if TikTok user is offline
@@ -152,35 +151,73 @@ TikTokLive.newClient("bangbetmenygy")
 
  **Control**:
 
-- [onConnected](#onconnected-tiktokconnectedevent)
-- [onDisconnected](#ondisconnected-tiktokdisconnectedevent)
 - [onReconnecting](#onreconnecting-tiktokreconnectingevent)
 - [onError](#onerror-tiktokerrorevent)
+- [onConnected](#onconnected-tiktokconnectedevent)
+- [onDisconnected](#ondisconnected-tiktokdisconnectedevent)
 
  **Message**:
 
 - [onEvent](#onevent-tiktokevent)
-- [onSubscribe](#onsubscribe-tiktoksubscribeevent)
-- [onQuestion](#onquestion-tiktokquestionevent)
-- [onFollow](#onfollow-tiktokfollowevent)
-- [onLike](#onlike-tiktoklikeevent)
-- [onLiveEnded](#onliveended-tiktokliveendedevent)
-- [onRoomInfo](#onroominfo-tiktokroominfoevent)
-- [onShare](#onshare-tiktokshareevent)
-- [onGiftCombo](#ongiftcombo-tiktokgiftcomboevent)
-- [onEmote](#onemote-tiktokemoteevent)
-- [onGift](#ongift-tiktokgiftevent)
+- [onEvent](#onevent-tiktokevent)
 - [onComment](#oncomment-tiktokcommentevent)
-- [onLivePaused](#onlivepaused-tiktoklivepausedevent)
+- [onRoomInfo](#onroominfo-tiktokroominfoevent)
+- [onGift](#ongift-tiktokgiftevent)
+- [onSubscribe](#onsubscribe-tiktoksubscribeevent)
+- [onFollow](#onfollow-tiktokfollowevent)
+- [onGiftCombo](#ongiftcombo-tiktokgiftcomboevent)
+- [onLiveEnded](#onliveended-tiktokliveendedevent)
+- [onQuestion](#onquestion-tiktokquestionevent)
+- [onShare](#onshare-tiktokshareevent)
 - [onLiveUnpaused](#onliveunpaused-tiktokliveunpausedevent)
+- [onEmote](#onemote-tiktokemoteevent)
 - [onJoin](#onjoin-tiktokjoinevent)
+- [onLike](#onlike-tiktoklikeevent)
+- [onLivePaused](#onlivepaused-tiktoklivepausedevent)
 
  **Debug**:
 
-- [onWebsocketUnhandledMessage](#onwebsocketunhandledmessage-tiktokwebsocketunhandledmessageevent)
 - [onWebsocketResponse](#onwebsocketresponse-tiktokwebsocketresponseevent)
+- [onWebsocketUnhandledMessage](#onwebsocketunhandledmessage-tiktokwebsocketunhandledmessageevent)
+- [onHttpResponse](#onhttpresponse-tiktokhttpresponseevent)
 - [onWebsocketMessage](#onwebsocketmessage-tiktokwebsocketmessageevent)
 # Examples
+<br>
+
+## onReconnecting [TikTokReconnectingEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokReconnectingEvent.java)
+
+
+
+```java
+TikTokLive.newClient("host-name")
+.onReconnecting((liveClient, event) ->
+{
+
+})
+.buildAndConnect();
+```
+
+
+
+<br>
+
+## onError [TikTokErrorEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokErrorEvent.java)
+
+
+  General error event. You should handle this.
+ 
+
+```java
+TikTokLive.newClient("host-name")
+.onError((liveClient, event) ->
+{
+
+})
+.buildAndConnect();
+```
+
+
+
 <br>
 
 ## onConnected [TikTokConnectedEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokConnectedEvent.java)
@@ -222,32 +259,15 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onReconnecting [TikTokReconnectingEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokReconnectingEvent.java)
+## onEvent [TikTokEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/common/TikTokEvent.java)
 
 
-
-```java
-TikTokLive.newClient("host-name")
-.onReconnecting((liveClient, event) ->
-{
-
-})
-.buildAndConnect();
-```
-
-
-
-<br>
-
-## onError [TikTokErrorEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokErrorEvent.java)
-
-
-  General error event. You should handle this.
+  Base class for all events
  
 
 ```java
 TikTokLive.newClient("host-name")
-.onError((liveClient, event) ->
+.onEvent((liveClient, event) ->
 {
 
 })
@@ -277,15 +297,15 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onSubscribe [TikTokSubscribeEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokSubscribeEvent.java)
+## onComment [TikTokCommentEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokCommentEvent.java)
 
 
-  Triggers when a user creates a subscription.
+  Triggered every time a new chat comment arrives.
  
 
 ```java
 TikTokLive.newClient("host-name")
-.onSubscribe((liveClient, event) ->
+.onComment((liveClient, event) ->
 {
 
 })
@@ -296,15 +316,55 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onQuestion [TikTokQuestionEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokQuestionEvent.java)
+## onRoomInfo [TikTokRoomInfoEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/room/TikTokRoomInfoEvent.java)
 
 
-Triggered every time someone asks a new question via the question feature.
+Triggered when LiveRoomInfo got updated such as likes, viewers, ranking ....
  
 
 ```java
 TikTokLive.newClient("host-name")
-.onQuestion((liveClient, event) ->
+.onRoomInfo((liveClient, event) ->
+{
+
+})
+.buildAndConnect();
+```
+
+
+
+<br>
+
+## onGift [TikTokGiftEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/gift/TikTokGiftEvent.java)
+
+
+  Triggered when user sends gifts that has
+  no combo (most of expensive gifts)
+  or if combo has finished
+ 
+
+```java
+TikTokLive.newClient("host-name")
+.onGift((liveClient, event) ->
+{
+
+})
+.buildAndConnect();
+```
+
+
+
+<br>
+
+## onSubscribe [TikTokSubscribeEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokSubscribeEvent.java)
+
+
+  Triggers when a user creates a subscription.
+ 
+
+```java
+TikTokLive.newClient("host-name")
+.onSubscribe((liveClient, event) ->
 {
 
 })
@@ -334,15 +394,25 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onLike [TikTokLikeEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/social/TikTokLikeEvent.java)
+## onGiftCombo [TikTokGiftComboEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/gift/TikTokGiftComboEvent.java)
 
 
-  Triggered when a viewer sends likes to the streamer. For streams with many viewers, this event is not always triggered by TikTok.
+  Triggered every time gift is sent
+ 
+  @see GiftSendType it has 3 states
+ 
+  <p>Example when user sends gift with combo</p>
+  <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
+  <p>Combo: 4 -> comboState = GiftSendType.Active</p>
+  <p>Combo: 8 -> comboState = GiftSendType.Active</p>
+  <p>Combo: 12 -> comboState = GiftSendType.Finsihed</p>
+  <p>
+  Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
  
 
 ```java
 TikTokLive.newClient("host-name")
-.onLike((liveClient, event) ->
+.onGiftCombo((liveClient, event) ->
 {
 
 })
@@ -372,13 +442,15 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onRoomInfo [TikTokRoomInfoEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/room/TikTokRoomInfoEvent.java)
+## onQuestion [TikTokQuestionEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokQuestionEvent.java)
 
 
+Triggered every time someone asks a new question via the question feature.
+ 
 
 ```java
 TikTokLive.newClient("host-name")
-.onRoomInfo((liveClient, event) ->
+.onQuestion((liveClient, event) ->
 {
 
 })
@@ -408,25 +480,13 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onGiftCombo [TikTokGiftComboEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/gift/TikTokGiftComboEvent.java)
+## onLiveUnpaused [TikTokLiveUnpausedEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokLiveUnpausedEvent.java)
 
 
-  Triggered every time gift is sent
- 
-  @see GiftSendType it has 3 states
- 
-  <p>Example when user sends gift with combo</p>
-  <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
-  <p>Combo: 4 -> comboState = GiftSendType.Active</p>
-  <p>Combo: 8 -> comboState = GiftSendType.Active</p>
-  <p>Combo: 12 -> comboState = GiftSendType.Finsihed</p>
- 
-  Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
- 
 
 ```java
 TikTokLive.newClient("host-name")
-.onGiftCombo((liveClient, event) ->
+.onLiveUnpaused((liveClient, event) ->
 {
 
 })
@@ -456,17 +516,13 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onGift [TikTokGiftEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/gift/TikTokGiftEvent.java)
+## onJoin [TikTokJoinEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/social/TikTokJoinEvent.java)
 
 
-  Triggered when user sends gifts that has
-   no combo (most of expensive gifts)
-   or if combo has finished
- 
 
 ```java
 TikTokLive.newClient("host-name")
-.onGift((liveClient, event) ->
+.onJoin((liveClient, event) ->
 {
 
 })
@@ -477,15 +533,15 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onComment [TikTokCommentEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokCommentEvent.java)
+## onLike [TikTokLikeEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/social/TikTokLikeEvent.java)
 
 
-  Triggered every time a new chat comment arrives.
+  Triggered when a viewer sends likes to the streamer. For streams with many viewers, this event is not always triggered by TikTok.
  
 
 ```java
 TikTokLive.newClient("host-name")
-.onComment((liveClient, event) ->
+.onLike((liveClient, event) ->
 {
 
 })
@@ -513,30 +569,13 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onLiveUnpaused [TikTokLiveUnpausedEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/TikTokLiveUnpausedEvent.java)
+## onWebsocketResponse [TikTokWebsocketResponseEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/websocket/TikTokWebsocketResponseEvent.java)
 
 
 
 ```java
 TikTokLive.newClient("host-name")
-.onLiveUnpaused((liveClient, event) ->
-{
-
-})
-.buildAndConnect();
-```
-
-
-
-<br>
-
-## onJoin [TikTokJoinEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/social/TikTokJoinEvent.java)
-
-
-
-```java
-TikTokLive.newClient("host-name")
-.onJoin((liveClient, event) ->
+.onWebsocketResponse((liveClient, event) ->
 {
 
 })
@@ -566,13 +605,13 @@ TikTokLive.newClient("host-name")
 
 <br>
 
-## onWebsocketResponse [TikTokWebsocketResponseEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/websocket/TikTokWebsocketResponseEvent.java)
+## onHttpResponse [TikTokHttpResponseEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/http/TikTokHttpResponseEvent.java)
 
 
 
 ```java
 TikTokLive.newClient("host-name")
-.onWebsocketResponse((liveClient, event) ->
+.onHttpResponse((liveClient, event) ->
 {
 
 })
@@ -586,7 +625,8 @@ TikTokLive.newClient("host-name")
 ## onWebsocketMessage [TikTokWebsocketMessageEvent](https://github.com/jwdeveloper/TikTokLiveJava/blob/master/API/src/main/java/io/github/jwdeveloper/tiktok/data/events/websocket/TikTokWebsocketMessageEvent.java)
 
 
-  Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
+  Triggered every time TikTok sends data. Data incoming as protobuf message.
+  You can deserialize the binary object depending on the use case.
  
 
 ```java
@@ -602,6 +642,17 @@ TikTokLive.newClient("host-name")
 
 
 
+{{for item of data }} 
+
+{{if item is 2}}
+
+my name is {{item.name}}
+
+{{else}}
+
+{{end}}
+
+{{end}}
 <br>
 
 ## Listeners
@@ -628,7 +679,7 @@ TikTokLive.newClient("host-name")
     /**
      *
      *  Method in TikTokEventListener should meet 4 requirements to be detected
-     *         - must have @TikTokEventHandler annotation
+     *         - must have @TikTokEventObserver annotation
      *         - must have 2 parameters
      *         - first parameter must be LiveClient
      *         - second must be class that extending TikTokEvent
@@ -636,24 +687,24 @@ TikTokLive.newClient("host-name")
 
     public static class CustomListener implements TikTokEventListener {
 
-        @TikTokEventHandler
+        @TikTokEventObserver
         public void onLike(LiveClient liveClient, TikTokLikeEvent event) {
             System.out.println(event.toString());
         }
 
-        @TikTokEventHandler
+        @TikTokEventObserver
         public void onError(LiveClient liveClient, TikTokErrorEvent event) {
           //  event.getException().printStackTrace();
         }
 
-        @TikTokEventHandler
+        @TikTokEventObserver
         public void onComment(LiveClient liveClient, TikTokCommentEvent event) {
             var userName = event.getUser().getName();
             var text = event.getText();
             liveClient.getLogger().info(userName + ": " + text);
         }
 
-        @TikTokEventHandler
+        @TikTokEventObserver
         public void onGift(LiveClient liveClient, TikTokGiftEvent event) {
             var message = switch (event.getGift()) {
                 case ROSE -> "Thanks :)";
@@ -666,7 +717,7 @@ TikTokLive.newClient("host-name")
             liveClient.getLogger().info(message);
         }
 
-        @TikTokEventHandler
+        @TikTokEventObserver
         public void onAnyEvent(LiveClient liveClient, TikTokEvent event) {
             liveClient.getLogger().info(event.getClass().getSimpleName());
         }

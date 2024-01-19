@@ -49,7 +49,7 @@ public class CollectorExample {
         collector.connectDatabase();
 
         var users = List.of("tehila_723", "dino123597", "domaxyzx", "dash4214", "obserwacje_live");
-        var sessionTag = "Dupa";
+        var sessionTag = "Tag1";
         for (var user : users) {
             TikTokLive.newClient(user)
                     .configure(liveClientSettings ->
