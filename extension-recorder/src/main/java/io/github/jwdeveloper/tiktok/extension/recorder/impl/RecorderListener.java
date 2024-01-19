@@ -37,10 +37,6 @@ import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
 import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import net.bramp.ffmpeg.FFmpeg;
-import net.bramp.ffmpeg.FFmpegExecutor;
-import net.bramp.ffmpeg.RunProcessFunction;
-import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -95,39 +91,6 @@ public class RecorderListener implements LiveRecorder {
 
     @TikTokEventObserver
     private void onConnected(LiveClient liveClient, TikTokConnectedEvent event) {
-      /*  liveDownloadThread = new Thread(() ->
-        {
-            try {
-                var ffmpeg = new FFmpeg(settings.getFfmpegPath(), new RunProcessFunction() {
-                    @Override
-                    public Process run(final List<String> args) throws IOException {
-                        var process = super.run(args);
-                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                            terminateFfmpeg(process);
-                        }, "FFmpeg process destroyer"));
-                        return process;
-                    }
-                });
-
-                var builder = new FFmpegBuilder()
-                        .setInput(downloadData.getFullUrl())
-                        .addOutput(settings.getOutputPath() + File.separator + settings.getOutputFileName()) // Set the output file path
-                        .setFormat("mp4")
-                        .done();
-
-                var executor = new FFmpegExecutor(ffmpeg);
-                var ffmpegProcess = executor.createJob(builder, (progress)-> {
-                    liveClient.getLogger().info("Downloading stream: " +progress.total_size);
-                });
-                ffmpegProcess.run();
-                liveClient.publishEvent(new TikTokLiveRecorderStartedEvent(downloadData));
-
-            } catch (Exception e) {
-                throw new TikTokLiveException("Unable to run ffmpeg drivers",e);
-            }
-        });
-*/
-
         liveDownloadThread = new Thread(() ->
         {
             try {
@@ -139,7 +102,6 @@ public class RecorderListener implements LiveRecorder {
                     socksConnection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
 
-                System.out.println(socksConnection.getResponseCode());
                 try (var in = new BufferedInputStream(socksConnection.getInputStream())) {
                     var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
                     var file = new File(path);

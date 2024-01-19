@@ -22,8 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
 
+
+import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
 
 import java.io.IOException;
 import java.util.List;
