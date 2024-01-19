@@ -26,6 +26,8 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
+import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveData;
@@ -120,7 +122,7 @@ public class TikTokLiveClient implements LiveClient {
         }
 
         setState(ConnectionState.CONNECTING);
-
+        tikTokEventHandler.publish(this,new TikTokConnectingEvent());
         var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
         liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
@@ -134,6 +136,7 @@ public class TikTokLiveClient implements LiveClient {
 
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
+        tikTokEventHandler.publish(this, new TikTokRoomDataResponseEvent(liveData));
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound) {
             throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found.");
         }
@@ -159,8 +162,8 @@ public class TikTokLiveClient implements LiveClient {
         if (liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
             return;
         }
-        webSocketClient.stop();
         setState(ConnectionState.DISCONNECTED);
+        webSocketClient.stop();
     }
 
     private void setState(ConnectionState connectionState) {

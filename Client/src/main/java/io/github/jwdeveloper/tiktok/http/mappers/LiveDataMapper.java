@@ -43,6 +43,7 @@ public class LiveDataMapper {
     public LiveData.Response map(String json) {
         var response = new LiveData.Response();
 
+        response.setJson(json);
 
         var parsedJson = JsonParser.parseString(json);
         var jsonObject = parsedJson.getAsJsonObject();

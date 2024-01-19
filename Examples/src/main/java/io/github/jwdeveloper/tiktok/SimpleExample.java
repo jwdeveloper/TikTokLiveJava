@@ -23,27 +23,18 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.TikTokSubNotifyEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
-import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 public class SimpleExample {
-    public static String TIKTOK_HOSTNAME = "dash4214";
+    public static String TIKTOK_HOSTNAME = "dash4114";
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
         showLogo();
 

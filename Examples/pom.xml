@@ -60,6 +60,18 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.jwdeveloper.tiktok</groupId>
+            <artifactId>extension-collector</artifactId>
+            <version>1.0.14-Release</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jwdeveloper.tiktok</groupId>
+            <artifactId>extension-recorder</artifactId>
+            <version>1.0.14-Release</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <properties>
