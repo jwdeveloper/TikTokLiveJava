@@ -672,8 +672,8 @@ TikTokLive.newClient("host-name")
 List of extensions (addons) to TiktokLiveJava
 that will save your time
 
-- (Video Recorder)[]
-- (Live data collector to database)[]
+- [Video Recorder](https://github.com/jwdeveloper/TikTokLiveJava/tree/master/extension-collector)
+- [Live data collector to database](https://github.com/jwdeveloper/TikTokLiveJava/tree/master/extension-collector)
 
 
 
