@@ -36,14 +36,12 @@ public class LiveClientSettings {
     /**
      * ISO-Language for Client
      */
-
     private String clientLanguage;
 
     /**
      * Whether to Retry if Connection Fails
      */
     private boolean retryOnConnectionFailure;
-
 
     /**
      * Before retrying connect, wait for select amount of time
@@ -53,41 +51,34 @@ public class LiveClientSettings {
     /**
      * Whether to print Logs to Console
      */
-
     private boolean printToConsole = true;
+
     /**
      * LoggingLevel for Logs
      */
     private Level logLevel;
-
 
     /**
      * Optional: Use it if you need to change TikTok live hostname in builder
      */
     private String hostName;
 
-
     /**
      * Parameters used in requests to TikTok api
      */
     private HttpClientSettings httpSettings;
 
-
-    /*
+    /**
      *  Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
      *  documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
      */
     private String sessionId;
 
-    /*
+    /**
      * Optional: By default roomID is fetched before connect to live, but you can set it manually
      *
      */
     private String roomId;
-
-
-
-
 
     public static LiveClientSettings createDefault()
     {
@@ -103,11 +94,9 @@ public class LiveClientSettings {
         clientSettings.setPrintToConsole(false);
         clientSettings.setLogLevel(Level.ALL);
 
-
         clientSettings.setHttpSettings(httpSettings);
         return clientSettings;
     }
-
 
     /**
      * Default Parameters for HTTP-Request
@@ -147,10 +136,8 @@ public class LiveClientSettings {
         clientParams.put("webcast_sdk_version", "1.3.0");
         clientParams.put("update_version_code", "1.3.0");
 
-
         return clientParams;
     }
-
 
     /**
      * Default Headers for HTTP-Request
@@ -167,6 +154,4 @@ public class LiveClientSettings {
         headers.put("Accept-Language", "en-US,en; q=0.9");
         return headers;
     }
-
 }
-

@@ -128,12 +128,14 @@ public class RecorderListener implements LiveRecorder {
 
     @TikTokEventObserver
     private void onDisconnected(LiveClient liveClient, TikTokDisconnectedEvent event) {
-        liveDownloadThread.interrupt();
+        if (isConnected())
+            liveDownloadThread.interrupt();
     }
 
     @TikTokEventObserver
     private void onDisconnected(LiveClient liveClient, TikTokLiveEndedEvent event) {
-        liveDownloadThread.interrupt();
+        if (isConnected())
+            liveDownloadThread.interrupt();
     }
 
     private int terminateFfmpeg(final Process process) {
@@ -193,5 +195,9 @@ public class RecorderListener implements LiveRecorder {
         //https://pull-f5-tt02.fcdn.eu.tiktokcdn.com/stage/stream-3861399216374940610_uhd5.flv?_session_id=136-20240109000223D0BAA1A83974490EE630.1704758544391&_webnoredir=1
 
         return new DownloadData(urlLink, sessionId);
+    }
+
+    private boolean isConnected() {
+        return liveDownloadThread != null && liveDownloadThread.isAlive();
     }
 }
