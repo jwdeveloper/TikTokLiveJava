@@ -87,6 +87,7 @@ public class ProxyClientSettings implements Iterator<ProxyData>
     @Override
     public void remove() {
         proxyList.remove(index);
+        lastSuccess = false; // index is no longer valid and lastSuccess needs falsified
     }
 
     public void setIndex(int index) {

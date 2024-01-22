@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.settings.*;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import org.java_websocket.client.WebSocketClient;
 
@@ -41,7 +41,7 @@ public class TikTokWebSocketClient implements SocketClient {
     private final TikTokLiveEventHandler tikTokEventHandler;
     private WebSocketClient webSocketClient;
 
-    private TikTokWebSocketPingingTask pingingTask;
+    private final TikTokWebSocketPingingTask pingingTask;
     private boolean isConnected;
 
     public TikTokWebSocketClient(
@@ -91,6 +91,20 @@ public class TikTokWebSocketClient implements SocketClient {
     }
 
     public void connectProxy(ProxyClientSettings proxySettings) {
+        try {
+            if (proxySettings.getType() == Proxy.Type.SOCKS) {
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, new TrustManager[]{new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+                    public X509Certificate[] getAcceptedIssuers() { return null; }
+                }}, null);
+                webSocketClient.setSocketFactory(sc.getSocketFactory());
+            }
+        } catch (Exception e) {
+            // This will never be thrown.
+            throw new TikTokProxyRequestException("Unable to set Socks proxy SSL instance");
+        }
         while (proxySettings.hasNext()) {
             ProxyData proxyData = proxySettings.next();
             if (!tryProxyConnection(proxySettings, proxyData)) {
@@ -98,6 +112,7 @@ public class TikTokWebSocketClient implements SocketClient {
                     proxySettings.remove();
                 continue;
             }
+            pingingTask.run(webSocketClient);
             isConnected = true;
             break;
         }
@@ -107,21 +122,6 @@ public class TikTokWebSocketClient implements SocketClient {
 
     public boolean tryProxyConnection(ProxyClientSettings proxySettings, ProxyData proxyData) {
         try {
-            if (proxySettings.getType() == Proxy.Type.SOCKS) {
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, new TrustManager[]{new X509TrustManager() {
-                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
-                    }
-
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-                }}, null);
-                webSocketClient.setSocketFactory(sc.getSocketFactory());
-            }
             webSocketClient.setProxy(new Proxy(proxySettings.getType(), proxyData.toSocketAddress()));
             webSocketClient.connect();
             return true;

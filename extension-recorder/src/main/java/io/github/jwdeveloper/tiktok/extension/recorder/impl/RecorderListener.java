@@ -24,24 +24,18 @@ package io.github.jwdeveloper.tiktok.extension.recorder.impl;
 
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.data.events.TikTokLiveEndedEvent;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
-import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
-import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.DownloadData;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.RecorderSettings;
+import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
-import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -86,13 +80,11 @@ public class RecorderListener implements LiveRecorder {
             throw new TikTokLiveException("Unable to find download live url!");
         }
         liveClient.getLogger().info("Live download url found!");
-
     }
 
     @TikTokEventObserver
     private void onConnected(LiveClient liveClient, TikTokConnectedEvent event) {
-        liveDownloadThread = new Thread(() ->
-        {
+        liveDownloadThread = new Thread(() -> {
             try {
                 var bufferSize = 1024;
                 var url = new URL(downloadData.getFullUrl());
@@ -102,40 +94,33 @@ public class RecorderListener implements LiveRecorder {
                     socksConnection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
 
-                try (var in = new BufferedInputStream(socksConnection.getInputStream())) {
-                    var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
-                    var file = new File(path);
-                    file.getParentFile().mkdirs();
-                    var fileOutputStream = new FileOutputStream(file);
-                    byte dataBuffer[] = new byte[bufferSize];
-                    int bytesRead;
-                    while ((bytesRead = in.read(dataBuffer, 0, bufferSize)) != -1) {
-                        fileOutputStream.write(dataBuffer, 0, bytesRead);
-                    }
-                } catch (IOException e) {
-                    throw e;
+                var in = new BufferedInputStream(socksConnection.getInputStream());
+                var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
+                var file = new File(path);
+                file.getParentFile().mkdirs();
+                var fileOutputStream = new FileOutputStream(file);
+                byte[] dataBuffer = new byte[bufferSize];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, bufferSize)) != -1) {
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
                 }
-            } catch (Exception e) {
+                in.close();
+			} catch (Exception e) {
                 e.printStackTrace();
-                ;
             }
-
         });
-
 
         liveDownloadThread.start();
     }
-
 
     private static void downloadUsingStream(String urlStr, String file) throws IOException {
         URL url = new URL(urlStr);
         BufferedInputStream bis = new BufferedInputStream(url.openStream());
         FileOutputStream fis = new FileOutputStream(file);
         byte[] buffer = new byte[1024];
-        int count = 0;
-        while ((count = bis.read(buffer, 0, 1024)) != -1) {
+        int count;
+        while ((count = bis.read(buffer, 0, 1024)) != -1)
             fis.write(buffer, 0, count);
-        }
         fis.close();
         bis.close();
     }
@@ -143,25 +128,23 @@ public class RecorderListener implements LiveRecorder {
 
     @TikTokEventObserver
     private void onDisconnected(LiveClient liveClient, TikTokDisconnectedEvent event) {
-        liveDownloadThread.interrupt();
+        if (isConnected())
+            liveDownloadThread.interrupt();
     }
 
     @TikTokEventObserver
     private void onDisconnected(LiveClient liveClient, TikTokLiveEndedEvent event) {
-        liveDownloadThread.interrupt();
+        if (isConnected())
+            liveDownloadThread.interrupt();
     }
 
     private int terminateFfmpeg(final Process process) {
         if (!process.isAlive()) {
-            /*
-             * ffmpeg -version, do nothing
-             */
+            // ffmpeg -version, do nothing
             return process.exitValue();
         }
 
-        /*
-         * ffmpeg -f x11grab
-         */
+        // ffmpeg -f x11grab
         System.out.println("About to destroy the child process...");
         try (final OutputStreamWriter out = new OutputStreamWriter(process.getOutputStream(), UTF_8)) {
             out.write('q');
@@ -174,7 +157,7 @@ public class RecorderListener implements LiveRecorder {
                 process.waitFor();
             }
             return process.exitValue();
-        } catch (final InterruptedException ie) {
+        } catch (InterruptedException ie) {
             System.out.println("Interrupted");
             ie.printStackTrace();
             Thread.currentThread().interrupt();
@@ -201,11 +184,9 @@ public class RecorderListener implements LiveRecorder {
                 .get("flv")
                 .getAsString();
 
-
         var sessionId = streamDataJsonObject.getAsJsonObject("common")
                 .get("session_id")
                 .getAsString();
-
 
         //main
         //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/stage/stream-3284937501738533765.flv?session_id=136-20240109000954BF818F1B3A8E5E39E238&_webnoredir=1
@@ -216,5 +197,7 @@ public class RecorderListener implements LiveRecorder {
         return new DownloadData(urlLink, sessionId);
     }
 
-
+    private boolean isConnected() {
+        return liveDownloadThread != null && liveDownloadThread.isAlive();
+    }
 }
