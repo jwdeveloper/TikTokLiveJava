@@ -34,6 +34,6 @@ public class DownloadData {
     private String sessionId;
 
     public String getFullUrl() {
-        return downloadLiveUrl + "?_webnoredir=1&session_id=" + sessionId;
+        return downloadLiveUrl + "&_webnoredir=1&session_id=" + sessionId;
     }
 }
