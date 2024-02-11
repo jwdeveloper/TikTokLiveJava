@@ -11,24 +11,18 @@ public class TikTokWebSocketPingingTask
     private final int MIN_TIMEOUT = 250;
     private final int MAX_TIMEOUT = 500;
 
-
     public void run(WebSocket webSocket)
     {
         stop();
-        thread = new Thread(() ->
-        {
-            pingTask(webSocket);
-        });
-        isRunning =true;
+        thread = new Thread(() -> pingTask(webSocket));
+        isRunning = true;
         thread.start();
     }
 
     public void stop()
     {
-        if(thread != null)
-        {
+        if (thread != null)
             thread.interrupt();
-        }
         isRunning = false;
     }
 
@@ -36,12 +30,9 @@ public class TikTokWebSocketPingingTask
     private void pingTask(WebSocket webSocket)
     {
         var random = new Random();
-        while (isRunning)
-        {
-            try
-            {
-                if(!webSocket.isOpen())
-                {
+        while (isRunning) {
+            try {
+                if (!webSocket.isOpen()) {
                     Thread.sleep(100);
                     continue;
                 }
@@ -50,8 +41,7 @@ public class TikTokWebSocketPingingTask
                 var timeout = random.nextInt(MAX_TIMEOUT)+MIN_TIMEOUT;
                 Thread.sleep(timeout);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 isRunning = false;
             }
         }
