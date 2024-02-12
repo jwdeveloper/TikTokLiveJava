@@ -105,6 +105,22 @@ public class LiveDataMapper {
             response.setHost(user);
         }
 
+        if (data.has("link_mic")) {
+            var element = data.getAsJsonObject("link_mic");
+            var multi_live = element.get("multi_live_enum").getAsInt();
+            var rival_id = element.get("rival_anchor_id").getAsInt();
+            var battle_scores = element.get("battle_scores").getAsJsonArray();
+            if (multi_live == 1) {
+                if (!battle_scores.isEmpty())
+                    response.setLiveType(LiveData.LiveType.BATTLE);
+                else if (rival_id != 0)
+                    response.setLiveType(LiveData.LiveType.CO_HOST);
+                else
+                    response.setLiveType(LiveData.LiveType.BOX);
+            } else
+                response.setLiveType(LiveData.LiveType.SOLO);
+        }
+
         return response;
     }
 

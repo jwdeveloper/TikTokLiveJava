@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
+import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokHttpResponseEvent;
@@ -150,6 +151,13 @@ public interface EventsBuilder<T> {
     T onConnected(EventConsumer<TikTokConnectedEvent> action);
 
     /**
+     * Invoked before client has been successfully connected to live
+     * @param action
+     * @return
+     */
+    T onPreConnection(EventConsumer<TikTokPreConnectionEvent> action);
+
+    /**
      * Invoked when client tries to reconnect
      * @param action
      * @return
@@ -216,5 +224,3 @@ public interface EventsBuilder<T> {
 
     //T onUnhandledControl(TikTokEventConsumer<TikTokUnhandledControlEvent> event);
 }
-
-

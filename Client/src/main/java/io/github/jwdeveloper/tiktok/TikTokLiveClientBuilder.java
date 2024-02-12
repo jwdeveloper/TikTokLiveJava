@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -275,9 +276,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return build().connectAsync();
     }
 
-
-    public TikTokLiveClientBuilder onUnhandledSocial(
-            EventConsumer<TikTokUnhandledSocialEvent> event) {
+    public TikTokLiveClientBuilder onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event) {
         tikTokEventHandler.subscribe(TikTokUnhandledSocialEvent.class, event);
         return this;
     }
@@ -289,8 +288,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
 
-    public TikTokLiveClientBuilder onLinkMicFanTicket(
-            EventConsumer<TikTokLinkMicFanTicketEvent> event) {
+    public TikTokLiveClientBuilder onLinkMicFanTicket(EventConsumer<TikTokLinkMicFanTicketEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkMicFanTicketEvent.class, event);
         return this;
     }
@@ -305,20 +303,23 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onDetect(
-            EventConsumer<TikTokDetectEvent> event) {
+    public TikTokLiveClientBuilder onDetect(EventConsumer<TikTokDetectEvent> event) {
         tikTokEventHandler.subscribe(TikTokDetectEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkLayer(
-            EventConsumer<TikTokLinkLayerEvent> event) {
+    public TikTokLiveClientBuilder onLinkLayer(EventConsumer<TikTokLinkLayerEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkLayerEvent.class, event);
         return this;
     }
 
     public TikTokLiveClientBuilder onConnected(EventConsumer<TikTokConnectedEvent> event) {
         tikTokEventHandler.subscribe(TikTokConnectedEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onPreConnection(EventConsumer<TikTokPreConnectionEvent> event) {
+        tikTokEventHandler.subscribe(TikTokPreConnectionEvent.class, event);
         return this;
     }
 
@@ -332,8 +333,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onRoomPin(
-            EventConsumer<TikTokRoomPinEvent> event) {
+    public TikTokLiveClientBuilder onRoomPin(EventConsumer<TikTokRoomPinEvent> event) {
         tikTokEventHandler.subscribe(TikTokRoomPinEvent.class, event);
         return this;
     }
@@ -373,8 +373,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onBarrage(
-            EventConsumer<TikTokBarrageEvent> event) {
+    public TikTokLiveClientBuilder onBarrage(EventConsumer<TikTokBarrageEvent> event) {
         tikTokEventHandler.subscribe(TikTokBarrageEvent.class, event);
         return this;
     }
@@ -391,8 +390,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
 
-    public TikTokLiveClientBuilder onLinkMicArmies(
-            EventConsumer<TikTokLinkMicArmiesEvent> event) {
+    public TikTokLiveClientBuilder onLinkMicArmies(EventConsumer<TikTokLinkMicArmiesEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkMicArmiesEvent.class, event);
         return this;
     }
@@ -402,20 +400,17 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnauthorizedMember(
-            EventConsumer<TikTokUnauthorizedMemberEvent> event) {
+    public TikTokLiveClientBuilder onUnauthorizedMember(EventConsumer<TikTokUnauthorizedMemberEvent> event) {
         tikTokEventHandler.subscribe(TikTokUnauthorizedMemberEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onInRoomBanner(
-            EventConsumer<TikTokInRoomBannerEvent> event) {
+    public TikTokLiveClientBuilder onInRoomBanner(EventConsumer<TikTokInRoomBannerEvent> event) {
         tikTokEventHandler.subscribe(TikTokInRoomBannerEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMicMethod(
-            EventConsumer<TikTokLinkMicMethodEvent> event) {
+    public TikTokLiveClientBuilder onLinkMicMethod(EventConsumer<TikTokLinkMicMethodEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkMicMethodEvent.class, event);
         return this;
     }
@@ -487,8 +482,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnhandledMember(
-            EventConsumer<TikTokUnhandledMemberEvent> event) {
+    public TikTokLiveClientBuilder onUnhandledMember(EventConsumer<TikTokUnhandledMemberEvent> event) {
         tikTokEventHandler.subscribe(TikTokUnhandledMemberEvent.class, event);
         return this;
     }
@@ -498,20 +492,17 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder onLinkMicBattle(
-            EventConsumer<TikTokLinkMicBattleEvent> event) {
+    public TikTokLiveClientBuilder onLinkMicBattle(EventConsumer<TikTokLinkMicBattleEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkMicBattleEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onDisconnected(
-            EventConsumer<TikTokDisconnectedEvent> event) {
+    public TikTokLiveClientBuilder onDisconnected(EventConsumer<TikTokDisconnectedEvent> event) {
         tikTokEventHandler.subscribe(TikTokDisconnectedEvent.class, event);
         return this;
     }
 
-    public TikTokLiveClientBuilder onUnhandledControl(
-            EventConsumer<TikTokUnhandledControlEvent> event) {
+    public TikTokLiveClientBuilder onUnhandledControl(EventConsumer<TikTokUnhandledControlEvent> event) {
         tikTokEventHandler.subscribe(TikTokUnhandledControlEvent.class, event);
         return this;
     }
