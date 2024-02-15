@@ -32,8 +32,7 @@ import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveOfflineHostException;
+import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
@@ -127,22 +126,26 @@ public class TikTokLiveClient implements LiveClient {
         var userData = httpClient.fetchLiveUserData(userDataRequest);
         liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
         liveRoomInfo.setRoomId(userData.getRoomId());
-        if (userData.getUserStatus() == LiveUserData.UserStatus.Offline) {
-            throw new TikTokLiveOfflineHostException("User is offline: "+liveRoomInfo.getHostUser());
-        }
-        if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound) {
-            throw new TikTokLiveOfflineHostException("User not found: "+liveRoomInfo.getHostUser());
-        }
+
+        if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
+            throw new TikTokLiveOfflineHostException("User is offline: "+liveRoomInfo.getHostName());
+
+        if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
+            throw new TikTokLiveOfflineHostException("User not found: "+liveRoomInfo.getHostName());
 
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
+
+        if (liveData.isAgeRestricted())
+            throw new TikTokLiveException("Livestream for "+liveRoomInfo.getHostName()+" is 18+ or age restricted!");
+
+        if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound)
+            throw new TikTokLiveOfflineHostException("LiveStream for "+liveRoomInfo.getHostName()+" could not be found.");
+
+        if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline)
+            throw new TikTokLiveOfflineHostException("LiveStream for "+liveRoomInfo.getHostName()+" not found, is the Host offline?");
+
         tikTokEventHandler.publish(this, new TikTokRoomDataResponseEvent(liveData));
-        if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound) {
-            throw new TikTokLiveOfflineHostException("LiveStream for Host name could not be found.");
-        }
-        if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline) {
-            throw new TikTokLiveOfflineHostException("LiveStream for not be found, is the Host offline?");
-        }
 
         liveRoomInfo.setTitle(liveData.getTitle());
         liveRoomInfo.setViewersCount(liveData.getViewers());

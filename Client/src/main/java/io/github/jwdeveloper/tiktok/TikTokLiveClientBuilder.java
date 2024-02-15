@@ -99,7 +99,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
     public TikTokLiveClientBuilder addListener(TikTokEventListener listener) {
-        listeners.add(listener);
+        if (listener != null)
+            listeners.add(listener);
         return this;
     }
 

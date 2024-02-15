@@ -27,9 +27,8 @@ import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 
-public interface LiveHttpClient {
-
-
+public interface LiveHttpClient
+{
     /**
      * @return list of gifts that are available in your country
      */
@@ -37,28 +36,32 @@ public interface LiveHttpClient {
 
     /**
      * Returns information about user that is having a livestream
-     *
-     * @param userName
-     * @return
+     * @param userName name of user
+     * @return {@link LiveUserData.Response}
      */
-    LiveUserData.Response fetchLiveUserData(String userName);
+    default LiveUserData.Response fetchLiveUserData(String userName) {
+        return fetchLiveUserData(new LiveUserData.Request(userName));
+    }
 
     LiveUserData.Response fetchLiveUserData(LiveUserData.Request request);
 
     /**
      * @param roomId can be obtained from browsers cookies or by invoked fetchLiveUserData
-     * @return
+     * @return {@link LiveData.Response}
      */
-    LiveData.Response fetchLiveData(String roomId);
+    default LiveData.Response fetchLiveData(String roomId) {
+        return fetchLiveData(new LiveData.Request(roomId));
+    }
 
     LiveData.Response fetchLiveData(LiveData.Request request);
 
-
     /**
      * @param roomId can be obtained from browsers cookies or by invoked fetchLiveUserData
-     * @return
+     * @return {@link LiveConnectionData.Response}
      */
-    LiveConnectionData.Response fetchLiveConnectionData(String roomId);
+    default LiveConnectionData.Response fetchLiveConnectionData(String roomId) {
+        return fetchLiveConnectionData(new LiveConnectionData.Request(roomId));
+    }
 
     LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request);
 }
