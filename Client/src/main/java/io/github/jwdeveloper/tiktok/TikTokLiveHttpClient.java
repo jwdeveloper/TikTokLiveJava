@@ -166,7 +166,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 		HttpResponse<byte[]> credentialsResponse = getOptionalProxyResponse(request).orElseGet(()-> getStarterPayload(request.getRoomId()));
 
         try {
-            System.out.println(credentialsResponse.headers().map());
             var optionalHeader = credentialsResponse.headers().firstValue("x-set-tt-cookie");
             if (optionalHeader.isEmpty()) {
                 throw new TikTokSignServerException("Sign server did not return the set-cookie header");
