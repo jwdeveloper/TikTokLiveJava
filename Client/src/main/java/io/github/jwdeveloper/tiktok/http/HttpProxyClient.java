@@ -67,16 +67,12 @@ public class HttpProxyClient extends HttpClient
 				var request = prepareGetRequest();
 
 				var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-				if (response.statusCode() != 200) {
-					proxySettings.setLastSuccess(false);
+				if (response.statusCode() != 200)
 					continue;
-				}
-				proxySettings.setLastSuccess(true);
 				return Optional.of(response);
 			} catch (HttpConnectTimeoutException | ConnectException e) {
 				if (proxySettings.isAutoDiscard())
 					proxySettings.remove();
-				proxySettings.setLastSuccess(false);
 				throw new TikTokProxyRequestException(e);
 			} catch (IOException e) {
 				if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
@@ -121,14 +117,12 @@ public class HttpProxyClient extends HttpClient
 
 					var response = createHttpResponse(body, toUrl(), responseInfo);
 
-					proxySettings.setLastSuccess(true);
 					return Optional.of(response);
 				} catch (IOException e) {
 					if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
 						return super.toResponse();
 					if (proxySettings.isAutoDiscard())
 						proxySettings.remove();
-					proxySettings.setLastSuccess(false);
 					throw new TikTokProxyRequestException(e);
 				} catch (Exception e) {
 					throw new TikTokLiveRequestException(e);
@@ -137,7 +131,7 @@ public class HttpProxyClient extends HttpClient
 			throw new TikTokLiveRequestException("No more proxies available!");
 		} catch (NoSuchAlgorithmException | MalformedURLException | KeyManagementException e) {
 			// Should never be reached!
-			System.out.println("handleSocksProxyRequest()! If you see this message, reach us on discord!");
+			System.out.println("handleSocksProxyRequest: If you see this, message us on discord!");
 			e.printStackTrace();
 			return Optional.empty();
 		} catch (TikTokLiveRequestException e) {

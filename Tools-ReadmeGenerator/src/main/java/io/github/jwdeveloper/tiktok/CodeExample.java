@@ -97,6 +97,10 @@ public class CodeExample {
                     //RoomId can be used as an override if you're having issues with HostId.
                     //You can find it in the HTML for the livestream-page
                     settings.setRoomId("XXXXXXXXXXXXXXXXX");
+
+                    //Optional:
+                    //API Key for increased limit to signing server
+                    settings.setApiKey("XXXXXXXXXXXXXXXXX");
                 })
                 .buildAndConnect();
         //  </code>

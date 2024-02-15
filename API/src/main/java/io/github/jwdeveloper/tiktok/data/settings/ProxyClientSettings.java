@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 @Setter
 public class ProxyClientSettings implements Iterator<ProxyData>
 {
-    private boolean enabled, lastSuccess, autoDiscard = true, fallback = true;
+    private boolean enabled, autoDiscard = true, fallback = true;
     private Rotation rotation = Rotation.CONSECUTIVE;
     private final List<ProxyData> proxyList = new ArrayList<>();
     private int index = -1;
@@ -63,10 +63,6 @@ public class ProxyClientSettings implements Iterator<ProxyData>
 
     @Override
     public ProxyData next() {
-		return lastSuccess ? proxyList.get(index) : rotate();
-	}
-
-    public ProxyData rotate() {
         var nextProxy = switch (rotation)
         {
             case CONSECUTIVE -> {
@@ -84,12 +80,11 @@ public class ProxyClientSettings implements Iterator<ProxyData>
         };
         onProxyUpdated.accept(nextProxy);
         return nextProxy;
-    }
+	}
 
     @Override
     public void remove() {
         proxyList.remove(index);
-        lastSuccess = false; // index is no longer valid and lastSuccess needs falsified
     }
 
     public void setIndex(int index) {
