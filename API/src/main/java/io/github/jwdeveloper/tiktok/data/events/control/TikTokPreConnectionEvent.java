@@ -20,43 +20,25 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.requests;
+package io.github.jwdeveloper.tiktok.data.events.control;
 
-import io.github.jwdeveloper.tiktok.data.models.users.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
+import io.github.jwdeveloper.tiktok.data.requests.*;
+import lombok.*;
 
-public class LiveData {
-    @Getter
-    @AllArgsConstructor
-    public static class Request {
-        private String roomId;
-    }
+/**
+ * Triggered before the connection is established.
+ */
+@EventMeta(eventType = EventType.Control)
+public class TikTokPreConnectionEvent extends TikTokLiveClientEvent
+{
+	@Getter private final LiveUserData.Response userData;
+	@Getter private final LiveData.Response roomData;
+	@Getter @Setter boolean cancelConnection = false;
 
-    @Data
-    public static class Response {
-        private String json;
-        private LiveStatus liveStatus;
-        private String title;
-        private int likes;
-        private int viewers;
-        private int totalViewers;
-        private boolean ageRestricted;
-        private User host;
-        private LiveType liveType;
-    }
-
-    public enum LiveStatus {
-        HostNotFound,
-        HostOnline,
-        HostOffline,
-    }
-
-    public enum LiveType {
-        SOLO,
-        BOX,
-        BATTLE,
-        CO_HOST
-    }
+	public TikTokPreConnectionEvent(LiveUserData.Response userData, LiveData.Response liveData) {
+		this.userData = userData;
+		this.roomData = liveData;
+	}
 }

@@ -77,6 +77,11 @@ public class HttpProxyClient extends HttpClient
 				if (proxySettings.isAutoDiscard())
 					proxySettings.remove();
 				proxySettings.setLastSuccess(false);
+				throw new TikTokProxyRequestException(e);
+			} catch (IOException e) {
+				if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
+					return super.toResponse();
+				throw new TikTokProxyRequestException(e);
 			} catch (Exception e) {
 				throw new TikTokLiveRequestException(e);
 			}
@@ -119,6 +124,8 @@ public class HttpProxyClient extends HttpClient
 					proxySettings.setLastSuccess(true);
 					return Optional.of(response);
 				} catch (IOException e) {
+					if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
+						return super.toResponse();
 					if (proxySettings.isAutoDiscard())
 						proxySettings.remove();
 					proxySettings.setLastSuccess(false);

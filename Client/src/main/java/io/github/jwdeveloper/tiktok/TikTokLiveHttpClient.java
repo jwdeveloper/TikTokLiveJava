@@ -66,6 +66,22 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
     public GiftsData.Response fetchGiftsData() {
         var url = TIKTOK_URL_WEBCAST + "gift/list/";
+        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled()) {
+            while (proxyClientSettings.hasNext()) {
+                try {
+                    var optional = httpFactory.client(url)
+                            .build()
+                            .toJsonResponse();
+
+                    if (optional.isEmpty()) {
+                        throw new TikTokLiveRequestException("Unable to fetch gifts information's");
+                    }
+                    var json = optional.get();
+                    return giftsDataMapper.map(json);
+                } catch (TikTokProxyRequestException ignored) {}
+            }
+        }
         var optional = httpFactory.client(url)
                 .build()
                 .toJsonResponse();
@@ -73,6 +89,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         if (optional.isEmpty()) {
             throw new TikTokLiveRequestException("Unable to fetch gifts information's");
         }
+
         var json = optional.get();
         return giftsDataMapper.map(json);
     }
@@ -85,11 +102,11 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
     @Override
     public LiveUserData.Response fetchLiveUserData(LiveUserData.Request request) {
+        var url = TIKTOK_URL_WEB + "api-live/user/room";
         var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
         if (proxyClientSettings.isEnabled()) {
             while (proxyClientSettings.hasNext()) {
                 try {
-                    var url = TIKTOK_URL_WEB + "api-live/user/room";
                     var optional = httpFactory.client(url)
                         .withParam("uniqueId", request.getUserName())
                         .withParam("sourceType", "54")
@@ -105,7 +122,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
                 } catch (TikTokProxyRequestException ignored) {}
             }
         }
-        var url = TIKTOK_URL_WEB + "api-live/user/room";
         var optional = httpFactory.client(url)
                 .withParam("uniqueId", request.getUserName())
                 .withParam("sourceType", "54")
@@ -127,11 +143,11 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
     @Override
     public LiveData.Response fetchLiveData(LiveData.Request request) {
+        var url = TIKTOK_URL_WEBCAST + "room/info";
         var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
         if (proxyClientSettings.isEnabled()) {
             while (proxyClientSettings.hasNext()) {
                 try {
-                    var url = TIKTOK_URL_WEBCAST + "room/info";
                     var optional = httpFactory.client(url)
                         .withParam("room_id", request.getRoomId())
                         .build()
@@ -146,7 +162,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
                 } catch (TikTokProxyRequestException ignored) {}
             }
         }
-        var url = TIKTOK_URL_WEBCAST + "room/info";
         var optional = httpFactory.client(url)
                 .withParam("room_id", request.getRoomId())
                 .build()

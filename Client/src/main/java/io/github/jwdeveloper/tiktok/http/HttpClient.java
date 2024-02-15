@@ -39,7 +39,7 @@ public class HttpClient {
     protected final String url;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
-    public  Optional<HttpResponse<byte[]>> toResponse() {
+    public Optional<HttpResponse<byte[]>> toResponse() {
         var client = prepareClient();
         var request = prepareGetRequest();
         try {

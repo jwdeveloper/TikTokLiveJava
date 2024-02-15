@@ -26,7 +26,7 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
+import io.github.jwdeveloper.tiktok.data.events.control.*;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
@@ -149,6 +149,11 @@ public class TikTokLiveClient implements LiveClient {
         liveRoomInfo.setTotalViewersCount(liveData.getTotalViewers());
         liveRoomInfo.setAgeRestricted(liveData.isAgeRestricted());
         liveRoomInfo.setHost(liveData.getHost());
+
+        var preconnectEvent = new TikTokPreConnectionEvent(userData, liveData);
+        tikTokEventHandler.publish(this, preconnectEvent);
+        if (preconnectEvent.isCancelConnection())
+            throw new TikTokLiveException("TikTokPreConnectionEvent cancelled connection!");
 
         var liveConnectionRequest =new LiveConnectionData.Request(userData.getRoomId());
         var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
