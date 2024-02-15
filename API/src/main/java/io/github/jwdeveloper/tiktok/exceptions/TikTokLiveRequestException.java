@@ -23,7 +23,7 @@
 package io.github.jwdeveloper.tiktok.exceptions;
 
 
-/*
+/**
  * Happens while bad response from Http request to TikTok
  */
 public class TikTokLiveRequestException extends TikTokLiveException

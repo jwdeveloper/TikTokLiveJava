@@ -33,11 +33,10 @@ import java.util.function.Consumer;
 @Setter
 public class ProxyClientSettings implements Iterator<ProxyData>
 {
-    private boolean enabled, lastSuccess;
+    private boolean enabled, lastSuccess, autoDiscard = true, fallback = true;
     private Rotation rotation = Rotation.CONSECUTIVE;
     private final List<ProxyData> proxyList = new ArrayList<>();
-    private int index = 0;
-    private boolean autoDiscard = true;
+    private int index = -1;
     private Proxy.Type type = Proxy.Type.DIRECT;
     private Consumer<ProxyData> onProxyUpdated = x -> {};
 
@@ -78,7 +77,10 @@ public class ProxyClientSettings implements Iterator<ProxyData>
                 index = new Random().nextInt(proxyList.size());
                 yield proxyList.get(index).clone();
             }
-            case NONE -> proxyList.get(index).clone();
+            case NONE -> {
+                index = Math.max(index, 0);
+                yield proxyList.get(index).clone();
+            }
         };
         onProxyUpdated.accept(nextProxy);
         return nextProxy;
@@ -99,6 +101,7 @@ public class ProxyClientSettings implements Iterator<ProxyData>
             this.index = index;
         }
     }
+
     public ProxyClientSettings clone()
     {
         ProxyClientSettings settings = new ProxyClientSettings();
