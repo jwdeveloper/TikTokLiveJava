@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
+import io.github.jwdeveloper.tiktok.common.ActionResult;
 import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import lombok.AllArgsConstructor;
@@ -34,36 +35,26 @@ import java.util.regex.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class HttpClient {
+public class HttpClient
+{
     protected final HttpClientSettings httpClientSettings;
     protected final String url;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
-    public Optional<HttpResponse<byte[]>> toResponse() {
+    public ActionResult<HttpResponse<byte[]>> toResponse() {
         var client = prepareClient();
         var request = prepareGetRequest();
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            if (response.statusCode() != 200) {
-                return Optional.empty();
-            }
-
-            return Optional.of(response);
-        } catch (Exception e) {
+            var result = ActionResult.of(response);
+			return response.statusCode() != 200 ? result.message("HttpResponse Code: ", response.statusCode()).failure() : result.success();
+		} catch (Exception e) {
             throw new TikTokLiveRequestException(e);
         }
     }
 
-    public Optional<String> toJsonResponse() {
-        var optional = toResponse();
-        if (optional.isEmpty()) {
-            return Optional.empty();
-        }
-
-        var response = optional.get();
-        var body = response.body();
-        var charset = charsetFrom(response.headers());
-        return Optional.of(new String(body,charset));
+    public ActionResult<String> toJsonResponse() {
+        return toResponse().map(content -> new String(content.body(), charsetFrom(content.headers())));
     }
 
     private Charset charsetFrom(HttpHeaders headers) {

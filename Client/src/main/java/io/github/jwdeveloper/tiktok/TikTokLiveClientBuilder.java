@@ -22,69 +22,52 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.common.LoggerFactory;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.*;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokHttpResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
+import io.github.jwdeveloper.tiktok.data.events.room.*;
+import io.github.jwdeveloper.tiktok.data.events.social.*;
+import io.github.jwdeveloper.tiktok.data.events.websocket.*;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
-import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
-import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
-import io.github.jwdeveloper.tiktok.live.GiftManager;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
-import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
-import io.github.jwdeveloper.tiktok.mappers.TikTokGenericEventMapper;
-import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
-import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapperHelper;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
+import io.github.jwdeveloper.tiktok.listener.*;
+import io.github.jwdeveloper.tiktok.live.*;
+import io.github.jwdeveloper.tiktok.live.builder.*;
+import io.github.jwdeveloper.tiktok.mappers.*;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
-import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokCommonEventHandler;
-import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
-import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokRoomInfoEventHandler;
-import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokSocialMediaEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.logging.Formatter;
 import java.util.logging.*;
 
 public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     protected final LiveClientSettings clientSettings;
-    protected final Logger logger;
     protected final TikTokLiveEventHandler tikTokEventHandler;
     protected final List<TikTokEventListener> listeners;
     protected Consumer<TikTokMapper> onCustomMappings;
+    protected Logger logger;
 
     public TikTokLiveClientBuilder(String userName)
     {
         this.clientSettings = LiveClientSettings.createDefault();
         this.clientSettings.setHostName(userName);
         this.tikTokEventHandler = new TikTokLiveEventHandler();
-        this.logger = Logger.getLogger(TikTokLive.class.getSimpleName() + " " + userName);
         this.listeners = new ArrayList<>();
-        this.onCustomMappings = (e) -> {
-        };
+        this.onCustomMappings = (e) -> {};
     }
 
     public LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings) {
@@ -124,6 +107,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
 
 
+        this.logger = LoggerFactory.create(clientSettings.getHostName(), clientSettings);
         var handler = new ConsoleHandler();
         handler.setFormatter(new Formatter() {
             @Override

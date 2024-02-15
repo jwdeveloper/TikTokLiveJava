@@ -23,8 +23,9 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import io.github.jwdeveloper.tiktok.common.LoggerFactory;
 import io.github.jwdeveloper.tiktok.data.requests.*;
-import io.github.jwdeveloper.tiktok.data.settings.*;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.http.*;
 import io.github.jwdeveloper.tiktok.http.mappers.*;
@@ -32,9 +33,10 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.net.http.HttpResponse;
 import java.util.Optional;
+import java.util.logging.Logger;
 
-public class TikTokLiveHttpClient implements LiveHttpClient {
-
+public class TikTokLiveHttpClient implements LiveHttpClient
+{
     /**
 	 * <a href="https://github-wiki-see.page/m/isaackogan/TikTokLive/wiki/All-About-Signatures">Signing API by Isaac Kogan</a>
 	 */
@@ -48,10 +50,12 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
     private final LiveUserDataMapper liveUserDataMapper;
     private final LiveDataMapper liveDataMapper;
     private final GiftsDataMapper giftsDataMapper;
+    private final Logger logger;
 
     public TikTokLiveHttpClient(HttpClientFactory factory, LiveClientSettings settings) {
         this.httpFactory = factory;
-        clientSettings = settings;
+        this.clientSettings = settings;
+        this.logger = LoggerFactory.create("HttpClient", clientSettings);
         liveUserDataMapper = new LiveUserDataMapper();
         liveDataMapper = new LiveDataMapper();
         giftsDataMapper = new GiftsDataMapper();
@@ -169,7 +173,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         try {
             var optionalHeader = credentialsResponse.headers().firstValue("x-set-tt-cookie");
             if (optionalHeader.isEmpty()) {
-                throw new TikTokSignServerException("Sign server did not return the set-cookie header");
+                logger.warning("SignServer Headers: "+credentialsResponse.headers().map());
+                throw new TikTokSignServerException("Sign server did not return the x-set-tt-cookie header");
             }
             var websocketCookie = optionalHeader.get();
             var webcastResponse = WebcastResponse.parseFrom(credentialsResponse.body());
