@@ -64,6 +64,10 @@ public class LiveDataMapper {
                 default -> LiveData.LiveStatus.HostNotFound;
             };
             response.setLiveStatus(statusValue);
+        } else if (data.has("prompts") && jsonObject.has("status_code") &&
+            data.get("prompts").getAsString().isEmpty() && jsonObject.get("status_code").isJsonPrimitive()) {
+            // 4003110 is age restriction code
+            response.setAgeRestricted(jsonObject.get("status_code").getAsInt() == 4003110);
         } else {
             response.setLiveStatus(LiveData.LiveStatus.HostNotFound);
         }

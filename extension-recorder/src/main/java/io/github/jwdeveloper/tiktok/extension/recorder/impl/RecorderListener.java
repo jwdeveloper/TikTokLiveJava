@@ -27,7 +27,6 @@ import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
@@ -70,16 +69,12 @@ public class RecorderListener implements LiveRecorder {
         var json = event.getLiveData().getJson();
 
         liveClient.getLogger().info("Searching for live download url");
-        if (settings.getPrepareDownloadData() != null) {
-            downloadData = settings.getPrepareDownloadData().apply(json);
-        } else {
-            downloadData = mapToDownloadData(json);
-        }
+		downloadData = settings.getPrepareDownloadData() != null ? settings.getPrepareDownloadData().apply(json) : mapToDownloadData(json);
 
-        if (downloadData.getDownloadLiveUrl().isEmpty()) {
-            throw new TikTokLiveException("Unable to find download live url!");
-        }
-        liveClient.getLogger().info("Live download url found!");
+        if (downloadData.getDownloadLiveUrl().isEmpty())
+            liveClient.getLogger().warning("Unable to find download live url!");
+        else
+            liveClient.getLogger().info("Live download url found!");
     }
 
     @TikTokEventObserver
@@ -88,13 +83,13 @@ public class RecorderListener implements LiveRecorder {
             try {
                 var bufferSize = 1024;
                 var url = new URL(downloadData.getFullUrl());
-                HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 var headers = LiveClientSettings.DefaultRequestHeaders();
                 for (var entry : headers.entrySet()) {
-                    socksConnection.setRequestProperty(entry.getKey(), entry.getValue());
+                    connection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
 
-                var in = new BufferedInputStream(socksConnection.getInputStream());
+                var in = new BufferedInputStream(connection.getInputStream());
                 var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
                 var file = new File(path);
                 file.getParentFile().mkdirs();
