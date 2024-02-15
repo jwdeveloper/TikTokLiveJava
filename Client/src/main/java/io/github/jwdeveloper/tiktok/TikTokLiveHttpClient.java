@@ -36,18 +36,17 @@ import java.util.Optional;
 public class TikTokLiveHttpClient implements LiveHttpClient {
 
     /**
-     * Signing API by Isaac Kogan
-     * https://github-wiki-see.page/m/isaackogan/TikTokLive/wiki/All-About-Signatures
-     */
-    private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/sign_url";
+	 * <a href="https://github-wiki-see.page/m/isaackogan/TikTokLive/wiki/All-About-Signatures">Signing API by Isaac Kogan</a>
+	 */
+    private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/fetch";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
+    public static final int TIKTOK_AGE_RESTRICTED_CODE = 4003110;
 
     private final HttpClientFactory httpFactory;
     private final LiveClientSettings clientSettings;
     private final LiveUserDataMapper liveUserDataMapper;
     private final LiveDataMapper liveDataMapper;
-    private final SignServerResponseMapper signServerResponseMapper;
     private final GiftsDataMapper giftsDataMapper;
 
     public TikTokLiveHttpClient(HttpClientFactory factory, LiveClientSettings settings) {
@@ -55,7 +54,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         clientSettings = settings;
         liveUserDataMapper = new LiveUserDataMapper();
         liveDataMapper = new LiveDataMapper();
-        signServerResponseMapper = new SignServerResponseMapper();
         giftsDataMapper = new GiftsDataMapper();
     }
 
@@ -92,12 +90,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
 
         var json = optional.get();
         return giftsDataMapper.map(json);
-    }
-
-
-    @Override
-    public LiveUserData.Response fetchLiveUserData(String userName) {
-        return fetchLiveUserData(new LiveUserData.Request(userName));
     }
 
     @Override
@@ -137,11 +129,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
     }
 
     @Override
-    public LiveData.Response fetchLiveData(String roomId) {
-        return fetchLiveData(new LiveData.Request(roomId));
-    }
-
-    @Override
     public LiveData.Response fetchLiveData(LiveData.Request request) {
         var url = TIKTOK_URL_WEBCAST + "room/info";
         var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
@@ -176,19 +163,11 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
     }
 
     @Override
-    public LiveConnectionData.Response fetchLiveConnectionData(String roomId) {
-        return fetchLiveConnectionData(new LiveConnectionData.Request(roomId));
-    }
-
-    @Override
     public LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request) {
-		HttpResponse<byte[]> credentialsResponse = getOptionalProxyResponse(request).orElseGet(()-> {
-            SignServerResponse signServerResponse = getSignedUrl(request.getRoomId());
-            return getWebsocketCredentialsResponse(signServerResponse.getSignedUrl());
-        });
+		HttpResponse<byte[]> credentialsResponse = getOptionalProxyResponse(request).orElseGet(()-> getStarterPayload(request.getRoomId()));
 
         try {
-            var optionalHeader = credentialsResponse.headers().firstValue("set-cookie");
+            var optionalHeader = credentialsResponse.headers().firstValue("x-set-tt-cookie");
             if (optionalHeader.isEmpty()) {
                 throw new TikTokSignServerException("Sign server did not return the set-cookie header");
             }
@@ -210,39 +189,21 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         }
     }
 
-    SignServerResponse getSignedUrl(String roomId) {
-        var urlToSign = httpFactory
-                .client(TikTokLiveHttpClient.TIKTOK_URL_WEBCAST + "im/fetch")
-                .withParam("room_id", roomId)
-                .build()
-                .toUrl();
+    HttpResponse<byte[]> getStarterPayload(String room_id) {
+        HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
+            .withParam("client", "ttlive-java")
+            .withParam("uuc", "1")
+            .withParam("room_id", room_id);
 
+        if (clientSettings.getApiKey() != null)
+            builder.withParam("apiKey", clientSettings.getApiKey());
 
-        var optional = httpFactory
-                .client(TikTokLiveHttpClient.TIKTOK_SIGN_API)
-                .withParam("client", "ttlive-java")
-                .withParam("uuc", "1")
-                .withParam("url", urlToSign.toString())
-                .build()
-                .toJsonResponse();
+        var optional = builder.build().toResponse();
 
         if (optional.isEmpty()) {
-            throw new TikTokSignServerException("Unable to sign url: " + urlToSign);
-        }
-
-        var json = optional.get();
-        return signServerResponseMapper.map(json);
-    }
-
-    HttpResponse<byte[]> getWebsocketCredentialsResponse(String signedUrl) {
-        var optionalResponse = httpFactory
-                .clientEmpty(signedUrl)
-                .build()
-                .toResponse();
-        if (optionalResponse.isEmpty()) {
             throw new TikTokSignServerException("Unable to get websocket connection credentials");
         }
-        return optionalResponse.get();
+        return optional.get();
     }
 
     Optional<HttpResponse<byte[]>> getOptionalProxyResponse(LiveConnectionData.Request request) {
@@ -250,9 +211,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient {
         if (proxyClientSettings.isEnabled()) {
             while (proxyClientSettings.hasNext()) {
                 try {
-                    SignServerResponse signServerResponse = getSignedUrl(request.getRoomId());
-                    HttpResponse<byte[]> credentialsResponse = getWebsocketCredentialsResponse(signServerResponse.getSignedUrl());
-                    clientSettings.getHttpSettings().getProxyClientSettings().rotate();
+                    HttpResponse<byte[]> credentialsResponse = getStarterPayload(request.getRoomId());
                     return Optional.of(credentialsResponse);
                 } catch (TikTokProxyRequestException | TikTokSignServerException ignored) {}
             }

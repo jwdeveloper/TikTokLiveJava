@@ -30,7 +30,6 @@ import java.util.function.Consumer;
 
 public class TikTokLiveRecorder
 {
-
     public static LiveRecorder use(Consumer<RecorderSettings> consumer)
     {
         return new RecorderListener(consumer);

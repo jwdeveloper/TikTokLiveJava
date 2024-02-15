@@ -80,6 +80,11 @@ public class LiveClientSettings {
      */
     private String roomId;
 
+    /**
+     * Optional: API Key for increased limit to signing server
+     */
+    private String apiKey;
+
     public static LiveClientSettings createDefault()
     {
         var httpSettings = new HttpClientSettings();
