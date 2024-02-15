@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.http.mappers;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.data.models.users.UserAttribute;
@@ -66,8 +67,7 @@ public class LiveDataMapper {
             response.setLiveStatus(statusValue);
         } else if (data.has("prompts") && jsonObject.has("status_code") &&
             data.get("prompts").getAsString().isEmpty() && jsonObject.get("status_code").isJsonPrimitive()) {
-            // 4003110 is age restriction code
-            response.setAgeRestricted(jsonObject.get("status_code").getAsInt() == 4003110);
+            response.setAgeRestricted(jsonObject.get("status_code").getAsInt() == TikTokLiveHttpClient.TIKTOK_AGE_RESTRICTED_CODE);
         } else {
             response.setLiveStatus(LiveData.LiveStatus.HostNotFound);
         }
