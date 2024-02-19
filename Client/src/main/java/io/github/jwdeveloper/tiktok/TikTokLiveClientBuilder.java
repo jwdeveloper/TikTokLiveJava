@@ -44,14 +44,12 @@ import io.github.jwdeveloper.tiktok.mappers.*;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.mappers.handlers.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
-import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.logging.Formatter;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
@@ -61,8 +59,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     protected Consumer<TikTokMapper> onCustomMappings;
     protected Logger logger;
 
-    public TikTokLiveClientBuilder(String userName)
-    {
+    public TikTokLiveClientBuilder(String userName) {
         this.clientSettings = LiveClientSettings.createDefault();
         this.clientSettings.setHostName(userName);
         this.tikTokEventHandler = new TikTokLiveEventHandler();
@@ -74,7 +71,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         this.onCustomMappings = onCustomMappings;
         return this;
     }
-
 
     public TikTokLiveClientBuilder configure(Consumer<LiveClientSettings> onConfigure) {
         onConfigure.accept(clientSettings);
@@ -88,44 +84,20 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
     protected void validate() {
-        if (clientSettings.getClientLanguage() == null || clientSettings.getClientLanguage().isEmpty()) {
+        if (clientSettings.getClientLanguage() == null || clientSettings.getClientLanguage().isEmpty())
             clientSettings.setClientLanguage("en");
-        }
 
-
-        if (clientSettings.getHostName() == null || clientSettings.getHostName().isEmpty()) {
+        if (clientSettings.getHostName() == null || clientSettings.getHostName().isEmpty())
             throw new TikTokLiveException("HostName can not be null");
-        }
 
-        if (clientSettings.getHostName().startsWith("@")) {
+        if (clientSettings.getHostName().startsWith("@"))
             clientSettings.setHostName(clientSettings.getHostName().substring(1));
-        }
-
 
         var httpSettings = clientSettings.getHttpSettings();
         httpSettings.getParams().put("app_language", clientSettings.getClientLanguage());
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
 
-
         this.logger = LoggerFactory.create(clientSettings.getHostName(), clientSettings);
-        var handler = new ConsoleHandler();
-        handler.setFormatter(new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                var sb = new StringBuilder();
-                sb.append(ConsoleColors.GREEN).append("[").append(record.getLoggerName()).append("] ");
-                sb.append(ConsoleColors.GREEN).append("[").append(record.getLevel()).append("]: ");
-                sb.append(ConsoleColors.WHITE_BRIGHT).append(record.getMessage());
-                sb.append(ConsoleColors.RESET).append("\n");
-                return sb.toString();
-            }
-        });
-        logger.setUseParentHandlers(false);
-        logger.addHandler(handler);
-        logger.setLevel(clientSettings.getLogLevel());
-        if (!clientSettings.isPrintToConsole()) {
-            logger.setLevel(Level.OFF);
-        }
     }
 
     public LiveClient build() {
@@ -266,12 +238,10 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    //  @Override
     public LiveClientBuilder onChest(EventConsumer<TikTokChestEvent> event) {
         tikTokEventHandler.subscribe(TikTokChestEvent.class, event);
         return this;
     }
-
 
     public TikTokLiveClientBuilder onLinkMicFanTicket(EventConsumer<TikTokLinkMicFanTicketEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkMicFanTicketEvent.class, event);
@@ -329,13 +299,11 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-
     @Override
     public TikTokLiveClientBuilder onRoomInfo(EventConsumer<TikTokRoomInfoEvent> event) {
         tikTokEventHandler.subscribe(TikTokRoomInfoEvent.class, event);
         return this;
     }
-
 
     public TikTokLiveClientBuilder onLivePaused(EventConsumer<TikTokLivePausedEvent> event) {
         tikTokEventHandler.subscribe(TikTokLivePausedEvent.class, event);
@@ -363,7 +331,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-
     public TikTokLiveClientBuilder onGift(EventConsumer<TikTokGiftEvent> event) {
         tikTokEventHandler.subscribe(TikTokGiftEvent.class, event);
         return this;
@@ -373,7 +340,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         tikTokEventHandler.subscribe(TikTokGiftComboEvent.class, event);
         return this;
     }
-
 
     public TikTokLiveClientBuilder onLinkMicArmies(EventConsumer<TikTokLinkMicArmiesEvent> event) {
         tikTokEventHandler.subscribe(TikTokLinkMicArmiesEvent.class, event);
@@ -450,7 +416,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         tikTokEventHandler.subscribe(TikTokErrorEvent.class, event);
         return this;
     }
-
 
     public TikTokLiveClientBuilder onJoin(EventConsumer<TikTokJoinEvent> event) {
         tikTokEventHandler.subscribe(TikTokJoinEvent.class, event);

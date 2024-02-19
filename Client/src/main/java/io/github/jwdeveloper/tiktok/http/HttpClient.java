@@ -35,8 +35,8 @@ import java.util.regex.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class HttpClient
-{
+public class HttpClient {
+
     protected final HttpClientSettings httpClientSettings;
     protected final String url;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
@@ -71,13 +71,8 @@ public class HttpClient
         }
     }
 
-    public Optional<byte[]> toBinaryResponse() {
-        var optional = toResponse();
-        if (optional.isEmpty()) {
-            return Optional.empty();
-        }
-        var body = optional.get().body();
-        return Optional.of(body);
+    public ActionResult<byte[]> toBinaryResponse() {
+        return toResponse().map(HttpResponse::body);
     }
 
     public URI toUrl() {

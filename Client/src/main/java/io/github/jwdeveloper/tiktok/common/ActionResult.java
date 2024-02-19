@@ -2,11 +2,12 @@ package io.github.jwdeveloper.tiktok.common;
 
 import lombok.Data;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Data
-public class ActionResult<T>
-{
+public class ActionResult<T> {
+
 	private boolean success = true;
 	private T content;
 	private String message;
@@ -29,6 +30,10 @@ public class ActionResult<T>
 		return new ActionResultBuilder<>(content);
 	}
 
+	public static <T> ActionResult<T> of(Optional<T> optional) {
+		return new ActionResult<>(optional.orElse(null), optional.isPresent());
+	}
+
 	public boolean isFailure() {
 		return !isSuccess();
 	}
@@ -36,13 +41,12 @@ public class ActionResult<T>
 	public boolean hasMessage() {
 		return message != null;
 	}
+	public String toStack() {
+		return hasMessage() ? " - "+message : "";
+	}
 
 	public boolean hasContent() {
 		return content != null;
-	}
-
-	public static <T> ActionResult<T> success() {
-		return new ActionResult<>(null, true);
 	}
 
 	public <Output> ActionResult<Output> cast(Output output) {
@@ -50,34 +54,34 @@ public class ActionResult<T>
 	}
 
 	public <Output> ActionResult<Output> cast() {
-		return new ActionResult<>(null, this.isSuccess(), this.getMessage());
+		return cast(null);
 	}
 
 	public <U> ActionResult<U> map(Function<? super T, ? extends U> mapper) {
 		return hasContent() ? cast(mapper.apply(content)) : cast();
 	}
 
-	public static <Input, Output> ActionResult<Output> cast(ActionResult<Input> action, Output output) {
-		return new ActionResult<>(output, action.isSuccess(), action.getMessage());
-	}
-
-	public static <T> ActionResult<T> success(T payload) {
-		return new ActionResult<>(payload, true);
-	}
-
 	public static <T> ActionResult<T> success(T payload, String message) {
 		return new ActionResult<>(payload, true, message);
 	}
 
-	public static <T> ActionResult<T> failure() {
-		return new ActionResult<>(null, false);
+	public static <T> ActionResult<T> success(T payload) {
+		return success(payload, null);
 	}
 
-	public static <T> ActionResult<T> failure(String message) {
-		return new ActionResult<>(null, false, message);
+	public static <T> ActionResult<T> success() {
+		return success(null);
 	}
 
 	public static <T> ActionResult<T> failure(T target, String message) {
 		return new ActionResult<>(target, false, message);
+	}
+
+	public static <T> ActionResult<T> failure(String message) {
+		return failure(null, message);
+	}
+
+	public static <T> ActionResult<T> failure() {
+		return failure(null);
 	}
 }
