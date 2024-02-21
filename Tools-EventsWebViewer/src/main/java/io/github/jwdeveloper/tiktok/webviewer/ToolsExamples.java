@@ -22,11 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.webviewer;
 
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkLayerMessage;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import io.github.jwdeveloper.tiktok.tools.TikTokLiveTools;
 
 import java.io.IOException;

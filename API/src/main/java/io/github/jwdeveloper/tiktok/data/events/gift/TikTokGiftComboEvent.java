@@ -24,7 +24,7 @@ package io.github.jwdeveloper.tiktok.data.events.gift;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
@@ -49,7 +49,7 @@ import lombok.Getter;
 public class TikTokGiftComboEvent extends TikTokGiftEvent {
     private final GiftSendType comboState;
 
-    public TikTokGiftComboEvent(Gift gift, User host, WebcastGiftMessage msg, GiftSendType comboState) {
+    public TikTokGiftComboEvent(GiftOld gift, User host, WebcastGiftMessage msg, GiftSendType comboState) {
         super(gift, host, msg);
         this.comboState = comboState;
     }

@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ public class TikTokGiftManagerTest {
 
     @Test
     void getGifts() {
-        Assertions.assertEquals(Gift.values().length, giftManager.getGifts().size());
+        Assertions.assertEquals(GiftOld.values().length, giftManager.getGifts().size());
     }
 
 

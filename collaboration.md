@@ -83,7 +83,7 @@ Are you willing to help or improve TikTokLiveJava?
   #### Tools
    Project that contains code generators.
    The most useful one is class `GenerateGiftsEnum` that download gifts json from TikTok
-   and generates code for `Gift` enum that is later added to `API` module at path `io.github.jwdeveloper.tiktok.data.models.gifts.Gift`
+   and generates code for `Gift` enum that is later added to `API` module at path `io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld`
    
   #### Tools-EventsCollector
    Tool that can be used to store all `protocol-buffer` and `events` from live to `sqlLite` database or `Json` file

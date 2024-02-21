@@ -23,24 +23,22 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.live.GiftManager;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
 import lombok.AllArgsConstructor;
 
 public class CustomEventExample {
     @AllArgsConstructor
     public static class CheapGiftEvent extends TikTokEvent {
-        Gift gift;
+        GiftOld gift;
     }
 
     @AllArgsConstructor
     public static class ExpensiveGiftEvent extends TikTokEvent {
-        Gift gift;
+        GiftOld gift;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->
                 {

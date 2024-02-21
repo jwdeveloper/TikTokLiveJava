@@ -1,5 +1,7 @@
 backend-infrastructure/.aws-sam
 
+
+.db
 # Created by https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 *.db
 ### Linux ###

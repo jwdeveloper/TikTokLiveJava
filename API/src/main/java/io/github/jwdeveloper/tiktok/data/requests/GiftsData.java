@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.data.requests;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

@@ -27,7 +27,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
@@ -112,13 +112,13 @@ public class TikTokGiftEventHandler {
         return new TikTokGiftComboEvent(gift, tikTokRoomInfo.getHost(), message, state);
     }
 
-    private Gift getGiftObject(WebcastGiftMessage giftMessage) {
+    private GiftOld getGiftObject(WebcastGiftMessage giftMessage) {
         var giftId = (int) giftMessage.getGiftId();
         var gift = giftManager.findById(giftId);
-        if (gift == Gift.UNDEFINED) {
+        if (gift == GiftOld.UNDEFINED) {
             gift = giftManager.findByName(giftMessage.getGift().getName());
         }
-        if (gift == Gift.UNDEFINED) {
+        if (gift == GiftOld.UNDEFINED) {
             gift = giftManager.registerGift(
                     giftId,
                     giftMessage.getGift().getName(),
@@ -133,12 +133,12 @@ public class TikTokGiftEventHandler {
     }
 
 
-    private void updatePicture(Gift gift, WebcastGiftMessage webcastGiftMessage) {
+    private void updatePicture(GiftOld gift, WebcastGiftMessage webcastGiftMessage) {
         try {
             var picture = Picture.map(webcastGiftMessage.getGift().getImage());
             var constructor = Unsafe.class.getDeclaredConstructors()[0];
             constructor.setAccessible(true);
-            var field = Gift.class.getDeclaredField("picture");
+            var field = GiftOld.class.getDeclaredField("picture");
             field.setAccessible(true);
             field.set(gift, picture);
         } catch (Exception e) {

@@ -26,14 +26,10 @@ package io.github.jwdeveloper.tiktok.data.events.gift;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
-
-import java.util.ArrayList;
 
 
 /**
@@ -44,12 +40,12 @@ import java.util.ArrayList;
 @EventMeta(eventType = EventType.Message)
 @Getter
 public class TikTokGiftEvent extends TikTokHeaderEvent {
-    private final Gift gift;
+    private final GiftOld gift;
     private final User user;
     private final User toUser;
     private final int combo;
 
-    public TikTokGiftEvent(Gift gift, User liveHost, WebcastGiftMessage msg) {
+    public TikTokGiftEvent(GiftOld gift, User liveHost, WebcastGiftMessage msg) {
         super(msg.getCommon());
         this.gift = gift;
         user = User.map(msg.getUser(), msg.getUserIdentity());
