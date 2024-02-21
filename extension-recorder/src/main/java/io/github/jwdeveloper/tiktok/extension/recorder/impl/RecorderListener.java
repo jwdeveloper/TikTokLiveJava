@@ -52,16 +52,6 @@ public class RecorderListener implements LiveRecorder {
         this.consumer = consumer;
     }
 
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void unpause() {
-
-    }
-
     @TikTokEventObserver
     private void onResponse(LiveClient liveClient, TikTokRoomDataResponseEvent event) {
         settings = RecorderSettings.DEFAULT();

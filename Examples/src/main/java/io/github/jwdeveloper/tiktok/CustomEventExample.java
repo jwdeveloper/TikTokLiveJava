@@ -23,18 +23,18 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
+import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 import lombok.AllArgsConstructor;
 
 public class CustomEventExample {
     @AllArgsConstructor
     public static class CheapGiftEvent extends TikTokEvent {
-        GiftOld gift;
+        Gift gift;
     }
 
     @AllArgsConstructor
     public static class ExpensiveGiftEvent extends TikTokEvent {
-        GiftOld gift;
+        Gift gift;
     }
 
     public static void main(String[] args)

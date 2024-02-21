@@ -22,19 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
+import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
-import sun.misc.Unsafe;
 
 import java.util.*;
 import java.util.logging.Logger;
 
 public class TikTokGiftManager implements GiftManager {
 
-    private final Map<Integer, GiftOld> indexById;
-    private final Map<String, GiftOld> indexByName;
+    private final Map<Integer, Gift> indexById;
+    private final Map<String, Gift> indexByName;
     private final Logger logger;
 
     public TikTokGiftManager(Logger logger)
@@ -46,58 +45,29 @@ public class TikTokGiftManager implements GiftManager {
     }
 
     protected void init() {
-        for (var gift : GiftOld.values()) {
+        for (var gift : Gift.getGifts()) {
             indexById.put(gift.getId(), gift);
             indexByName.put(gift.getName(), gift);
         }
     }
 
-    public GiftOld registerGift(int id, String name, int diamondCost, Picture picture) {
-        try {
-            var constructor = Unsafe.class.getDeclaredConstructors()[0];
-            constructor.setAccessible(true);
-            var unsafe = (Unsafe) constructor.newInstance();
-            GiftOld enumInstance = (GiftOld) unsafe.allocateInstance(GiftOld.class);
-
-            var field = GiftOld.class.getDeclaredField("id");
-            field.setAccessible(true);
-            field.set(enumInstance, id);
-
-            field = GiftOld.class.getDeclaredField("name");
-            field.setAccessible(true);
-            field.set(enumInstance, name);
-
-
-         //   EnumSet
-            field = GiftOld.class.getDeclaredField("diamondCost");
-            field.setAccessible(true);
-            field.set(enumInstance, diamondCost);
-
-            field = GiftOld.class.getDeclaredField("picture");
-            field.setAccessible(true);
-            field.set(enumInstance, picture);
-
-            indexById.put(enumInstance.getId(), enumInstance);
-            indexByName.put(enumInstance.getName(), enumInstance);
-
-            return enumInstance;
-        } catch (Exception e) {
-            throw new TikTokLiveException("Unable to register gift: " + name + ": " + id);
-        }
+    public Gift registerGift(int id, String name, int diamondCost, Picture picture, JsonObject properties) {
+        Gift gift = new Gift(id, name, diamondCost, picture, properties);
+        indexById.put(gift.getId(), gift);
+        indexByName.put(gift.getName(), gift);
+        return gift;
     }
 
-    public GiftOld findById(int giftId) {
-        GiftOld gift = indexById.get(giftId);
-        return gift == null ? GiftOld.UNDEFINED : gift;
+    public Gift findById(int giftId) {
+        return indexById.getOrDefault(giftId, Gift.UNDEFINED);
     }
 
-    public GiftOld findByName(String giftName) {
-        GiftOld gift = indexByName.get(giftName);
-        return gift == null ? GiftOld.UNDEFINED : gift;
+    public Gift findByName(String giftName) {
+        return indexByName.getOrDefault(giftName, Gift.UNDEFINED);
     }
 
     @Override
-    public List<GiftOld> getGifts() {
+    public List<Gift> getGifts() {
         return indexById.values().stream().toList();
     }
 }

@@ -22,8 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
+import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 
 import java.util.List;
 
@@ -38,26 +39,29 @@ public interface GiftManager {
      * @param diamondCost diamond cost
      * @return
      */
-    GiftOld registerGift(int id, String name, int diamondCost, Picture picture);
+    default Gift registerGift(int id, String name, int diamondCost, Picture picture) {
+        return registerGift(id, name, diamondCost, picture, null);
+    }
 
+    Gift registerGift(int id, String name, int diamondCost, Picture picture, JsonObject properties);
 
     /**
      *
      * @param giftId
      * @return
      */
-    GiftOld findById(int giftId);
+    Gift findById(int giftId);
 
     /**
      *
      * @param giftName
      * @return
      */
-    GiftOld findByName(String giftName);
+    Gift findByName(String giftName);
 
     /**
      *
      * @return all gifts
      */
-    List<GiftOld> getGifts();
+    List<Gift> getGifts();
 }

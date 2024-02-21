@@ -24,11 +24,9 @@ package io.github.jwdeveloper.tiktok.mappers.handlers;
 
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.*;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
+import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftManager;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
@@ -37,9 +35,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TikTokGiftEventHandler {
     private final GiftManager giftManager;
@@ -112,33 +108,31 @@ public class TikTokGiftEventHandler {
         return new TikTokGiftComboEvent(gift, tikTokRoomInfo.getHost(), message, state);
     }
 
-    private GiftOld getGiftObject(WebcastGiftMessage giftMessage) {
+    private Gift getGiftObject(WebcastGiftMessage giftMessage) {
         var giftId = (int) giftMessage.getGiftId();
         var gift = giftManager.findById(giftId);
-        if (gift == GiftOld.UNDEFINED) {
+        if (gift == Gift.UNDEFINED)
             gift = giftManager.findByName(giftMessage.getGift().getName());
-        }
-        if (gift == GiftOld.UNDEFINED) {
+        if (gift == Gift.UNDEFINED) {
             gift = giftManager.registerGift(
-                    giftId,
-                    giftMessage.getGift().getName(),
-                    giftMessage.getGift().getDiamondCount(),
-                    Picture.map(giftMessage.getGift().getImage()));
+                giftId,
+                giftMessage.getGift().getName(),
+                giftMessage.getGift().getDiamondCount(),
+                Picture.map(giftMessage.getGift().getImage()));
         }
 
-        if (gift.getPicture().getLink().endsWith(".webp")) {
+        if (gift.getPicture().getLink().endsWith(".webp"))
             updatePicture(gift, giftMessage);
-        }
         return gift;
     }
 
-
-    private void updatePicture(GiftOld gift, WebcastGiftMessage webcastGiftMessage) {
+    // TODO-kohlerpop1: I do not think this method is needed for any reason?
+    private void updatePicture(Gift gift, WebcastGiftMessage webcastGiftMessage) {
         try {
             var picture = Picture.map(webcastGiftMessage.getGift().getImage());
             var constructor = Unsafe.class.getDeclaredConstructors()[0];
             constructor.setAccessible(true);
-            var field = GiftOld.class.getDeclaredField("picture");
+            var field = Gift.class.getDeclaredField("picture");
             field.setAccessible(true);
             field.set(gift, picture);
         } catch (Exception e) {
