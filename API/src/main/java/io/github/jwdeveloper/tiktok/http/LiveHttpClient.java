@@ -34,6 +34,7 @@ public interface LiveHttpClient
      */
     GiftsData.Response fetchGiftsData();
 
+
     /**
      * Returns information about user that is having a livestream
      * @param userName name of user

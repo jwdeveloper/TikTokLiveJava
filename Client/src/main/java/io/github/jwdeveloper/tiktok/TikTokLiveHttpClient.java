@@ -42,6 +42,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/fetch";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
+    public static final String TIKTOK_GIFTS_URL = "https://raw.githubusercontent.com/TikTok-LIVE-Private/GiftsGenerator/master/page/public/gifts.json";
     public static final int TIKTOK_AGE_RESTRICTED_CODE = 4003110;
 
     private final HttpClientFactory httpFactory;
@@ -77,8 +78,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     }
 
     public GiftsData.Response getGiftsData() {
-        var url = TIKTOK_URL_WEBCAST + "gift/list/";
-        var result = httpFactory.client(url)
+        var result = httpFactory.client(TIKTOK_GIFTS_URL)
             .build()
             .toJsonResponse();
 

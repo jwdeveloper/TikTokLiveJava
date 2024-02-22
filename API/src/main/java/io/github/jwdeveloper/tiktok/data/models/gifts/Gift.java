@@ -8,9 +8,7 @@ import java.util.*;
 
 @Data
 @AllArgsConstructor
-public class Gift
-{
-    @Getter private static final Set<Gift> gifts = new HashSet<>();
+public class Gift {
     public static final Gift UNDEFINED = new Gift(-1, "undefined", -1, "", null);
 
     private final int id;
@@ -29,6 +27,22 @@ public class Gift
         this.diamondCost = diamondCost;
         this.picture = new Picture(pictureLink);
         this.properties = properties;
+    }
+
+    public Gift(int id, String name, int diamondCost, String pictureLink) {
+        this.id = id;
+        this.name = name;
+        this.diamondCost = diamondCost;
+        this.picture = new Picture(pictureLink);
+        this.properties = new JsonObject();
+    }
+
+    public Gift(int id, String name, int diamondCost, Picture picture) {
+        this.id = id;
+        this.name = name;
+        this.diamondCost = diamondCost;
+        this.picture = picture;
+        this.properties = new JsonObject();
     }
 
     public boolean hasDiamondCostRange(int minimalCost, int maximalCost) {

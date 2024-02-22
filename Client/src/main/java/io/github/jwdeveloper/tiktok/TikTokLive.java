@@ -23,15 +23,19 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
+import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class TikTokLive {
 
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     *
      * @param hostName profile name of Tiktok user could be found in profile link
      * @return LiveClientBuilder
      */
@@ -41,42 +45,42 @@ public class TikTokLive {
 
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     *
      * @param hostName profile name of Tiktok user could be found in profile link
      * @return true if live is Online, false if is offline
      */
-    public static boolean isLiveOnline(String hostName)
-    {
+    public static boolean isLiveOnline(String hostName) {
         return requests().fetchLiveUserData(hostName).isLiveOnline();
     }
 
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     *
      * @param hostName profile name of Tiktok user could be found in profile link
      * @return true if live is Online, false if is offline
      */
-    public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName)
-    {
-        return CompletableFuture.supplyAsync(()-> isLiveOnline(hostName));
+    public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName) {
+        return CompletableFuture.supplyAsync(() -> isLiveOnline(hostName));
     }
 
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     *
      * @param hostName profile name of Tiktok user could be found in profile link
      * @return true is hostName name is valid and exists, false if not
      */
-    public static boolean isHostNameValid(String hostName)
-    {
+    public static boolean isHostNameValid(String hostName) {
         return requests().fetchLiveUserData(hostName).isHostNameValid();
     }
 
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     *
      * @param hostName profile name of Tiktok user could be found in profile link
      * @return true is hostName name is valid and exists, false if not
      */
-    public static CompletableFuture<Boolean> isHostNameValidAsync(String hostName)
-    {
-        return CompletableFuture.supplyAsync(()-> isHostNameValid(hostName));
+    public static CompletableFuture<Boolean> isHostNameValidAsync(String hostName) {
+        return CompletableFuture.supplyAsync(() -> isHostNameValid(hostName));
     }
 
     /**
@@ -86,5 +90,27 @@ public class TikTokLive {
      */
     public static LiveHttpClient requests() {
         return new TikTokLiveHttpClient();
+    }
+
+
+    /**
+     * Fetch gifts from endpoint and returns GiftManager
+     *
+     * @return GiftsManager
+     */
+    public static GiftsManager gifts()
+    {
+        return new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
+    }
+
+    /**
+     * @param fetchGifts fetch gifts from internet or return empty giftManager
+     * @return
+     */
+    public static GiftsManager gifts(boolean fetchGifts) {
+        if (fetchGifts) {
+            return gifts();
+        }
+        return new TikTokGiftsManager(List.of());
     }
 }
