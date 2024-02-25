@@ -93,6 +93,8 @@ public class TikTokLive {
     }
 
 
+    private static GiftsManager giftsManager;
+
     /**
      * Fetch gifts from endpoint and returns GiftManager
      *
@@ -100,17 +102,20 @@ public class TikTokLive {
      */
     public static GiftsManager gifts()
     {
-        return new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
+        if(giftsManager != null)
+        {
+            return giftsManager;
+        }
+
+        try
+        {
+            giftsManager = new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
+            return giftsManager;
+        } catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
-    /**
-     * @param fetchGifts fetch gifts from internet or return empty giftManager
-     * @return
-     */
-    public static GiftsManager gifts(boolean fetchGifts) {
-        if (fetchGifts) {
-            return gifts();
-        }
-        return new TikTokGiftsManager(List.of());
-    }
+
 }

@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.http.mappers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
 
@@ -48,7 +49,7 @@ public class GiftsDataMapper {
         var id = jsonObject.get("id").getAsInt();
         var name = jsonObject.get("name").getAsString();
         var diamondCost = jsonObject.get("diamondCost").getAsInt();
-        var image =jsonObject.get("image").getAsString();
-        return new Gift(id, name, diamondCost, image, jsonObject);
+        var image = jsonObject.get("image").getAsString();
+        return new Gift(id, name, diamondCost, new Picture(image), jsonObject);
     }
 }

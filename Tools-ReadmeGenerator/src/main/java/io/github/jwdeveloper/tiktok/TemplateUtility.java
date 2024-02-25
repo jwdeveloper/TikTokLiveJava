@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
  *
@@ -20,15 +21,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.gifts.downloader;
+package io.github.jwdeveloper.tiktok;
 
-import lombok.Data;
+import java.util.Map;
 
-@Data
-public class GiftDto
-{
-    private int id;
-    private String name;
-    private int diamondCost;
-    private String image;
+public class TemplateUtility {
+    public static String generateTemplate(String template, Map<String, Object> values) {
+        for (var entry : values.entrySet()) {
+            template = doReplacement(template, entry.getKey(), entry.getValue().toString());
+        }
+        return template;
+    }
+
+
+    private static String doReplacement(String template, String keyword, String value) {
+        var key = "(\\{\\{)" + keyword + "(}})";
+        return template.replaceAll(key, value);
+    }
+
+
 }
