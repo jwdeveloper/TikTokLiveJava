@@ -25,12 +25,13 @@ package io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.TikTokLiveClient;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
 import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
+import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class LiveClientMock extends TikTokLiveClient {
@@ -41,16 +42,15 @@ public class LiveClientMock extends TikTokLiveClient {
             TikTokRoomInfo tikTokLiveMeta,
             TikTokLiveHttpClient httpClient,
             WebsocketClientMock webSocketClient,
-            TikTokGiftManager tikTokGiftManager,
             TikTokLiveEventHandler tikTokEventHandler,
             LiveClientSettings clientSettings,
             TikTokListenersManager listenersManager,
             Logger logger) {
         super(
+                new TikTokGiftsManager(List.of()),
                 tikTokLiveMeta,
                 httpClient,
                 webSocketClient,
-                tikTokGiftManager,
                 tikTokEventHandler,
                 clientSettings,
                 listenersManager,

@@ -64,7 +64,7 @@ public interface LiveClient {
     /**
      * Get information about gifts
      */
-    GiftManager getGiftManager();
+    GiftsManager getGiftManager();
 
     /**
      * Gets the current room info from TikTok API including streamer info, room status and statistics.

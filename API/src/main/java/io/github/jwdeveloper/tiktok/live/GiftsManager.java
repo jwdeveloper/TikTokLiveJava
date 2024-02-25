@@ -25,43 +25,62 @@ package io.github.jwdeveloper.tiktok.live;
 import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.*;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
-public interface GiftManager {
-
-    /**
-     * In case you can't find your gift in Gift enum. You can register gift
-     * manually here to make it detected while TikTokGiftEvent
-     *
-     * @param id gift's id
-     * @param name gift's name
-     * @param diamondCost diamond cost
-     * @return
-     */
-    default Gift registerGift(int id, String name, int diamondCost, Picture picture) {
-        return registerGift(id, name, diamondCost, picture, null);
-    }
-
-    Gift registerGift(int id, String name, int diamondCost, Picture picture, JsonObject properties);
+public interface GiftsManager {
 
     /**
+     * You can create and attach your own custom gift to manager
      *
-     * @param giftId
-     * @return
+     * @param gift
      */
-    Gift findById(int giftId);
+    void attachGift(Gift gift);
 
     /**
+     * You can create and attach your own custom gift to manager
      *
-     * @param giftName
-     * @return
+     * @param gifts
      */
-    Gift findByName(String giftName);
+    void attachGiftsList(List<Gift> gifts);
 
     /**
+     * finds gift by name
+     * When gift not found return Gift.UNDEFINED;
      *
-     * @return all gifts
+     * @param name gift name
      */
-    List<Gift> getGifts();
+    Gift getByName(String name);
+
+    /**
+     * finds gift by id
+     * When gift not found return Gift.UNDEFINED;
+     *
+     * @param giftId giftId
+     */
+    Gift getById(int giftId);
+
+
+    /**
+     * finds gift by filter
+     * When gift not found return Gift.UNDEFINED;
+     */
+    Gift getByFilter(Predicate<Gift> filter);
+
+    List<Gift> getManyByFilter(Predicate<Gift> filter);
+
+    /**
+     * @return list of all gifts
+     */
+    List<Gift> toList();
+
+
+    /**
+     * @return list of all map of all gifts where Integer is gift Id
+     */
+    Map<Integer, Gift> toMap();
 }

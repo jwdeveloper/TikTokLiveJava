@@ -21,10 +21,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package io.github.jwdeveloper.tiktok;
-
-import io.github.jwdeveloper.tiktok.utils.FilesUtility;
-import io.github.jwdeveloper.tiktok.utils.TemplateUtility;
-
 import java.util.HashMap;
 
 public class ReadmeGenerator {

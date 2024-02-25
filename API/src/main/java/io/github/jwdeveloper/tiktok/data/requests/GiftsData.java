@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.data.requests;
 
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -41,16 +42,7 @@ public class GiftsData
     public static final class Response
     {
         private String json;
-        private List<GiftModel> gifts;
-    }
-
-    @Data
-    public static class GiftModel
-    {
-        private int id;
-        private String name;
-        private int diamondCost;
-        private String image;
+        private List<Gift> gifts;
     }
 
 }

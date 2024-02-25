@@ -35,7 +35,7 @@ import io.github.jwdeveloper.tiktok.data.events.social.*;
 import io.github.jwdeveloper.tiktok.data.events.websocket.*;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
+import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
 import io.github.jwdeveloper.tiktok.listener.*;
 import io.github.jwdeveloper.tiktok.live.*;
@@ -58,13 +58,15 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     protected final List<TikTokEventListener> listeners;
     protected Consumer<TikTokMapper> onCustomMappings;
     protected Logger logger;
+    protected GiftsManager giftsManager;
 
     public TikTokLiveClientBuilder(String userName) {
         this.clientSettings = LiveClientSettings.createDefault();
         this.clientSettings.setHostName(userName);
         this.tikTokEventHandler = new TikTokLiveEventHandler();
         this.listeners = new ArrayList<>();
-        this.onCustomMappings = (e) -> {};
+        this.onCustomMappings = (e) -> {
+        };
     }
 
     public LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings) {
@@ -98,6 +100,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
 
         this.logger = LoggerFactory.create(clientSettings.getHostName(), clientSettings);
+        this.giftsManager = clientSettings.isFetchGifts() ? TikTokLive.gifts() : new TikTokGiftsManager(List.of());
     }
 
     public LiveClient build() {
@@ -108,33 +111,31 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
 
-        var giftManager = new TikTokGiftManager(logger);
-        var eventsMapper = createMapper(giftManager, tiktokRoomInfo);
-        var messageHandler = new TikTokLiveMessageHandler(tikTokEventHandler, eventsMapper);
-
-
         var httpClientFactory = new HttpClientFactory(clientSettings);
         var tikTokLiveHttpClient = new TikTokLiveHttpClient(httpClientFactory, clientSettings);
+
+
+        var eventsMapper = createMapper(giftsManager, tiktokRoomInfo);
+        var messageHandler = new TikTokLiveMessageHandler(tikTokEventHandler, eventsMapper);
+
 
         var webSocketClient = new TikTokWebSocketClient(
                 clientSettings,
                 messageHandler,
                 tikTokEventHandler);
 
-        return new TikTokLiveClient(tiktokRoomInfo,
+        return new TikTokLiveClient(
+                giftsManager,
+                tiktokRoomInfo,
                 tikTokLiveHttpClient,
                 webSocketClient,
-                giftManager,
                 tikTokEventHandler,
                 clientSettings,
                 listenerManager,
                 logger);
     }
 
-    public TikTokLiveMapper createMapper(GiftManager giftManager, TikTokRoomInfo roomInfo) {
-        /*
-          //
-         */
+    public TikTokLiveMapper createMapper(GiftsManager giftsManager, TikTokRoomInfo roomInfo) {
 
 
         var eventMapper = new TikTokGenericEventMapper();
@@ -142,7 +143,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //ConnectionEvents events
         var commonHandler = new TikTokCommonEventHandler();
-        var giftHandler = new TikTokGiftEventHandler(giftManager, roomInfo);
+        var giftHandler = new TikTokGiftEventHandler(giftsManager, roomInfo);
         var roomInfoHandler = new TikTokRoomInfoEventHandler(roomInfo);
         var socialHandler = new TikTokSocialMediaEventHandler(roomInfo);
 

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
  *
@@ -20,7 +21,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.utils;
+package io.github.jwdeveloper.tiktok;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class FilesUtility
     public static List<Path> getFiles(String input) {
         Path path = Paths.get(input);
         try (Stream<Path> paths = Files.list(path)) {
-           return paths.filter(Files::isRegularFile).toList();
+            return paths.filter(Files::isRegularFile).toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -96,13 +97,13 @@ public class FilesUtility
                 file.createNewFile();
             } catch (IOException e)
             {
-               e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
 
 
-     public static String loadFileContent(String path) {
+    public static String loadFileContent(String path) {
         ensureFile(path);
         Path pathh = Paths.get(path);
         try {

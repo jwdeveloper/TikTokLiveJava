@@ -41,11 +41,12 @@ public class CodeExample {
         TikTokLive.newClient("bangbetmenygy")
                 .onGift((liveClient, event) ->
                 {
-                    String message = switch (event.getGift()) {
-                        case ROSE -> "ROSE!";
-                        case GG -> "GOOD GAME";
-                        case TIKTOK -> "Ye";
-                        case CORGI -> "Nice gift";
+                    String message = switch (event.getGift().getName())
+                    {
+                        case "Rose" -> "ROSE!";
+                        case "Good game" -> "GOOD GAME";
+                        case "Ye" -> "Ye";
+                        case "Nice gift" -> "Nice gift";
                         default -> "Thank you for " + event.getGift().getName();
                     };
                     System.out.println(event.getUser().getProfileName() + " sends " + message);

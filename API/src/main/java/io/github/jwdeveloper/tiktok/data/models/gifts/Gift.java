@@ -7,11 +7,8 @@ import lombok.*;
 import java.util.*;
 
 @Data
-@AllArgsConstructor
-public class Gift
-{
-    @Getter private static final Set<Gift> gifts = new HashSet<>();
-    public static final Gift UNDEFINED = new Gift(-1, "undefined", -1, "", null);
+public class Gift {
+    public static final Gift UNDEFINED = new Gift(-1, "undefined", -1, "");
 
     private final int id;
 
@@ -23,12 +20,21 @@ public class Gift
 
     private final JsonObject properties;
 
-    public Gift(int id, String name, int diamondCost, String pictureLink, JsonObject properties) {
+    public Gift(int id, String name, int diamondCost, Picture pictureLink, JsonObject properties) {
         this.id = id;
         this.name = name;
         this.diamondCost = diamondCost;
-        this.picture = new Picture(pictureLink);
+        this.picture = pictureLink;
         this.properties = properties;
+    }
+
+
+    public Gift(int id, String name, int diamondCost, String pictureLink) {
+        this(id, name, diamondCost, new Picture(pictureLink), new JsonObject());
+    }
+
+    public Gift(int id, String name, int diamondCost, Picture picture) {
+        this(id, name, diamondCost, picture, new JsonObject());
     }
 
     public boolean hasDiamondCostRange(int minimalCost, int maximalCost) {

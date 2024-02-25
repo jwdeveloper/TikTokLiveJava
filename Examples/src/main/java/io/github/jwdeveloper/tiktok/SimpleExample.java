@@ -32,12 +32,13 @@ import java.time.Duration;
 import java.util.logging.Level;
 
 public class SimpleExample {
-    public static String TIKTOK_HOSTNAME = "dash4114";
+    public static String TIKTOK_HOSTNAME = "kvadromama_marina1";
 
     public static void main(String[] args) throws IOException {
 
         showLogo();
 
+        var gifts = TikTokLive.gifts();
 
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->

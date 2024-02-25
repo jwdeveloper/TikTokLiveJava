@@ -24,8 +24,8 @@ package io.github.jwdeveloper.tiktok.tools.collector.client;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import io.github.jwdeveloper.tiktok.FilesUtility;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
