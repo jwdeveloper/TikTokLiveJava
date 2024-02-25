@@ -44,7 +44,6 @@ public class CustomEventExample {
                 {
                     clientSettings.setPrintToConsole(true);
                 })
-
                 .onGift((liveClient, event) ->
                 {
                     if (event.getGift().getDiamondCost() > 100)

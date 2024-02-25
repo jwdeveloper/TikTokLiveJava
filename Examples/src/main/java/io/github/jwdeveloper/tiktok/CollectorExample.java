@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok;
 
 
-
 import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
 
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class CollectorExample {
         collector.connectDatabase();
 
         var users = List.of("tehila_723", "dino123597", "domaxyzx", "dash4214", "obserwacje_live");
-        var sessionTag = "Tag1";
+        Map<String, Object> additionalDataFields = Map.of("sessionTag", "ExampleTag");
         for (var user : users) {
             TikTokLive.newClient(user)
                     .configure(liveClientSettings ->
@@ -60,8 +59,9 @@ public class CollectorExample {
                     {
                         event.getException().printStackTrace();
                     })
-                    .addListener(collector.newListener(Map.of("sessionTag", sessionTag), document ->
+                    .addListener(collector.newListener(additionalDataFields, document ->
                     {
+                        //filtering document data before it is inserted to database
                         if (document.get("dataType") == "message") {
                             return false;
                         }

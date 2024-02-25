@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 public class TikTokGiftsManager implements GiftsManager {
     private final Map<Integer, Gift> giftsByIdIndex;
 
-    public TikTokGiftsManager(List<Gift> giftList) {
+    public TikTokGiftsManager(List<Gift> giftList)
+    {
         giftsByIdIndex = giftList.stream().collect(Collectors.toConcurrentMap(Gift::getId, e -> e));
     }
 

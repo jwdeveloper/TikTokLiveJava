@@ -33,6 +33,13 @@ import java.util.logging.Level;
 @Data
 public class LiveClientSettings {
 
+
+    /**
+     * Determines if gifts data is downloaded before TikTokLive starts,
+     * when `false` then client.giftManager() does not contain initial gifts
+     */
+    private boolean fetchGifts;
+
     /**
      * ISO-Language for Client
      */

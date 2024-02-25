@@ -29,6 +29,8 @@ public class GiftsExample {
     public static void main(String[] args) {
         var giftsManager = TikTokLive.gifts();
 
+
+
         var giftsList = giftsManager.toList();
         for (var gift : giftsList) {
             System.out.println("Gift: " + gift);

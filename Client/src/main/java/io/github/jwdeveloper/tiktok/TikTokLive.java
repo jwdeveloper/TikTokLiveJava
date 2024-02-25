@@ -93,6 +93,7 @@ public class TikTokLive {
     }
 
 
+    //I don't like it, but it is reasonable for now
     private static GiftsManager giftsManager;
 
     /**
@@ -100,21 +101,18 @@ public class TikTokLive {
      *
      * @return GiftsManager
      */
-    public static GiftsManager gifts()
-    {
-        if(giftsManager != null)
-        {
+    public static GiftsManager gifts() {
+        if (giftsManager != null) {
             return giftsManager;
         }
-
-        try
+        synchronized (GiftsManager.class)
         {
-            giftsManager = new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
-            return giftsManager;
-        } catch (Exception ex)
-        {
-            throw ex;
+            if (giftsManager == null)
+            {
+                return new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
+            }
         }
+        return giftsManager;
     }
 
 

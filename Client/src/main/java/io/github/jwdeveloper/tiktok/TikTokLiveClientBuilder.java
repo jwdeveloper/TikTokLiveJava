@@ -58,6 +58,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     protected final List<TikTokEventListener> listeners;
     protected Consumer<TikTokMapper> onCustomMappings;
     protected Logger logger;
+    protected GiftsManager giftsManager;
 
     public TikTokLiveClientBuilder(String userName) {
         this.clientSettings = LiveClientSettings.createDefault();
@@ -99,6 +100,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
 
         this.logger = LoggerFactory.create(clientSettings.getHostName(), clientSettings);
+        this.giftsManager = clientSettings.isFetchGifts() ? TikTokLive.gifts() : new TikTokGiftsManager(List.of());
     }
 
     public LiveClient build() {
@@ -112,8 +114,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var httpClientFactory = new HttpClientFactory(clientSettings);
         var tikTokLiveHttpClient = new TikTokLiveHttpClient(httpClientFactory, clientSettings);
 
-        var gifts = tikTokLiveHttpClient.getGiftsData().getGifts();
-        var giftsManager = new TikTokGiftsManager(gifts);
 
         var eventsMapper = createMapper(giftsManager, tiktokRoomInfo);
         var messageHandler = new TikTokLiveMessageHandler(tikTokEventHandler, eventsMapper);

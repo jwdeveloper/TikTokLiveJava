@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
-            <artifactId>Tools</artifactId>
+            <artifactId>Tools-ReadmeGenerator</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
