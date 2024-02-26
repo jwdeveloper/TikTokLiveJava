@@ -32,12 +32,13 @@ import java.time.Duration;
 import java.util.logging.Level;
 
 public class SimpleExample {
-    public static String TIKTOK_HOSTNAME = "dash4114";
+    public static String TIKTOK_HOSTNAME = "kvadromama_marina1";
 
     public static void main(String[] args) throws IOException {
 
         showLogo();
 
+        var gifts = TikTokLive.gifts();
 
         TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->
@@ -84,10 +85,10 @@ public class SimpleExample {
                 })
                 .onGift((liveClient, event) ->
                 {
-                    switch (event.getGift()) {
-                        case ROSE -> print(ConsoleColors.RED, "Rose!");
-                        case GG -> print(ConsoleColors.YELLOW, " GOOD GAME!");
-                        case TIKTOK -> print(ConsoleColors.CYAN, "Thanks for TikTok");
+                    switch (event.getGift().getName()) {
+                        case "ROSE" -> print(ConsoleColors.RED, "Rose!");
+                        case "GG" -> print(ConsoleColors.YELLOW, " GOOD GAME!");
+                        case "TIKTOK" -> print(ConsoleColors.CYAN, "Thanks for TikTok");
                         default ->
                                 print(ConsoleColors.GREEN, "[Thanks for gift] ", ConsoleColors.YELLOW, event.getGift().getName(), "x", event.getCombo());
                     }

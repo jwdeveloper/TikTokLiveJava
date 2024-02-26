@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
+import io.github.jwdeveloper.tiktok.common.ActionResult;
 import io.github.jwdeveloper.tiktok.data.settings.*;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 
@@ -35,8 +36,8 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HttpProxyClient extends HttpClient
-{
+public class HttpProxyClient extends HttpClient {
+
 	private final ProxyClientSettings proxySettings;
 
 	public HttpProxyClient(HttpClientSettings httpClientSettings, String url) {
@@ -44,14 +45,14 @@ public class HttpProxyClient extends HttpClient
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}
 
-	public Optional<HttpResponse<byte[]>> toResponse() {
+	public ActionResult<HttpResponse<byte[]>> toResponse() {
 		return switch (proxySettings.getType()) {
 			case HTTP, DIRECT -> handleHttpProxyRequest();
 			default -> handleSocksProxyRequest();
 		};
 	}
 
-	public Optional<HttpResponse<byte[]>> handleHttpProxyRequest() {
+	public ActionResult<HttpResponse<byte[]>> handleHttpProxyRequest() {
 		var builder = java.net.http.HttpClient.newBuilder()
 			.followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
 			.cookieHandler(new CookieManager())
@@ -69,7 +70,7 @@ public class HttpProxyClient extends HttpClient
 				var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 				if (response.statusCode() != 200)
 					continue;
-				return Optional.of(response);
+				return ActionResult.success(response);
 			} catch (HttpConnectTimeoutException | ConnectException e) {
 				if (proxySettings.isAutoDiscard())
 					proxySettings.remove();
@@ -85,7 +86,7 @@ public class HttpProxyClient extends HttpClient
 		throw new TikTokLiveRequestException("No more proxies available!");
 	}
 
-	private Optional<HttpResponse<byte[]>> handleSocksProxyRequest() {
+	private ActionResult<HttpResponse<byte[]>> handleSocksProxyRequest() {
 		try {
 			SSLContext sc = SSLContext.getInstance("SSL");
 			sc.init(null, new TrustManager[]{ new X509TrustManager() {
@@ -117,7 +118,7 @@ public class HttpProxyClient extends HttpClient
 
 					var response = createHttpResponse(body, toUrl(), responseInfo);
 
-					return Optional.of(response);
+					return ActionResult.success(response);
 				} catch (IOException e) {
 					if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
 						return super.toResponse();
@@ -133,11 +134,10 @@ public class HttpProxyClient extends HttpClient
 			// Should never be reached!
 			System.out.println("handleSocksProxyRequest: If you see this, message us on discord!");
 			e.printStackTrace();
-			return Optional.empty();
 		} catch (TikTokLiveRequestException e) {
 			e.printStackTrace();
-			return Optional.empty();
 		}
+		return ActionResult.failure();
 	}
 
 	private ResponseInfo createResponseInfo(int code, Map<String, List<String>> headers) {

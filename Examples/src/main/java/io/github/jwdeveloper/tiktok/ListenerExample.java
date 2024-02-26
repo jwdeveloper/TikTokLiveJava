@@ -84,12 +84,12 @@ public class ListenerExample
 
         @TikTokEventObserver
         public void onGift(LiveClient liveClient, TikTokGiftEvent event) {
-            var message = switch (event.getGift()) {
-                case ROSE -> "Thanks :)";
-                case APPETIZERS -> ":OO";
-                case APRIL -> ":D";
-                case TIKTOK -> ":P";
-                case CAP -> ":F";
+            var message = switch (event.getGift().getName()) {
+                case "ROSE" -> "Thanks :)";
+                case "APPETIZERS" -> ":OO";
+                case "APRIL" -> ":D";
+                case "TIKTOK" -> ":P";
+                case "CAP" -> ":F";
                 default -> ":I";
             };
             liveClient.getLogger().info(message);

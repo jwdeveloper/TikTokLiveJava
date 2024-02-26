@@ -1,10 +1,11 @@
 backend-infrastructure/.aws-sam
 
+
+.db
 # Created by https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 *.db
 ### Linux ###
 *~
-.db
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
 

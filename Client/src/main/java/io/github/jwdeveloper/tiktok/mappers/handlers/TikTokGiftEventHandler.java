@@ -24,32 +24,29 @@ package io.github.jwdeveloper.tiktok.mappers.handlers;
 
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.data.events.gift.*;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
+import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.live.GiftManager;
+import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TikTokGiftEventHandler {
-    private final GiftManager giftManager;
     private final Map<Long, WebcastGiftMessage> giftsMessages;
     private final TikTokRoomInfo tikTokRoomInfo;
 
-    public TikTokGiftEventHandler(GiftManager giftManager, TikTokRoomInfo tikTokRoomInfo) {
-        this.giftManager = giftManager;
+    private final GiftsManager giftsManager;
+
+    public TikTokGiftEventHandler(GiftsManager giftsManager, TikTokRoomInfo tikTokRoomInfo) {
         giftsMessages = new HashMap<>();
         this.tikTokRoomInfo = tikTokRoomInfo;
+        this.giftsManager = giftsManager;
     }
 
     @SneakyThrows
@@ -114,24 +111,38 @@ public class TikTokGiftEventHandler {
 
     private Gift getGiftObject(WebcastGiftMessage giftMessage) {
         var giftId = (int) giftMessage.getGiftId();
-        var gift = giftManager.findById(giftId);
+        var gift = giftsManager.getById(giftId);
+        if (gift == Gift.UNDEFINED)
+            gift = giftsManager.getByName(giftMessage.getGift().getName());
         if (gift == Gift.UNDEFINED) {
-            gift = giftManager.findByName(giftMessage.getGift().getName());
-        }
-        if (gift == Gift.UNDEFINED) {
-            gift = giftManager.registerGift(
-                    giftId,
+            gift = new Gift(giftId,
                     giftMessage.getGift().getName(),
                     giftMessage.getGift().getDiamondCount(),
                     Picture.map(giftMessage.getGift().getImage()));
+
+            giftsManager.attachGift(gift);
         }
 
-        if (gift.getPicture().getLink().endsWith(".webp")) {
+        if (gift.getPicture().getLink().endsWith(".webp"))
+        {
             updatePicture(gift, giftMessage);
         }
+
         return gift;
     }
 
+    // TODO-kohlerpop1: I do not think this method is needed for any reason?
+    // TODO response:
+
+    /**
+     * Some generated gifts in JSON file contains .webp image format,
+     * that's bad since java by the defult is not supporing .webp and when URL is
+     * converted to Java.io.Image then image is null
+     *
+     * However, TikTok in GiftWebcast event always has image in .jpg format,
+     * so I take advantage of it and swap .webp url with .jpg url
+     *
+     */
 
     private void updatePicture(Gift gift, WebcastGiftMessage webcastGiftMessage) {
         try {

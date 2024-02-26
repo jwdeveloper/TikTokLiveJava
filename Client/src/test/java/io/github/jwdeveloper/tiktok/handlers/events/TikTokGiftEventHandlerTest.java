@@ -26,8 +26,9 @@ import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
+import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.messages.data.GiftStruct;
 import io.github.jwdeveloper.tiktok.messages.data.Image;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -46,13 +48,12 @@ class TikTokGiftEventHandlerTest {
 
     public static TikTokGiftEventHandler handler;
 
-
     @BeforeAll
     public void before() {
-        var manager = new TikTokGiftManager(Logger.getLogger("x"));
+        var manager = new TikTokGiftsManager(List.of());
         var info = new TikTokRoomInfo();
         info.setHost(new io.github.jwdeveloper.tiktok.data.models.users.User(123L, "test", new Picture("")));
-        manager.registerGift(123, "example", 123, new Picture("image.webp"));
+        manager.attachGift(new Gift(123, "example", 123, "image.webp"));
         handler = new TikTokGiftEventHandler(manager, info);
     }
 

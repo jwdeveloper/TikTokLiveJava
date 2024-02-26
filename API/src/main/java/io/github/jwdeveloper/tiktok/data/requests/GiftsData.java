@@ -42,16 +42,7 @@ public class GiftsData
     public static final class Response
     {
         private String json;
-        private List<GiftModel> gifts;
-    }
-
-    @Data
-    public static class GiftModel
-    {
-        private int id;
-        private String name;
-        private int diamondCost;
-        private String image;
+        private List<Gift> gifts;
     }
 
 }

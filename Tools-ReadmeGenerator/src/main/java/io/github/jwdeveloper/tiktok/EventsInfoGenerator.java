@@ -27,8 +27,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.live.builder.EventsBuilder;
-import io.github.jwdeveloper.tiktok.utils.FilesUtility;
-import io.github.jwdeveloper.tiktok.utils.TemplateUtility;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.reflections.Reflections;

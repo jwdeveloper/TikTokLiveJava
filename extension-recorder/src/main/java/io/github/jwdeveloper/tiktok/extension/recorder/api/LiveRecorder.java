@@ -26,6 +26,5 @@ import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 
 public interface LiveRecorder extends TikTokEventListener {
 
-    void pause();
-    void unpause();
+
 }

@@ -32,6 +32,7 @@ import java.util.function.Function;
 @Getter
 @Setter
 public class RecorderSettings {
+
     private String ffmpegPath;
     private String quality;
     private String format;
@@ -39,6 +40,7 @@ public class RecorderSettings {
     private String outputFileName;
     private Function<String,DownloadData> prepareDownloadData;
     private boolean startOnConnected;
+    private boolean stopOnDisconnect = true;
 
     public static RecorderSettings DEFAULT() {
         return new RecorderSettings();

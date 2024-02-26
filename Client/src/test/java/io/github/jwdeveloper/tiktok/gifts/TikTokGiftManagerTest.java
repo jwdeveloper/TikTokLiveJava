@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,38 +35,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 public class TikTokGiftManagerTest {
 
-    @InjectMocks
-    TikTokGiftManager giftManager;
-
-    private static final Picture rosePicture = new Picture("https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.png");
-
-    @Test
-    void registerGift() {
-        var fakeGift = giftManager.registerGift(123, "Fake gift", 123123, rosePicture);
-        var gifts = giftManager.getGifts();
-        var optional = gifts.stream().filter(r -> r == fakeGift).findFirst();
-        Assertions.assertTrue(optional.isPresent());
-//        Assertions.assertNotNull(optional.get().name());
-    }
-
-    @Test
-    void findById() {
-        var target = giftManager.registerGift(123, "FAKE", 123123, rosePicture);
-        var result = giftManager.findById(target.getId());
-        Assertions.assertEquals(target, result);
-    }
-
-    @Test
-    void findByName() {
-        var target = giftManager.registerGift(123, "FAKE", 123123, rosePicture);
-        var result = giftManager.findByName(target.getName());
-        Assertions.assertEquals(target, result);
-    }
-
-    @Test
-    void getGifts() {
-        Assertions.assertEquals(Gift.values().length, giftManager.getGifts().size());
-    }
 
 
 

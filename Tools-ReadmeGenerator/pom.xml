@@ -24,12 +24,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.jwdeveloper.tiktok</groupId>
-            <artifactId>Tools</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.jwdeveloper.Descrabble</groupId>
             <artifactId>Descrabble-Full</artifactId>
             <version>0.0.7-Release</version>
@@ -39,6 +33,12 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.12</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jwdeveloper.tiktok</groupId>
+            <artifactId>Client</artifactId>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

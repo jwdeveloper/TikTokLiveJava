@@ -25,9 +25,9 @@ package io.github.jwdeveloper.tiktok.tools.tester.mockClient;
 import io.github.jwdeveloper.tiktok.TikTokLiveClientBuilder;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftManager;
 import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
 import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
+import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.tools.tester.mockClient.mocks.LiveClientMock;
@@ -87,15 +87,13 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
         tiktokRoomInfo.setHostName(clientSettings.getHostName());
 
         var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
-        var giftManager = new TikTokGiftManager(logger);
-        var mapper = createMapper(giftManager, tiktokRoomInfo);
+        var mapper = createMapper(new TikTokGiftsManager(List.of()), tiktokRoomInfo);
         var handler = new TikTokLiveMessageHandler(tikTokEventHandler, mapper);
         var webSocketClient = new WebsocketClientMock(logger, responses, handler);
 
         return new LiveClientMock(tiktokRoomInfo,
                 new TikTokLiveHttpClient(),
                 webSocketClient,
-                giftManager,
                 tikTokEventHandler,
                 clientSettings,
                 listenerManager,

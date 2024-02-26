@@ -1,0 +1,87 @@
+package io.github.jwdeveloper.tiktok.common;
+
+import lombok.Data;
+
+import java.util.Optional;
+import java.util.function.Function;
+
+@Data
+public class ActionResult<T> {
+
+	private boolean success = true;
+	private T content;
+	private String message;
+
+	protected ActionResult(T object) {
+		this.content = object;
+	}
+
+	protected ActionResult(T object, boolean success) {
+		this(object);
+		this.success = success;
+	}
+
+	protected ActionResult(T object, boolean success, String message) {
+		this(object, success);
+		this.message = message;
+	}
+
+	public static <T> ActionResultBuilder<T> of(T content) {
+		return new ActionResultBuilder<>(content);
+	}
+
+	public static <T> ActionResult<T> of(Optional<T> optional) {
+		return new ActionResult<>(optional.orElse(null), optional.isPresent());
+	}
+
+	public boolean isFailure() {
+		return !isSuccess();
+	}
+
+	public boolean hasMessage() {
+		return message != null;
+	}
+	public String toStack() {
+		return hasMessage() ? " - "+message : "";
+	}
+
+	public boolean hasContent() {
+		return content != null;
+	}
+
+	public <Output> ActionResult<Output> cast(Output output) {
+		return new ActionResult<>(output, this.isSuccess(), this.getMessage());
+	}
+
+	public <Output> ActionResult<Output> cast() {
+		return cast(null);
+	}
+
+	public <U> ActionResult<U> map(Function<? super T, ? extends U> mapper) {
+		return hasContent() ? cast(mapper.apply(content)) : cast();
+	}
+
+	public static <T> ActionResult<T> success(T payload, String message) {
+		return new ActionResult<>(payload, true, message);
+	}
+
+	public static <T> ActionResult<T> success(T payload) {
+		return success(payload, null);
+	}
+
+	public static <T> ActionResult<T> success() {
+		return success(null);
+	}
+
+	public static <T> ActionResult<T> failure(T target, String message) {
+		return new ActionResult<>(target, false, message);
+	}
+
+	public static <T> ActionResult<T> failure(String message) {
+		return failure(null, message);
+	}
+
+	public static <T> ActionResult<T> failure() {
+		return failure(null);
+	}
+}

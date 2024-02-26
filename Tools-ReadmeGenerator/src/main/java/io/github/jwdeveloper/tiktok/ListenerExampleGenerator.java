@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.utils.FilesUtility;
 
 import java.util.regex.Pattern;
 
