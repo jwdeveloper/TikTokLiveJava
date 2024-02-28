@@ -20,27 +20,21 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.collector;
+package io.github.jwdeveloper.tiktok.extension.collector.api.mongo;
 
-import io.github.jwdeveloper.tiktok.extension.collector.api.file.FileDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.api.mongo.MongoDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.*;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-import java.util.function.Consumer;
+@Setter
+@Accessors(chain = true)
+public class MongoDBConnectionStringBuilder {
+    private String username;
+    private String password;
+    private String database;
+    private String cluster;
 
-public class TikTokLiveCollector
-{
-    public static MongoDataCollector useMongo(Consumer<MongoDataCollectorSettings> consumer)
-    {
-        var settings = new MongoDataCollectorSettings();
-        consumer.accept(settings);
-        return new MongoDataCollector(settings);
-    }
-
-    public static FileDataCollector useFile(Consumer<FileDataCollectorSettings> consumer)
-    {
-        var settings = new FileDataCollectorSettings();
-        consumer.accept(settings);
-        return new FileDataCollector(settings);
+    public String build() {
+        return String.format("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
+                username, password, cluster, database);
     }
 }

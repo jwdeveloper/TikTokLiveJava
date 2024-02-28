@@ -20,36 +20,35 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.collector.api.data;
+package io.github.jwdeveloper.tiktok.extension.collector.impl;
 
-public class MongoDBConnectionStringBuilder {
-    private String username;
-    private String password;
-    private String database;
-    private String cluster;
+import io.github.jwdeveloper.tiktok.extension.collector.api.data.CollectorListenerSettings;
+import io.github.jwdeveloper.tiktok.extension.collector.api.file.FileDataCollectorSettings;
 
-    public MongoDBConnectionStringBuilder setUsername(String username) {
-        this.username = username;
-        return this;
+import java.util.Map;
+import java.util.function.Function;
+
+public class FileDataCollector {
+
+    private final FileDataCollectorSettings settings;
+
+    public FileDataCollector(FileDataCollectorSettings settings) {
+        this.settings = settings;
     }
 
-    public MongoDBConnectionStringBuilder setPassword(String password) {
-        this.password = password;
-        return this;
+    public FileDataCollectorListener newListener() {
+        return newListener(Map.of());
     }
 
-    public MongoDBConnectionStringBuilder setDatabase(String database) {
-        this.database = database;
-        return this;
+    public FileDataCollectorListener newListener(Map<String, Object> additionalFields) {
+        return newListener(additionalFields, (e)->true);
     }
 
-    public MongoDBConnectionStringBuilder setCluster(String cluster) {
-        this.cluster = cluster;
-        return this;
-    }
-
-    public String build() {
-        return String.format("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
-                username, password, cluster, database);
+    public FileDataCollectorListener newListener(Map<String, Object> additionalFields,
+                                                  Function<Object, Boolean> filter) {
+        var settings = new CollectorListenerSettings();
+        settings.setExtraFields(additionalFields);
+        settings.setFilter(filter);
+        return new FileDataCollectorListener(this.settings, settings);
     }
 }

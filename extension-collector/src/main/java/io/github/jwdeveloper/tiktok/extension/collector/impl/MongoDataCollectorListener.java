@@ -19,14 +19,14 @@ import java.io.StringWriter;
 import java.util.Base64;
 import java.util.UUID;
 
-public class TikTokLiveDataCollectorListener implements LiveDataCollector {
+public class MongoDataCollectorListener implements LiveDataCollector {
 
     private final MongoCollection<Document> collection;
     private final CollectorListenerSettings settings;
     private String sessionId;
     private String userName;
 
-    public TikTokLiveDataCollectorListener(MongoCollection<Document> collection, CollectorListenerSettings settings) {
+    public MongoDataCollectorListener(MongoCollection<Document> collection, CollectorListenerSettings settings) {
         this.collection = collection;
         this.settings = settings;
     }
@@ -35,10 +35,7 @@ public class TikTokLiveDataCollectorListener implements LiveDataCollector {
     @TikTokEventObserver
     private void onResponse(LiveClient liveClient, TikTokWebsocketResponseEvent event) {
         includeResponse(liveClient, event.getResponse());
-        event.getResponse().getMessagesList().forEach(message ->
-        {
-            includeMessage(liveClient, message);
-        });
+        event.getResponse().getMessagesList().forEach(message -> includeMessage(liveClient, message));
     }
 
     @TikTokEventObserver

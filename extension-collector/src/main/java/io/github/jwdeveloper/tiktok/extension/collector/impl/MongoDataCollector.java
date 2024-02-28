@@ -32,24 +32,22 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
 import io.github.jwdeveloper.tiktok.extension.collector.api.data.CollectorListenerSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.api.data.LiveDataCollectorSettings;
+import io.github.jwdeveloper.tiktok.extension.collector.api.mongo.MongoDataCollectorSettings;
 import org.bson.Document;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 
-public class TikTokLiveDataCollector {
+public class MongoDataCollector {
 
-    private final LiveDataCollectorSettings settings;
+    private final MongoDataCollectorSettings settings;
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> collection;
 
-    public TikTokLiveDataCollector(LiveDataCollectorSettings settings) {
+    public MongoDataCollector(MongoDataCollectorSettings settings) {
         this.settings = settings;
     }
-
 
     public void connectDatabase() {
         var serverApi = ServerApi.builder()
@@ -72,19 +70,19 @@ public class TikTokLiveDataCollector {
         mongoClient.close();
     }
 
-    public TikTokLiveDataCollectorListener newListener() {
+    public MongoDataCollectorListener newListener() {
         return newListener(Map.of());
     }
 
-    public TikTokLiveDataCollectorListener newListener(Map<String, Object> additionalFields) {
+    public MongoDataCollectorListener newListener(Map<String, Object> additionalFields) {
         return newListener(additionalFields, (e)->true);
     }
 
-    public TikTokLiveDataCollectorListener newListener(Map<String, Object> additionalFields,
-                                                       Function<Document, Boolean> filter) {
+    public MongoDataCollectorListener newListener(Map<String, Object> additionalFields,
+                                                  Function<Object, Boolean> filter) {
         var settings = new CollectorListenerSettings();
         settings.setExtraFields(additionalFields);
         settings.setFilter(filter);
-        return new TikTokLiveDataCollectorListener(collection, settings);
+        return new MongoDataCollectorListener(collection, settings);
     }
 }
