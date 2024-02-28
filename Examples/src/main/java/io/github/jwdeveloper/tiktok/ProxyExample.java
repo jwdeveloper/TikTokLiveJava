@@ -26,7 +26,7 @@ import java.net.Proxy;
 
 public class ProxyExample {
     public static void main(String[] args) throws Exception {
-        TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+        TikTokLive.newClient(ConnectionExample.TIKTOK_HOSTNAME)
             .configure(clientSettings -> {
                 clientSettings.setPrintToConsole(true);
                 clientSettings.getHttpSettings().configureProxy(proxySettings -> {

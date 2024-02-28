@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.logging.Level;
 
-public class SimpleExample {
+public class ConnectionExample {
     public static String TIKTOK_HOSTNAME = "kvadromama_marina1";
 
     public static void main(String[] args) throws IOException {
@@ -40,10 +40,10 @@ public class SimpleExample {
 
         var gifts = TikTokLive.gifts();
 
-        TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+        TikTokLive.newClient(ConnectionExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->
                 {
-                    clientSettings.setHostName(SimpleExample.TIKTOK_HOSTNAME); // This method is useful in case you want change hostname later
+                    clientSettings.setHostName(ConnectionExample.TIKTOK_HOSTNAME); // This method is useful in case you want change hostname later
                     clientSettings.setClientLanguage("en"); // Language
                     clientSettings.setLogLevel(Level.ALL); // Log level
                     clientSettings.setPrintToConsole(true); // Printing all logs to console even if log level is Level.OFF

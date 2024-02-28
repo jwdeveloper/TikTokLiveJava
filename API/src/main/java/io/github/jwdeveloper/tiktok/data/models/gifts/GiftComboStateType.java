@@ -20,17 +20,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.webviewer;
+package io.github.jwdeveloper.tiktok.data.models.gifts;
 
+//TODO it should be called GiftComboStateType
+public enum GiftComboStateType {
+    Finished,
+    Begin,
+    Active;
 
-import lombok.Data;
-
-@Data
-public class Settings
-{
-
-    private int port;
-    private String dbName;
-    private String userName;
-    private String sessionTag;
+    public static GiftComboStateType fromNumber(long number) {
+        return switch ((int) number) {
+            case 1, 2, 4 -> GiftComboStateType.Active;
+            default -> GiftComboStateType.Finished;
+        };
+    }
 }
