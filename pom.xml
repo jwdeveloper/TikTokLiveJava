@@ -18,7 +18,6 @@
 
         <module>extension-recorder</module>
         <module>extension-collector</module>
-        <module>extension-tester</module>
     </modules>
 
     <properties>

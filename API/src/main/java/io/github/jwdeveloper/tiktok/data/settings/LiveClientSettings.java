@@ -35,6 +35,16 @@ public class LiveClientSettings {
 
 
     /**
+     * TODO: give better description
+     * <p>
+     *  sets client in the offline mode, so it do not connects to TikTok servers
+     *  it makes sense to use it when you are testing client with your custom events
+     */
+    private boolean offline;
+
+    /**
+     * TODO: give better description
+     * <p>
      * Determines if gifts data is downloaded before TikTokLive starts,
      * when `false` then client.giftManager() does not contain initial gifts
      */
@@ -76,14 +86,13 @@ public class LiveClientSettings {
     private HttpClientSettings httpSettings;
 
     /**
-     *  Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
-     *  documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
+     * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+     * documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
      */
     private String sessionId;
 
     /**
      * Optional: By default roomID is fetched before connect to live, but you can set it manually
-     *
      */
     private String roomId;
 
@@ -92,8 +101,7 @@ public class LiveClientSettings {
      */
     private String apiKey;
 
-    public static LiveClientSettings createDefault()
-    {
+    public static LiveClientSettings createDefault() {
         var httpSettings = new HttpClientSettings();
         httpSettings.getParams().putAll(DefaultClientParams());
         httpSettings.getHeaders().putAll(DefaultRequestHeaders());
@@ -166,4 +174,6 @@ public class LiveClientSettings {
         headers.put("Accept-Language", "en-US,en; q=0.9");
         return headers;
     }
+
+
 }

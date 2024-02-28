@@ -50,7 +50,6 @@ public class TikTokLiveDataCollector {
         this.settings = settings;
     }
 
-
     public void connectDatabase() {
         var serverApi = ServerApi.builder()
                 .version(ServerApiVersion.V1)

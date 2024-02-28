@@ -70,6 +70,6 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
     }
 
     public static TikTokGiftEvent of(String name, int id, int diamonds) {
-        return null;
+        return TikTokGiftEvent.of(new Gift(id, name, diamonds, ""));
     }
 }

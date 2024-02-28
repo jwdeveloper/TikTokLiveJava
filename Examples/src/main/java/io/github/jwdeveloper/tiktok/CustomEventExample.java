@@ -39,7 +39,7 @@ public class CustomEventExample {
 
     public static void main(String[] args)
     {
-        TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+        TikTokLive.newClient(ConnectionExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->
                 {
                     clientSettings.setPrintToConsole(true);
