@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.data.events.gift;
 
 import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
@@ -54,5 +55,21 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
             toUser = User.map(msg.getToUser());
         }
         combo = msg.getComboCount();
+    }
+
+    public TikTokGiftEvent(Gift gift) {
+        this.gift = gift;
+        user = new User(0L, "sender", new Picture(""));
+        toUser = new User(0L, "receiver", new Picture(""));
+        combo = 1;
+    }
+
+
+    public static TikTokGiftEvent of(Gift gift) {
+        return new TikTokGiftEvent(gift);
+    }
+
+    public static TikTokGiftEvent of(String name, int id, int diamonds) {
+        return null;
     }
 }
