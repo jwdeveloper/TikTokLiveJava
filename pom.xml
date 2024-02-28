@@ -12,9 +12,7 @@
         <module>API</module>
         <module>Client</module>
         <module>Examples</module>
-        <module>Tools-EventsCollector</module>
         <module>Tools-ReadmeGenerator</module>
-        <module>Tools-EventsWebViewer</module>
 
         <module>extension-recorder</module>
         <module>extension-collector</module>

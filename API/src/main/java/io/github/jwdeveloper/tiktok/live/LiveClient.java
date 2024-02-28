@@ -61,6 +61,8 @@ public interface LiveClient {
      */
      void publishEvent(TikTokEvent event);
 
+     void publishMessage(String base64);
+
     /**
      * Get information about gifts
      */
