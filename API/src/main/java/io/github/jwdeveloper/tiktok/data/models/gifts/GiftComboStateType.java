@@ -22,17 +22,16 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.gifts;
 
-public enum GiftSendType
-{
+//TODO it should be called GiftComboStateType
+public enum GiftComboStateType {
     Finished,
     Begin,
     Active;
 
-    public static GiftSendType fromNumber(long number)
-    {
+    public static GiftComboStateType fromNumber(long number) {
         return switch ((int) number) {
-            case 1, 2, 4 -> GiftSendType.Active;
-            default -> GiftSendType.Finished;
+            case 1, 2, 4 -> GiftComboStateType.Active;
+            default -> GiftComboStateType.Finished;
         };
     }
 }

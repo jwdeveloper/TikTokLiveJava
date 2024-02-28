@@ -58,40 +58,40 @@ public class TikTokGiftEventHandler {
 
     public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage) {
         var userId = currentMessage.getUser().getId();
-        var currentType = GiftSendType.fromNumber(currentMessage.getSendType());
+        var currentType = GiftComboStateType.fromNumber(currentMessage.getSendType());
         var containsPreviousMessage = giftsMessages.containsKey(userId);
 
 
         //If gift is not streakable just return onGift event
         if (currentMessage.getGift().getType() != 1) {
-            var comboEvent = getGiftComboEvent(currentMessage, GiftSendType.Finished);
+            var comboEvent = getGiftComboEvent(currentMessage, GiftComboStateType.Finished);
             var giftEvent = getGiftEvent(currentMessage);
             return List.of(comboEvent, giftEvent);
         }
 
         if (!containsPreviousMessage) {
-            if (currentType == GiftSendType.Finished) {
+            if (currentType == GiftComboStateType.Finished) {
                 return List.of(getGiftEvent(currentMessage));
             } else {
                 giftsMessages.put(userId, currentMessage);
-                return List.of(getGiftComboEvent(currentMessage, GiftSendType.Begin));
+                return List.of(getGiftComboEvent(currentMessage, GiftComboStateType.Begin));
             }
         }
 
         var previousMessage = giftsMessages.get(userId);
-        var previousType = GiftSendType.fromNumber(previousMessage.getSendType());
-        if (currentType == GiftSendType.Active &&
-                previousType == GiftSendType.Active) {
+        var previousType = GiftComboStateType.fromNumber(previousMessage.getSendType());
+        if (currentType == GiftComboStateType.Active &&
+                previousType == GiftComboStateType.Active) {
             giftsMessages.put(userId, currentMessage);
-            return List.of(getGiftComboEvent(currentMessage, GiftSendType.Active));
+            return List.of(getGiftComboEvent(currentMessage, GiftComboStateType.Active));
         }
 
 
-        if (currentType == GiftSendType.Finished &&
-                previousType == GiftSendType.Active) {
+        if (currentType == GiftComboStateType.Finished &&
+                previousType == GiftComboStateType.Active) {
             giftsMessages.clear();
             return List.of(
-                    getGiftComboEvent(currentMessage, GiftSendType.Finished),
+                    getGiftComboEvent(currentMessage, GiftComboStateType.Finished),
                     getGiftEvent(currentMessage));
         }
 
@@ -104,7 +104,7 @@ public class TikTokGiftEventHandler {
         return new TikTokGiftEvent(gift, tikTokRoomInfo.getHost(), message);
     }
 
-    private TikTokGiftEvent getGiftComboEvent(WebcastGiftMessage message, GiftSendType state) {
+    private TikTokGiftEvent getGiftComboEvent(WebcastGiftMessage message, GiftComboStateType state) {
         var gift = getGiftObject(message);
         return new TikTokGiftComboEvent(gift, tikTokRoomInfo.getHost(), message, state);
     }

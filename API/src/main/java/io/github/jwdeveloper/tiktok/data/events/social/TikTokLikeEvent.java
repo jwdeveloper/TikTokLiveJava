@@ -57,4 +57,15 @@ public class TikTokLikeEvent extends TikTokHeaderEvent
         likes = msg.getCount();
         totalLikes = msg.getTotal();
     }
+
+    public static TikTokLikeEvent of(String userName, int likes)
+    {
+        return new TikTokLikeEvent(WebcastLikeMessage.newBuilder()
+                .setCount(likes)
+                .setTotal(likes)
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setNickname(userName)
+                        .build())
+                .build());
+    }
 }

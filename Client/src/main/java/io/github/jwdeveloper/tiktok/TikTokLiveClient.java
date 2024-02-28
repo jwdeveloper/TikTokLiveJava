@@ -33,6 +33,7 @@ import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.*;
+import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
@@ -48,7 +49,7 @@ import java.util.logging.Logger;
 
 public class TikTokLiveClient implements LiveClient {
     private final TikTokRoomInfo liveRoomInfo;
-    private final TikTokLiveHttpClient httpClient;
+    private final LiveHttpClient httpClient;
     private final SocketClient webSocketClient;
     private final TikTokLiveEventHandler tikTokEventHandler;
     private final LiveClientSettings clientSettings;
@@ -58,7 +59,7 @@ public class TikTokLiveClient implements LiveClient {
 
     public TikTokLiveClient(GiftsManager giftsManager,
                             TikTokRoomInfo tikTokLiveMeta,
-                            TikTokLiveHttpClient tiktokHttpClient,
+                            LiveHttpClient tiktokHttpClient,
                             SocketClient webSocketClient,
                             TikTokLiveEventHandler tikTokEventHandler,
                             LiveClientSettings clientSettings,

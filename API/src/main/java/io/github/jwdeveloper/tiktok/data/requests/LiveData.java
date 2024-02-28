@@ -35,6 +35,7 @@ public class LiveData {
     }
 
     @Data
+    @AllArgsConstructor
     public static class Response {
         private String json;
         private LiveStatus liveStatus;
@@ -45,6 +46,11 @@ public class LiveData {
         private boolean ageRestricted;
         private User host;
         private LiveType liveType;
+        public Response() {
+
+        }
+
+
     }
 
     public enum LiveStatus {

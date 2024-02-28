@@ -86,15 +86,15 @@ public class TikTokMockBuilder extends TikTokLiveClientBuilder {
         var tiktokRoomInfo = new TikTokRoomInfo();
         tiktokRoomInfo.setHostName(clientSettings.getHostName());
 
-        var listenerManager = new TikTokListenersManager(listeners, tikTokEventHandler);
+        var listenerManager = new TikTokListenersManager(listeners, eventHandler);
         var mapper = createMapper(new TikTokGiftsManager(List.of()), tiktokRoomInfo);
-        var handler = new TikTokLiveMessageHandler(tikTokEventHandler, mapper);
+        var handler = new TikTokLiveMessageHandler(eventHandler, mapper);
         var webSocketClient = new WebsocketClientMock(logger, responses, handler);
 
         return new LiveClientMock(tiktokRoomInfo,
                 new TikTokLiveHttpClient(),
                 webSocketClient,
-                tikTokEventHandler,
+                eventHandler,
                 clientSettings,
                 listenerManager,
                 logger);

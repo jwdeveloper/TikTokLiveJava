@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.data.events.gift;
 
 import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
@@ -32,7 +33,7 @@ import lombok.Getter;
 /**
  * Triggered every time gift is sent
  *
- * @see GiftSendType it has 3 states
+ * @see GiftComboStateType it has 3 states
  *
  * <p>Example when user sends gift with combo</p>
  * <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
@@ -45,10 +46,21 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Message)
 @Getter
 public class TikTokGiftComboEvent extends TikTokGiftEvent {
-    private final GiftSendType comboState;
+    private final GiftComboStateType comboState;
 
-    public TikTokGiftComboEvent(Gift gift, User host, WebcastGiftMessage msg, GiftSendType comboState) {
+    public TikTokGiftComboEvent(Gift gift, User host, WebcastGiftMessage msg, GiftComboStateType comboState) {
         super(gift, host, msg);
         this.comboState = comboState;
+    }
+
+    public static TikTokGiftComboEvent of(Gift gift, int combo, GiftComboStateType comboState) {
+        return new TikTokGiftComboEvent(
+                gift,
+                new User(0L, "Test", new Picture("")),
+                WebcastGiftMessage
+                        .newBuilder()
+                        .setComboCount(combo)
+                        .build(),
+                comboState);
     }
 }
