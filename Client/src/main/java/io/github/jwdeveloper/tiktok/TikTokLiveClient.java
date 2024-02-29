@@ -185,6 +185,9 @@ public class TikTokLiveClient implements LiveClient {
     }
 
     @Override
+    public void publishMessage(String base64) {}
+
+    @Override
     public GiftsManager getGiftManager() {
         return giftsManager;
     }
