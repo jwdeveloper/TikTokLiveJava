@@ -20,36 +20,24 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.collector;
+package io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo;
 
-import io.github.jwdeveloper.tiktok.extension.collector.api.settings.FileDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo.MongoDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.*;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.FileStorage;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.MongoStorage;
+import lombok.*;
 
 import java.util.function.Consumer;
 
+@Data
+public class MongoDataCollectorSettings {
 
-/**
- *
- */
-public class TikTokLiveCollector
-{
+    private String connectionUrl;
 
-    public static DataCollector useMongo(Consumer<MongoDataCollectorSettings> consumer) {
-        var settings = new MongoDataCollectorSettings();
-        consumer.accept(settings);
+    private String databaseName = "tiktok";
 
-        var storage = new MongoStorage(settings);
-        return new DataCollector(storage);
-    }
+    private String collectionName = "data";
 
-    public static DataCollector useFile(Consumer<FileDataCollectorSettings> consumer) {
-        var settings = new FileDataCollectorSettings();
-        consumer.accept(settings);
-
-        var storage = new FileStorage(settings);
-        return new DataCollector(storage);
+    public void connectionBuilder(Consumer<MongoDBConnectionStringBuilder> consumer) {
+        var builder = new MongoDBConnectionStringBuilder();
+        consumer.accept(builder);
+        connectionUrl = builder.build();
     }
 }

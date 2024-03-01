@@ -47,11 +47,23 @@ public class TikTokCommentEvent extends TikTokHeaderEvent {
 
     public TikTokCommentEvent(WebcastChatMessage msg) {
         super(msg.getCommon());
-        user = User.map(msg.getUser(),msg.getUserIdentity());
+        user = User.map(msg.getUser(), msg.getUserIdentity());
         text = msg.getContent();
         visibleToSender = msg.getVisibleToSender();
         getUserLanguage = msg.getContentLanguage();
         mentionedUser = User.map(msg.getAtUser());
         pictures = msg.getEmotesListList().stream().map(e -> Picture.map(e.getEmote().getImage())).toList();
+    }
+
+
+    public static TikTokCommentEvent of(String userName, String message) {
+        var builder = WebcastChatMessage.newBuilder();
+        builder.setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setNickname(userName)
+                .build());
+        builder.setContentLanguage("en");
+        builder.setVisibleToSender(true);
+        builder.setContent(message);
+        return new TikTokCommentEvent(builder.build());
     }
 }

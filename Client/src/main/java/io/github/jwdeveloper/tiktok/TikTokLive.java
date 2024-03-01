@@ -28,7 +28,6 @@ import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class TikTokLive {
@@ -102,14 +101,9 @@ public class TikTokLive {
      * @return GiftsManager
      */
     public static GiftsManager gifts() {
-        if (giftsManager != null) {
-            return giftsManager;
-        }
-        synchronized (GiftsManager.class)
-        {
-            if (giftsManager == null)
-            {
-                return new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
+        if (giftsManager == null) {
+            synchronized (GiftsManager.class) {
+                giftsManager = new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
             }
         }
         return giftsManager;

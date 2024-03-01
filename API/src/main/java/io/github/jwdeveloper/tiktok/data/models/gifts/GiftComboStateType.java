@@ -20,36 +20,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.collector;
+package io.github.jwdeveloper.tiktok.data.models.gifts;
 
-import io.github.jwdeveloper.tiktok.extension.collector.api.settings.FileDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo.MongoDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.*;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.FileStorage;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.MongoStorage;
+//TODO it should be called GiftComboStateType
+public enum GiftComboStateType {
+    Finished,
+    Begin,
+    Active;
 
-import java.util.function.Consumer;
-
-
-/**
- *
- */
-public class TikTokLiveCollector
-{
-
-    public static DataCollector useMongo(Consumer<MongoDataCollectorSettings> consumer) {
-        var settings = new MongoDataCollectorSettings();
-        consumer.accept(settings);
-
-        var storage = new MongoStorage(settings);
-        return new DataCollector(storage);
-    }
-
-    public static DataCollector useFile(Consumer<FileDataCollectorSettings> consumer) {
-        var settings = new FileDataCollectorSettings();
-        consumer.accept(settings);
-
-        var storage = new FileStorage(settings);
-        return new DataCollector(storage);
+    public static GiftComboStateType fromNumber(long number) {
+        return switch ((int) number) {
+            case 1, 2, 4 -> GiftComboStateType.Active;
+            default -> GiftComboStateType.Finished;
+        };
     }
 }

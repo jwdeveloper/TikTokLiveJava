@@ -48,7 +48,7 @@ public class ListenerExample
         showLogo();
         CustomListener customListener = new CustomListener();
 
-        TikTokLive.newClient(SimpleExample.TIKTOK_HOSTNAME)
+        TikTokLive.newClient(ConnectionExample.TIKTOK_HOSTNAME)
                 .addListener(customListener)
                 .buildAndConnect();
         System.in.read();

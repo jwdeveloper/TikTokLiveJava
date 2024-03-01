@@ -36,9 +36,9 @@ import lombok.Getter;
  */
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokSubscribeEvent extends TikTokHeaderEvent
-{
+public class TikTokSubscribeEvent extends TikTokHeaderEvent {
     private final User user;
+
 
     public TikTokSubscribeEvent(WebcastMemberMessage msg) {
         super(msg.getCommon());
@@ -52,4 +52,11 @@ public class TikTokSubscribeEvent extends TikTokHeaderEvent
         user.addAttribute(UserAttribute.Subscriber);
     }
 
+    public static TikTokSubscribeEvent of(String userName) {
+        return new TikTokSubscribeEvent(WebcastMemberMessage.newBuilder()
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setNickname(userName)
+                        .build())
+                .build());
+    }
 }

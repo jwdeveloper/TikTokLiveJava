@@ -24,8 +24,10 @@ package io.github.jwdeveloper.tiktok.data.events.social;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Value;
 
@@ -45,4 +47,12 @@ public class TikTokFollowEvent extends TikTokHeaderEvent
     totalFollowers = msg.getFollowCount();
   }
 
+    public static TikTokFollowEvent of(String userName)
+    {
+        return new TikTokFollowEvent(WebcastSocialMessage.newBuilder()
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setNickname(userName)
+                        .build())
+                .build());
+    }
 }

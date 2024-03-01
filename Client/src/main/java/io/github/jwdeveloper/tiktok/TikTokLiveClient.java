@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import com.google.protobuf.ByteString;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
@@ -33,37 +34,44 @@ import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.*;
+import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
 
+import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class TikTokLiveClient implements LiveClient {
     private final TikTokRoomInfo liveRoomInfo;
-    private final TikTokLiveHttpClient httpClient;
+    private final LiveHttpClient httpClient;
     private final SocketClient webSocketClient;
     private final TikTokLiveEventHandler tikTokEventHandler;
     private final LiveClientSettings clientSettings;
     private final TikTokListenersManager listenersManager;
     private final Logger logger;
     private final GiftsManager giftsManager;
+    private final TikTokLiveMessageHandler messageHandler;
 
-    public TikTokLiveClient(GiftsManager giftsManager,
-                            TikTokRoomInfo tikTokLiveMeta,
-                            TikTokLiveHttpClient tiktokHttpClient,
-                            SocketClient webSocketClient,
-                            TikTokLiveEventHandler tikTokEventHandler,
-                            LiveClientSettings clientSettings,
-                            TikTokListenersManager listenersManager,
-                            Logger logger) {
+    public TikTokLiveClient(
+            TikTokLiveMessageHandler messageHandler,
+            GiftsManager giftsManager,
+            TikTokRoomInfo tikTokLiveMeta,
+            LiveHttpClient tiktokHttpClient,
+            SocketClient webSocketClient,
+            TikTokLiveEventHandler tikTokEventHandler,
+            LiveClientSettings clientSettings,
+            TikTokListenersManager listenersManager,
+            Logger logger) {
+        this.messageHandler = messageHandler;
         this.giftsManager = giftsManager;
         this.liveRoomInfo = tikTokLiveMeta;
         this.httpClient = tiktokHttpClient;
@@ -181,6 +189,20 @@ public class TikTokLiveClient implements LiveClient {
 
     public void publishEvent(TikTokEvent event) {
         tikTokEventHandler.publish(this, event);
+    }
+
+    @Override
+    public void publishMessage(String webcastMessageName, String payloadBase64) {
+        this.publishMessage(webcastMessageName, Base64.getDecoder().decode(payloadBase64));
+    }
+    @Override
+    public void publishMessage(String webcastMessageName, byte[] payload) {
+
+        var builder = WebcastResponse.Message.newBuilder();
+        builder.setMethod(webcastMessageName);
+        builder.setPayload(ByteString.copyFrom(payload));
+        var message = builder.build();
+        messageHandler.handleSingleMessage(this, message);
     }
 
     @Override

@@ -27,7 +27,7 @@ import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftSendType;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftComboStateType;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.messages.data.GiftStruct;
@@ -40,7 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -99,9 +98,9 @@ class TikTokGiftEventHandlerTest {
         Assertions.assertEquals(2, result3.size());
         var event3 = (TikTokGiftComboEvent) result3.get(0);
 
-        Assertions.assertEquals(GiftSendType.Begin, event1.getComboState());
-        Assertions.assertEquals(GiftSendType.Active, event2.getComboState());
-        Assertions.assertEquals(GiftSendType.Finished, event3.getComboState());
+        Assertions.assertEquals(GiftComboStateType.Begin, event1.getComboState());
+        Assertions.assertEquals(GiftComboStateType.Active, event2.getComboState());
+        Assertions.assertEquals(GiftComboStateType.Finished, event3.getComboState());
     }
 
 
