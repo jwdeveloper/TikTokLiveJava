@@ -65,7 +65,7 @@ public class LiveUserDataMapper
             };
 
             return new LiveUserData.Response(json, statusEnum, roomId, startTime);
-        } catch (JsonSyntaxException e) {
+        } catch (JsonSyntaxException | IllegalStateException e) {
             logger.warning("Malformed Json: '"+json+"' - Error Message: "+e.getMessage());
             return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1);
         }
