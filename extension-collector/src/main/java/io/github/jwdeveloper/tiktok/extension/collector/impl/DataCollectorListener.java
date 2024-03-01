@@ -1,6 +1,5 @@
 package io.github.jwdeveloper.tiktok.extension.collector.impl;
 
-import com.mongodb.client.MongoCollection;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
@@ -8,7 +7,8 @@ import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.extension.collector.api.LiveDataCollector;
-import io.github.jwdeveloper.tiktok.extension.collector.api.data.CollectorListenerSettings;
+import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
+import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
@@ -19,15 +19,15 @@ import java.io.StringWriter;
 import java.util.Base64;
 import java.util.UUID;
 
-public class TikTokLiveDataCollectorListener implements LiveDataCollector {
+public class DataCollectorListener implements LiveDataCollector {
 
-    private final MongoCollection<Document> collection;
+    private final Storage storage;
     private final CollectorListenerSettings settings;
     private String sessionId;
     private String userName;
 
-    public TikTokLiveDataCollectorListener(MongoCollection<Document> collection, CollectorListenerSettings settings) {
-        this.collection = collection;
+    public DataCollectorListener(Storage collection, CollectorListenerSettings settings) {
+        this.storage = collection;
         this.settings = settings;
     }
 
@@ -35,10 +35,7 @@ public class TikTokLiveDataCollectorListener implements LiveDataCollector {
     @TikTokEventObserver
     private void onResponse(LiveClient liveClient, TikTokWebsocketResponseEvent event) {
         includeResponse(liveClient, event.getResponse());
-        event.getResponse().getMessagesList().forEach(message ->
-        {
-            includeMessage(liveClient, message);
-        });
+        event.getResponse().getMessagesList().forEach(message -> includeMessage(liveClient, message));
     }
 
     @TikTokEventObserver
@@ -103,7 +100,7 @@ public class TikTokLiveDataCollectorListener implements LiveDataCollector {
         if (!settings.getFilter().apply(document)) {
             return;
         }
-        collection.insertOne(document);
+        storage.insert(document);
     }
 
 

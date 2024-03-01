@@ -1,4 +1,4 @@
-package io.github.jwdeveloper.tiktok.extension.collector.api.data;
+package io.github.jwdeveloper.tiktok.extension.collector.api.settings;
 
 import lombok.Data;
 import org.bson.Document;
