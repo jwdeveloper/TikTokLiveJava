@@ -25,24 +25,19 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public class CollectorExample {
 
-
-    private static String mongoUser;
-
-    private static String mongoPassword;
-
-    private static String mongoDatabase;
-
     public static void main(String[] args) throws IOException {
 
-        var collector = TikTokLiveCollector.useMongo(settings ->
+        var path = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\resources";
+        var collector = TikTokLiveCollector.useFile(settings ->
         {
-            settings.setConnectionUrl("mongodb+srv://" + mongoUser + ":" + mongoPassword + "@" + mongoDatabase + "/?retryWrites=true&w=majority");
+            settings.setParentFile(new File(path));
         });
         collector.connect();
 
@@ -58,14 +53,7 @@ public class CollectorExample {
                     {
                         event.getException().printStackTrace();
                     })
-                    .addListener(collector.newListener(additionalDataFields, document ->
-                    {
-                        //filtering document data before it is inserted to database
-                        if (document.get("dataType") == "message") {
-                            return false;
-                        }
-                        return true;
-                    }))
+                    .addListener(collector.newListener(additionalDataFields))
                     .buildAndConnectAsync();
         }
 

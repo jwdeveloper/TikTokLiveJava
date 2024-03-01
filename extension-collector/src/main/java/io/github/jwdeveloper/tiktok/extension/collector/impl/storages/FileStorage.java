@@ -3,6 +3,7 @@ package io.github.jwdeveloper.tiktok.extension.collector.impl.storages;
 import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.FileDataCollectorSettings;
 import org.bson.Document;
+import org.bson.json.JsonWriterSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +30,11 @@ public class FileStorage implements Storage {
 
     @Override
     public void insert(Document document) {
-        var fileName = document.get("dataType") + ":" + document.get("dataTypeName") + ".json";
+        var fileName = document.get("dataType") + "_" + document.get("dataTypeName") + ".json";
         try {
             var file = new File(settings.getParentFile(), fileName);
             file.createNewFile();
-            Files.writeString(file.toPath(), document.toJson(), StandardOpenOption.APPEND);
+            Files.writeString(file.toPath(), document.toJson(JsonWriterSettings.builder().indent(true).build()), StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }
