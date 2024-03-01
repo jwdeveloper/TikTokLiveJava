@@ -22,25 +22,34 @@
  */
 package io.github.jwdeveloper.tiktok.extension.collector;
 
-import io.github.jwdeveloper.tiktok.extension.collector.api.file.FileDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.api.mongo.MongoDataCollectorSettings;
+import io.github.jwdeveloper.tiktok.extension.collector.api.settings.FileDataCollectorSettings;
+import io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo.MongoDataCollectorSettings;
 import io.github.jwdeveloper.tiktok.extension.collector.impl.*;
+import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.FileStorage;
+import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.MongoStorage;
 
 import java.util.function.Consumer;
 
+
+/**
+ *
+ */
 public class TikTokLiveCollector
 {
-    public static MongoDataCollector useMongo(Consumer<MongoDataCollectorSettings> consumer)
-    {
+
+    public static DataCollector useMongo(Consumer<MongoDataCollectorSettings> consumer) {
         var settings = new MongoDataCollectorSettings();
         consumer.accept(settings);
-        return new MongoDataCollector(settings);
+
+        var storage = new MongoStorage(settings);
+        return new DataCollector(storage);
     }
 
-    public static FileDataCollector useFile(Consumer<FileDataCollectorSettings> consumer)
-    {
+    public static DataCollector useFile(Consumer<FileDataCollectorSettings> consumer) {
         var settings = new FileDataCollectorSettings();
         consumer.accept(settings);
-        return new FileDataCollector(settings);
+
+        var storage = new FileStorage(settings);
+        return new DataCollector(storage);
     }
 }
