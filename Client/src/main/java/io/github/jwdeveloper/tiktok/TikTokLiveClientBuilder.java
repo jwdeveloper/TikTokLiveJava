@@ -132,6 +132,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
                         eventHandler);
 
         return new TikTokLiveClient(
+                messageHandler,
                 giftsManager,
                 tiktokRoomInfo,
                 liveHttpClient,

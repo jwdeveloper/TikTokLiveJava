@@ -59,9 +59,16 @@ public interface LiveClient {
     /**
      * Use to manually invoke event
      */
-     void publishEvent(TikTokEvent event);
+    void publishEvent(TikTokEvent event);
 
-     void publishMessage(String base64);
+
+    /**
+     * @param webcastMessageName name of TikTok protocol-buffer message
+     * @param payloadBase64      protocol-buffer message bytes payload
+     */
+    void publishMessage(String webcastMessageName, String payloadBase64);
+
+    void publishMessage(String webcastMessageName, byte[] payload);
 
     /**
      * Get information about gifts
