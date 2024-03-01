@@ -1,6 +1,8 @@
 package io.github.jwdeveloper.tiktok.common;
 
+import com.google.gson.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -11,6 +13,8 @@ public class ActionResult<T> {
 	private boolean success = true;
 	private T content;
 	private String message;
+	@Accessors(chain = true, fluent = true)
+	private ActionResult<?> previous;
 
 	protected ActionResult(T object) {
 		this.content = object;
@@ -41,8 +45,9 @@ public class ActionResult<T> {
 	public boolean hasMessage() {
 		return message != null;
 	}
-	public String toStack() {
-		return hasMessage() ? " - "+message : "";
+
+	public boolean hasPrevious() {
+		return previous != null;
 	}
 
 	public boolean hasContent() {
@@ -83,5 +88,19 @@ public class ActionResult<T> {
 
 	public static <T> ActionResult<T> failure() {
 		return failure(null);
+	}
+
+	public JsonObject toJson() {
+		JsonObject map = new JsonObject();
+		map.addProperty("success", success);
+		map.add("content", new Gson().toJsonTree(content));
+		map.addProperty("message", message);
+		map.add("previous", hasPrevious() ? previous.toJson() : null);
+		return map;
+	}
+
+	@Override
+	public String toString() {
+		return "ActionResult: "+new Gson().newBuilder().setPrettyPrinting().create().toJson(toJson());
 	}
 }

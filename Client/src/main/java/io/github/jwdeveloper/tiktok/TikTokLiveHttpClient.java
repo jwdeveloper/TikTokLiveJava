@@ -83,7 +83,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             .toJsonResponse();
 
         if (result.isFailure())
-            throw new TikTokLiveRequestException("Unable to fetch gifts information's"+result.toStack());
+            throw new TikTokLiveRequestException("Unable to fetch gifts information's - "+result);
 
         var json = result.getContent();
         return giftsDataMapper.map(json);
@@ -111,10 +111,10 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             .toJsonResponse();
 
         if (result.isFailure())
-            throw new TikTokLiveRequestException("Unable to get information's about user"+result.toStack());
+            throw new TikTokLiveRequestException("Unable to get information's about user - "+result);
 
         var json = result.getContent();
-        return liveUserDataMapper.map(json);
+        return liveUserDataMapper.map(json, logger);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             .toJsonResponse();
 
         if (result.isFailure())
-            throw new TikTokLiveRequestException("Unable to get info about live room"+result.toStack());
+            throw new TikTokLiveRequestException("Unable to get info about live room - "+result);
 
         var json = result.getContent();
         return liveDataMapper.map(json);
@@ -153,7 +153,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             var resultHeader = ActionResult.of(credentialsResponse.headers().firstValue("x-set-tt-cookie"));
             if (resultHeader.isFailure()) {
                 logger.warning("SignServer Headers: "+request.getRoomId()+" - "+credentialsResponse.headers().map());
-                throw new TikTokSignServerException("Sign server did not return the x-set-tt-cookie header"+result.toStack());
+                throw new TikTokSignServerException("Sign server did not return the x-set-tt-cookie header - "+result);
             }
             var websocketCookie = resultHeader.getContent();
             var webcastResponse = WebcastResponse.parseFrom(credentialsResponse.body());
@@ -169,7 +169,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
             return new LiveConnectionData.Response(websocketCookie, webSocketUrl, webcastResponse);
         } catch (InvalidProtocolBufferException e) {
-            throw new TikTokSignServerException("Unable to parse websocket credentials response to WebcastResponse"+result.toStack());
+            throw new TikTokSignServerException("Unable to parse websocket credentials response to WebcastResponse - "+result);
         }
     }
 
@@ -197,7 +197,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         var result = builder.build().toResponse();
 
         if (result.isFailure())
-            throw new TikTokSignServerException("Unable to get websocket connection credentials"+result.toStack());
+            throw new TikTokSignServerException("Unable to get websocket connection credentials - "+result);
 
         return result;
     }

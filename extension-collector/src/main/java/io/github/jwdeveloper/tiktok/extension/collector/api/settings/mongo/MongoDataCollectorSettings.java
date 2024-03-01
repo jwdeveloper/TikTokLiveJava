@@ -29,7 +29,6 @@ import java.util.function.Consumer;
 @Data
 public class MongoDataCollectorSettings {
 
-    @Setter
     private String connectionUrl;
 
     private String databaseName = "tiktok";
