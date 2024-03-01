@@ -24,11 +24,9 @@ package io.github.jwdeveloper.tiktok;
 
 
 import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
-import org.bson.Document;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CollectorExample {
 
@@ -59,10 +57,10 @@ public class CollectorExample {
                     {
                         event.getException().printStackTrace();
                     })
-                    .addListener(collector.newListener(additionalDataFields, o ->
+                    .addListener(collector.newListener(additionalDataFields, document ->
                     {
                         //filtering document data before it is inserted to database
-                        if (o instanceof Document document && document.get("dataType") == "message") {
+                        if (document.get("dataType") == "message") {
                             return false;
                         }
                         return true;
