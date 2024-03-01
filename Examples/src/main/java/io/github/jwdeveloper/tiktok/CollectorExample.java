@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 
 import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
+import org.bson.Document;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +41,7 @@ public class CollectorExample {
 
     public static void main(String[] args) throws IOException {
 
-        var collector = TikTokLiveCollector.use(settings ->
+        var collector = TikTokLiveCollector.useMongo(settings ->
         {
             settings.setConnectionUrl("mongodb+srv://" + mongoUser + ":" + mongoPassword + "@" + mongoDatabase + "/?retryWrites=true&w=majority");
             settings.setDatabaseName("tiktok");
@@ -59,10 +60,10 @@ public class CollectorExample {
                     {
                         event.getException().printStackTrace();
                     })
-                    .addListener(collector.newListener(additionalDataFields, document ->
+                    .addListener(collector.newListener(additionalDataFields, o ->
                     {
                         //filtering document data before it is inserted to database
-                        if (document.get("dataType") == "message") {
+                        if (o instanceof Document document && document.get("dataType") == "message") {
                             return false;
                         }
                         return true;

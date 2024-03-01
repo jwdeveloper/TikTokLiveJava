@@ -86,9 +86,23 @@ public class LiveClientSettings {
     private HttpClientSettings httpSettings;
 
     /**
-     * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
-     * documentation how to obtain sessionId https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages
+     * Loop time in milliseconds between pings to TikTok
+     * @apiNote Min: 250 (0.25 seconds), Max: 30000 (30 seconds), Default: 5000 (5 seconds)
      */
+    private long pingTaskTime = 5000;
+
+    public void setPingTaskTime(long pingTaskTime) {
+        if (pingTaskTime < 250)
+            throw new IllegalArgumentException("Minimum allowed value 250 millseconds");
+        if (pingTaskTime > 30000)
+            throw new IllegalArgumentException("Maximum allowed value 30000 milliseconds");
+        this.pingTaskTime = pingTaskTime;
+    }
+
+    /**
+	 * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
+	 * @see <a href="https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages">Documentation: How to obtain sessionId</a>
+	 */
     private String sessionId;
 
     /**

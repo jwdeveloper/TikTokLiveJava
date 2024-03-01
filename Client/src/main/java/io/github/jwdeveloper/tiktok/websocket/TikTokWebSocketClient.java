@@ -82,7 +82,7 @@ public class TikTokWebSocketClient implements SocketClient {
     private void connectDefault() {
         try {
             webSocketClient.connect();
-            pingingTask.run(webSocketClient);
+            pingingTask.run(webSocketClient, clientSettings.getPingTaskTime());
             isConnected = true;
         } catch (Exception e) {
             isConnected = false;
@@ -112,7 +112,7 @@ public class TikTokWebSocketClient implements SocketClient {
                     proxySettings.remove();
                 continue;
             }
-            pingingTask.run(webSocketClient);
+            pingingTask.run(webSocketClient, clientSettings.getPingTaskTime());
             isConnected = true;
             break;
         }

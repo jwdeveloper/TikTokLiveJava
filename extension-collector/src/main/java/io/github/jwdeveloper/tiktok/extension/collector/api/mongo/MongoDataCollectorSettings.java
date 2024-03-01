@@ -35,7 +35,7 @@ public class MongoDataCollectorSettings {
 
     private String sessionTag;
 
-    public void setConnectionUrl(Consumer<MongoDBConnectionStringBuilder> consumer) {
+    public void setConnectionUrlConsumer(Consumer<MongoDBConnectionStringBuilder> consumer) {
         var builder = new MongoDBConnectionStringBuilder();
         consumer.accept(builder);
         connectionUrl = builder.build();
