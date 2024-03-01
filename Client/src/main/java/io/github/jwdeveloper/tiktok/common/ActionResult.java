@@ -1,14 +1,21 @@
 package io.github.jwdeveloper.tiktok.common;
 
 import com.google.gson.*;
+import io.github.jwdeveloper.tiktok.http.mappers.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.net.http.*;
 import java.util.Optional;
 import java.util.function.Function;
 
 @Data
 public class ActionResult<T> {
+
+	private static final Gson gson = new Gson().newBuilder().disableHtmlEscaping()
+		.registerTypeHierarchyAdapter(HttpResponse.class, new HttpResponseJsonMapper())
+		.registerTypeHierarchyAdapter(HttpRequest.class, new HttpRequestJsonMapper())
+		.setPrettyPrinting().create();
 
 	private boolean success = true;
 	private T content;
@@ -93,7 +100,7 @@ public class ActionResult<T> {
 	public JsonObject toJson() {
 		JsonObject map = new JsonObject();
 		map.addProperty("success", success);
-		map.add("content", new Gson().toJsonTree(content));
+		map.add("content", gson.toJsonTree(content));
 		map.addProperty("message", message);
 		map.add("previous", hasPrevious() ? previous.toJson() : null);
 		return map;
@@ -101,6 +108,6 @@ public class ActionResult<T> {
 
 	@Override
 	public String toString() {
-		return "ActionResult: "+new Gson().newBuilder().setPrettyPrinting().create().toJson(toJson());
+		return "ActionResult: "+gson.toJson(toJson());
 	}
 }
