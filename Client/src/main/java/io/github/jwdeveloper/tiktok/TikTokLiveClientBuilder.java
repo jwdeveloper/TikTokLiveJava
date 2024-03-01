@@ -96,6 +96,9 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         if (clientSettings.getHostName().startsWith("@"))
             clientSettings.setHostName(clientSettings.getHostName().substring(1));
 
+        if (clientSettings.getPingInterval() < 250)
+            throw new TikTokLiveException("Minimum allowed ping interval is 250 millseconds");
+
         var httpSettings = clientSettings.getHttpSettings();
         httpSettings.getParams().put("app_language", clientSettings.getClientLanguage());
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
