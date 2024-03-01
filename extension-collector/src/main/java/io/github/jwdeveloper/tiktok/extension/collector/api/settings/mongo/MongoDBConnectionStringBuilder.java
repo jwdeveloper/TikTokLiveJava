@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.collector.api.mongo;
+package io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;

@@ -44,9 +44,8 @@ public class CollectorExample {
         var collector = TikTokLiveCollector.useMongo(settings ->
         {
             settings.setConnectionUrl("mongodb+srv://" + mongoUser + ":" + mongoPassword + "@" + mongoDatabase + "/?retryWrites=true&w=majority");
-            settings.setDatabaseName("tiktok");
         });
-        collector.connectDatabase();
+        collector.connect();
 
         var users = List.of("tehila_723", "dino123597", "domaxyzx", "dash4214", "obserwacje_live");
         Map<String, Object> additionalDataFields = Map.of("sessionTag", "ExampleTag");
@@ -72,6 +71,6 @@ public class CollectorExample {
         }
 
         System.in.read();
-        collector.disconnectDatabase();
+        collector.disconnect();
     }
 }

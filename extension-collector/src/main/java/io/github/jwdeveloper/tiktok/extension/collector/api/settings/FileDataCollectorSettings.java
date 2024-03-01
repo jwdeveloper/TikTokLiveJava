@@ -20,24 +20,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.collector.api.mongo;
+package io.github.jwdeveloper.tiktok.extension.collector.api.settings;
 
-import lombok.*;
+import lombok.Data;
 
-import java.util.function.Consumer;
+import java.io.File;
 
 @Data
-public class MongoDataCollectorSettings {
+public class FileDataCollectorSettings {
 
-    private String connectionUrl;
-
-    private String databaseName;
-
-    private String sessionTag;
-
-    public void setConnectionUrlConsumer(Consumer<MongoDBConnectionStringBuilder> consumer) {
-        var builder = new MongoDBConnectionStringBuilder();
-        consumer.accept(builder);
-        connectionUrl = builder.build();
-    }
+    private File parentFile;
 }

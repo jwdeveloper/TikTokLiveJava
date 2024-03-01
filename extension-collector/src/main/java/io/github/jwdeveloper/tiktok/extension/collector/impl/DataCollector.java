@@ -22,33 +22,41 @@
  */
 package io.github.jwdeveloper.tiktok.extension.collector.impl;
 
-import io.github.jwdeveloper.tiktok.extension.collector.api.data.CollectorListenerSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.api.file.FileDataCollectorSettings;
+import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
+import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
+import org.bson.Document;
 
 import java.util.Map;
 import java.util.function.Function;
 
-public class FileDataCollector {
+public class DataCollector {
 
-    private final FileDataCollectorSettings settings;
+    private final Storage storage;
 
-    public FileDataCollector(FileDataCollectorSettings settings) {
-        this.settings = settings;
+    public DataCollector(Storage storage) {
+        this.storage = storage;
     }
 
-    public FileDataCollectorListener newListener() {
+    public void connect() {
+        storage.connect();
+    }
+    public void disconnect() {
+        storage.disconnect();
+    }
+
+    public DataCollectorListener newListener() {
         return newListener(Map.of());
     }
 
-    public FileDataCollectorListener newListener(Map<String, Object> additionalFields) {
-        return newListener(additionalFields, (e)->true);
+    public DataCollectorListener newListener(Map<String, Object> additionalFields) {
+        return newListener(additionalFields, (e) -> true);
     }
 
-    public FileDataCollectorListener newListener(Map<String, Object> additionalFields,
-                                                  Function<Object, Boolean> filter) {
+    public DataCollectorListener newListener(Map<String, Object> additionalFields,
+                                             Function<Document, Boolean> filter) {
         var settings = new CollectorListenerSettings();
         settings.setExtraFields(additionalFields);
         settings.setFilter(filter);
-        return new FileDataCollectorListener(this.settings, settings);
+        return new DataCollectorListener(storage, settings);
     }
 }
