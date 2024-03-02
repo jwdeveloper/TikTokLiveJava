@@ -41,7 +41,7 @@
     <parent>
         <artifactId>TikTokLiveJava</artifactId>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
-        <version>1.5.1-Release</version>
+        <version>1.5.2-Release</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>extension-collector</artifactId>
-            <version>1.5.1-Release</version>
+            <version>1.5.2-Release</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
