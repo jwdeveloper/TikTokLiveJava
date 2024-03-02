@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.extension.collector.impl;
 
+import io.github.jwdeveloper.tiktok.extension.collector.api.CollectorEvent;
 import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
 import org.bson.Document;
@@ -40,6 +41,7 @@ public class DataCollector {
     public void connect() {
         storage.connect();
     }
+
     public void disconnect() {
         storage.disconnect();
     }
@@ -49,11 +51,11 @@ public class DataCollector {
     }
 
     public DataCollectorListener newListener(Map<String, Object> additionalFields) {
-        return newListener(additionalFields, (e) -> true);
+        return newListener(additionalFields, (live, document) -> true);
     }
 
     public DataCollectorListener newListener(Map<String, Object> additionalFields,
-                                             Function<Document, Boolean> filter) {
+                                             CollectorEvent filter) {
         var settings = new CollectorListenerSettings();
         settings.setExtraFields(additionalFields);
         settings.setFilter(filter);

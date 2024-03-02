@@ -17,13 +17,13 @@ import org.bson.Document;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Base64;
-import java.util.UUID;
+import java.util.Date;
 
 public class DataCollectorListener implements LiveDataCollector {
 
     private final Storage storage;
     private final CollectorListenerSettings settings;
-    private String sessionId;
+    private String roomId;
     private String userName;
 
     public DataCollectorListener(Storage collection, CollectorListenerSettings settings) {
@@ -41,44 +41,42 @@ public class DataCollectorListener implements LiveDataCollector {
     @TikTokEventObserver
     private void onEvent(LiveClient liveClient, TikTokEvent event) {
         if (event instanceof TikTokConnectingEvent) {
-            sessionId = UUID.randomUUID().toString();
             userName = liveClient.getRoomInfo().getHostName();
+            roomId = liveClient.getRoomInfo().getRoomId();
         }
-
         if (event instanceof TikTokErrorEvent) {
             return;
         }
 
-        includeEvent(event);
+        includeEvent(liveClient, event);
     }
 
     @TikTokEventObserver
     private void onError(LiveClient liveClient, TikTokErrorEvent event) {
         event.getException().printStackTrace();
-        includeError(event);
+        includeError(liveClient, event);
     }
 
 
     private void includeResponse(LiveClient liveClient, WebcastResponse message) {
         var messageContent = Base64.getEncoder().encodeToString(message.toByteArray());
-        insertDocument(createDocument("response", "webcast", messageContent));
+        insertDocument(liveClient, createDocument("response", "webcast", messageContent));
     }
 
     private void includeMessage(LiveClient liveClient, WebcastResponse.Message message) {
         var method = message.getMethod();
         var messageContent = Base64.getEncoder().encodeToString(message.getPayload().toByteArray());
-
-        insertDocument(createDocument("message", method, messageContent));
+        insertDocument(liveClient, createDocument("message", method, messageContent));
     }
 
-    private void includeEvent(TikTokEvent event) {
+    private void includeEvent(LiveClient client, TikTokEvent event) {
         var json = JsonUtil.toJson(event);
         var content = Base64.getEncoder().encodeToString(json.getBytes());
         var name = event.getClass().getSimpleName();
-        insertDocument(createDocument("event", name, content));
+        insertDocument(client, createDocument("event", name, content));
     }
 
-    private void includeError(TikTokErrorEvent event) {
+    private void includeError(LiveClient client, TikTokErrorEvent event) {
         var exception = event.getException();
         var exceptionName = event.getException().getClass().getSimpleName();
 
@@ -86,18 +84,18 @@ public class DataCollectorListener implements LiveDataCollector {
         var pw = new PrintWriter(sw);
         event.getException().printStackTrace(pw);
         var content = sw.toString();
-
-        var doc = createDocument("error", exceptionName, content);
+        var contentBase64 = Base64.getEncoder().encodeToString(content.getBytes());
+        var doc = createDocument("error", exceptionName, contentBase64);
         if (exception instanceof TikTokLiveMessageException ex) {
             doc.append("message", ex.messageToBase64())
                     .append("response", ex.webcastResponseToBase64());
         }
-        insertDocument(doc);
+        insertDocument(client, doc);
     }
 
 
-    private void insertDocument(Document document) {
-        if (!settings.getFilter().apply(document)) {
+    private void insertDocument(LiveClient client, Document document) {
+        if (!settings.getFilter().execute(client, document)) {
             return;
         }
         storage.insert(document);
@@ -106,7 +104,7 @@ public class DataCollectorListener implements LiveDataCollector {
 
     private Document createDocument(String dataType, String dataTypeName, String content) {
         var doc = new Document();
-        doc.append("session", sessionId);
+        doc.append("roomId", roomId);
         for (var entry : settings.getExtraFields().entrySet()) {
             doc.append(entry.getKey(), entry.getValue());
         }
@@ -114,6 +112,7 @@ public class DataCollectorListener implements LiveDataCollector {
         doc.append("dataType", dataType);
         doc.append("dataTypeName", dataTypeName);
         doc.append("content", content);
+        doc.append("createdAt", new Date());
         return doc;
     }
 }
