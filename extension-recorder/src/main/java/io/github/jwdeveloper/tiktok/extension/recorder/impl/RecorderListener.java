@@ -30,6 +30,7 @@ import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 
@@ -60,7 +61,9 @@ public class RecorderListener implements LiveRecorder {
         var json = event.getLiveData().getJson();
 
         liveClient.getLogger().info("Searching for live download url");
-		downloadData = settings.getPrepareDownloadData() != null ? settings.getPrepareDownloadData().apply(json) : mapToDownloadData(json);
+        downloadData = settings.getPrepareDownloadData() != null ?
+                settings.getPrepareDownloadData().apply(json) :
+                mapToDownloadData(json);
 
         if (downloadData.getDownloadLiveUrl().isEmpty())
             liveClient.getLogger().warning("Unable to find download live url!");
@@ -72,8 +75,11 @@ public class RecorderListener implements LiveRecorder {
     private void onConnected(LiveClient liveClient, TikTokConnectedEvent event) {
         if (isConnected())
             return;
+
+
         liveDownloadThread = new Thread(() -> {
             try {
+                liveClient.getLogger().info("Recording started");
                 var url = new URL(downloadData.getFullUrl());
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 var headers = LiveClientSettings.DefaultRequestHeaders();
@@ -87,8 +93,8 @@ public class RecorderListener implements LiveRecorder {
                 file.createNewFile();
 
                 try (
-                    var in = connection.getInputStream();
-                    var fos = new FileOutputStream(file)
+                        var in = connection.getInputStream();
+                        var fos = new FileOutputStream(file)
                 ) {
                     byte[] dataBuffer = new byte[1024];
                     int bytesRead;
@@ -98,13 +104,19 @@ public class RecorderListener implements LiveRecorder {
                     }
                 } catch (IOException ignored) {
                 } finally {
-                    liveClient.getLogger().severe("Stopped recording "+liveClient.getRoomInfo().getHostName());
+                    liveClient.getLogger().severe("Stopped recording " + liveClient.getRoomInfo().getHostName());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
+        var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
+        liveClient.publishEvent(recordingStartedEvent);
+        if (recordingStartedEvent.isCanceled()) {
+            liveClient.getLogger().info("Recording cancelled");
+            return;
+        }
         liveDownloadThread.start();
     }
 
@@ -120,32 +132,6 @@ public class RecorderListener implements LiveRecorder {
             liveDownloadThread.interrupt();
     }
 
-    private int terminateFfmpeg(final Process process) {
-        if (!process.isAlive()) {
-            // ffmpeg -version, do nothing
-            return process.exitValue();
-        }
-
-        // ffmpeg -f x11grab
-        System.out.println("About to destroy the child process...");
-        try (final OutputStreamWriter out = new OutputStreamWriter(process.getOutputStream(), UTF_8)) {
-            out.write('q');
-        } catch (final IOException ioe) {
-            ioe.printStackTrace();
-        }
-        try {
-            if (!process.waitFor(5L, TimeUnit.SECONDS)) {
-                process.destroy();
-                process.waitFor();
-            }
-            return process.exitValue();
-        } catch (InterruptedException ie) {
-            System.out.println("Interrupted");
-            ie.printStackTrace();
-            Thread.currentThread().interrupt();
-            return -1;
-        }
-    }
 
     private DownloadData mapToDownloadData(String json) {
 

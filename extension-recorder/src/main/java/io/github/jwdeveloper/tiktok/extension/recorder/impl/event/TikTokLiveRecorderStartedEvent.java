@@ -26,10 +26,18 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.DownloadData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @AllArgsConstructor
-@Data
-public class TikTokLiveRecorderStartedEvent extends TikTokEvent
-{
+@Getter
+public class TikTokLiveRecorderStartedEvent extends TikTokEvent {
     DownloadData downloadData;
+
+    @Setter
+    boolean canceled;
+
+    public TikTokLiveRecorderStartedEvent(DownloadData downloadData) {
+        this.downloadData = downloadData;
+    }
 }
