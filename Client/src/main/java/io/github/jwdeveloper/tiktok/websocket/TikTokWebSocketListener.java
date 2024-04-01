@@ -61,7 +61,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
         } catch (Exception e) {
             tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(e));
         }
-        if (isNotClosing()) {
+        if (isOpen()) {
             sendPing();
         }
     }
@@ -79,8 +79,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
             pushFrameBuilder.setPayloadType("ack");
             pushFrameBuilder.setLogId(websocketPushFrame.getLogId());
             pushFrameBuilder.setPayload(webcastResponse.getInternalExtBytes());
-            if (isNotClosing())
-            {
+            if (isOpen()) {
                 this.send(pushFrameBuilder.build().toByteArray());
             }
         }
@@ -90,7 +89,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         tikTokEventHandler.publish(tikTokLiveClient, new TikTokConnectedEvent());
-        if (isNotClosing()) {
+        if (isOpen()) {
             sendPing();
         }
     }
@@ -104,7 +103,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
     @Override
     public void onError(Exception error) {
         tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(error));
-        if (isNotClosing()) {
+        if (isOpen()) {
             sendPing();
         }
     }
@@ -127,10 +126,6 @@ public class TikTokWebSocketListener extends WebSocketClient {
         } catch (Exception e) {
             throw new TikTokProtocolBufferException("Unable to parse WebcastResponse", buffer.toByteArray(), e);
         }
-    }
-
-    private boolean isNotClosing() {
-        return !isClosed() && !isClosing();
     }
 
     @Override
