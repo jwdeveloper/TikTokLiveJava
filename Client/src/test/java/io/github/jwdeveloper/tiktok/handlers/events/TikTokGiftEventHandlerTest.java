@@ -117,7 +117,7 @@ class TikTokGiftEventHandlerTest {
 
         giftBuilder.setId(giftId);
         giftBuilder.setName(giftName);
-        giftBuilder.setImage(Image.newBuilder().addUrlList(giftImage).build());
+        giftBuilder.setImage(Image.newBuilder().addUrl(giftImage).build());
         giftBuilder.setType(streakable ? 1 : 0);
         userBuilder.setId(userId);
 
