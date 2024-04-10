@@ -22,29 +22,50 @@
  */
 package io.github.jwdeveloper.tiktok.data.events;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.LinkMicBattleTeam;
+import io.github.jwdeveloper.tiktok.data.models.battles.*;
+import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.*;
 
 /**
- * Triggered every time a battle starts.
+ * Triggered every time a battle starts & ends
  */
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent {
-  private final Long battleId;
-  private final List<LinkMicBattleTeam> team1;
-  private final List<LinkMicBattleTeam> team2;
+public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
+{
+    private final Long battleId;
+    /**
+     true if battle is finished otherwise false
+     */
+    private final boolean finished;
+    private final List<Team> teams;
 
-  public TikTokLinkMicBattleEvent(WebcastLinkMicBattle msg) {
-    super(msg.getCommon());
-    battleId = msg.getId();
-    team1 = msg.getTeams1List().stream().map(LinkMicBattleTeam::new).toList();
-    team2 = msg.getTeams2List().stream().map(LinkMicBattleTeam::new).toList();
-  }
+    public TikTokLinkMicBattleEvent(WebcastLinkMicBattle msg) {
+        super(msg.getCommon());
+        battleId = msg.getId();
+        finished = msg.getBattleStatus() == LinkMicBattleStatus.BATTLE_FINISHED;
+        teams = new ArrayList<>();
+        if (msg.getHostTeamCount() == 2) { // 1v1 battle
+            teams.add(new Team1v1(msg.getHostTeam(0), msg));
+            teams.add(new Team1v1(msg.getHostTeam(1), msg));
+        } else { // 2v2 battle
+            if (isFinished()) {
+                teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 1).findFirst().orElse(null), msg));
+                teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 2).findFirst().orElse(null), msg));
+            } else {
+                teams.add(new Team2v2(msg.getHostTeam(0), msg.getHostTeam(1), msg));
+                teams.add(new Team2v2(msg.getHostTeam(2), msg.getHostTeam(3), msg));
+            }
+        }
+
+        // Info:
+        // - msg.getDetailsList() & msg.getViewerTeamList() both only have content when battle is finished
+        // - msg.getDetailsCount() & msg.getViewerTeamCount() always is 2 only when battle is finished
+        // - msg.getHostTeamCount() always is 2 for 1v1 or 4 for 2v2
+    }
 }

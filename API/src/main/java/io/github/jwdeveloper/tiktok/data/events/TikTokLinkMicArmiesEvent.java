@@ -27,11 +27,11 @@ import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.LinkMicArmy;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicArmies;
 import lombok.Getter;
 
 import java.util.List;
-
 
 /**
  * Triggered every time a battle participant receives points. Contains the current status of the battle and the army that suported the group.
@@ -40,8 +40,10 @@ import java.util.List;
 @EventMeta(eventType = EventType.Message)
 public class TikTokLinkMicArmiesEvent extends TikTokHeaderEvent {
     private final Long battleId;
-
-    private final Integer battleStatus;
+    /**
+     true if battle is finished otherwise false
+     */
+    private final boolean finished;
 
     private final Picture picture;
 
@@ -52,6 +54,6 @@ public class TikTokLinkMicArmiesEvent extends TikTokHeaderEvent {
         battleId = msg.getId();
         armies = msg.getBattleItemsList().stream().map(LinkMicArmy::new).toList();
         picture = Picture.map(msg.getImage());
-        battleStatus = msg.getBattleStatus();
+        finished = msg.getBattleStatus() == LinkMicBattleStatus.ARMY_FINISHED;
     }
 }

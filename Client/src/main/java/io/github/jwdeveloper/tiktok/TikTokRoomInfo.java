@@ -61,11 +61,6 @@ public class TikTokRoomInfo implements LiveRoomInfo {
         return connectionState == state;
     }
 
-    @Override
-    public User getHostUser() {
-        return host;
-    }
-
     public void updateRanking(List<RankingUser> rankingUsers) {
         usersRanking.clear();
         usersRanking.addAll(rankingUsers);
