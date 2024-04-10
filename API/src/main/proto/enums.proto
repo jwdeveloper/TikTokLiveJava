@@ -35,6 +35,14 @@ enum LinkmicApplierSortSetting {
   LINKMIC_APPLIER_SORT_SETTING_BY_GIFT_SCORE = 1;
 }
 
+enum LinkMicBattleStatus {
+  BATTLE_ARMY_UNKNOWN = 0;
+  ARMY_ONGOING = 1;
+  ARMY_FINISHED = 2;
+  BATTLE_ONGOING = 4;
+  BATTLE_FINISHED = 5;
+}
+
 enum HashtagNamespace {
   GLOBAL = 0;
   GAMING = 1;

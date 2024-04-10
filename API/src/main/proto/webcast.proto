@@ -521,7 +521,7 @@ message WebcastLinkMicArmies {
   uint64 id2 = 4;
   uint64 timeStamp1 = 5;
   uint64 timeStamp2 = 6;
-  int32 battleStatus = 7; // SHOULD BE AN ENUM
+  LinkMicBattleStatus battleStatus = 7;
   uint64 data1 = 8;
   uint64 data2 = 9;
   uint32 data3 = 10;
@@ -574,7 +574,7 @@ message WebcastLinkMicBattle {
   Common common = 1;
   uint64 id = 2;
   LinkMicBattleConfig battleConfig = 3;
-  int32 battleStatus = 4; // SHOULD BE AN ENUM
+  LinkMicBattleStatus battleStatus = 4;
   repeated LinkMicBattleDetails details = 5;
   repeated LinkMicBattleTopViewers viewerTeam = 9;
   repeated LinkMicBattleHost hostTeam = 10;
