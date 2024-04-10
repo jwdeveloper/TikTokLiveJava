@@ -24,7 +24,7 @@ package io.github.jwdeveloper.tiktok.data.models.users;
 
 import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastEnvelopeMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -136,6 +136,14 @@ public class User {
         this.picture = picture;
     }
 
+    public User(long id, String name, String profileId, Picture picture) {
+        this(id, name, profileId, picture, 0, 0, List.of(Badge.empty()));
+    }
+
+    public User(WebcastLinkMicBattle.LinkMicBattleHost.HostGroup.Host host) {
+        this(host.getId(), host.getName(), host.getProfileId(), Picture.map(host.getImages(0)));
+    }
+
     public User(io.github.jwdeveloper.tiktok.messages.data.User user) {
         this(user.getId(), user.getDisplayId(), Picture.map(user.getAvatarThumb()));
         profileName = user.getNickname();
@@ -158,7 +166,6 @@ public class User {
             addAttribute(UserAttribute.Blocked);
         }
     }
-
 
     public static User EMPTY = new User(0L,
             "",
@@ -208,5 +215,19 @@ public class User {
                 0,
                 0,
                 List.of(Badge.empty()));
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "id=" + id +
+            ", name='" + name + "'" +
+            ", profileName='" + profileName + "'" +
+            ", picture=" + picture +
+            ", following=" + following +
+            ", followers=" + followers +
+            ", badges=" + badges +
+            ", attributes=" + attributes +
+			"}";
     }
 }

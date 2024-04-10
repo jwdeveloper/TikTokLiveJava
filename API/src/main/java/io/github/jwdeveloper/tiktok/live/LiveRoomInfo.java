@@ -47,7 +47,7 @@ public interface LiveRoomInfo
      String getRoomId();
      String getHostName();
      String getTitle();
-     User getHostUser();
+     User getHost();
      List<RankingUser> getUsersRanking();
      ConnectionState getConnectionState();
 }

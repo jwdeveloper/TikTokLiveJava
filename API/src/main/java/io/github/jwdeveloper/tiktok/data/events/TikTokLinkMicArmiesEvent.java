@@ -32,7 +32,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-
 /**
  * Triggered every time a battle participant receives points. Contains the current status of the battle and the army that suported the group.
  */
@@ -53,5 +52,13 @@ public class TikTokLinkMicArmiesEvent extends TikTokHeaderEvent {
         armies = msg.getBattleItemsList().stream().map(LinkMicArmy::new).toList();
         picture = Picture.map(msg.getImage());
         battleStatus = msg.getBattleStatus();
+    }
+
+    /**
+     battleStatus of 1 is Ongoing battle & 2 is Finished Battle
+     @return true if battle is finished otherwise false
+     */
+    public boolean isFinished() {
+        return battleStatus == 2;
     }
 }
