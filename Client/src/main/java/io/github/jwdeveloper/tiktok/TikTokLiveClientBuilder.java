@@ -207,9 +207,15 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
 
         //LinkMic events
-        //  mapper.webcastObjectToConstructor(WebcastLinkMicBattle.class, TikTokLinkMicBattleEvent.class);
-        //  mapper.webcastObjectToConstructor(WebcastLinkMicArmies.class, TikTokLinkMicArmiesEvent.class);
-        //  mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
+        mapper.forMessage(WebcastLinkMicBattle.class, (inputBytes, messageName, mapperHelper) -> {
+            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicBattle.class);
+            return MappingResult.of(message, new TikTokLinkMicBattleEvent(message));
+        });
+        mapper.forMessage(WebcastLinkMicArmies.class, (inputBytes, messageName, mapperHelper) -> {
+            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicArmies.class);
+            return MappingResult.of(message, new TikTokLinkMicArmiesEvent(message));
+        });
+         // mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
         //  mapper.webcastObjectToConstructor(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
 
         //Rank events
