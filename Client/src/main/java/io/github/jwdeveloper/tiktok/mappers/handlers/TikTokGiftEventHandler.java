@@ -27,13 +27,11 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.*;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.*;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
-import sun.misc.Unsafe;
 
 import java.util.*;
 
@@ -124,36 +122,8 @@ public class TikTokGiftEventHandler {
         }
 
         if (gift.getPicture().getLink().endsWith(".webp"))
-        {
-            updatePicture(gift, giftMessage);
-        }
+            gift.setPicture(Picture.map(giftMessage.getGift().getImage()));
 
         return gift;
-    }
-
-    // TODO-kohlerpop1: I do not think this method is needed for any reason?
-    // TODO response:
-
-    /**
-     * Some generated gifts in JSON file contains .webp image format,
-     * that's bad since java by the defult is not supporing .webp and when URL is
-     * converted to Java.io.Image then image is null
-     *
-     * However, TikTok in GiftWebcast event always has image in .jpg format,
-     * so I take advantage of it and swap .webp url with .jpg url
-     *
-     */
-
-    private void updatePicture(Gift gift, WebcastGiftMessage webcastGiftMessage) {
-        try {
-            var picture = Picture.map(webcastGiftMessage.getGift().getImage());
-            var constructor = Unsafe.class.getDeclaredConstructors()[0];
-            constructor.setAccessible(true);
-            var field = Gift.class.getDeclaredField("picture");
-            field.setAccessible(true);
-            field.set(gift, picture);
-        } catch (Exception e) {
-            throw new TikTokLiveException("Unable to update picture in gift: " + gift.toString());
-        }
     }
 }
