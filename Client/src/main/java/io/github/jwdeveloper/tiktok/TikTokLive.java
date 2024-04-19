@@ -91,6 +91,7 @@ public class TikTokLive {
         return new TikTokLiveHttpClient();
     }
 
+
     //I don't like it, but it is reasonable for now
     private static GiftsManager giftsManager;
 
@@ -107,4 +108,6 @@ public class TikTokLive {
         }
         return giftsManager;
     }
+
+
 }

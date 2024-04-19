@@ -2,7 +2,9 @@ package io.github.jwdeveloper.tiktok.data.models.gifts;
 
 import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import lombok.Data;
+import lombok.*;
+
+import java.util.*;
 
 @Data
 public class Gift {
@@ -14,7 +16,7 @@ public class Gift {
 
     private final int diamondCost;
 
-    private Picture picture;
+    private final Picture picture;
 
     private final JsonObject properties;
 

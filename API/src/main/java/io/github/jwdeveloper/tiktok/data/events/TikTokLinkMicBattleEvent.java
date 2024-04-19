@@ -27,7 +27,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.battles.*;
 import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
-import lombok.*;
+import lombok.Getter;
 
 import java.util.*;
 
@@ -43,8 +43,6 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
      true if battle is finished otherwise false
      */
     private final boolean finished;
-    @Getter(AccessLevel.NONE)
-    private final boolean oneVsOne;
     private final List<Team> teams;
 
     public TikTokLinkMicBattleEvent(WebcastLinkMicBattle msg) {
@@ -55,29 +53,19 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
         if (msg.getHostTeamCount() == 2) { // 1v1 battle
             teams.add(new Team1v1(msg.getHostTeam(0), msg));
             teams.add(new Team1v1(msg.getHostTeam(1), msg));
-            oneVsOne = true;
         } else { // 2v2 battle
             if (isFinished()) {
-                teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 1).findFirst().orElseThrow(), msg));
-                teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 2).findFirst().orElseThrow(), msg));
+                teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 1).findFirst().orElse(null), msg));
+                teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 2).findFirst().orElse(null), msg));
             } else {
                 teams.add(new Team2v2(msg.getHostTeam(0), msg.getHostTeam(1), msg));
                 teams.add(new Team2v2(msg.getHostTeam(2), msg.getHostTeam(3), msg));
             }
-            oneVsOne = false;
         }
 
         // Info:
         // - msg.getDetailsList() & msg.getViewerTeamList() both only have content when battle is finished
         // - msg.getDetailsCount() & msg.getViewerTeamCount() always is 2 only when battle is finished
         // - msg.getHostTeamCount() always is 2 for 1v1 or 4 for 2v2
-    }
-
-    public boolean is1v1() {
-        return oneVsOne;
-    }
-
-    public boolean is2v2() {
-        return !oneVsOne;
     }
 }

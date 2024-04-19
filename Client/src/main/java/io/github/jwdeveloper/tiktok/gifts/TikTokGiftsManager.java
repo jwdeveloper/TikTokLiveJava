@@ -1,9 +1,13 @@
 package io.github.jwdeveloper.tiktok.gifts;
 
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -28,7 +32,11 @@ public class TikTokGiftsManager implements GiftsManager {
     }
 
     public Gift getById(int giftId) {
-        return giftsByIdIndex.getOrDefault(giftId, Gift.UNDEFINED);
+        if (!giftsByIdIndex.containsKey(giftId)) {
+            return Gift.UNDEFINED;
+        }
+
+        return giftsByIdIndex.get(giftId);
     }
 
     public Gift getByFilter(Predicate<Gift> filter) {
@@ -36,7 +44,7 @@ public class TikTokGiftsManager implements GiftsManager {
                 .stream()
                 .filter(filter)
                 .findFirst()
-                .orElse(Gift.UNDEFINED);
+                .orElseGet(() -> Gift.UNDEFINED);
     }
 
     @Override
