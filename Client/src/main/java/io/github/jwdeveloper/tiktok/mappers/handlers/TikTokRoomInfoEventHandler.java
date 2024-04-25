@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokUnhandledMemberEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
@@ -39,6 +40,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomUserSeqMessage;
 import lombok.SneakyThrows;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -57,9 +59,9 @@ public class TikTokRoomInfoEventHandler {
 
     @SneakyThrows
     public TikTokEvent handleUserRanking(byte[] msg) {
-        var message = WebcastRoomUserSeqMessage.parseFrom(msg);
-        var totalUsers = message.getTotalUser();
-        var userRanking = message.getRanksListList().stream().map(RankingUser::new)
+        WebcastRoomUserSeqMessage message = WebcastRoomUserSeqMessage.parseFrom(msg);
+        int totalUsers = message.getTotalUser();
+        List<RankingUser> userRanking = message.getRanksListList().stream().map(RankingUser::new)
                 .sorted((ru1, ru2) -> Integer.compare(ru2.getScore(), ru1.getScore()))
                 .collect(Collectors.toList());
 
@@ -72,9 +74,9 @@ public class TikTokRoomInfoEventHandler {
 
     @SneakyThrows
     public TikTokEvent handleIntro(byte[] msg) {
-        var message = WebcastLiveIntroMessage.parseFrom(msg);
-        var hostUser = User.map(message.getHost());
-        var language = message.getLanguage();
+        WebcastLiveIntroMessage message = WebcastLiveIntroMessage.parseFrom(msg);
+        User hostUser = User.map(message.getHost());
+        String language = message.getLanguage();
 
         return handleRoomInfo(tikTokRoomInfo ->
         {
@@ -87,29 +89,35 @@ public class TikTokRoomInfoEventHandler {
 
     @SneakyThrows
     public MappingResult handleMemberMessage(byte[] msg, String name, TikTokMapperHelper helper) {
-        var message = WebcastMemberMessage.parseFrom(msg);
+        WebcastMemberMessage message = WebcastMemberMessage.parseFrom(msg);
 
-        var event = switch (message.getAction()) {
-            case JOINED -> new TikTokJoinEvent(message);
-            case SUBSCRIBED -> new TikTokSubscribeEvent(message);
-            default -> new TikTokUnhandledMemberEvent(message);
+        TikTokEvent event;
+        switch (message.getAction()) {
+            case JOINED:
+                event = new TikTokJoinEvent(message);
+                break;
+            case SUBSCRIBED:
+                event = new TikTokSubscribeEvent(message);
+                break;
+            default:
+                event = new TikTokUnhandledMemberEvent(message);
         };
 
-        var roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->
+        TikTokEvent roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->
         {
             tikTokRoomInfo.setViewersCount(message.getMemberCount());
         });
-        return MappingResult.of(message, List.of(event, roomInfoEvent));
+        return MappingResult.of(message, Arrays.asList(event, roomInfoEvent));
     }
 
     @SneakyThrows
     public MappingResult handleLike(byte[] msg, String name, TikTokMapperHelper helper) {
-        var message = WebcastLikeMessage.parseFrom(msg);
-        var event = new TikTokLikeEvent(message);
-        var roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->
+        WebcastLikeMessage message = WebcastLikeMessage.parseFrom(msg);
+        TikTokLikeEvent event = new TikTokLikeEvent(message);
+        TikTokEvent roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->
         {
             tikTokRoomInfo.setLikesCount(event.getTotalLikes());
         });
-        return MappingResult.of(message, List.of(event, roomInfoEvent));
+        return MappingResult.of(message, Arrays.asList(event, roomInfoEvent));
     }
 }

@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
@@ -35,6 +36,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.Stopwatch;
 
 import java.time.Duration;
+import java.util.List;
 
 public class TikTokLiveMessageHandler {
 
@@ -48,11 +50,11 @@ public class TikTokLiveMessageHandler {
 
     public void handle(LiveClient client, WebcastResponse webcastResponse) {
         tikTokEventHandler.publish(client, new TikTokWebsocketResponseEvent(webcastResponse));
-        for (var message : webcastResponse.getMessagesList()) {
+        for (WebcastResponse.Message message : webcastResponse.getMessagesList()) {
             try {
                 handleSingleMessage(client, message);
             } catch (Exception e) {
-                var exception = new TikTokLiveMessageException(message, webcastResponse, e);
+                TikTokLiveMessageException exception = new TikTokLiveMessageException(message, webcastResponse, e);
                 tikTokEventHandler.publish(client, new TikTokErrorEvent(exception));
             }
         }
@@ -60,18 +62,18 @@ public class TikTokLiveMessageHandler {
 
     public void handleSingleMessage(LiveClient client, WebcastResponse.Message message)
     {
-        var messageClassName = message.getMethod();
+        String messageClassName = message.getMethod();
         if (!mapper.isRegistered(messageClassName)) {
             tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
             return;
         }
-        var stopwatch = new Stopwatch();
+        Stopwatch stopwatch = new Stopwatch();
         stopwatch.start();
-        var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
-        var handlingTimeInMs = stopwatch.stop();
-        var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
+        List<TikTokEvent> events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
+        long handlingTimeInMs = stopwatch.stop();
+        MessageMetaData metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
 
-        for (var event : events) {
+        for (TikTokEvent event : events) {
             tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(message, event, metadata));
             tikTokEventHandler.publish(client, event);
         }

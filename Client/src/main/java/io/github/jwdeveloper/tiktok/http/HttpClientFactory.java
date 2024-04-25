@@ -37,7 +37,7 @@ public class HttpClientFactory {
 
     //Does not contains default httpClientSettings, Params, headers, etd
     public HttpClientBuilder clientEmpty(String url) {
-        var settings = new HttpClientSettings();
+        HttpClientSettings settings = new HttpClientSettings();
         settings.setProxyClientSettings(liveClientSettings.getHttpSettings().getProxyClientSettings());
         return new HttpClientBuilder(url, settings);
     }

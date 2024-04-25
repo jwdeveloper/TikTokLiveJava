@@ -77,20 +77,32 @@ public class ListenerExample
 
         @TikTokEventObserver
         public void onComment(LiveClient liveClient, TikTokCommentEvent event) {
-            var userName = event.getUser().getName();
-            var text = event.getText();
+            String userName = event.getUser().getName();
+            String text = event.getText();
             liveClient.getLogger().info(userName + ": " + text);
         }
 
         @TikTokEventObserver
         public void onGift(LiveClient liveClient, TikTokGiftEvent event) {
-            var message = switch (event.getGift().getName()) {
-                case "ROSE" -> "Thanks :)";
-                case "APPETIZERS" -> ":OO";
-                case "APRIL" -> ":D";
-                case "TIKTOK" -> ":P";
-                case "CAP" -> ":F";
-                default -> ":I";
+            String message;
+            switch (event.getGift().getName()) {
+                case "ROSE":
+                    message = "Thanks :)";
+                    break;
+                case "APPETIZERS":
+                    message = ":OO";
+                    break;
+                case "APRIL":
+                    message = ":D";
+                    break;
+                case "TIKTOK":
+                    message = ":P";
+                    break;
+                case "CAP":
+                    message = ":F";
+                    break;
+                default:
+                    message = ":I";
             };
             liveClient.getLogger().info(message);
         }
@@ -105,14 +117,14 @@ public class ListenerExample
     // </code>
     private static void showLogo()
     {
-        System.out.println(ConsoleColors.GREEN+"""
-                                
-                 _____ _ _    _____     _    _     _          \s
-                |_   _(_) | _|_   _|__ | | _| |   (_)_   _____\s
-                  | | | | |/ / | |/ _ \\| |/ / |   | \\ \\ / / _ \\
-                  | | | |   <  | | (_) |   <| |___| |\\ V /  __/ 
-                  |_| |_|_|\\_\\ |_|\\___/|_|\\_\\_____|_| \\_/ \\___| 
-                """);
+        System.out.println(ConsoleColors.GREEN + "\"" +
+                "\n" +
+                " _____ _ _    _____     _    _     _          \n" +
+                "|_   _(_) | _|_   _|__ | | _| |   (_)_   _____\n" +
+                "  | | | | |/ / | |/ _ \\| |/ / |   | \\ \\ / / _ \\\n" +
+                "  | | | |   <  | | (_) |   <| |___| |\\ V /  __/\n" +
+                "  |_| |_|_|\\_\\ |_|\\___/|_|\\_\\_____|_| \\_/ \\___|\n" +
+                "\"");
 
     }
 }

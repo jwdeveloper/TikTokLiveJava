@@ -33,10 +33,12 @@ import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.*;
 import io.github.jwdeveloper.tiktok.data.events.social.*;
 import io.github.jwdeveloper.tiktok.data.events.websocket.*;
+import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
+import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.listener.*;
 import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.live.builder.*;
@@ -44,6 +46,7 @@ import io.github.jwdeveloper.tiktok.mappers.*;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.mappers.handlers.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
+import io.github.jwdeveloper.tiktok.websocket.SocketClient;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
 import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketOfflineClient;
 
@@ -99,32 +102,32 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         if (clientSettings.getPingInterval() < 250)
             throw new TikTokLiveException("Minimum allowed ping interval is 250 millseconds");
 
-        var httpSettings = clientSettings.getHttpSettings();
+        HttpClientSettings httpSettings = clientSettings.getHttpSettings();
         httpSettings.getParams().put("app_language", clientSettings.getClientLanguage());
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
 
         this.logger = LoggerFactory.create(clientSettings.getHostName(), clientSettings);
-        this.giftsManager = clientSettings.isFetchGifts() ? TikTokLive.gifts() : new TikTokGiftsManager(List.of());
+        this.giftsManager = clientSettings.isFetchGifts() ? TikTokLive.gifts() : new TikTokGiftsManager(Collections.emptyList());
     }
 
     public LiveClient build() {
         validate();
 
-        var tiktokRoomInfo = new TikTokRoomInfo();
+        TikTokRoomInfo tiktokRoomInfo = new TikTokRoomInfo();
         tiktokRoomInfo.setHostName(clientSettings.getHostName());
 
-        var listenerManager = new TikTokListenersManager(listeners, eventHandler);
+        TikTokListenersManager listenerManager = new TikTokListenersManager(listeners, eventHandler);
 
-        var httpClientFactory = new HttpClientFactory(clientSettings);
+        HttpClientFactory httpClientFactory = new HttpClientFactory(clientSettings);
 
-        var liveHttpClient = clientSettings.isOffline() ?
+        LiveHttpClient liveHttpClient = clientSettings.isOffline() ?
                 new TikTokLiveHttpOfflineClient() :
                 new TikTokLiveHttpClient(httpClientFactory, clientSettings);
 
-        var eventsMapper = createMapper(giftsManager, tiktokRoomInfo);
-        var messageHandler = new TikTokLiveMessageHandler(eventHandler, eventsMapper);
+        TikTokLiveMapper eventsMapper = createMapper(giftsManager, tiktokRoomInfo);
+        TikTokLiveMessageHandler messageHandler = new TikTokLiveMessageHandler(eventHandler, eventsMapper);
 
-        var webSocketClient = clientSettings.isOffline() ?
+        SocketClient webSocketClient = clientSettings.isOffline() ?
                 new TikTokWebSocketOfflineClient(eventHandler) :
                 new TikTokWebSocketClient(
                         clientSettings,
@@ -146,14 +149,14 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     public TikTokLiveMapper createMapper(GiftsManager giftsManager, TikTokRoomInfo roomInfo) {
 
 
-        var eventMapper = new TikTokGenericEventMapper();
-        var mapper = new TikTokLiveMapper(new TikTokLiveMapperHelper(eventMapper));
+        TikTokGenericEventMapper eventMapper = new TikTokGenericEventMapper();
+        TikTokLiveMapper mapper = new TikTokLiveMapper(new TikTokLiveMapperHelper(eventMapper));
 
         //ConnectionEvents events
-        var commonHandler = new TikTokCommonEventHandler();
-        var giftHandler = new TikTokGiftEventHandler(giftsManager, roomInfo);
-        var roomInfoHandler = new TikTokRoomInfoEventHandler(roomInfo);
-        var socialHandler = new TikTokSocialMediaEventHandler(roomInfo);
+        TikTokCommonEventHandler commonHandler = new TikTokCommonEventHandler();
+        TikTokGiftEventHandler giftHandler = new TikTokGiftEventHandler(giftsManager, roomInfo);
+        TikTokRoomInfoEventHandler roomInfoHandler = new TikTokRoomInfoEventHandler(roomInfo);
+        TikTokSocialMediaEventHandler socialHandler = new TikTokSocialMediaEventHandler(roomInfo);
 
 
         mapper.forMessage(WebcastControlMessage.class, commonHandler::handleWebcastControlMessage);
@@ -163,7 +166,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         mapper.forMessage(WebcastRoomUserSeqMessage.class, roomInfoHandler::handleUserRanking);
         mapper.forMessage(WebcastCaptionMessage.class, (inputBytes, messageName, mapperHelper) ->
         {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastCaptionMessage.class);
+            WebcastCaptionMessage messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastCaptionMessage.class);
             return MappingResult.of(messageObject, new TikTokCaptionEvent(messageObject));
         });
 
@@ -171,22 +174,22 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         //User Interactions events
         mapper.forMessage(WebcastChatMessage.class, (inputBytes, messageName, mapperHelper) ->
         {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
+            WebcastChatMessage messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
             return MappingResult.of(messageObject, new TikTokCommentEvent(messageObject));
         });
         mapper.forMessage(WebcastSubNotifyMessage.class, (inputBytes, messageName, mapperHelper) ->
         {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastSubNotifyMessage.class);
+            WebcastSubNotifyMessage messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastSubNotifyMessage.class);
             return MappingResult.of(messageObject, new TikTokSubscribeEvent(messageObject));
         });
         mapper.forMessage(WebcastEmoteChatMessage.class, (inputBytes, messageName, mapperHelper) ->
         {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastEmoteChatMessage.class);
+            WebcastEmoteChatMessage messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastEmoteChatMessage.class);
             return MappingResult.of(messageObject, new TikTokEmoteEvent(messageObject));
         });
         mapper.forMessage(WebcastQuestionNewMessage.class, (inputBytes, messageName, mapperHelper) ->
         {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastQuestionNewMessage.class);
+            WebcastQuestionNewMessage messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastQuestionNewMessage.class);
             return MappingResult.of(messageObject, new TikTokQuestionEvent(messageObject));
         });
 
@@ -201,7 +204,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         mapper.forMessage(WebcastRoomPinMessage.class, commonHandler::handlePinMessage);
         mapper.forMessage(WebcastChatMessage.class, (inputBytes, messageName, mapperHelper) ->
         {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
+            WebcastChatMessage messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
             return MappingResult.of(messageObject, new TikTokCommentEvent(messageObject));
         });
 
@@ -233,7 +236,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
 
     public LiveClient buildAndConnect() {
-        var client = build();
+        LiveClient client = build();
         client.connect();
         return client;
     }

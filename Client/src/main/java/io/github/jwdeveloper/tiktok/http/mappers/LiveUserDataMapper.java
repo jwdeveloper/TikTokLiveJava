@@ -32,9 +32,9 @@ public class LiveUserDataMapper
 {
     public LiveUserData.Response map(String json, Logger logger) {
         try {
-            var jsonObject = JsonParser.parseString(json).getAsJsonObject();
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
-            var message = jsonObject.get("message").getAsString();
+            String message = jsonObject.get("message").getAsString();
 
             if (message.equals("params_error")) {
                 throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact the developer");
@@ -45,24 +45,32 @@ public class LiveUserDataMapper
             //live -> status 2
             //live paused -> 3
             //not live -> status 4
-            var element = jsonObject.get("data");
+            JsonElement element = jsonObject.get("data");
             if (element.isJsonNull()) {
                 return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1);
             }
-            var data = element.getAsJsonObject();
-            var user = data.getAsJsonObject("user");
-            var roomId = user.get("roomId").getAsString();
-            var status = user.get("status").getAsInt();
+            JsonObject data = element.getAsJsonObject();
+            JsonObject user = data.getAsJsonObject("user");
+            String roomId = user.get("roomId").getAsString();
+            int status = user.get("status").getAsInt();
 
-            var liveRoom = data.getAsJsonObject("liveRoom");
+            JsonObject liveRoom = data.getAsJsonObject("liveRoom");
             long startTime = liveRoom.get("startTime").getAsLong();
 
-            var statusEnum = switch (status) {
-                case 2 -> LiveUserData.UserStatus.Live;
-                case 3 -> LiveUserData.UserStatus.LivePaused;
-                case 4 -> LiveUserData.UserStatus.Offline;
-                default -> LiveUserData.UserStatus.NotFound;
-            };
+            LiveUserData.UserStatus statusEnum;
+            switch (status) {
+                case 2:
+                    statusEnum = LiveUserData.UserStatus.Live;
+                    break;
+                case 3:
+                    statusEnum = LiveUserData.UserStatus.LivePaused;
+                    break;
+                case 4:
+                    statusEnum = LiveUserData.UserStatus.Offline;
+                    break;
+                default:
+                    statusEnum = LiveUserData.UserStatus.NotFound;
+            }
 
             return new LiveUserData.Response(json, statusEnum, roomId, startTime);
         } catch (JsonSyntaxException | IllegalStateException e) {

@@ -31,10 +31,9 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TikTokListenersManager implements ListenersManager {
     private final TikTokLiveEventHandler eventObserver;
@@ -43,27 +42,27 @@ public class TikTokListenersManager implements ListenersManager {
     public TikTokListenersManager(List<TikTokEventListener> listeners, TikTokLiveEventHandler tikTokEventHandler) {
         this.eventObserver = tikTokEventHandler;
         this.bindingModels = new ArrayList<>(listeners.size());
-        for (var listener : listeners) {
+        for (TikTokEventListener listener : listeners) {
             addListener(listener);
         }
     }
 
     @Override
     public List<TikTokEventListener> getListeners() {
-        return bindingModels.stream().map(ListenerBindingModel::getListener).toList();
+        return bindingModels.stream().map(ListenerBindingModel::getListener).collect(Collectors.toList());
     }
 
     @Override
     public void addListener(TikTokEventListener listener) {
-        var alreadyExists = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
+        Optional<ListenerBindingModel> alreadyExists = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
         if (alreadyExists.isPresent()) {
             throw new TikTokLiveException("Listener " + listener.getClass() + " has already been registered");
         }
-        var bindingModel = bindToEvents(listener);
+        ListenerBindingModel bindingModel = bindToEvents(listener);
 
-        for (var eventEntrySet : bindingModel.getEvents().entrySet()) {
-            var eventType = eventEntrySet.getKey();
-            for (var methods : eventEntrySet.getValue()) {
+        for (Map.Entry<Class<?>, List<EventConsumer<?>>> eventEntrySet : bindingModel.getEvents().entrySet()) {
+            Class<?> eventType = eventEntrySet.getKey();
+            for (EventConsumer<?> methods : eventEntrySet.getValue()) {
                 eventObserver.subscribe(eventType, methods);
             }
         }
@@ -72,16 +71,16 @@ public class TikTokListenersManager implements ListenersManager {
 
     @Override
     public void removeListener(TikTokEventListener listener) {
-        var optional = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
-        if (optional.isEmpty()) {
+        Optional<ListenerBindingModel> optional = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
+        if (!optional.isPresent()) {
             return;
         }
 
-        var bindingModel = optional.get();
+        ListenerBindingModel bindingModel = optional.get();
 
-        for (var eventEntrySet : bindingModel.getEvents().entrySet()) {
-            var eventType = eventEntrySet.getKey();
-            for (var methods : eventEntrySet.getValue()) {
+        for (Map.Entry<Class<?>, List<EventConsumer<?>>> eventEntrySet : bindingModel.getEvents().entrySet()) {
+            Class<?> eventType = eventEntrySet.getKey();
+            for (EventConsumer<?> methods : eventEntrySet.getValue()) {
                 eventObserver.unsubscribe(eventType, methods);
             }
         }
@@ -90,13 +89,13 @@ public class TikTokListenersManager implements ListenersManager {
 
     private ListenerBindingModel bindToEvents(TikTokEventListener listener) {
 
-        var clazz = listener.getClass();
-        var methods = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
+        Class<?> clazz = listener.getClass();
+        List<Method> methods = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
                 m.getParameterCount() == 2 &&
-                        m.isAnnotationPresent(TikTokEventObserver.class)).toList();
-        var eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
-        for (var method : methods) {
-            var eventClazz = method.getParameterTypes()[1];
+                        m.isAnnotationPresent(TikTokEventObserver.class)).collect(Collectors.toList());
+        Map<Class<?>, List<EventConsumer<?>>> eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
+        for (Method method : methods) {
+            Class<?> eventClazz = method.getParameterTypes()[1];
 
             if (eventClazz.isAssignableFrom(LiveClient.class) &&
                     !eventClazz.equals(LiveClient.class)) {
@@ -108,7 +107,7 @@ public class TikTokListenersManager implements ListenersManager {
                 throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 2nd parameter must instance of " + TikTokEvent.class.getName());
             }
 
-            EventConsumer eventMethodRef = (liveClient, event) ->
+            EventConsumer<?> eventMethodRef = (liveClient, event) ->
             {
                 try {
                     method.setAccessible(true);

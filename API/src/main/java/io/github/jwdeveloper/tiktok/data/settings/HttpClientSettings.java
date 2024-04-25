@@ -24,9 +24,9 @@ package io.github.jwdeveloper.tiktok.data.settings;
 
 import lombok.Getter;
 import lombok.Setter;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,10 +50,10 @@ public class HttpClientSettings {
     ProxyClientSettings proxyClientSettings;
 
     @Getter
-    Consumer<HttpClient.Builder> onClientCreating;
+    Consumer<OkHttpClient.Builder> onClientCreating;
 
     @Getter
-    Consumer<HttpRequest.Builder> onRequestCreating;
+    Consumer<Request.Builder> onRequestCreating;
 
     @Setter
     @Getter
@@ -83,7 +83,7 @@ public class HttpClientSettings {
      * @param onRequestCreating Every time new Http request in created this method will be triggered
      *                          use to modify request
      */
-    public void onRequestCreating(Consumer<HttpRequest.Builder> onRequestCreating) {
+    public void onRequestCreating(Consumer<Request.Builder> onRequestCreating) {
         this.onRequestCreating = onRequestCreating;
     }
 
@@ -91,14 +91,14 @@ public class HttpClientSettings {
      * @param onClientCreating Every time new instance of Http client request in created this method will be triggered
      *                         use to modify http client
      */
-    public void onClientCreating(Consumer<HttpClient.Builder> onClientCreating) {
+    public void onClientCreating(Consumer<OkHttpClient.Builder> onClientCreating) {
         this.onClientCreating = onClientCreating;
     }
 
     @Override
     public HttpClientSettings clone() {
 
-        var newSettings = new HttpClientSettings();
+        HttpClientSettings newSettings = new HttpClientSettings();
         newSettings.setTimeout(this.getTimeout());
         newSettings.onRequestCreating(this.onRequestCreating);
         newSettings.onClientCreating(this.onClientCreating);

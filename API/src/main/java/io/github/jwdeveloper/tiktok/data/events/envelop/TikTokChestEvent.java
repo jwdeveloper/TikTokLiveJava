@@ -58,12 +58,12 @@ public class TikTokChestEvent extends TikTokHeaderEvent {
         super(msg.getCommon());
         this.chest = chest;
 
-        var text = Text.map(msg.getCommon().getDisplayText());
-        var userPiece = (Text.UserTextPiece) text.getTextPieces().get(0);
+        Text text = Text.map(msg.getCommon().getDisplayText());
+        Text.UserTextPiece userPiece = (Text.UserTextPiece) text.getTextPieces().get(0);
         user = userPiece.getUser();
 
 
-        var envelopInfo = msg.getEnvelopeInfo();
+        WebcastEnvelopeMessage.EnvelopeInfo envelopInfo = msg.getEnvelopeInfo();
 
         openedAt = new Date(envelopInfo.getUnpackAt());
 

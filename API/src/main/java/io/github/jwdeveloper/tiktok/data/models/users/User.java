@@ -28,10 +28,8 @@ import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class User {
@@ -46,7 +44,7 @@ public class User {
     private final Set<UserAttribute> attributes = new HashSet<>();
 
     public List<UserAttribute> getAttributes() {
-        return attributes.stream().toList();
+        return attributes.stream().filter(attribute -> attribute instanceof UserAttribute).collect(Collectors.toList());
     }
 
     public boolean hasAttribute(UserAttribute userFlag) {
@@ -54,7 +52,7 @@ public class User {
     }
 
     public void addAttribute(UserAttribute... flags) {
-        this.attributes.addAll(Arrays.stream(flags).toList());
+        this.attributes.addAll(Arrays.stream(flags).collect(Collectors.toList()));
     }
 
     public boolean isGiftGiver() {
@@ -137,7 +135,7 @@ public class User {
     }
 
     public User(long id, String name, String profileId, Picture picture) {
-        this(id, name, profileId, picture, 0, 0, List.of(Badge.empty()));
+        this(id, name, profileId, picture, 0, 0, Collections.singletonList(Badge.empty()));
     }
 
     public User(WebcastLinkMicBattle.LinkMicBattleHost.HostGroup.Host host) {
@@ -149,7 +147,7 @@ public class User {
         profileName = user.getNickname();
         following = user.getFollowInfo().getFollowingCount();
         followers = user.getFollowInfo().getFollowerCount();
-        badges = user.getBadgeListList().stream().map(Badge::map).toList();
+        badges = user.getBadgeListList().stream().map(Badge::map).collect(Collectors.toList());
         if (user.getIsFollower()) {
             addAttribute(UserAttribute.Follower);
         }
@@ -172,7 +170,7 @@ public class User {
             Picture.Empty(),
             0,
             0,
-            List.of(Badge.empty()));
+            Collections.singletonList(Badge.empty()));
 
     public static User map(io.github.jwdeveloper.tiktok.messages.data.User user) {
         return new User(user);
@@ -180,7 +178,7 @@ public class User {
 
     public static User map(io.github.jwdeveloper.tiktok.messages.data.User user,
                            io.github.jwdeveloper.tiktok.messages.data.UserIdentity userIdentity) {
-        var outUser = map(user);
+        User outUser = map(user);
 
         if (userIdentity.getIsGiftGiverOfAnchor()) {
             outUser.addAttribute(UserAttribute.GiftGiver);
@@ -214,7 +212,7 @@ public class User {
                 Picture.map(envelopeInfo.getSendUserAvatar()),
                 0,
                 0,
-                List.of(Badge.empty()));
+                Collections.singletonList(Badge.empty()));
     }
 
     @Override

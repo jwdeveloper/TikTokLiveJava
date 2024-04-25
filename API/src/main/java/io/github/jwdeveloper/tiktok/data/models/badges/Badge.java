@@ -25,13 +25,13 @@ package io.github.jwdeveloper.tiktok.data.models.badges;
 public class Badge {
 
     public static Badge map(io.github.jwdeveloper.tiktok.messages.data.BadgeStruct badge) {
-        return switch (badge.getDisplayType()) {
-            case BADGEDISPLAYTYPE_TEXT -> new TextBadge(badge.getText());
-            case BADGEDISPLAYTYPE_IMAGE -> new PictureBadge(badge.getImage());
-            case BADGEDISPLAYTYPE_STRING -> new StringBadge(badge.getStr());
-            case BADGEDISPLAYTYPE_COMBINE -> new CombineBadge(badge.getCombine());
-            default -> empty();
-        };
+        switch (badge.getDisplayType()) {
+            case BADGEDISPLAYTYPE_TEXT: return new TextBadge(badge.getText());
+            case BADGEDISPLAYTYPE_IMAGE: return new PictureBadge(badge.getImage());
+            case BADGEDISPLAYTYPE_STRING: return new StringBadge(badge.getStr());
+            case BADGEDISPLAYTYPE_COMBINE: return new CombineBadge(badge.getCombine());
+            default: return empty();
+        }
     }
 
     public static Badge empty() {

@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.ProxyClientSettings;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -78,7 +79,7 @@ public class HttpClientBuilder {
     }
 
     public HttpClient build() {
-        var proxyClientSettings = httpClientSettings.getProxyClientSettings();
+        ProxyClientSettings proxyClientSettings = httpClientSettings.getProxyClientSettings();
         if (proxyClientSettings.isEnabled() && proxyClientSettings.hasNext())
             return new HttpProxyClient(httpClientSettings, url);
         return new HttpClient(httpClientSettings, url);

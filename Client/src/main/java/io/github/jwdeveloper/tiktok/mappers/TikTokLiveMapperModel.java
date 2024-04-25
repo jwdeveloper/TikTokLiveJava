@@ -28,6 +28,7 @@ import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -53,7 +54,7 @@ public class TikTokLiveMapperModel implements TikTokMapperModel {
     public TikTokLiveMapperModel(String sourceMessageName) {
         this.sourceMessageName = sourceMessageName;
         this.onBeforeMapping = (inputBytes, mesasgeName, mapperHelper) -> inputBytes;
-        this.onMapping = (inputBytes, mesasgeName, mapperHelper) -> MappingResult.of(inputBytes, List.of());
+        this.onMapping = (inputBytes, mesasgeName, mapperHelper) -> MappingResult.of(inputBytes, Collections.emptyList());
         this.onAfterMapping = MappingResult::getEvents;
     }
 

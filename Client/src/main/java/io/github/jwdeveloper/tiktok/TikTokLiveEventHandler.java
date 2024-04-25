@@ -40,8 +40,8 @@ public class TikTokLiveEventHandler {
 
     public void publish(LiveClient tikTokLiveClient, TikTokEvent tikTokEvent) {
         if (events.containsKey(TikTokEvent.class)) {
-            var handlers = events.get(TikTokEvent.class);
-            for (var handle : handlers) {
+            Set<EventConsumer> handlers = events.get(TikTokEvent.class);
+            for (EventConsumer handle : handlers) {
                 handle.onEvent(tikTokLiveClient, tikTokEvent);
             }
         }
@@ -50,8 +50,8 @@ public class TikTokLiveEventHandler {
         if (!events.containsKey(tikTokEvent.getClass())) {
             return;
         }
-        var handlers = events.get(tikTokEvent.getClass());
-        for (var handler : handlers) {
+        Set<EventConsumer> handlers = events.get(tikTokEvent.getClass());
+        for (EventConsumer handler : handlers) {
             handler.onEvent(tikTokLiveClient, tikTokEvent);
         }
     }
@@ -65,7 +65,7 @@ public class TikTokLiveEventHandler {
     }
 
     public <T extends TikTokEvent> void unsubscribe(EventConsumer<T> consumer) {
-        for (var entry : events.entrySet()) {
+        for (Map.Entry<Class<?>, Set<EventConsumer>> entry : events.entrySet()) {
             entry.getValue().remove(consumer);
         }
     }
@@ -79,7 +79,7 @@ public class TikTokLiveEventHandler {
             return;
         }
 
-        var eventSet = events.get(clazz);
+        Set<EventConsumer> eventSet = events.get(clazz);
         eventSet.remove(consumer);
 
     }

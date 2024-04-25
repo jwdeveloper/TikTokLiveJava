@@ -22,17 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ReadmeGenerator {
     public static void main(String[] args) {
-        var generator = new ReadmeGenerator();
+        ReadmeGenerator generator = new ReadmeGenerator();
         generator.generate();
 
     }
 
     public void generate() {
-        var template = FilesUtility.getFileFromResource(ReadmeGenerator.class, "template.md");
-        var variables = new HashMap<String, Object>();
+        String template = FilesUtility.getFileFromResource(ReadmeGenerator.class, "template.md");
+        Map<String, Object> variables = new HashMap<String, Object>();
 
         variables.put("version", getCurrentVersion());
         variables.put("code-content", new CodeExamplesGenerator().run());
@@ -40,19 +41,17 @@ public class ReadmeGenerator {
         variables.put("listener-content",new ListenerExampleGenerator().run());
 
         template = TemplateUtility.generateTemplate(template, variables);
-        var outputPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\resources\\output.md";
+        String outputPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\resources\\output.md";
         FilesUtility.saveFile(outputPath, template);
     }
 
     public String getCurrentVersion() {
-        var version = System.getenv("version");
-        ;
-
+        String version = System.getenv("version");
         return version == null ? "NOT_FOUND" : version;
     }
 
     public String getCodeExample(String path) {
-        var content = FilesUtility.loadFileContent(path);
+        String content = FilesUtility.loadFileContent(path);
         content = content.substring(content.indexOf("*/") + 2);
         return content;
     }

@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
 import org.bson.Document;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -47,7 +48,7 @@ public class DataCollector {
     }
 
     public DataCollectorListener newListener() {
-        return newListener(Map.of());
+        return newListener(new HashMap<String, Object>());
     }
 
     public DataCollectorListener newListener(Map<String, Object> additionalFields) {
@@ -56,7 +57,7 @@ public class DataCollector {
 
     public DataCollectorListener newListener(Map<String, Object> additionalFields,
                                              CollectorEvent filter) {
-        var settings = new CollectorListenerSettings();
+        CollectorListenerSettings settings = new CollectorListenerSettings();
         settings.setExtraFields(additionalFields);
         settings.setFilter(filter);
         return new DataCollectorListener(storage, settings);

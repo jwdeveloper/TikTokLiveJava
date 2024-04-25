@@ -23,10 +23,12 @@
 package io.github.jwdeveloper.tiktok.data.models.http;
 
 import lombok.Data;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.Buffer;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
 
 @Data
@@ -39,27 +41,37 @@ public class HttpData {
     String body = "";
 
 
-    public static HttpData map(HttpRequest request) {
-        var data = new HttpData();
-        data.setUrl(request.uri().getPath());
+    public static HttpData map(Request request) {
+        HttpData data = new HttpData();
+        data.setUrl(request.url().encodedPath());
         data.setMethod(request.method());
-        data.setParameters(extractQueryParams(request.uri()));
+        data.setParameters(extractQueryParams(request.url().uri()));
         data.setStatus(200);
-        if (request.bodyPublisher().isPresent()) {
-            data.setBody(request.bodyPublisher().get().toString());
-        }
-        data.setHeaders(Collections.unmodifiableMap(request.headers().map()));
+        data.setHeaders(Collections.unmodifiableMap(request.headers().toMultimap()));
+
+        if (request.body() != null)
+            try {
+                final Buffer buffer = new Buffer();
+                request.body().writeTo(buffer);
+                data.setBody(buffer.readUtf8());
+            } catch (IOException ignored) {}
+
         return data;
     }
 
-    public static HttpData map(HttpResponse<String> response) {
-        var data = new HttpData();
-        data.setUrl(response.uri().getPath());
+    public static HttpData map(Response response) {
+        HttpData data = new HttpData();
+        data.setUrl(response.request().url().encodedPath());
         data.setMethod(response.request().method());
-        data.setParameters(extractQueryParams(response.uri()));
+        data.setParameters(extractQueryParams(response.request().url().uri()));
         data.setStatus(200);
-        data.setBody(response.body());
-        data.setHeaders(Collections.unmodifiableMap(response.headers().map()));
+        data.setHeaders(Collections.unmodifiableMap(response.headers().toMultimap()));
+
+        if (response.body() != null)
+            try {
+                data.setBody(response.body().string());
+            } catch (IOException ignored) {}
+
         return data;
     }
 

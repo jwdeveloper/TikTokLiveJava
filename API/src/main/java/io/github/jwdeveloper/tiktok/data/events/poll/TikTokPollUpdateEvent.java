@@ -30,6 +30,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPollMessage;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @EventMeta(eventType = EventType.Message)
 @Getter
@@ -37,6 +38,6 @@ public class TikTokPollUpdateEvent extends TikTokPollEvent {
     private final List<PollOption> options;
     public TikTokPollUpdateEvent(WebcastPollMessage msg) {
         super(msg);
-        options = msg.getUpdateContent().getOptionListList().stream().map(PollOption::map).toList();
+        options = msg.getUpdateContent().getOptionListList().stream().map(PollOption::map).collect(Collectors.toList());
     }
 }

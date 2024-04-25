@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.messages.data.LinkMicArmiesItems;
 import lombok.Value;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Value
 public class LinkMicArmy {
@@ -37,8 +38,8 @@ public class LinkMicArmy {
         armyId = army.getHostUserId();
         armies = army.getBattleGroupsList()
                 .stream()
-                .map(x -> new Army(x.getUsersList().stream().map(User::map).toList(), x.getPoints()))
-                .toList();
+                .map(x -> new Army(x.getUsersList().stream().map(User::map).collect(Collectors.toList()), x.getPoints()))
+                .collect(Collectors.toList());
     }
 
     @Value

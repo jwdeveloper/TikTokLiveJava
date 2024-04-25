@@ -28,6 +28,8 @@ import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
 import io.github.jwdeveloper.tiktok.utils.ProtocolUtils;
 
+import java.lang.reflect.Method;
+
 public class TikTokLiveMapperHelper implements TikTokMapperHelper {
     private final TikTokGenericEventMapper genericMapper;
 
@@ -38,8 +40,8 @@ public class TikTokLiveMapperHelper implements TikTokMapperHelper {
     @Override
     public <T extends GeneratedMessageV3> T bytesToWebcastObject(byte[] bytes, Class<T> messageClass) {
         try {
-            var parsingMethod = genericMapper.getParsingMethod(messageClass);
-            var sourceObject = parsingMethod.invoke(null, bytes);
+            Method parsingMethod = genericMapper.getParsingMethod(messageClass);
+            Object sourceObject = parsingMethod.invoke(null, bytes);
             return (T) sourceObject;
         } catch (Exception e) {
             throw new TikTokMessageMappingException(messageClass, "can't find parsing method", e);
@@ -49,8 +51,8 @@ public class TikTokLiveMapperHelper implements TikTokMapperHelper {
     @Override
     public Object bytesToWebcastObject(byte[] bytes, String messageName) {
         try {
-            var packageName = "io.github.jwdeveloper.tiktok.messages.webcast." + messageName;
-            var clazz = Class.forName(packageName);
+            String packageName = "io.github.jwdeveloper.tiktok.messages.webcast." + messageName;
+            Class<?> clazz = Class.forName(packageName);
             return bytesToWebcastObject(bytes, (Class<? extends GeneratedMessageV3>) clazz);
         } catch (Exception e) {
             throw new TikTokMessageMappingException(messageName, e);
@@ -60,7 +62,7 @@ public class TikTokLiveMapperHelper implements TikTokMapperHelper {
     @Override
     public boolean isMessageHasProtoClass(String messageName) {
         try {
-            var packageName = "io.github.jwdeveloper.tiktok.messages.webcast." + messageName;
+            String packageName = "io.github.jwdeveloper.tiktok.messages.webcast." + messageName;
             Class.forName(packageName);
             return true;
         } catch (Exception e) {

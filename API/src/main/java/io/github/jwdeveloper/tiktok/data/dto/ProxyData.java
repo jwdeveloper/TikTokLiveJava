@@ -34,7 +34,7 @@ public class ProxyData
 	private final int port;
 
 	public static ProxyData map(String string) {
-		if (string == null || string.isBlank())
+		if (string == null || string.isEmpty())
 			throw new IllegalArgumentException("Provided address cannot be null or empty!");
 		int portIndex = string.lastIndexOf(':');
 		try {

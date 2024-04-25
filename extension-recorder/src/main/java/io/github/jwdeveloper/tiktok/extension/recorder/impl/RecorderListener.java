@@ -22,6 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.extension.recorder.impl;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.*;
@@ -37,6 +39,7 @@ import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -58,7 +61,7 @@ public class RecorderListener implements LiveRecorder {
         settings = RecorderSettings.DEFAULT();
         consumer.accept(settings);
 
-        var json = event.getLiveData().getJson();
+        String json = event.getLiveData().getJson();
 
         liveClient.getLogger().info("Searching for live download url");
         downloadData = settings.getPrepareDownloadData() != null ?
@@ -80,21 +83,21 @@ public class RecorderListener implements LiveRecorder {
         liveDownloadThread = new Thread(() -> {
             try {
                 liveClient.getLogger().info("Recording started");
-                var url = new URL(downloadData.getFullUrl());
+                URL url = new URL(downloadData.getFullUrl());
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                var headers = LiveClientSettings.DefaultRequestHeaders();
-                for (var entry : headers.entrySet()) {
+                Map<String, String> headers = LiveClientSettings.DefaultRequestHeaders();
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
                     connection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
 
-                var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
-                var file = new File(path);
+                String path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
+                File file = new File(path);
                 file.getParentFile().mkdirs();
                 file.createNewFile();
 
                 try (
-                        var in = connection.getInputStream();
-                        var fos = new FileOutputStream(file)
+                        InputStream in = connection.getInputStream();
+                        FileOutputStream fos = new FileOutputStream(file)
                 ) {
                     byte[] dataBuffer = new byte[1024];
                     int bytesRead;
@@ -111,7 +114,7 @@ public class RecorderListener implements LiveRecorder {
             }
         });
 
-        var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
+        TikTokLiveRecorderStartedEvent recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
         liveClient.publishEvent(recordingStartedEvent);
         if (recordingStartedEvent.isCanceled()) {
             liveClient.getLogger().info("Recording cancelled");
@@ -135,24 +138,24 @@ public class RecorderListener implements LiveRecorder {
 
     private DownloadData mapToDownloadData(String json) {
 
-        var parsedJson = JsonParser.parseString(json);
-        var jsonObject = parsedJson.getAsJsonObject();
-        var streamDataJson = jsonObject.getAsJsonObject("data")
+        JsonElement parsedJson = JsonParser.parseString(json);
+        JsonObject jsonObject = parsedJson.getAsJsonObject();
+        String streamDataJson = jsonObject.getAsJsonObject("data")
                 .getAsJsonObject("stream_url")
                 .getAsJsonObject("live_core_sdk_data")
                 .getAsJsonObject("pull_data")
                 .get("stream_data")
                 .getAsString();
 
-        var streamDataJsonObject = JsonParser.parseString(streamDataJson).getAsJsonObject();
+        JsonObject streamDataJsonObject = JsonParser.parseString(streamDataJson).getAsJsonObject();
 
-        var urlLink = streamDataJsonObject.getAsJsonObject("data")
+        String urlLink = streamDataJsonObject.getAsJsonObject("data")
                 .getAsJsonObject(LiveQuality.origin.name())
                 .getAsJsonObject("main")
                 .get("flv")
                 .getAsString();
 
-        var sessionId = streamDataJsonObject.getAsJsonObject("common")
+        String sessionId = streamDataJsonObject.getAsJsonObject("common")
                 .get("session_id")
                 .getAsString();
 

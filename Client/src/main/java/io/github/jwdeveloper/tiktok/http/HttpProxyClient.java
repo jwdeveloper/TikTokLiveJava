@@ -25,16 +25,18 @@ package io.github.jwdeveloper.tiktok.http;
 import io.github.jwdeveloper.tiktok.common.ActionResult;
 import io.github.jwdeveloper.tiktok.data.settings.*;
 import io.github.jwdeveloper.tiktok.exceptions.*;
+import okhttp3.*;
 
 import javax.net.ssl.*;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.*;
-import java.net.http.*;
-import java.net.http.HttpResponse.ResponseInfo;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HttpProxyClient extends HttpClient {
 
@@ -45,33 +47,35 @@ public class HttpProxyClient extends HttpClient {
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}
 
-	public ActionResult<HttpResponse<byte[]>> toResponse() {
-		return switch (proxySettings.getType()) {
-			case HTTP, DIRECT -> handleHttpProxyRequest();
-			default -> handleSocksProxyRequest();
-		};
+	public ActionResult<Response> toResponse() {
+		switch (proxySettings.getType()) {
+			case HTTP:
+			case DIRECT:
+				return this.handleHttpProxyRequest();
+			default: return this.handleSocksProxyRequest();
+		}
 	}
 
-	public ActionResult<HttpResponse<byte[]>> handleHttpProxyRequest() {
-		var builder = java.net.http.HttpClient.newBuilder()
-			.followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
-			.cookieHandler(new CookieManager())
+	public ActionResult<Response> handleHttpProxyRequest() {
+		OkHttpClient.Builder builder = new OkHttpClient.Builder()
+			.followRedirects(true)
+			.cookieJar(CookieJar.NO_COOKIES)
 			.connectTimeout(httpClientSettings.getTimeout());
 
 		while (proxySettings.hasNext()) {
 			try {
 				InetSocketAddress address = proxySettings.next().toSocketAddress();
-				builder.proxy(ProxySelector.of(address));
+				builder.proxy(new Proxy(Proxy.Type.HTTP, address));
 
 				httpClientSettings.getOnClientCreating().accept(builder);
-				var client = builder.build();
-				var request = prepareGetRequest();
+				OkHttpClient client = builder.build();
+				Request request = prepareGetRequest();
 
-				var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-				if (response.statusCode() != 200)
+				Response response = client.newCall(request).execute();
+				if (response.code() != 200)
 					continue;
 				return ActionResult.success(response);
-			} catch (HttpConnectTimeoutException | ConnectException e) {
+			} catch (SocketTimeoutException | ConnectException e) {
 				if (proxySettings.isAutoDiscard())
 					proxySettings.remove();
 				throw new TikTokProxyRequestException(e);
@@ -86,7 +90,7 @@ public class HttpProxyClient extends HttpClient {
 		throw new TikTokLiveRequestException("No more proxies available!");
 	}
 
-	private ActionResult<HttpResponse<byte[]>> handleSocksProxyRequest() {
+	private ActionResult<Response> handleSocksProxyRequest() {
 		try {
 			SSLContext sc = SSLContext.getInstance("SSL");
 			sc.init(null, new TrustManager[]{ new X509TrustManager() {
@@ -103,20 +107,22 @@ public class HttpProxyClient extends HttpClient {
 
 					HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection(proxy);
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
-					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
-					socksConnection.setReadTimeout(httpClientSettings.getTimeout().toMillisPart());
+					socksConnection.setConnectTimeout((int) httpClientSettings.getTimeout().toMillis());
+					socksConnection.setReadTimeout((int) httpClientSettings.getTimeout().toMillis());
 
-					byte[] body = socksConnection.getInputStream().readAllBytes();
+					InputStream socksInputStream = socksConnection.getInputStream();
+					byte[] body = new byte[socksInputStream.available()];
+					DataInputStream dataInputStream = new DataInputStream(socksInputStream);
+					dataInputStream.readFully(body);
 
-					Map<String, List<String>> headers = socksConnection.getHeaderFields()
+					Map<String, String> headers = socksConnection.getHeaderFields()
 						.entrySet()
 						.stream()
 						.filter(entry -> entry.getKey() != null)
+						.flatMap(entry -> Stream.of(new AbstractMap.SimpleEntry<String, String>(entry.getKey(), String.join(", ", entry.getValue()))))
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-					var responseInfo = createResponseInfo(socksConnection.getResponseCode(), headers);
-
-					var response = createHttpResponse(body, toUrl(), responseInfo);
+					Response response = createHttpResponse(body, toUrl(), socksConnection.getResponseCode(), headers);
 
 					return ActionResult.success(response);
 				} catch (IOException e) {
@@ -140,69 +146,20 @@ public class HttpProxyClient extends HttpClient {
 		return ActionResult.failure();
 	}
 
-	private ResponseInfo createResponseInfo(int code, Map<String, List<String>> headers) {
-		return new ResponseInfo() {
-			@Override
-			public int statusCode() {
-				return code;
-			}
-
-			@Override
-			public HttpHeaders headers() {
-				return HttpHeaders.of(headers, (s, s1) -> s != null);
-			}
-
-			@Override
-			public java.net.http.HttpClient.Version version() {
-				return java.net.http.HttpClient.Version.HTTP_2;
-			}
-		};
-	}
-
-	private HttpResponse<byte[]> createHttpResponse(byte[] body,
-												   URI uri,
-												   ResponseInfo info) {
-		return new HttpResponse<>()
-		{
-			@Override
-			public int statusCode() {
-				return info.statusCode();
-			}
-
-			@Override
-			public HttpRequest request() {
-				throw new UnsupportedOperationException("TODO");
-			}
-
-			@Override
-			public Optional<HttpResponse<byte[]>> previousResponse() {
-				return Optional.empty();
-			}
-
-			@Override
-			public HttpHeaders headers() {
-				return info.headers();
-			}
-
-			@Override
-			public byte[] body() {
-				return body;
-			}
-
-			@Override
-			public Optional<SSLSession> sslSession() {
-				throw new UnsupportedOperationException("TODO");
-			}
-
-			@Override
-			public URI uri() {
-				return uri;
-			}
-
-			@Override
-			public java.net.http.HttpClient.Version version() {
-				return info.version();
-			}
-		};
+	private Response createHttpResponse(byte[] body,
+										URI uri,
+										int code,
+										Map<String, String> headers)
+	{
+		Request request = new Request.Builder()
+				.url(HttpUrl.get(uri))
+				.headers(Headers.of(headers))
+				.build();
+		return new Response.Builder()
+				.protocol(Protocol.HTTP_2)
+				.code(code)
+				.request(request)
+				.body(ResponseBody.create(body, MediaType.get("text/plain")))
+				.build();
 	}
 }

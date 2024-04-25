@@ -22,23 +22,27 @@
  */
 package io.github.jwdeveloper.tiktok.utils;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+
+import java.util.Map;
 
 public class ProtoBufferJsonGenerator {
     public static JsonObject genratejson(ProtoBufferObject protoBuffObj) {
 
         JsonObject jsonObject = new JsonObject();
-        for (var entry : protoBuffObj.getFields().entrySet()) {
-            var fieldName = entry.getKey() + "_" + entry.getValue().type;
-            if (entry.getValue().value instanceof ProtoBufferObject protoObj)
+        for (Map.Entry<Integer, ProtoBufferObject.ProtoBufferField> entry : protoBuffObj.getFields().entrySet()) {
+            String fieldName = entry.getKey() + "_" + entry.getValue().type;
+            if (entry.getValue().value instanceof ProtoBufferObject)
             {
+                ProtoBufferObject protoObj = (ProtoBufferObject) entry.getValue().value;
                 JsonObject childJson = genratejson(protoObj);
                 jsonObject.add(fieldName, childJson);
                 continue;
             }
 
-            var value = entry.getValue().value.toString();
+            String value = entry.getValue().value.toString();
             jsonObject.addProperty(fieldName, value);
         }
 
@@ -46,8 +50,8 @@ public class ProtoBufferJsonGenerator {
     }
 
     public static String generate(ProtoBufferObject protoBufferObject) {
-        var json = genratejson(protoBufferObject);
-        var gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject json = genratejson(protoBufferObject);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(json);
     }
 }

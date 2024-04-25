@@ -67,15 +67,15 @@ public class TikTokWebSocketListener extends WebSocketClient {
     }
 
     private void handleBinary(byte[] buffer) {
-        var websocketPushFrameOptional = getWebcastPushFrame(buffer);
-        if (websocketPushFrameOptional.isEmpty()) {
+        Optional<WebcastPushFrame> websocketPushFrameOptional = getWebcastPushFrame(buffer);
+        if (!websocketPushFrameOptional.isPresent()) {
             return;
         }
-        var websocketPushFrame = websocketPushFrameOptional.get();
-        var webcastResponse = getWebResponseMessage(websocketPushFrame.getPayload());
+        WebcastPushFrame websocketPushFrame = websocketPushFrameOptional.get();
+        WebcastResponse webcastResponse = getWebResponseMessage(websocketPushFrame.getPayload());
 
         if (webcastResponse.getNeedsAck()) {
-            var pushFrameBuilder = WebcastPushFrame.newBuilder();
+            WebcastPushFrame.Builder pushFrameBuilder = WebcastPushFrame.newBuilder();
             pushFrameBuilder.setPayloadType("ack");
             pushFrameBuilder.setLogId(websocketPushFrame.getLogId());
             pushFrameBuilder.setPayload(webcastResponse.getInternalExtBytes());
@@ -110,7 +110,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     private Optional<WebcastPushFrame> getWebcastPushFrame(byte[] buffer) {
         try {
-            var websocketMessage = WebcastPushFrame.parseFrom(buffer);
+            WebcastPushFrame websocketMessage = WebcastPushFrame.parseFrom(buffer);
             if (websocketMessage.getPayload().isEmpty()) {
                 return Optional.empty();
             }

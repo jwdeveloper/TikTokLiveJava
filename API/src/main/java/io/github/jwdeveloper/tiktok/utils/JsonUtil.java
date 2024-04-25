@@ -30,6 +30,7 @@ import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import java.awt.*;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JsonUtil {
     public static String toJson(Object obj) {
@@ -65,7 +66,7 @@ public class JsonUtil {
 
     public static String messageToJson(Object obj) {
 
-        var ignoredFields = new ArrayList<String>();
+        List<String> ignoredFields = new ArrayList<String>();
         ignoredFields.add("memoizedIsInitialized");
         ignoredFields.add("memoizedSize");
         ignoredFields.add("memoizedHashCode");

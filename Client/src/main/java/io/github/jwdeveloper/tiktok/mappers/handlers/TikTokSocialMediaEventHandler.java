@@ -33,6 +33,8 @@ import io.github.jwdeveloper.tiktok.data.models.Text;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import io.github.jwdeveloper.tiktok.models.SocialTypes;
 import lombok.SneakyThrows;
+
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TikTokSocialMediaEventHandler
@@ -47,24 +49,24 @@ public class TikTokSocialMediaEventHandler
     @SneakyThrows
     public TikTokEvent handle(byte[] msg)
     {
-        var message = WebcastSocialMessage.parseFrom(msg);
+        WebcastSocialMessage message = WebcastSocialMessage.parseFrom(msg);
 
-        var socialType = Text.map(message.getCommon().getDisplayText()).getKey();
-        var matcher = socialMediaPattern.matcher(socialType);
+        String socialType = Text.map(message.getCommon().getDisplayText()).getKey();
+        Matcher matcher = socialMediaPattern.matcher(socialType);
 
         if (matcher.find()) {
-            var value = matcher.group(1);
-            var number = Integer.parseInt(value);
+            String value = matcher.group(1);
+            int number = Integer.parseInt(value);
             return new TikTokShareEvent(message, number);
         }
 
-        return switch (socialType) {
-            case SocialTypes.LikeType -> new TikTokLikeEvent(message, roomInfo.getLikesCount());
-            case SocialTypes.FollowType -> new TikTokFollowEvent(message);
-            case SocialTypes.ShareType -> new TikTokShareEvent(message);
-            case SocialTypes.JoinType -> new TikTokJoinEvent(message, roomInfo.getViewersCount());
-            default -> new TikTokUnhandledSocialEvent(message);
-        };
+        switch (socialType) {
+            case SocialTypes.LikeType: return new TikTokLikeEvent(message, roomInfo.getLikesCount());
+            case SocialTypes.FollowType: return new TikTokFollowEvent(message);
+            case SocialTypes.ShareType: return new TikTokShareEvent(message);
+            case SocialTypes.JoinType: return new TikTokJoinEvent(message, roomInfo.getViewersCount());
+            default: return new TikTokUnhandledSocialEvent(message);
+        }
     }
 
 

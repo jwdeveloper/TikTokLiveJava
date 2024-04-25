@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -40,7 +41,7 @@ public class MappingResult
     String message;
 
     public static MappingResult of(Object source) {
-        return new MappingResult(source, List.of(),"");
+        return new MappingResult(source, Collections.emptyList(),"");
     }
 
     public static MappingResult of(Object source, List<TikTokEvent> events) {
@@ -48,6 +49,6 @@ public class MappingResult
     }
 
     public static MappingResult of(Object source,TikTokEvent events) {
-        return new MappingResult(source, List.of(events),"");
+        return new MappingResult(source, Collections.singletonList(events),"");
     }
 }

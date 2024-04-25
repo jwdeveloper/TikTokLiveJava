@@ -44,11 +44,11 @@ public class Picture {
     }
 
     public static Picture map(io.github.jwdeveloper.tiktok.messages.data.Image profilePicture) {
-        var index = profilePicture.getUrlCount() - 1;
+        int index = profilePicture.getUrlCount() - 1;
         if (index < 0) {
             return new Picture("");
         }
-        var url = profilePicture.getUrl(index);
+        String url = profilePicture.getUrl(index);
         return new Picture(url);
     }
 
@@ -73,9 +73,9 @@ public class Picture {
             return null;
         }
 
-        var baos = new ByteArrayOutputStream();
-        try (var is = new URL(urlString).openStream()) {
-            var byteChunk = new byte[4096];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream is = new URL(urlString).openStream()) {
+            byte[] byteChunk = new byte[4096];
             int n;
 
             while ((n = is.read(byteChunk)) > 0) {
@@ -85,7 +85,7 @@ public class Picture {
             throw new TikTokLiveException("Unable map downloaded image", e);
         }
 
-        var bais = new ByteArrayInputStream(baos.toByteArray());
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         try {
             return ImageIO.read(bais);
         } catch (IOException e) {

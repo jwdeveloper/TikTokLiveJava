@@ -63,19 +63,22 @@ public class ProxyClientSettings implements Iterator<ProxyData>
 
     @Override
     public ProxyData next() {
-        var nextProxy = switch (rotation)
-        {
-            case CONSECUTIVE -> {
+        ProxyData nextProxy;
+        switch (rotation) {
+            case CONSECUTIVE: {
                 index = (index+1) % proxyList.size();
-                yield proxyList.get(index).clone();
+                nextProxy = proxyList.get(index).clone();
+                break;
             }
-            case RANDOM -> {
+            case RANDOM: {
                 index = new Random().nextInt(proxyList.size());
-                yield proxyList.get(index).clone();
+                nextProxy = proxyList.get(index).clone();
+                break;
             }
-            case NONE -> {
+            case NONE:
+            default: {
                 index = Math.max(index, 0);
-                yield proxyList.get(index).clone();
+                nextProxy = proxyList.get(index).clone();
             }
         };
         onProxyUpdated.accept(nextProxy);

@@ -30,7 +30,9 @@ import lombok.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Getter
 public class Text {
@@ -53,30 +55,30 @@ public class Text {
     }
 
     public static Text map(io.github.jwdeveloper.tiktok.messages.data.Text input) {
-        var pieces = input.getPiecesListList().stream().map(Text::mapTextPiece).toList();
+        List<Text.TextPiece> pieces = input.getPiecesListList().stream().map(Text::mapTextPiece).collect(Collectors.toList());
         return new Text(input.getKey(), input.getDefaultPattern(), pieces);
     }
 
 
     public static TextPiece mapTextPiece(io.github.jwdeveloper.tiktok.messages.data.Text.TextPiece input) {
-        return switch (input.getType()) {
-            case 11 -> {
-                var user = User.map(input.getUserValue().getUser());
-                yield new UserTextPiece(user);
+        switch (input.getType()) {
+            case 11: {
+                User user = User.map(input.getUserValue().getUser());
+                return new UserTextPiece(user);
             }
-            case 12 -> new GiftTextPiece(input.getGiftValue().getGiftId());
-            default -> new StringTextPiece(input.getStringValue());
-        };
+            case 12: return new GiftTextPiece(input.getGiftValue().getGiftId());
+            default: return new StringTextPiece(input.getStringValue());
+        }
     }
 
 
     private String computeValue() {
-        var regexPattern = Pattern.compile("\\{.*?\\}");
-        var matcher = regexPattern.matcher(pattern);
-        var format = matcher.replaceAll("%s");
+        Pattern regexPattern = Pattern.compile("\\{.*?\\}");
+        Matcher matcher = regexPattern.matcher(pattern);
+        String format = matcher.replaceAll("%s");
 
-        var output = new ArrayList<String>();
-        for (var piece : textPieces)
+        List<String> output = new ArrayList<String>();
+        for (Text.TextPiece piece : textPieces)
         {
             output.add(piece.getText());
         }

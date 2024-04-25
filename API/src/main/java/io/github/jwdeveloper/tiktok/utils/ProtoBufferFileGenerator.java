@@ -31,25 +31,26 @@ public class ProtoBufferFileGenerator {
 
     public static String generate(ProtoBufferObject protoBuffObj, String name) {
 
-        var sb = new StringBuilder();
-        var offset = 2;
+        StringBuilder sb = new StringBuilder();
+        int offset = 2;
         sb.append("message ").append(name).append(" { \n");
 
-        var objects = new TreeMap<String, ProtoBufferObject>();
-        var objectCounter = 0;
-        for (var entry : protoBuffObj.getFields().entrySet()) {
-            var index = entry.getKey();
-            var field = entry.getValue();
-            var fieldName = field.type.toLowerCase() + "Value";
-            var value = field.value;
-            if (field.value instanceof ProtoBufferObject object) {
+        Map<String, ProtoBufferObject> objects = new TreeMap<String, ProtoBufferObject>();
+        int objectCounter = 0;
+        for (Map.Entry<Integer, ProtoBufferObject.ProtoBufferField> entry : protoBuffObj.getFields().entrySet()) {
+            int index = entry.getKey();
+            ProtoBufferObject.ProtoBufferField field = entry.getValue();
+            String fieldName = field.type.toLowerCase() + "Value";
+            Object value = field.value;
+            if (field.value instanceof ProtoBufferObject) {
+                ProtoBufferObject object = (ProtoBufferObject) field.value;
                 fieldName += objectCounter;
                 value = "";
                 objects.put(fieldName,object);
                 objectCounter++;
 
             }
-            for (var i = 0; i < offset; i++) {
+            for (int i = 0; i < offset; i++) {
                 sb.append(" ");
             }
             sb.append(field.type).append(" ").append(fieldName)
@@ -63,9 +64,9 @@ public class ProtoBufferFileGenerator {
                     .append("\n");
         }
         sb.append(" \n");
-        for(var object : objects.entrySet())
+        for(Map.Entry<String, ProtoBufferObject> object : objects.entrySet())
         {
-            var structure = generate(object.getValue(),object.getKey());
+            String structure = generate(object.getValue(),object.getKey());
             sb.append(structure);
         }
 

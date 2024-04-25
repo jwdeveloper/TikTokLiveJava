@@ -28,6 +28,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingAction;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class TikTokLiveMapper implements TikTokMapper {
     @Override
     public TikTokMapperModel forMessage(String messageName) {
         if (!isRegistered(messageName)) {
-            var model = new TikTokLiveMapperModel(messageName);
+            TikTokLiveMapperModel model = new TikTokLiveMapperModel(messageName);
             mappers.put(messageName, model);
         }
         return mappers.get(messageName);
@@ -61,7 +62,7 @@ public class TikTokLiveMapper implements TikTokMapper {
 
     @Override
     public TikTokMapperModel forMessage(String mapperName, MappingAction<MappingResult> onMapping) {
-        var model = forMessage(mapperName);
+        TikTokMapperModel model = forMessage(mapperName);
         model.onMapping(onMapping);
         return model;
     }
@@ -69,7 +70,7 @@ public class TikTokLiveMapper implements TikTokMapper {
 
     @Override
     public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, MappingAction<MappingResult> onMapping) {
-        var model = forMessage(mapperName);
+        TikTokMapperModel model = forMessage(mapperName);
         model.onMapping(onMapping);
         return model;
     }
@@ -95,22 +96,22 @@ public class TikTokLiveMapper implements TikTokMapper {
 
     public List<TikTokEvent> handleMapping(String messageName, byte[] bytes) {
         if (!isRegistered(messageName)) {
-            return List.of();
+            return Collections.emptyList();
         }
-        var mapperModel = mappers.get(messageName);
+        TikTokLiveMapperModel mapperModel = mappers.get(messageName);
 
-        var inputBytes = mapperModel.getOnBeforeMapping().onMapping(bytes, messageName, mapperUtils);
-        var globalInputBytes = globalMapperModel.getOnBeforeMapping().onMapping(inputBytes, messageName, mapperUtils);
+        byte[] inputBytes = mapperModel.getOnBeforeMapping().onMapping(bytes, messageName, mapperUtils);
+        byte[] globalInputBytes = globalMapperModel.getOnBeforeMapping().onMapping(inputBytes, messageName, mapperUtils);
 
 
-        var mappingResult = mapperModel.getOnMapping().onMapping(globalInputBytes, messageName, mapperUtils);
+        MappingResult mappingResult = mapperModel.getOnMapping().onMapping(globalInputBytes, messageName, mapperUtils);
 
         if (mappingResult == null) {
             mappingResult = globalMapperModel.getOnMapping().onMapping(globalInputBytes, messageName, mapperUtils);
         }
 
-        var afterMappingResult = mapperModel.getOnAfterMapping().apply(mappingResult);
-        var globalAfterMappingResult = globalMapperModel.getOnAfterMapping().apply(MappingResult.of(mappingResult.getSource(), afterMappingResult));
+        List<TikTokEvent> afterMappingResult = mapperModel.getOnAfterMapping().apply(mappingResult);
+        List<TikTokEvent> globalAfterMappingResult = globalMapperModel.getOnAfterMapping().apply(MappingResult.of(mappingResult.getSource(), afterMappingResult));
         return globalAfterMappingResult;
     }
 }

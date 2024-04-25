@@ -22,6 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.http.mappers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
@@ -42,28 +44,34 @@ public class LiveDataMapper {
      * 4 - Offline
      */
     public LiveData.Response map(String json) {
-        var response = new LiveData.Response();
+        LiveData.Response response = new LiveData.Response();
 
         response.setJson(json);
 
-        var parsedJson = JsonParser.parseString(json);
-        var jsonObject = parsedJson.getAsJsonObject();
+        JsonElement parsedJson = JsonParser.parseString(json);
+        JsonObject jsonObject = parsedJson.getAsJsonObject();
 
 
         if (!jsonObject.has("data")) {
             throw new TikTokLiveRequestException("Data section not found in LiveData.Response");
         }
-        var data = jsonObject.getAsJsonObject("data");
+        JsonObject data = jsonObject.getAsJsonObject("data");
 
 
         if (data.has("status")) {
-            var status = data.get("status");
-            var statusId = status.getAsInt();
-            var statusValue = switch (statusId) {
-                case 2 -> LiveData.LiveStatus.HostOnline;
-                case 4 -> LiveData.LiveStatus.HostOffline;
-                default -> LiveData.LiveStatus.HostNotFound;
-            };
+            JsonElement status = data.get("status");
+            int statusId = status.getAsInt();
+            LiveData.LiveStatus statusValue;
+            switch (statusId) {
+                case 2:
+                    statusValue = LiveData.LiveStatus.HostOnline;
+                    break;
+                case 4:
+                    statusValue = LiveData.LiveStatus.HostOffline;
+                    break;
+                default:
+                    statusValue = LiveData.LiveStatus.HostNotFound;
+            }
             response.setLiveStatus(statusValue);
         } else if (data.has("prompts") && jsonObject.has("status_code") &&
             data.get("prompts").getAsString().isEmpty() && jsonObject.get("status_code").isJsonPrimitive()) {
@@ -73,24 +81,24 @@ public class LiveDataMapper {
         }
 
         if (data.has("age_restricted")) {
-            var element = data.getAsJsonObject("age_restricted");
-            var restricted = element.get("restricted").getAsBoolean();
+            JsonObject element = data.getAsJsonObject("age_restricted");
+            boolean restricted = element.get("restricted").getAsBoolean();
             response.setAgeRestricted(restricted);
         }
 
         if (data.has("title")) {
-            var element = data.get("title");
-            var title = element.getAsString();
+            JsonElement element = data.get("title");
+            String title = element.getAsString();
             response.setTitle(title);
         }
 
         if (data.has("stats")) {
-            var statsElement = data.getAsJsonObject("stats");
-            var likeElement = statsElement.get("like_count");
-            var likes = likeElement.getAsInt();
+            JsonObject statsElement = data.getAsJsonObject("stats");
+            JsonElement likeElement = statsElement.get("like_count");
+            int likes = likeElement.getAsInt();
 
-            var titalUsersElement = statsElement.get("total_user");
-            var totalUsers = titalUsersElement.getAsInt();
+            JsonElement titalUsersElement = statsElement.get("total_user");
+            int totalUsers = titalUsersElement.getAsInt();
 
 
             response.setLikes(likes);
@@ -98,22 +106,22 @@ public class LiveDataMapper {
         }
 
         if (data.has("user_count")) {
-            var element = data.get("user_count");
-            var viewers = element.getAsInt();
+            JsonElement element = data.get("user_count");
+            int viewers = element.getAsInt();
             response.setViewers(viewers);
         }
 
         if (data.has("owner")) {
-            var element = data.getAsJsonObject("owner");
-            var user = getUser(element);
+            JsonObject element = data.getAsJsonObject("owner");
+            User user = getUser(element);
             response.setHost(user);
         }
 
         if (data.has("link_mic")) {
-            var element = data.getAsJsonObject("link_mic");
-            var multi_live = element.get("multi_live_enum").getAsInt();
-            var rival_id = element.get("rival_anchor_id").getAsInt();
-            var battle_scores = element.get("battle_scores").getAsJsonArray();
+            JsonObject element = data.getAsJsonObject("link_mic");
+            int multi_live = element.get("multi_live_enum").getAsInt();
+            int rival_id = element.get("rival_anchor_id").getAsInt();
+            JsonArray battle_scores = element.get("battle_scores").getAsJsonArray();
             if (multi_live == 1) {
                 if (!battle_scores.isEmpty())
                     response.setLiveType(LiveData.LiveType.BATTLE);
@@ -129,21 +137,21 @@ public class LiveDataMapper {
     }
 
     public User getUser(JsonObject jsonElement) {
-        var id = jsonElement.get("id").getAsLong();
-        var name = jsonElement.get("display_id").getAsString();
-        var profileName = jsonElement.get("nickname").getAsString();
+        long id = jsonElement.get("id").getAsLong();
+        String name = jsonElement.get("display_id").getAsString();
+        String profileName = jsonElement.get("nickname").getAsString();
 
 
-        var followElement = jsonElement.getAsJsonObject("follow_info");
-        var followers = followElement.get("follower_count").getAsInt();
-        var followingCount = followElement.get("following_count").getAsInt();
+        JsonObject followElement = jsonElement.getAsJsonObject("follow_info");
+        int followers = followElement.get("follower_count").getAsInt();
+        int followingCount = followElement.get("following_count").getAsInt();
 
 
-        var pictureElement = jsonElement.getAsJsonObject("avatar_large");
-        var link = pictureElement.getAsJsonArray("url_list").get(1).getAsString();
-        var picture = new Picture(link);
+        JsonObject pictureElement = jsonElement.getAsJsonObject("avatar_large");
+        String link = pictureElement.getAsJsonArray("url_list").get(1).getAsString();
+        Picture picture = new Picture(link);
 
-        var user = new User(id, name, profileName, picture, followers, followingCount, new ArrayList<>());
+        User user = new User(id, name, profileName, picture, followers, followingCount, new ArrayList<>());
         user.addAttribute(UserAttribute.LiveHost);
         return user;
     }

@@ -23,33 +23,36 @@
 package io.github.jwdeveloper.tiktok.http.mappers;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GiftsDataMapper {
     public GiftsData.Response map(String json) {
-        var parsedJson = JsonParser.parseString(json);
-        var jsonObject = parsedJson.getAsJsonObject();
-        var gifts = jsonObject.entrySet()
+        JsonElement parsedJson = JsonParser.parseString(json);
+        JsonObject jsonObject = parsedJson.getAsJsonObject();
+        List<Gift> gifts = jsonObject.entrySet()
                 .parallelStream()
                 .map(e -> mapSingleGift(e.getValue()))
-                .toList();
+                .collect(Collectors.toList());
 
         return new GiftsData.Response(json, gifts);
     }
 
 
     private Gift mapSingleGift(JsonElement jsonElement) {
-        var jsonObject = jsonElement.getAsJsonObject();
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-        var id = jsonObject.get("id").getAsInt();
-        var name = jsonObject.get("name").getAsString();
-        var diamondCost = jsonObject.get("diamondCost").getAsInt();
-        var image = jsonObject.get("image").getAsString();
+        int id = jsonObject.get("id").getAsInt();
+        String name = jsonObject.get("name").getAsString();
+        int diamondCost = jsonObject.get("diamondCost").getAsInt();
+        String image = jsonObject.get("image").getAsString();
         return new Gift(id, name, diamondCost, new Picture(image), jsonObject);
     }
 }

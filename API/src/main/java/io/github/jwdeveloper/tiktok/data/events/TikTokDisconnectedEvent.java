@@ -34,7 +34,7 @@ import lombok.Getter;
 public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
 	@Getter private final String reason;
 	public TikTokDisconnectedEvent(String reason) {
-		this.reason = reason.isBlank() ? "None" : reason;
+		this.reason = reason.isEmpty() ? "None" : reason;
 	}
 
 	public TikTokDisconnectedEvent() {

@@ -28,6 +28,7 @@ import com.google.protobuf.UnknownFieldSet;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.util.Base64;
+import java.util.Map;
 
 public class ProtocolUtils {
     public static String toBase64(byte[] bytes) {
@@ -48,8 +49,8 @@ public class ProtocolUtils {
     public static ProtoBufferObject getProtocolBufferStructure(byte[] bytes) {
 
         try {
-            var files = UnknownFieldSet.parseFrom(bytes);
-            var protoBufferObject = new ProtoBufferObject();
+            UnknownFieldSet files = UnknownFieldSet.parseFrom(bytes);
+            ProtoBufferObject protoBufferObject = new ProtoBufferObject();
             createStructure(files, protoBufferObject);
             return protoBufferObject;
         } catch (Exception e) {
@@ -58,16 +59,16 @@ public class ProtocolUtils {
     }
 
     public static void createStructure(UnknownFieldSet unknownFieldSet, ProtoBufferObject root) throws InvalidProtocolBufferException {
-        for (var entry : unknownFieldSet.asMap().entrySet()) {
-            var objectValue = entry.getValue();
-            var type = "undefind";
+        for (Map.Entry<Integer, UnknownFieldSet.Field> entry : unknownFieldSet.asMap().entrySet()) {
+            UnknownFieldSet.Field objectValue = entry.getValue();
+            String type = "undefind";
             Object value = null;
-            var index = entry.getKey();
+            int index = entry.getKey();
             if (!objectValue.getLengthDelimitedList().isEmpty()) {
-                var nestedObject = new ProtoBufferObject();
-                for (var str : objectValue.getLengthDelimitedList()) {
+                ProtoBufferObject nestedObject = new ProtoBufferObject();
+                for (ByteString str : objectValue.getLengthDelimitedList()) {
                     try {
-                        var nestedFieldsSet = UnknownFieldSet.parseFrom(str);
+                        UnknownFieldSet nestedFieldsSet = UnknownFieldSet.parseFrom(str);
                         createStructure(nestedFieldsSet, nestedObject);
                     } catch (Exception e)
                     {
@@ -108,7 +109,7 @@ public class ProtocolUtils {
     }
 
     public static WebcastResponse.Message fromBase64ToMessage(String base64) throws InvalidProtocolBufferException {
-        var bytes = fromBase64(base64);
+        byte[] bytes = fromBase64(base64);
         return WebcastResponse.Message.parseFrom(bytes);
     }
 

@@ -35,6 +35,8 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
 import sun.misc.Unsafe;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class TikTokGiftEventHandler {
@@ -51,67 +53,67 @@ public class TikTokGiftEventHandler {
 
     @SneakyThrows
     public MappingResult handleGifts(byte[] msg, String name, TikTokMapperHelper helper) {
-        var currentMessage = WebcastGiftMessage.parseFrom(msg);
-        var gifts = handleGift(currentMessage);
+        WebcastGiftMessage currentMessage = WebcastGiftMessage.parseFrom(msg);
+        List<TikTokEvent> gifts = handleGift(currentMessage);
         return MappingResult.of(currentMessage, gifts);
     }
 
     public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage) {
-        var userId = currentMessage.getUser().getId();
-        var currentType = GiftComboStateType.fromNumber(currentMessage.getSendType());
-        var containsPreviousMessage = giftsMessages.containsKey(userId);
+        long userId = currentMessage.getUser().getId();
+        GiftComboStateType currentType = GiftComboStateType.fromNumber(currentMessage.getSendType());
+        boolean containsPreviousMessage = giftsMessages.containsKey(userId);
 
 
         //If gift is not streakable just return onGift event
         if (currentMessage.getGift().getType() != 1) {
-            var comboEvent = getGiftComboEvent(currentMessage, GiftComboStateType.Finished);
-            var giftEvent = getGiftEvent(currentMessage);
-            return List.of(comboEvent, giftEvent);
+            TikTokGiftEvent comboEvent = getGiftComboEvent(currentMessage, GiftComboStateType.Finished);
+            TikTokGiftEvent giftEvent = getGiftEvent(currentMessage);
+            return Arrays.asList(comboEvent, giftEvent);
         }
 
         if (!containsPreviousMessage) {
             if (currentType == GiftComboStateType.Finished) {
-                return List.of(getGiftEvent(currentMessage));
+                return Collections.singletonList(getGiftEvent(currentMessage));
             } else {
                 giftsMessages.put(userId, currentMessage);
-                return List.of(getGiftComboEvent(currentMessage, GiftComboStateType.Begin));
+                return Collections.singletonList(getGiftComboEvent(currentMessage, GiftComboStateType.Begin));
             }
         }
 
-        var previousMessage = giftsMessages.get(userId);
-        var previousType = GiftComboStateType.fromNumber(previousMessage.getSendType());
+        WebcastGiftMessage previousMessage = giftsMessages.get(userId);
+        GiftComboStateType previousType = GiftComboStateType.fromNumber(previousMessage.getSendType());
         if (currentType == GiftComboStateType.Active &&
                 previousType == GiftComboStateType.Active) {
             giftsMessages.put(userId, currentMessage);
-            return List.of(getGiftComboEvent(currentMessage, GiftComboStateType.Active));
+            return Collections.singletonList(getGiftComboEvent(currentMessage, GiftComboStateType.Active));
         }
 
 
         if (currentType == GiftComboStateType.Finished &&
                 previousType == GiftComboStateType.Active) {
             giftsMessages.clear();
-            return List.of(
+            return Arrays.asList(
                     getGiftComboEvent(currentMessage, GiftComboStateType.Finished),
                     getGiftEvent(currentMessage));
         }
 
-        return List.of();
+        return Collections.emptyList();
     }
 
 
     private TikTokGiftEvent getGiftEvent(WebcastGiftMessage message) {
-        var gift = getGiftObject(message);
+        Gift gift = getGiftObject(message);
         return new TikTokGiftEvent(gift, tikTokRoomInfo.getHost(), message);
     }
 
     private TikTokGiftEvent getGiftComboEvent(WebcastGiftMessage message, GiftComboStateType state) {
-        var gift = getGiftObject(message);
+        Gift gift = getGiftObject(message);
         return new TikTokGiftComboEvent(gift, tikTokRoomInfo.getHost(), message, state);
     }
 
     private Gift getGiftObject(WebcastGiftMessage giftMessage) {
-        var giftId = (int) giftMessage.getGiftId();
-        var gift = giftsManager.getById(giftId);
+        int giftId = (int) giftMessage.getGiftId();
+        Gift gift = giftsManager.getById(giftId);
         if (gift == Gift.UNDEFINED)
             gift = giftsManager.getByName(giftMessage.getGift().getName());
         if (gift == Gift.UNDEFINED) {
@@ -146,10 +148,10 @@ public class TikTokGiftEventHandler {
 
     private void updatePicture(Gift gift, WebcastGiftMessage webcastGiftMessage) {
         try {
-            var picture = Picture.map(webcastGiftMessage.getGift().getImage());
-            var constructor = Unsafe.class.getDeclaredConstructors()[0];
+            Picture picture = Picture.map(webcastGiftMessage.getGift().getImage());
+            Constructor<?> constructor = Unsafe.class.getDeclaredConstructors()[0];
             constructor.setAccessible(true);
-            var field = Gift.class.getDeclaredField("picture");
+            Field field = Gift.class.getDeclaredField("picture");
             field.setAccessible(true);
             field.set(gift, picture);
         } catch (Exception e) {

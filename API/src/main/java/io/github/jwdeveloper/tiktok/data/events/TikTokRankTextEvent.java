@@ -38,7 +38,7 @@ public class TikTokRankTextEvent extends TikTokHeaderEvent {
 
   public TikTokRankTextEvent(WebcastRankTextMessage msg) {
     super(msg.getCommon());
-    var text = Text.map(msg.getSelfGetBadgeMsg());
+    Text text = Text.map(msg.getSelfGetBadgeMsg());
     label = text.getPattern();
     eventType = text.getKey();
   }

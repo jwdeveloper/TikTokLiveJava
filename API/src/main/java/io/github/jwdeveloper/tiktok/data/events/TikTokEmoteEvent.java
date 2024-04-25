@@ -31,6 +31,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastEmoteChatMessage;
 import lombok.Value;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Triggered every time a subscriber sends an emote (sticker).
@@ -44,6 +45,6 @@ public class TikTokEmoteEvent extends TikTokHeaderEvent {
     public TikTokEmoteEvent(WebcastEmoteChatMessage msg) {
         super(msg.getCommon());
         user = User.map(msg.getUser());
-        emotes = msg.getEmoteListList().stream().map(Emote::map).toList();
+        emotes = msg.getEmoteListList().stream().map(Emote::map).collect(Collectors.toList());
     }
 }

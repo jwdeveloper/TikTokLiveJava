@@ -66,21 +66,22 @@ public class ProtoBufferObject {
 
     public String toString(int offset ,boolean nested) {
 
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("\n");
-        for (var entry : fields.entrySet()) {
-            var index = entry.getKey();
-            var field = entry.getValue();
+        for (Map.Entry<Integer, ProtoBufferField> entry : fields.entrySet()) {
+            int index = entry.getKey();
+            ProtoBufferField field = entry.getValue();
 
-            for(var i =0;i<offset;i++)
+            for(int i =0;i<offset;i++)
             {
                 sb.append(" ");
             }
             sb.append(index).append(" ")
                     .append(field.type).append(" ");
 
-            var value = field.value;
-            if (value instanceof ProtoBufferObject child) {
+            Object value = field.value;
+            if (value instanceof ProtoBufferObject) {
+                ProtoBufferObject child = (ProtoBufferObject) value;
                 sb.append(child.toString(offset+2,nested));
             } else {
                 sb.append(entry.getValue().value);

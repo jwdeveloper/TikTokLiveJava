@@ -41,7 +41,7 @@ public class TikTokQuestionEvent extends TikTokHeaderEvent {
     private final User user;
     public TikTokQuestionEvent(WebcastQuestionNewMessage msg) {
         super(msg.getCommon());
-        var data = msg.getDetails();
+        WebcastQuestionNewMessage.QuestionDetails data = msg.getDetails();
         questionId = data.getId();
         text = data.getText();
         time = data.getTimeStamp();

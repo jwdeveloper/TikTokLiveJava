@@ -29,9 +29,12 @@ public enum GiftComboStateType {
     Active;
 
     public static GiftComboStateType fromNumber(long number) {
-        return switch ((int) number) {
-            case 1, 2, 4 -> GiftComboStateType.Active;
-            default -> GiftComboStateType.Finished;
-        };
+        switch ((int) number) {
+            case 1:
+            case 2:
+            case 4:
+                return GiftComboStateType.Active;
+            default: return GiftComboStateType.Finished;
+        }
     }
 }

@@ -22,6 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+
 import java.time.Duration;
 import java.util.logging.Level;
 
@@ -39,16 +41,24 @@ public class CodeExample {
     public static void codeExample() {
         //  <code>
         TikTokLive.newClient("bangbetmenygy")
-                .onGift((liveClient, event) ->
-                {
-                    String message = switch (event.getGift().getName())
-                    {
-                        case "Rose" -> "ROSE!";
-                        case "Good game" -> "GOOD GAME";
-                        case "Ye" -> "Ye";
-                        case "Nice gift" -> "Nice gift";
-                        default -> "Thank you for " + event.getGift().getName();
-                    };
+                .onGift((liveClient, event) -> {
+                    String message;
+                    switch (event.getGift().getName()) {
+                        case "Rose":
+                            message = "ROSE!";
+                            break;
+                        case "Good game":
+                            message = "GOOD GAME";
+                            break;
+                        case "Ye":
+                            message = "Ye";
+                            break;
+                        case "Nice gift":
+                            message = "Nice gift";
+                            break;
+                        default:
+                            message = "Thank you for " + event.getGift().getName();
+                    }
                     System.out.println(event.getUser().getProfileName() + " sends " + message);
                 })
                 .onGiftCombo((liveClient, event) ->
@@ -57,7 +67,7 @@ public class CodeExample {
                 })
                 .onRoomInfo((liveClient, event) ->
                 {
-                    var roomInfo = event.getRoomInfo();
+                    LiveRoomInfo roomInfo = event.getRoomInfo();
                     System.out.println("Room Id: "+roomInfo.getRoomId());
                     System.out.println("Likes: "+roomInfo.getLikesCount());
                     System.out.println("Viewers: "+roomInfo.getViewersCount());

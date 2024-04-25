@@ -23,14 +23,17 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FilesUtility
@@ -38,29 +41,28 @@ public class FilesUtility
     public static List<Path> getFiles(String input) {
         Path path = Paths.get(input);
         try (Stream<Path> paths = Files.list(path)) {
-            return paths.filter(Files::isRegularFile).toList();
+            return paths.filter(Files::isRegularFile).collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     public static String getFileFromResource(Class clazz, String path)
     {
         try {
-            var stream =clazz.getClassLoader().getResourceAsStream(path);
-            var bytes=  stream.readAllBytes();
+            InputStream stream = clazz.getClassLoader().getResourceAsStream(path);
+            byte[] bytes = new byte[stream.available()];
+            DataInputStream dataInputStream = new DataInputStream(stream);
+            dataInputStream.readFully(bytes);
             stream.close();
             return new String(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     public static List<Path> getFileContent(String input) {
-        Path path = Paths.get(input);
-        try (Stream<Path> paths = Files.list(path)) {
-            return paths.filter(Files::isRegularFile).toList();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return getFiles(input);
     }
 
     public static void saveFile(String path, String content)
@@ -76,13 +78,13 @@ public class FilesUtility
         }
     }
 
-    public   static boolean pathExists(String path) {
-        var directory = new File(path);
+    public static boolean pathExists(String path) {
+        File directory = new File(path);
         return directory.exists();
     }
 
     public static File ensurePath(String path) {
-        var directory = new File(path);
+        File directory = new File(path);
         if (directory.exists()) {
             return directory;
         }
@@ -91,7 +93,7 @@ public class FilesUtility
     }
 
     public static void ensureFile(String paths) {
-        var file =   new File(paths);
+        File file = new File(paths);
         if (!file.exists()) {
             try {
                 file.createNewFile();

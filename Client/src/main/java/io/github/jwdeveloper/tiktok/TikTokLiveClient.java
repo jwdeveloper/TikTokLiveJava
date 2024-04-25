@@ -130,8 +130,8 @@ public class TikTokLiveClient implements LiveClient {
 
         setState(ConnectionState.CONNECTING);
         tikTokEventHandler.publish(this, new TikTokConnectingEvent());
-        var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
-        var userData = httpClient.fetchLiveUserData(userDataRequest);
+        LiveUserData.Request userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
+        LiveUserData.Response userData = httpClient.fetchLiveUserData(userDataRequest);
         liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
         liveRoomInfo.setRoomId(userData.getRoomId());
 
@@ -141,8 +141,8 @@ public class TikTokLiveClient implements LiveClient {
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
             throw new TikTokLiveOfflineHostException("User not found: " + liveRoomInfo.getHostName());
 
-        var liveDataRequest = new LiveData.Request(userData.getRoomId());
-        var liveData = httpClient.fetchLiveData(liveDataRequest);
+        LiveData.Request liveDataRequest = new LiveData.Request(userData.getRoomId());
+        LiveData.Response liveData = httpClient.fetchLiveData(liveDataRequest);
 
         if (liveData.isAgeRestricted())
             throw new TikTokLiveException("Livestream for " + liveRoomInfo.getHostName() + " is 18+ or age restricted!");
@@ -161,13 +161,13 @@ public class TikTokLiveClient implements LiveClient {
         liveRoomInfo.setAgeRestricted(liveData.isAgeRestricted());
         liveRoomInfo.setHost(liveData.getHost());
 
-        var preconnectEvent = new TikTokPreConnectionEvent(userData, liveData);
+        TikTokPreConnectionEvent preconnectEvent = new TikTokPreConnectionEvent(userData, liveData);
         tikTokEventHandler.publish(this, preconnectEvent);
         if (preconnectEvent.isCancelConnection())
             throw new TikTokLiveException("TikTokPreConnectionEvent cancelled connection!");
 
-        var liveConnectionRequest = new LiveConnectionData.Request(userData.getRoomId());
-        var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
+        LiveConnectionData.Request liveConnectionRequest = new LiveConnectionData.Request(userData.getRoomId());
+        LiveConnectionData.Response liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
         webSocketClient.start(liveConnectionData, this);
 
         setState(ConnectionState.CONNECTED);
@@ -198,10 +198,10 @@ public class TikTokLiveClient implements LiveClient {
     @Override
     public void publishMessage(String webcastMessageName, byte[] payload) {
 
-        var builder = WebcastResponse.Message.newBuilder();
+        WebcastResponse.Message.Builder builder = WebcastResponse.Message.newBuilder();
         builder.setMethod(webcastMessageName);
         builder.setPayload(ByteString.copyFrom(payload));
-        var message = builder.build();
+        WebcastResponse.Message message = builder.build();
         messageHandler.handleSingleMessage(this, message);
     }
 

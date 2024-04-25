@@ -31,6 +31,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastChatMessage;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Triggered every time a new chat comment arrives.
@@ -52,12 +53,12 @@ public class TikTokCommentEvent extends TikTokHeaderEvent {
         visibleToSender = msg.getVisibleToSender();
         getUserLanguage = msg.getContentLanguage();
         mentionedUser = User.map(msg.getAtUser());
-        pictures = msg.getEmotesListList().stream().map(e -> Picture.map(e.getEmote().getImage())).toList();
+        pictures = msg.getEmotesListList().stream().map(e -> Picture.map(e.getEmote().getImage())).collect(Collectors.toList());
     }
 
 
     public static TikTokCommentEvent of(String userName, String message) {
-        var builder = WebcastChatMessage.newBuilder();
+        WebcastChatMessage.Builder builder = WebcastChatMessage.newBuilder();
         builder.setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
                 .setNickname(userName)
                 .build());

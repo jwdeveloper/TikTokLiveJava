@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class TemplateUtility {
     public static String generateTemplate(String template, Map<String, Object> values) {
-        for (var entry : values.entrySet()) {
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
             template = doReplacement(template, entry.getKey(), entry.getValue().toString());
         }
         return template;
@@ -35,7 +35,7 @@ public class TemplateUtility {
 
 
     private static String doReplacement(String template, String keyword, String value) {
-        var key = "(\\{\\{)" + keyword + "(}})";
+        String key = "(\\{\\{)" + keyword + "(}})";
         return template.replaceAll(key, value);
     }
 

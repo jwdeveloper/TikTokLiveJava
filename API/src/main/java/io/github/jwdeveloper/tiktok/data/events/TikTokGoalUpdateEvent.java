@@ -32,6 +32,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGoalUpdateMessage;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
@@ -50,6 +51,6 @@ public class TikTokGoalUpdateEvent extends TikTokHeaderEvent {
                 .getContributorsListList()
                 .stream()
                 .map(u -> new User(u.getUserId(), u.getDisplayId(), Picture.map(u.getAvatar())))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

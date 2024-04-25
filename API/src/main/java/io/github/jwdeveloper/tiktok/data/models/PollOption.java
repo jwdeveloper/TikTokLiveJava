@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.messages.data.PollOptionInfo;
 import lombok.Value;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Value
 public class PollOption {
@@ -38,7 +39,7 @@ public class PollOption {
 
     public static PollOption map(PollOptionInfo pollOptionInfo) {
 
-        var users = pollOptionInfo.getVoteUserListList().stream().map(User::map).toList();
+        List<User> users = pollOptionInfo.getVoteUserListList().stream().map(User::map).collect(Collectors.toList());
         return new PollOption(
                 pollOptionInfo.getOptionIdx(),
                 pollOptionInfo.getDisplayContent(),

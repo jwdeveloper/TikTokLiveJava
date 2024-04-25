@@ -26,10 +26,12 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.models.PollOption;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.data.PollStartContent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastPollMessage;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
@@ -41,10 +43,10 @@ public class TikTokPollStartEvent extends TikTokPollEvent {
 
     public TikTokPollStartEvent(WebcastPollMessage msg) {
         super(msg);
-        var startContent = msg.getStartContent();
+        PollStartContent startContent = msg.getStartContent();
 
         title = startContent.getTitle();
         operator = User.map(startContent.getOperator());
-        options = startContent.getOptionListList().stream().map(PollOption::map).toList();
+        options = startContent.getOptionListList().stream().map(PollOption::map).collect(Collectors.toList());
     }
 }

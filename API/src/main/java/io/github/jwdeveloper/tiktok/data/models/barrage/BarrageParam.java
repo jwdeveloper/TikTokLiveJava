@@ -28,11 +28,11 @@ public class BarrageParam {
 
     //Figure out barrage type:11
     public static BarrageParam map(WebcastBarrageMessage msg) {
-        return switch (msg.getMsgType()) {
-            case GRADEUSERENTRANCENOTIFICATION -> new UserGradeParam(msg.getUserGradeParam());
-            case FANSLEVELUPGRADE -> new FansLevelParam(msg.getFansLevelParam());
-            case SUBSCRIBEGIFT -> new SubscribeGiftParam(msg.getSubscribeGiftParam());
-            default -> new BarrageParam();
-        };
+        switch (msg.getMsgType()) {
+            case GRADEUSERENTRANCENOTIFICATION: return new UserGradeParam(msg.getUserGradeParam());
+            case FANSLEVELUPGRADE: return new FansLevelParam(msg.getFansLevelParam());
+            case SUBSCRIBEGIFT: return new SubscribeGiftParam(msg.getSubscribeGiftParam());
+            default: return new BarrageParam();
+        }
     }
 }

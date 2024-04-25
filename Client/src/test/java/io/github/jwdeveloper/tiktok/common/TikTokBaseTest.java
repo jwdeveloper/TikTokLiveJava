@@ -24,7 +24,9 @@ package io.github.jwdeveloper.tiktok.common;
 
 
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 
 public class TikTokBaseTest
@@ -32,8 +34,10 @@ public class TikTokBaseTest
     public byte[] getFileBytes(String path)
     {
         try {
-            var stream = getClass().getClassLoader().getResourceAsStream(path);
-            var bytes=  stream.readAllBytes();
+            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
+            byte[] bytes = new byte[stream.available()];
+            DataInputStream dataInputStream = new DataInputStream(stream);
+            dataInputStream.readFully(bytes);
             stream.close();
             return bytes;
         } catch (IOException e) {
@@ -43,13 +47,6 @@ public class TikTokBaseTest
 
     public byte[] getFileBytesUtf(String path)
     {
-        try {
-            var stream = getClass().getClassLoader().getResourceAsStream(path);
-            var bytes=  stream.readAllBytes();
-            stream.close();
-            return Base64.getDecoder().decode(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return Base64.getDecoder().decode(this.getFileBytes(path));
     }
 }

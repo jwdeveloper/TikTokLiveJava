@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.jwdeveloper.tiktok.extension.collector.impl;
 
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
@@ -18,6 +40,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 
 public class DataCollectorListener implements LiveDataCollector {
 
@@ -59,34 +82,35 @@ public class DataCollectorListener implements LiveDataCollector {
 
 
     private void includeResponse(LiveClient liveClient, WebcastResponse message) {
-        var messageContent = Base64.getEncoder().encodeToString(message.toByteArray());
+        String messageContent = Base64.getEncoder().encodeToString(message.toByteArray());
         insertDocument(liveClient, createDocument("response", "webcast", messageContent));
     }
 
     private void includeMessage(LiveClient liveClient, WebcastResponse.Message message) {
-        var method = message.getMethod();
-        var messageContent = Base64.getEncoder().encodeToString(message.getPayload().toByteArray());
+        String method = message.getMethod();
+        String messageContent = Base64.getEncoder().encodeToString(message.getPayload().toByteArray());
         insertDocument(liveClient, createDocument("message", method, messageContent));
     }
 
     private void includeEvent(LiveClient client, TikTokEvent event) {
-        var json = JsonUtil.toJson(event);
-        var content = Base64.getEncoder().encodeToString(json.getBytes());
-        var name = event.getClass().getSimpleName();
+        String json = JsonUtil.toJson(event);
+        String content = Base64.getEncoder().encodeToString(json.getBytes());
+        String name = event.getClass().getSimpleName();
         insertDocument(client, createDocument("event", name, content));
     }
 
     private void includeError(LiveClient client, TikTokErrorEvent event) {
-        var exception = event.getException();
-        var exceptionName = event.getException().getClass().getSimpleName();
+        Throwable exception = event.getException();
+        String exceptionName = event.getException().getClass().getSimpleName();
 
-        var sw = new StringWriter();
-        var pw = new PrintWriter(sw);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
         event.getException().printStackTrace(pw);
-        var content = sw.toString();
-        var contentBase64 = Base64.getEncoder().encodeToString(content.getBytes());
-        var doc = createDocument("error", exceptionName, contentBase64);
-        if (exception instanceof TikTokLiveMessageException ex) {
+        String content = sw.toString();
+        String contentBase64 = Base64.getEncoder().encodeToString(content.getBytes());
+        Document doc = createDocument("error", exceptionName, contentBase64);
+        if (exception instanceof TikTokLiveMessageException) {
+            TikTokLiveMessageException ex = (TikTokLiveMessageException) exception;
             doc.append("message", ex.messageToBase64())
                     .append("response", ex.webcastResponseToBase64());
         }
@@ -103,9 +127,9 @@ public class DataCollectorListener implements LiveDataCollector {
 
 
     private Document createDocument(String dataType, String dataTypeName, String content) {
-        var doc = new Document();
+        Document doc = new Document();
         doc.append("roomId", roomId);
-        for (var entry : settings.getExtraFields().entrySet()) {
+        for (Map.Entry<String, Object> entry : settings.getExtraFields().entrySet()) {
             doc.append(entry.getKey(), entry.getValue());
         }
         doc.append("tiktokUser", userName);

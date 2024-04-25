@@ -108,12 +108,12 @@ public class LiveClientSettings {
     private String apiKey;
 
     public static LiveClientSettings createDefault() {
-        var httpSettings = new HttpClientSettings();
+        HttpClientSettings httpSettings = new HttpClientSettings();
         httpSettings.getParams().putAll(DefaultClientParams());
         httpSettings.getHeaders().putAll(DefaultRequestHeaders());
         httpSettings.setTimeout(Duration.ofSeconds(3));
 
-        var clientSettings = new LiveClientSettings();
+        LiveClientSettings clientSettings = new LiveClientSettings();
         clientSettings.setClientLanguage("en-US");
         clientSettings.setRetryOnConnectionFailure(false);
         clientSettings.setRetryConnectionTimeout(Duration.ofSeconds(1));
@@ -128,7 +128,7 @@ public class LiveClientSettings {
      * Default Parameters for HTTP-Request
      */
     public static Map<String, Object> DefaultClientParams() {
-        var clientParams = new TreeMap<String, Object>();
+        Map<String, Object> clientParams = new TreeMap<String, Object>();
         clientParams.put("aid", 1988);
         clientParams.put("app_language", "en-US");
         clientParams.put("app_name", "tiktok_web");
@@ -169,7 +169,7 @@ public class LiveClientSettings {
      * Default Headers for HTTP-Request
      */
     public static Map<String, String> DefaultRequestHeaders() {
-        var headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<String, String>();
 
         headers.put("authority", "www.tiktok.com");
         headers.put("Cache-Control", "max-age=0");

@@ -25,6 +25,9 @@ package io.github.jwdeveloper.tiktok;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastChatMessage;
+import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
+
+import java.util.List;
 
 public class CustomMappingExample {
 
@@ -42,17 +45,17 @@ public class CustomMappingExample {
                             .onMapping((inputBytes, messageName, mapperHelper) ->
                             {
                                 System.out.println("onMapping mapping: " + messageName);
-                                var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
-                                var language = message.getContentLanguage();
-                                var userName = message.getUser().getNickname();
-                                var content = message.getContent();
-                                var event = new CustomChatEvent(language, userName, content);
+                                WebcastChatMessage message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
+                                String language = message.getContentLanguage();
+                                String userName = message.getUser().getNickname();
+                                String content = message.getContent();
+                                CustomChatEvent event = new CustomChatEvent(language, userName, content);
                                 return MappingResult.of(message, event);
                             })
                             .onAfterMapping(mappingResult ->
                             {
-                                var source = mappingResult.getSource();
-                                var events = mappingResult.getEvents();
+                                Object source = mappingResult.getSource();
+                                List<TikTokEvent> events = mappingResult.getEvents();
                                 System.out.println("onAfter mapping, " + source.getClass().getSimpleName() + " was mapped to " + events.size() + " events");
                                 return events;
                             });
@@ -66,10 +69,10 @@ public class CustomMappingExample {
                             .onBeforeMapping((inputBytes, messageName, mapperHelper) ->
                             {
                                 if (mapperHelper.isMessageHasProtoClass(messageName)) {
-                                    var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, messageName);
+                                    Object messageObject = mapperHelper.bytesToWebcastObject(inputBytes, messageName);
                                     //    System.out.println(mapperHelper.toJson(messageObject));
                                 } else {
-                                    var structure = mapperHelper.bytesToProtoBufferStructure(inputBytes);
+                                    ProtoBufferObject structure = mapperHelper.bytesToProtoBufferStructure(inputBytes);
                                     //     System.out.println(structure.toJson());
                                 }
                                 return inputBytes;

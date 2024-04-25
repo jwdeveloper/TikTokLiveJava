@@ -23,12 +23,15 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.common.ActionResult;
+import io.github.jwdeveloper.tiktok.common.ActionResultBuilder;
 import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import lombok.AllArgsConstructor;
+import okhttp3.*;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
-import java.net.http.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.regex.*;
@@ -41,24 +44,30 @@ public class HttpClient {
     protected final String url;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
-    public ActionResult<HttpResponse<byte[]>> toResponse() {
-        var client = prepareClient();
-        var request = prepareGetRequest();
+    public ActionResult<Response> toResponse() {
+        OkHttpClient client = prepareClient();
+        Request request = prepareGetRequest();
         try {
-            var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            var result = ActionResult.of(response);
-			return response.statusCode() != 200 ? result.message("HttpResponse Code: ", response.statusCode()).failure() : result.success();
+            Response response = client.newCall(request).execute();
+            ActionResultBuilder<Response> result = ActionResult.of(response);
+			return response.code() != 200 ? result.message("HttpResponse Code: ", response.code()).failure() : result.success();
 		} catch (Exception e) {
             throw new TikTokLiveRequestException(e);
         }
     }
 
     public ActionResult<String> toJsonResponse() {
-        return toResponse().map(content -> new String(content.body(), charsetFrom(content.headers())));
+        return toResponse().map(content -> {
+            try {
+                return new String(content.body() != null ? content.body().bytes() : new byte[0], charsetFrom(content.headers()));
+            } catch (IOException ignored) {
+                return "";
+            }
+        });
     }
 
-    private Charset charsetFrom(HttpHeaders headers) {
-        String type = headers.firstValue("Content-type").orElse("text/html; charset=utf-8");
+    private Charset charsetFrom(Headers headers) {
+        String type = headers.get("Content-type") != null ? headers.get("Content-type") : "text/html; charset=utf-8";
         int i = type.indexOf(";");
         if (i >= 0) type = type.substring(i+1);
         try {
@@ -72,28 +81,33 @@ public class HttpClient {
     }
 
     public ActionResult<byte[]> toBinaryResponse() {
-        return toResponse().map(HttpResponse::body);
+        return toResponse().map(response -> {
+            if (response.body() != null)
+                try {
+                    return response.body().bytes();
+                } catch (IOException ignored) {}
+            return new byte[0];
+        });
     }
 
     public URI toUrl() {
-        var stringUrl = prepareUrlWithParameters(url, httpClientSettings.getParams());
+        String stringUrl = prepareUrlWithParameters(url, httpClientSettings.getParams());
         return URI.create(stringUrl);
     }
 
-    protected HttpRequest prepareGetRequest() {
-        var requestBuilder = HttpRequest.newBuilder().GET();
-        requestBuilder.uri(toUrl());
-        requestBuilder.timeout(httpClientSettings.getTimeout());
-        httpClientSettings.getHeaders().forEach(requestBuilder::setHeader);
+    protected Request prepareGetRequest() {
+        Request.Builder requestBuilder = new Request.Builder();
+        requestBuilder.url(url);
+        httpClientSettings.getHeaders().forEach(requestBuilder::addHeader);
 
         httpClientSettings.getOnRequestCreating().accept(requestBuilder);
         return requestBuilder.build();
     }
 
-    protected java.net.http.HttpClient prepareClient() {
-        var builder = java.net.http.HttpClient.newBuilder()
-            .followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
-            .cookieHandler(new CookieManager())
+    protected OkHttpClient prepareClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+            .followRedirects(true)
+            .cookieJar(CookieJar.NO_COOKIES)
             .connectTimeout(httpClientSettings.getTimeout());
 
         httpClientSettings.getOnClientCreating().accept(builder);
@@ -105,11 +119,14 @@ public class HttpClient {
             return url;
         }
 
-        return url + "?" + parameters.entrySet().stream().map(entry ->
-        {
-            var encodedKey = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8);
-            var encodedValue = URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8);
-            return encodedKey + "=" + encodedValue;
+        return url + "?" + parameters.entrySet().stream().map(entry -> {
+            try {
+                String encodedKey = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8.name());
+                String encodedValue = URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8.name());
+                return encodedKey + "=" + encodedValue;
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
         }).collect(Collectors.joining("&"));
     }
 }

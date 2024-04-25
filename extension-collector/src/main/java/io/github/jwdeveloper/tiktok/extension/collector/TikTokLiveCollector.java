@@ -38,18 +38,18 @@ public class TikTokLiveCollector
 {
 
     public static DataCollector useMongo(Consumer<MongoDataCollectorSettings> consumer) {
-        var settings = new MongoDataCollectorSettings();
+        MongoDataCollectorSettings settings = new MongoDataCollectorSettings();
         consumer.accept(settings);
 
-        var storage = new MongoStorage(settings);
+        MongoStorage storage = new MongoStorage(settings);
         return new DataCollector(storage);
     }
 
     public static DataCollector useFile(Consumer<FileDataCollectorSettings> consumer) {
-        var settings = new FileDataCollectorSettings();
+        FileDataCollectorSettings settings = new FileDataCollectorSettings();
         consumer.accept(settings);
 
-        var storage = new FileStorage(settings);
+        FileStorage storage = new FileStorage(settings);
         return new DataCollector(storage);
     }
 }

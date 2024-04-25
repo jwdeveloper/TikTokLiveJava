@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 
 import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
+import io.github.jwdeveloper.tiktok.extension.collector.impl.DataCollector;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,16 +34,18 @@ public class CollectorExample {
 
     public static void main(String[] args) throws IOException {
 
-        var path = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\resources";
-        var collector = TikTokLiveCollector.useFile(settings ->
+        String path = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\resources";
+        DataCollector collector = TikTokLiveCollector.useFile(settings ->
         {
             settings.setParentFile(new File(path));
         });
         collector.connect();
 
-        var users = List.of("tehila_723", "dino123597", "domaxyzx", "dash4214", "obserwacje_live");
-        Map<String, Object> additionalDataFields = Map.of("sessionTag", "ExampleTag");
-        for (var user : users) {
+        List<String> users = Arrays.asList("tehila_723", "dino123597", "domaxyzx", "dash4214", "obserwacje_live");
+        Map<String, Object> additionalDataFields = new HashMap<String, Object>();
+        additionalDataFields.put("sessionTag", "ExampleTag");
+
+        for (String user : users) {
             TikTokLive.newClient(user)
                     .configure(liveClientSettings ->
                     {

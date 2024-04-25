@@ -25,37 +25,39 @@ package io.github.jwdeveloper.tiktok;
 
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CodeExamplesGenerator {
     public static void main(String[] args) {
-        var result = new CodeExamplesGenerator().run();
+        String result = new CodeExamplesGenerator().run();
         System.out.println(result);
     }
 
     public String run() {
 
-        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\CodeExample.java");
-        var p = "<code>(.*?)</code>";
-        var r = Pattern.compile(p, Pattern.DOTALL);
-        var m = r.matcher(content);
+        String content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\CodeExample.java");
+        String p = "<code>(.*?)</code>";
+        Pattern r = Pattern.compile(p, Pattern.DOTALL);
+        Matcher m = r.matcher(content);
 
 
-        var pattern = """
-                ```java
-                {{code}}
-                ```
-                3. Configure (optional)
-                                
-                ```java
-                {{config}}
-                ```
-                """;
+        String pattern = "\"" +
+                "```java" +
+                "{{code}}" +
+                "```" +
+                "3. Configure (optional)" +
+                "\"" +
+                "```java" +
+                "{{config}}" +
+                "```" +
+                "\"";
 
 
-        var values = new HashMap<String, Object>();
+        Map<String, Object> values = new HashMap<String, Object>();
         m.find();
-        var code = m.group(0)
+        String code = m.group(0)
                 .replace("<code>", "")
                 .replace("//  </code>", "")
                 .replaceAll("(?m)^ {8}", "");
@@ -63,7 +65,7 @@ public class CodeExamplesGenerator {
 
         m.find();
         values.put("config", m.group(1));
-        var result = TemplateUtility.generateTemplate(pattern, values);
+        String result = TemplateUtility.generateTemplate(pattern, values);
 
 
         return result;

@@ -24,12 +24,15 @@ package io.github.jwdeveloper.tiktok.mappers;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
+import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *  Goal of this class is to map ProtocolBuffer objects to TikTok Event in generic way
@@ -50,7 +53,9 @@ import java.util.Map;
  */
 public class TikTokGenericEventMapper {
 
-    private record TypePair(Class<?> a, Class<?> b) {
+    @RequiredArgsConstructor
+    private static class TypePair {
+        private final Class<?> a, b;
     }
 
     private final Map<Class<?>, Method> methodCache;
@@ -63,11 +68,11 @@ public class TikTokGenericEventMapper {
 
     public TikTokEvent mapToEvent(Class<?> inputClazz, Class<?> outputClass, byte[] payload) {
         try {
-            var method = getParsingMethod(inputClazz);
-            var deserializedMessage = method.invoke(null, payload);
-            var constructor = getParsingConstructor(inputClazz, outputClass);
+            Method method = getParsingMethod(inputClazz);
+            Object deserializedMessage = method.invoke(null, payload);
+            Constructor<?> constructor = getParsingConstructor(inputClazz, outputClass);
 
-            var tiktokEvent = constructor.newInstance(deserializedMessage);
+            Object tiktokEvent = constructor.newInstance(deserializedMessage);
             return (TikTokEvent) tiktokEvent;
         } catch (Exception ex) {
             throw new TikTokMessageMappingException(inputClazz, outputClass, ex);
@@ -78,24 +83,24 @@ public class TikTokGenericEventMapper {
         if (methodCache.containsKey(input)) {
             return methodCache.get(input);
         }
-        var method = input.getDeclaredMethod("parseFrom", byte[].class);
+        Method method = input.getDeclaredMethod("parseFrom", byte[].class);
         methodCache.put(input, method);
         return method;
     }
 
     private Constructor<?> getParsingConstructor(Class<?> input, Class<?> output) {
-        var pair = new TypePair(input, output);
+        TypePair pair = new TypePair(input, output);
         if (constructorCache.containsKey(pair)) {
             return constructorCache.get(pair);
         }
 
-        var optional = Arrays.stream(output.getConstructors())
+        Optional<Constructor<?>> optional = Arrays.stream(output.getConstructors())
                 .filter(ea -> Arrays.stream(ea.getParameterTypes())
-                        .toList()
+                        .collect(Collectors.toList())
                         .contains(input))
                 .findFirst();
 
-        if (optional.isEmpty()) {
+        if (!optional.isPresent()) {
             throw new TikTokMessageMappingException(input, output, "Unable to find constructor with input class type");
         }
 

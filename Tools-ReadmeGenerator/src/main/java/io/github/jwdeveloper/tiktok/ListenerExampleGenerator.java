@@ -23,23 +23,24 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ListenerExampleGenerator
 {
     public static void main(String[] arg)
     {
-        var result = new ListenerExampleGenerator();
+        ListenerExampleGenerator result = new ListenerExampleGenerator();
         System.out.println(result);
     }
 
 
     public String run()
     {
-        var content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\ListenerExample.java");
-        var p = "<code>(.*?)</code>";
-        var r = Pattern.compile(p, Pattern.DOTALL);
-        var m = r.matcher(content);
+        String content = FilesUtility.loadFileContent("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Examples\\src\\main\\java\\io\\github\\jwdeveloper\\tiktok\\ListenerExample.java");
+        String p = "<code>(.*?)</code>";
+        Pattern r = Pattern.compile(p, Pattern.DOTALL);
+        Matcher m = r.matcher(content);
         m.find();
         return m.group(1);
     }

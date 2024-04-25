@@ -43,46 +43,46 @@ public class TikTokCommonEventHandler
 
     @SneakyThrows
     public TikTokEvent handleWebcastControlMessage(byte[] msg) {
-        var message = WebcastControlMessage.parseFrom(msg);
-        return switch (message.getAction()) {
-            case STREAM_PAUSED -> new TikTokLivePausedEvent();
-            case STREAM_ENDED -> new TikTokLiveEndedEvent();
-            case STREAM_UNPAUSED -> new TikTokLiveUnpausedEvent();
-            default -> new TikTokUnhandledControlEvent(message);
-        };
+        WebcastControlMessage message = WebcastControlMessage.parseFrom(msg);
+        switch (message.getAction()) {
+            case STREAM_PAUSED: return new TikTokLivePausedEvent();
+            case STREAM_ENDED: return new TikTokLiveEndedEvent();
+            case STREAM_UNPAUSED: return new TikTokLiveUnpausedEvent();
+            default: return new TikTokUnhandledControlEvent(message);
+        }
     }
 
     @SneakyThrows
     public TikTokEvent handlePinMessage(byte[] msg) {
-        var pinMessage = WebcastRoomPinMessage.parseFrom(msg);
-        var chatMessage = WebcastChatMessage.parseFrom(pinMessage.getPinnedMessage());
-        var chatEvent = new TikTokCommentEvent(chatMessage);
+        WebcastRoomPinMessage pinMessage = WebcastRoomPinMessage.parseFrom(msg);
+        WebcastChatMessage chatMessage = WebcastChatMessage.parseFrom(pinMessage.getPinnedMessage());
+        TikTokCommentEvent chatEvent = new TikTokCommentEvent(chatMessage);
         return new TikTokRoomPinEvent(pinMessage, chatEvent);
     }
 
     //TODO Probably not working
     @SneakyThrows
     public TikTokEvent handlePollEvent(byte[] msg) {
-        var poolMessage = WebcastPollMessage.parseFrom(msg);
-        return switch (poolMessage.getMessageType()) {
-            case MESSAGETYPE_SUBSUCCESS -> new TikTokPollStartEvent(poolMessage);
-            case MESSAGETYPE_ANCHORREMINDER -> new TikTokPollEndEvent(poolMessage);
-            case MESSAGETYPE_ENTERROOMEXPIRESOON -> new TikTokPollUpdateEvent(poolMessage);
-            default -> new TikTokPollEvent(poolMessage);
-        };
+        WebcastPollMessage poolMessage = WebcastPollMessage.parseFrom(msg);
+        switch (poolMessage.getMessageType()) {
+            case MESSAGETYPE_SUBSUCCESS: return new TikTokPollStartEvent(poolMessage);
+            case MESSAGETYPE_ANCHORREMINDER: return new TikTokPollEndEvent(poolMessage);
+            case MESSAGETYPE_ENTERROOMEXPIRESOON: return new TikTokPollUpdateEvent(poolMessage);
+            default: return new TikTokPollEvent(poolMessage);
+        }
     }
 
     @SneakyThrows
     public List<TikTokEvent> handleEnvelop(byte[] data) {
-        var msg = WebcastEnvelopeMessage.parseFrom(data);
+        WebcastEnvelopeMessage msg = WebcastEnvelopeMessage.parseFrom(data);
         if (msg.getDisplay() != EnvelopeDisplay.EnvelopeDisplayNew) {
             return Collections.emptyList();
         }
-        var totalDiamonds = msg.getEnvelopeInfo().getDiamondCount();
-        var totalUsers = msg.getEnvelopeInfo().getPeopleCount();
-        var chest = new Chest(totalDiamonds, totalUsers);
+        int totalDiamonds = msg.getEnvelopeInfo().getDiamondCount();
+        int totalUsers = msg.getEnvelopeInfo().getPeopleCount();
+        Chest chest = new Chest(totalDiamonds, totalUsers);
 
-        return List.of(new TikTokChestEvent(chest, msg));
+        return Collections.singletonList(new TikTokChestEvent(chest, msg));
     }
 
 }

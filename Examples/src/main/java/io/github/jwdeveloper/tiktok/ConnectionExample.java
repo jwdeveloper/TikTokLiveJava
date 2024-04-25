@@ -23,8 +23,11 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.TikTokSubNotifyEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.live.GiftsManager;
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 
 import java.io.IOException;
@@ -38,7 +41,7 @@ public class ConnectionExample {
 
         showLogo();
 
-        var gifts = TikTokLive.gifts();
+        GiftsManager gifts = TikTokLive.gifts();
 
         TikTokLive.newClient(ConnectionExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->
@@ -68,29 +71,35 @@ public class ConnectionExample {
                 {
 
 
-                    var tiktokLiveEvent = event.getEvent();
-                    if (tiktokLiveEvent instanceof TikTokSubNotifyEvent e) {
+                    TikTokEvent tiktokLiveEvent = event.getEvent();
+                    if (tiktokLiveEvent instanceof TikTokSubNotifyEvent) {
                         System.out.println("it was subscrible event");
                     }
 
                 })
                 .onEvent((liveClient, event) ->
                 {
-                    if (event instanceof TikTokGiftEvent giftEvent) {
+                    if (event instanceof TikTokGiftEvent) {
                         System.out.println("1");
                     }
-                    if (event instanceof TikTokChestEvent chestEvent) {
+                    if (event instanceof TikTokChestEvent) {
                         System.out.println("2");
                     }
                 })
                 .onGift((liveClient, event) ->
                 {
                     switch (event.getGift().getName()) {
-                        case "ROSE" -> print(ConsoleColors.RED, "Rose!");
-                        case "GG" -> print(ConsoleColors.YELLOW, " GOOD GAME!");
-                        case "TIKTOK" -> print(ConsoleColors.CYAN, "Thanks for TikTok");
-                        default ->
-                                print(ConsoleColors.GREEN, "[Thanks for gift] ", ConsoleColors.YELLOW, event.getGift().getName(), "x", event.getCombo());
+                        case "ROSE":
+                            print(ConsoleColors.RED, "Rose!");
+                            break;
+                        case "GG":
+                            print(ConsoleColors.YELLOW, " GOOD GAME!");
+                            break;
+                        case "TIKTOK":
+                            print(ConsoleColors.CYAN, "Thanks for TikTok");
+                            break;
+                        default:
+                            print(ConsoleColors.GREEN, "[Thanks for gift] ", ConsoleColors.YELLOW, event.getGift().getName(), "x", event.getCombo());
                     }
                 })
                 .onGiftCombo((liveClient, event) ->
@@ -107,7 +116,7 @@ public class ConnectionExample {
                 })
                 .onRoomInfo((liveClient, event) ->
                 {
-                    var info = event.getRoomInfo();
+                    LiveRoomInfo info = event.getRoomInfo();
                 })
                 .onFollow((liveClient, event) ->
                 {
@@ -134,22 +143,21 @@ public class ConnectionExample {
     }
 
     private static void print(Object... messages) {
-        var sb = new StringBuilder();
-        for (var message : messages) {
+        StringBuilder sb = new StringBuilder();
+        for (Object message : messages) {
             sb.append(message).append(" ");
         }
         System.out.println(sb);
     }
 
     private static void showLogo() {
-        System.out.println(ConsoleColors.GREEN + """
-                                
-                 _____ _ _    _____     _    _     _          \s
-                |_   _(_) | _|_   _|__ | | _| |   (_)_   _____\s
-                  | | | | |/ / | |/ _ \\| |/ / |   | \\ \\ / / _ \\
-                  | | | |   <  | | (_) |   <| |___| |\\ V /  __/ 
-                  |_| |_|_|\\_\\ |_|\\___/|_|\\_\\_____|_| \\_/ \\___| 
-                """);
-
+        System.out.println(ConsoleColors.GREEN + "\"" +
+                "\n" +
+                " _____ _ _    _____     _    _     _          \n" +
+                "|_   _(_) | _|_   _|__ | | _| |   (_)_   _____\n" +
+                "  | | | | |/ / | |/ _ \\| |/ / |   | \\ \\ / / _ \\\n" +
+                "  | | | |   <  | | (_) |   <| |___| |\\ V /  __/\n" +
+                "  |_| |_|_|\\_\\ |_|\\___/|_|\\_\\_____|_| \\_/ \\___|\n" +
+                "\"");
     }
 }
