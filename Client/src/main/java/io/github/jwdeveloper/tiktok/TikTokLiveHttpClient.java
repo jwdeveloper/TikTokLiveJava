@@ -22,18 +22,26 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import io.github.jwdeveloper.tiktok.common.*;
-import io.github.jwdeveloper.tiktok.data.requests.*;
+import io.github.jwdeveloper.tiktok.common.ActionResult;
+import io.github.jwdeveloper.tiktok.common.LoggerFactory;
+import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
+import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
+import io.github.jwdeveloper.tiktok.data.requests.LiveData;
+import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.data.settings.ProxyClientSettings;
-import io.github.jwdeveloper.tiktok.exceptions.*;
-import io.github.jwdeveloper.tiktok.http.*;
-import io.github.jwdeveloper.tiktok.http.mappers.*;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokProxyRequestException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokSignServerException;
+import io.github.jwdeveloper.tiktok.http.HttpClientBuilder;
+import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
+import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
+import io.github.jwdeveloper.tiktok.http.mappers.GiftsDataMapper;
+import io.github.jwdeveloper.tiktok.http.mappers.LiveDataMapper;
+import io.github.jwdeveloper.tiktok.http.mappers.LiveUserDataMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import okhttp3.Response;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -108,7 +116,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
     public LiveUserData.Response getLiveUserData(LiveUserData.Request request) {
         String url = TIKTOK_URL_WEB + "api-live/user/room";
-        ActionResult<String> result = httpFactory.client(url)
+        ActionResult<String> result = httpFactory
+            .client(url)
             .withParam("uniqueId", request.getUserName())
             .withParam("sourceType", "54")
             .build()
@@ -136,7 +145,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
     public LiveData.Response getLiveData(LiveData.Request request) {
         String url = TIKTOK_URL_WEBCAST + "room/info";
-        ActionResult<String> result = httpFactory.client(url)
+        ActionResult<String> result = httpFactory
+            .client(url)
             .withParam("room_id", request.getRoomId())
             .build()
             .toJsonResponse();
@@ -145,6 +155,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to get info about live room - "+result);
 
         String json = result.getContent();
+        System.out.println("LIVE DATA: " + json);
         return liveDataMapper.map(json);
     }
 

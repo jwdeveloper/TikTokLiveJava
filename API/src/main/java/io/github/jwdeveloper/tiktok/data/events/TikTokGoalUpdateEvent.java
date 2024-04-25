@@ -27,7 +27,6 @@ import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGoalUpdateMessage;
 import lombok.Getter;
 

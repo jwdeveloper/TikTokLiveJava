@@ -26,13 +26,9 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Value;
-
-import java.time.Duration;
 
 
 /**

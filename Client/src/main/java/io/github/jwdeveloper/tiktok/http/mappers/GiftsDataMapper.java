@@ -29,7 +29,6 @@ import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

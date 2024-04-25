@@ -22,8 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.extension.recorder.impl.data;
 
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveFormat;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -33,7 +33,6 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 
 public class TikTokLiveHttpOfflineClient implements LiveHttpClient {
     @Override

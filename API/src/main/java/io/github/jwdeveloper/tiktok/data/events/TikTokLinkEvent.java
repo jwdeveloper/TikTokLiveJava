@@ -25,11 +25,8 @@ package io.github.jwdeveloper.tiktok.data.events;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @EventMeta(eventType = EventType.Message)

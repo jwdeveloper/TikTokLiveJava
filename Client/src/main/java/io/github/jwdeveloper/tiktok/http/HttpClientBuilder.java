@@ -39,7 +39,7 @@ public class HttpClientBuilder {
     }
 
     public HttpClientBuilder(String url) {
-        httpClientSettings = new HttpClientSettings();
+        this.httpClientSettings = new HttpClientSettings();
         this.url = url;
     }
 
@@ -49,39 +49,39 @@ public class HttpClientBuilder {
     }
 
     public HttpClientBuilder withHttpClientSettings(Consumer<HttpClientSettings> consumer) {
-        consumer.accept(httpClientSettings);
+        consumer.accept(this.httpClientSettings);
         return this;
     }
 
     public HttpClientBuilder withCookie(String name, String value) {
-        httpClientSettings.getCookies().put(name, value);
+        this.httpClientSettings.getCookies().put(name, value);
         return this;
     }
 
     public HttpClientBuilder withHeader(String name, String value) {
-        httpClientSettings.getHeaders().put(name, value);
+        this.httpClientSettings.getHeaders().put(name, value);
         return this;
     }
 
     public HttpClientBuilder withParam(String name, String value) {
-        httpClientSettings.getParams().put(name, value);
+        this.httpClientSettings.getParams().put(name, value);
         return this;
     }
 
     public HttpClientBuilder withParams(Map<String, String> parameters) {
-        httpClientSettings.getParams().putAll(parameters);
+        this.httpClientSettings.getParams().putAll(parameters);
         return this;
     }
 
     public HttpClientBuilder withHeaders(Map<String, String> headers) {
-        httpClientSettings.getHeaders().putAll(headers);
+        this.httpClientSettings.getHeaders().putAll(headers);
         return this;
     }
 
     public HttpClient build() {
-        ProxyClientSettings proxyClientSettings = httpClientSettings.getProxyClientSettings();
+        ProxyClientSettings proxyClientSettings = this.httpClientSettings.getProxyClientSettings();
         if (proxyClientSettings.isEnabled() && proxyClientSettings.hasNext())
-            return new HttpProxyClient(httpClientSettings, url);
-        return new HttpClient(httpClientSettings, url);
+            return new HttpProxyClient(this.httpClientSettings, this.url);
+        return new HttpClient(this.httpClientSettings, this.url);
     }
 }

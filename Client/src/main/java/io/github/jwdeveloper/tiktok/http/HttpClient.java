@@ -29,27 +29,33 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 import lombok.AllArgsConstructor;
 import okhttp3.*;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.regex.*;
+import java.net.CookieManager;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class HttpClient {
 
+    private static final Pattern CHARSET_PATTERN = Pattern.compile("charset=(.*?)(?=&|$)");
+
     protected final HttpClientSettings httpClientSettings;
     protected final String url;
-    private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
     public ActionResult<Response> toResponse() {
-        OkHttpClient client = prepareClient();
-        Request request = prepareGetRequest();
+        OkHttpClient client = this.prepareClient();
+        Request request = this.prepareGetRequest();
         try {
             Response response = client.newCall(request).execute();
             ActionResultBuilder<Response> result = ActionResult.of(response);
+
+            System.out.println("CODE: " + response.code());
 			return response.code() != 200 ? result.message("HttpResponse Code: ", response.code()).failure() : result.success();
 		} catch (Exception e) {
             throw new TikTokLiveRequestException(e);
@@ -57,12 +63,11 @@ public class HttpClient {
     }
 
     public ActionResult<String> toJsonResponse() {
-        return toResponse().map(content -> {
+        return this.toResponse().map(response -> {
             try {
-                return new String(content.body() != null ? content.body().bytes() : new byte[0], charsetFrom(content.headers()));
-            } catch (IOException ignored) {
-                return "";
-            }
+                return response.body().string();
+            } catch (Exception ignored) {}
+            return "";
         });
     }
 
@@ -71,7 +76,7 @@ public class HttpClient {
         int i = type.indexOf(";");
         if (i >= 0) type = type.substring(i+1);
         try {
-            Matcher matcher = pattern.matcher(type);
+            Matcher matcher = CHARSET_PATTERN.matcher(type);
             if (!matcher.find())
                 return StandardCharsets.UTF_8;
             return Charset.forName(matcher.group(1));
@@ -81,25 +86,23 @@ public class HttpClient {
     }
 
     public ActionResult<byte[]> toBinaryResponse() {
-        return toResponse().map(response -> {
-            if (response.body() != null)
-                try {
-                    return response.body().bytes();
-                } catch (IOException ignored) {}
+        return this.toResponse().map(response -> {
+            try {
+                return response.body().bytes();
+            } catch (Exception ignored) {}
             return new byte[0];
         });
     }
 
     public URI toUrl() {
-        String stringUrl = prepareUrlWithParameters(url, httpClientSettings.getParams());
+        String stringUrl = this.prepareUrlWithParameters(this.url, this.httpClientSettings.getParams());
         return URI.create(stringUrl);
     }
 
     protected Request prepareGetRequest() {
-        Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.url(url);
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(HttpUrl.get(this.toUrl()));
         httpClientSettings.getHeaders().forEach(requestBuilder::addHeader);
-
         httpClientSettings.getOnRequestCreating().accept(requestBuilder);
         return requestBuilder.build();
     }
@@ -107,14 +110,15 @@ public class HttpClient {
     protected OkHttpClient prepareClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
             .followRedirects(true)
-            .cookieJar(CookieJar.NO_COOKIES)
+            .followSslRedirects(true)
+            .cookieJar(new JavaNetCookieJar(new CookieManager()))
             .connectTimeout(httpClientSettings.getTimeout());
 
         httpClientSettings.getOnClientCreating().accept(builder);
         return builder.build();
     }
 
-    protected String prepareUrlWithParameters(String url, Map<String, Object> parameters) {
+    protected static String prepareUrlWithParameters(String url, Map<String, Object> parameters) {
         if (parameters.isEmpty()) {
             return url;
         }

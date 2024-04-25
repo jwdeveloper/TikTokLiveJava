@@ -22,12 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.gifts;
 
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftOld;
-import io.github.jwdeveloper.tiktok.data.models.Picture;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 

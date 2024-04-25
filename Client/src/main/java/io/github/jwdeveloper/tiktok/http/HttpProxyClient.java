@@ -23,18 +23,25 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.common.ActionResult;
-import io.github.jwdeveloper.tiktok.data.settings.*;
-import io.github.jwdeveloper.tiktok.exceptions.*;
+import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.ProxyClientSettings;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokProxyRequestException;
 import okhttp3.*;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
-import java.security.*;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,7 +66,8 @@ public class HttpProxyClient extends HttpClient {
 	public ActionResult<Response> handleHttpProxyRequest() {
 		OkHttpClient.Builder builder = new OkHttpClient.Builder()
 			.followRedirects(true)
-			.cookieJar(CookieJar.NO_COOKIES)
+			.followSslRedirects(true)
+			.cookieJar(new JavaNetCookieJar(new CookieManager()))
 			.connectTimeout(httpClientSettings.getTimeout());
 
 		while (proxySettings.hasNext()) {
@@ -69,7 +77,7 @@ public class HttpProxyClient extends HttpClient {
 
 				httpClientSettings.getOnClientCreating().accept(builder);
 				OkHttpClient client = builder.build();
-				Request request = prepareGetRequest();
+				Request request = this.prepareGetRequest();
 
 				Response response = client.newCall(request).execute();
 				if (response.code() != 200)
@@ -99,7 +107,7 @@ public class HttpProxyClient extends HttpClient {
 				public X509Certificate[] getAcceptedIssuers() { return null; }
 			}}, null);
 
-			URL url = toUrl().toURL();
+			URL url = this.toUrl().toURL();
 
 			if (proxySettings.hasNext()) {
 				try {
@@ -122,7 +130,7 @@ public class HttpProxyClient extends HttpClient {
 						.flatMap(entry -> Stream.of(new AbstractMap.SimpleEntry<String, String>(entry.getKey(), String.join(", ", entry.getValue()))))
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-					Response response = createHttpResponse(body, toUrl(), socksConnection.getResponseCode(), headers);
+					Response response = this.createHttpResponse(body, this.toUrl(), socksConnection.getResponseCode(), headers);
 
 					return ActionResult.success(response);
 				} catch (IOException e) {

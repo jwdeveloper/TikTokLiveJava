@@ -22,7 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
-import io.github.jwdeveloper.tiktok.data.settings.*;
+import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 
 public class HttpClientFactory {
     private final LiveClientSettings liveClientSettings;

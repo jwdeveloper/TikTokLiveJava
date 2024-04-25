@@ -22,9 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.users;
 
-import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.messages.webcast.*;
+import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastEnvelopeMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.AccessLevel;
 import lombok.Getter;
 

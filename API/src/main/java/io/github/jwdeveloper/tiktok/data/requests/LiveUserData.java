@@ -22,7 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.data.requests;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 public class LiveUserData {
 

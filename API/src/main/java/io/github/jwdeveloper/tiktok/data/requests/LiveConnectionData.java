@@ -24,11 +24,9 @@ package io.github.jwdeveloper.tiktok.data.requests;
 
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 import java.net.URI;
-import java.time.Duration;
 
 public class LiveConnectionData {
     @Getter

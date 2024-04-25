@@ -22,7 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo;
 
-import lombok.*;
+import lombok.Data;
+import lombok.var;
 
 import java.util.function.Consumer;
 

@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.utils;
 
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
 

@@ -22,10 +22,13 @@
  */
 package io.github.jwdeveloper.tiktok.data.events.control;
 
-import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
-import io.github.jwdeveloper.tiktok.data.requests.*;
-import lombok.*;
+import io.github.jwdeveloper.tiktok.data.requests.LiveData;
+import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Triggered before the connection is established.

@@ -25,7 +25,6 @@ package io.github.jwdeveloper.tiktok.extension.recorder.impl.event;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.DownloadData;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

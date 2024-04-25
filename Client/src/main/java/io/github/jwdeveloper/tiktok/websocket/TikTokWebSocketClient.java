@@ -22,15 +22,20 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.tiktok.*;
+import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.TikTokLiveMessageHandler;
 import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
-import io.github.jwdeveloper.tiktok.data.settings.*;
-import io.github.jwdeveloper.tiktok.exceptions.*;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.data.settings.ProxyClientSettings;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokProxyRequestException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import org.java_websocket.client.WebSocketClient;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.net.Proxy;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;

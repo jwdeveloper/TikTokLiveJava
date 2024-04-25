@@ -24,7 +24,7 @@ package io.github.jwdeveloper.tiktok.extension.collector;
 
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.FileDataCollectorSettings;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.mongo.MongoDataCollectorSettings;
-import io.github.jwdeveloper.tiktok.extension.collector.impl.*;
+import io.github.jwdeveloper.tiktok.extension.collector.impl.DataCollector;
 import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.FileStorage;
 import io.github.jwdeveloper.tiktok.extension.collector.impl.storages.MongoStorage;
 

@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
-
 import lombok.Value;
 
 import java.util.List;

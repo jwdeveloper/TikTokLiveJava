@@ -23,10 +23,15 @@
 package io.github.jwdeveloper.tiktok.data.settings;
 
 import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.net.*;
-import java.util.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 @Getter

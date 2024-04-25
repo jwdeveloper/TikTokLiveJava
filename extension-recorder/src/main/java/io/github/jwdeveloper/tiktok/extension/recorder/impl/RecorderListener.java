@@ -26,24 +26,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.data.events.*;
+import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.data.events.TikTokLiveEndedEvent;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.DownloadData;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.RecorderSettings;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class RecorderListener implements LiveRecorder {
 

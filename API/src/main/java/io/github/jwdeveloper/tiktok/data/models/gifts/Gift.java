@@ -24,9 +24,7 @@ package io.github.jwdeveloper.tiktok.data.models.gifts;
 
 import com.google.gson.JsonObject;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
-import lombok.*;
-
-import java.util.*;
+import lombok.Data;
 
 @Data
 public class Gift {

@@ -25,11 +25,9 @@ package io.github.jwdeveloper.tiktok.extension.collector.impl;
 import io.github.jwdeveloper.tiktok.extension.collector.api.CollectorEvent;
 import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
-import org.bson.Document;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class DataCollector {
 

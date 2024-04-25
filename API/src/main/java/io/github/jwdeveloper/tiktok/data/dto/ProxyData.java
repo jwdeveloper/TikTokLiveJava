@@ -22,9 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok.data.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 @Data
 @AllArgsConstructor

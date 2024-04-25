@@ -22,22 +22,21 @@
  */
 package io.github.jwdeveloper.tiktok.http.mappers;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import okhttp3.Request;
 
 import java.lang.reflect.Type;
 
 public class HttpRequestJsonMapper implements JsonSerializer<Request>
 {
-	// TODO Theses extras fields that are commented out belongs to OkHttpClient
 	@Override
 	public JsonElement serialize(Request src, Type typeOfSrc, JsonSerializationContext context) {
 		JsonObject object = new JsonObject();
 		object.addProperty("method", src.method());
-		//object.add("timeout", context.serialize(src.timeout().toString()));
-		//object.addProperty("expectContinue", src.expectContinue());
 		object.add("uri", context.serialize(src.url().uri()));
-		//object.add("version", context.serialize(src.version().toString()));
 		object.add("headers", context.serialize(src.headers().toMultimap()));
 		return object;
 	}

@@ -22,14 +22,16 @@
  */
 package io.github.jwdeveloper.tiktok.http.mappers;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import okhttp3.Response;
 
 import java.lang.reflect.Type;
 
 public class HttpResponseJsonMapper implements JsonSerializer<Response>
 {
-	// TODO The version field which is commented out belongs to OkHttpClient
 	@Override
 	public JsonElement serialize(Response src, Type typeOfSrc, JsonSerializationContext context) {
 		JsonObject object = new JsonObject();
@@ -38,7 +40,6 @@ public class HttpResponseJsonMapper implements JsonSerializer<Response>
 		object.add("headers", context.serialize(src.headers().toMultimap()));
 		object.add("body", context.serialize(src.body()));
 		object.add("uri", context.serialize(src.request().url().uri().toString()));
-		//object.add("version", context.serialize(src.version().toString()));
 		return object;
 	}
 }

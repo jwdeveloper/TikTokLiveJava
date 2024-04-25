@@ -22,8 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok.common;
 
-import com.google.gson.*;
-import io.github.jwdeveloper.tiktok.http.mappers.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import io.github.jwdeveloper.tiktok.http.mappers.HttpRequestJsonMapper;
+import io.github.jwdeveloper.tiktok.http.mappers.HttpResponseJsonMapper;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import okhttp3.Request;

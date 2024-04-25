@@ -22,14 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok.data.events;
 
-import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.battles.*;
+import io.github.jwdeveloper.tiktok.data.models.battles.Team;
+import io.github.jwdeveloper.tiktok.data.models.battles.Team1v1;
+import io.github.jwdeveloper.tiktok.data.models.battles.Team2v2;
 import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Triggered every time a battle starts & ends

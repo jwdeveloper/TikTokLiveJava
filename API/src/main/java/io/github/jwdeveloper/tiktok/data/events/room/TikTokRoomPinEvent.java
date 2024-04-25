@@ -24,8 +24,8 @@ package io.github.jwdeveloper.tiktok.data.events.room;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokCommentEvent;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastRoomPinMessage;
 import lombok.Getter;
 

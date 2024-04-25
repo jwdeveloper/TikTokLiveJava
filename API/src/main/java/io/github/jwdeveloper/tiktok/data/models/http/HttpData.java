@@ -27,7 +27,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okio.Buffer;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
@@ -49,12 +48,11 @@ public class HttpData {
         data.setStatus(200);
         data.setHeaders(Collections.unmodifiableMap(request.headers().toMultimap()));
 
-        if (request.body() != null)
-            try {
-                final Buffer buffer = new Buffer();
-                request.body().writeTo(buffer);
-                data.setBody(buffer.readUtf8());
-            } catch (IOException ignored) {}
+        try {
+            final Buffer buffer = new Buffer();
+            request.body().writeTo(buffer);
+            data.setBody(buffer.readUtf8());
+        } catch (Exception ignored) {}
 
         return data;
     }
@@ -67,10 +65,9 @@ public class HttpData {
         data.setStatus(200);
         data.setHeaders(Collections.unmodifiableMap(response.headers().toMultimap()));
 
-        if (response.body() != null)
-            try {
-                data.setBody(response.body().string());
-            } catch (IOException ignored) {}
+        try {
+            data.setBody(response.body().string());
+        } catch (Exception ignored) {}
 
         return data;
     }

@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok.mappers;
 
 import com.google.protobuf.GeneratedMessageV3;
-import io.github.jwdeveloper.tiktok.TikTokLive;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingAction;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;

@@ -26,7 +26,6 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.live.builder.EventsBuilder;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.reflections.Reflections;
