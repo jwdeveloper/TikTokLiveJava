@@ -54,8 +54,6 @@ public class HttpClient {
         try {
             Response response = client.newCall(request).execute();
             ActionResultBuilder<Response> result = ActionResult.of(response);
-
-            System.out.println("CODE: " + response.code());
 			return response.code() != 200 ? result.message("HttpResponse Code: ", response.code()).failure() : result.success();
 		} catch (Exception e) {
             throw new TikTokLiveRequestException(e);

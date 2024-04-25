@@ -155,7 +155,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to get info about live room - "+result);
 
         String json = result.getContent();
-        System.out.println("LIVE DATA: " + json);
+
         return liveDataMapper.map(json);
     }
 
