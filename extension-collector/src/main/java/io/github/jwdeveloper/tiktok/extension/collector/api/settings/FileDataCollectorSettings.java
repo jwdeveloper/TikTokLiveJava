@@ -25,9 +25,14 @@ package io.github.jwdeveloper.tiktok.extension.collector.api.settings;
 import lombok.Data;
 
 import java.io.File;
+import java.util.function.*;
 
 @Data
 public class FileDataCollectorSettings {
 
     private File parentFile;
+    private BiPredicate<String, String> typeFilter = (dataType, dataTypeName) -> true;
+    private Predicate<String> userFilter = (tiktokUser) -> true;
+    private boolean useFileLocks = false;
+    private boolean appendUserName = false;
 }
