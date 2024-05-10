@@ -34,7 +34,7 @@ public class FileStorage implements Storage {
     @Override
     public void insert(Document document) {
         if (settings.getTypeFilter().test(document.getString("dataType"), document.getString("dataTypeName")) && settings.getUserFilter().test(document.getString("tiktokUser"))) {
-            var fileName = document.get("dataType") + "_" + document.get("dataTypeName") + (settings.isAppendUserName() ? document.getString("tiktokUser") : "") + ".json";
+            var fileName = document.get("dataType") + "_" + document.get("dataTypeName") + (settings.isAppendUserName() ? "_"+document.getString("tiktokUser") : "") + ".json";
             if (settings.isUseFileLocks()) {
                 var lock = locks.computeIfAbsent(fileName, s -> new ReentrantLock());
                 lock.lock();

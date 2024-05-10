@@ -65,8 +65,7 @@ public class LiveDataMapper {
                 default -> LiveData.LiveStatus.HostNotFound;
             };
             response.setLiveStatus(statusValue);
-        } else if (data.has("prompts") && jsonObject.has("status_code") &&
-            data.get("prompts").getAsString().isEmpty() && jsonObject.get("status_code").isJsonPrimitive()) {
+        } else if (data.has("prompts") && jsonObject.has("status_code") && data.get("prompts").getAsString().isEmpty() && jsonObject.get("status_code").isJsonPrimitive()) {
             response.setAgeRestricted(jsonObject.get("status_code").getAsInt() == TikTokLiveHttpClient.TIKTOK_AGE_RESTRICTED_CODE);
         } else {
             response.setLiveStatus(LiveData.LiveStatus.HostNotFound);
