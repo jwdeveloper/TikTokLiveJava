@@ -91,6 +91,9 @@ public class LiveClientSettings {
      */
     private long pingInterval = 5000;
 
+    /** Throw an exception on 18+ Age Restriction */
+    private boolean throwOnAgeRestriction;
+
     /**
 	 * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
 	 * @see <a href="https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages">Documentation: How to obtain sessionId</a>

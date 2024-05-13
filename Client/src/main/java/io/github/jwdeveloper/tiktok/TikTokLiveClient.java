@@ -23,26 +23,19 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokReconnectingEvent;
+import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.*;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
-import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
-import io.github.jwdeveloper.tiktok.data.requests.LiveData;
-import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
+import io.github.jwdeveloper.tiktok.data.requests.*;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
-import io.github.jwdeveloper.tiktok.listener.ListenersManager;
-import io.github.jwdeveloper.tiktok.listener.TikTokListenersManager;
-import io.github.jwdeveloper.tiktok.live.GiftsManager;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.listener.*;
+import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
 
 import java.util.Base64;
@@ -144,7 +137,7 @@ public class TikTokLiveClient implements LiveClient {
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
 
-        if (liveData.isAgeRestricted())
+        if (liveData.isAgeRestricted() && clientSettings.isThrowOnAgeRestriction())
             throw new TikTokLiveException("Livestream for " + liveRoomInfo.getHostName() + " is 18+ or age restricted!");
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound)
