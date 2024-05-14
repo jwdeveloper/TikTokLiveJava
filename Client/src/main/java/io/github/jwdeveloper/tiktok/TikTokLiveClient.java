@@ -128,6 +128,9 @@ public class TikTokLiveClient implements LiveClient {
         liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
         liveRoomInfo.setRoomId(userData.getRoomId());
 
+        if (clientSettings.isFetchGifts())
+            giftsManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
+
         if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
             throw new TikTokLiveOfflineHostException("User is offline: " + liveRoomInfo.getHostName());
 

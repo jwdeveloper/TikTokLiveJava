@@ -4,7 +4,7 @@ import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 public class TikTokGiftsManager implements GiftsManager {
@@ -12,7 +12,7 @@ public class TikTokGiftsManager implements GiftsManager {
 
     public TikTokGiftsManager(List<Gift> giftList)
     {
-        giftsByIdIndex = giftList.stream().collect(Collectors.toConcurrentMap(Gift::getId, e -> e));
+        giftsByIdIndex = giftList.stream().collect(Collectors.toConcurrentMap(Gift::getId, Function.identity()));
     }
 
     public void attachGift(Gift gift) {
