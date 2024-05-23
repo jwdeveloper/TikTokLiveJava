@@ -63,7 +63,7 @@ public class TikTokWebSocketClient implements SocketClient {
 
         messageHandler.handle(liveClient, connectionData.getWebcastResponse());
 
-        var headers = new HashMap<String, String>();
+        var headers = clientSettings.getHttpSettings().getHeaders();
         headers.put("Cookie", connectionData.getWebsocketCookies());
         webSocketClient = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
                 headers,
