@@ -33,20 +33,15 @@ import java.util.logging.Level;
 @Data
 public class LiveClientSettings {
 
-
     /**
-     * TODO: give better description
-     * <p>
-     *  sets client in the offline mode, so it do not connects to TikTok servers
-     *  it makes sense to use it when you are testing client with your custom events
+     *  Sets client to offline mode, prohibits connection to TikTok servers
+     *  @apiNote Useful when testing client with custom events
      */
     private boolean offline;
 
     /**
-     * TODO: give better description
-     * <p>
-     * Determines if gifts data is downloaded before TikTokLive starts,
-     * when `false` then client.giftManager() does not contain initial gifts
+     * Fetch and download gifts data before TikTokLive starts
+     * @apiNote If `false`, client.giftManager() does not contain initial gifts
      */
     private boolean fetchGifts = true;
 

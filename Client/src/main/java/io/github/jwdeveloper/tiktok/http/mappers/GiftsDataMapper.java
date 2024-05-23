@@ -22,15 +22,15 @@
  */
 package io.github.jwdeveloper.tiktok.http.mappers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GiftsDataMapper {
+
     public GiftsData.Response map(String json) {
         var parsedJson = JsonParser.parseString(json);
         var jsonObject = parsedJson.getAsJsonObject();
@@ -42,7 +42,6 @@ public class GiftsDataMapper {
         return new GiftsData.Response(json, gifts);
     }
 
-
     private Gift mapSingleGift(JsonElement jsonElement) {
         var jsonObject = jsonElement.getAsJsonObject();
 
@@ -51,5 +50,35 @@ public class GiftsDataMapper {
         var diamondCost = jsonObject.get("diamondCost").getAsInt();
         var image = jsonObject.get("image").getAsString();
         return new Gift(id, name, diamondCost, new Picture(image), jsonObject);
+    }
+
+    public GiftsData.Response mapRoom(String json) {
+        var parsedJson = JsonParser.parseString(json);
+        var jsonObject = parsedJson.getAsJsonObject();
+        if (jsonObject.get("data") instanceof JsonObject data && data.get("gifts") instanceof JsonArray giftArray) {
+            var gifts = giftArray.asList().parallelStream()
+                .map(this::mapSingleRoomGift)
+                .toList();
+
+            return new GiftsData.Response(json, gifts);
+        }
+        return new GiftsData.Response("", List.of());
+    }
+
+    private Gift mapSingleRoomGift(JsonElement jsonElement) {
+        var jsonObject = jsonElement.getAsJsonObject();
+
+        var id = jsonObject.get("id").getAsInt();
+        var name = jsonObject.get("name").getAsString();
+        var diamondCost = jsonObject.get("diamond_count").getAsInt();
+        Picture picture;
+        if (jsonObject.get("image") instanceof JsonObject image && image.get("url_list") instanceof JsonArray urls && !urls.isEmpty()) {
+            String url = urls.get(0).getAsString();
+            if (url.endsWith(".webp"))
+                url = url.substring(0, url.length()-4)+"png";
+            picture = new Picture(url);
+        } else
+            picture = Picture.empty();
+        return new Gift(id, name, diamondCost, picture, jsonObject);
     }
 }

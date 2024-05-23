@@ -43,6 +43,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
     public static final String TIKTOK_GIFTS_URL = "https://raw.githubusercontent.com/TikTok-LIVE-Private/GiftsGenerator/master/page/public/gifts.json";
+    public static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
     public static final int TIKTOK_AGE_RESTRICTED_CODE = 4003110;
 
     private final HttpClientFactory httpFactory;
@@ -63,6 +64,31 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
     public TikTokLiveHttpClient() {
         this(new HttpClientFactory(LiveClientSettings.createDefault()), LiveClientSettings.createDefault());
+    }
+
+    public GiftsData.Response fetchRoomGiftsData(String room_id) {
+        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled()) {
+            while (proxyClientSettings.hasNext()) {
+                try {
+                    return getRoomGiftsData(room_id);
+                } catch (TikTokProxyRequestException ignored) {}
+            }
+        }
+        return getRoomGiftsData(room_id);
+    }
+
+    public GiftsData.Response getRoomGiftsData(String room_id) {
+        var result = httpFactory.client(TIKTOK_ROOM_GIFTS_URL)
+            .withParam("room_id", room_id)
+            .build()
+            .toJsonResponse();
+
+        if (result.isFailure())
+            throw new TikTokLiveRequestException("Unable to fetch gifts information's - "+result);
+
+        var json = result.getContent();
+        return giftsDataMapper.mapRoom(json);
     }
 
     public GiftsData.Response fetchGiftsData() {

@@ -93,7 +93,7 @@ public class Picture {
         }
     }
 
-    public static Picture Empty() {
+    public static Picture empty() {
         return new Picture("");
     }
 

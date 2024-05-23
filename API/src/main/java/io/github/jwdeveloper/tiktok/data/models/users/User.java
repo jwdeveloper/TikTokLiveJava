@@ -169,7 +169,7 @@ public class User {
 
     public static User EMPTY = new User(0L,
             "",
-            Picture.Empty(),
+            Picture.empty(),
             0,
             0,
             List.of(Badge.empty()));

@@ -19,6 +19,11 @@ public class TikTokLiveHttpOfflineClient implements LiveHttpClient {
     }
 
     @Override
+    public GiftsData.Response fetchRoomGiftsData(String room_id) {
+        return new GiftsData.Response("", List.of());
+    }
+
+    @Override
     public LiveUserData.Response fetchLiveUserData(LiveUserData.Request request) {
         return new LiveUserData.Response("", LiveUserData.UserStatus.Live, "offline_room_id", 0);
     }
