@@ -33,6 +33,7 @@ import org.java_websocket.client.WebSocketClient;
 import javax.net.ssl.*;
 import java.net.Proxy;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 public class TikTokWebSocketClient implements SocketClient {
     private final LiveClientSettings clientSettings;
@@ -62,7 +63,7 @@ public class TikTokWebSocketClient implements SocketClient {
 
         messageHandler.handle(liveClient, connectionData.getWebcastResponse());
 
-        var headers = clientSettings.getHttpSettings().getHeaders();
+		var headers = new HashMap<>(clientSettings.getHttpSettings().getHeaders());
         headers.put("Cookie", connectionData.getWebsocketCookies());
         webSocketClient = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
                 headers,

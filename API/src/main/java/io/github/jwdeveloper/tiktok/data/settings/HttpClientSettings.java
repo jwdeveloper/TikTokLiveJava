@@ -34,30 +34,24 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 
 
+@Getter
 public class HttpClientSettings {
 
-    @Getter
-    final Map<String, Object> params;
+    private final Map<String, Object> params;
 
-    @Getter
-    final Map<String, String> headers;
+    private final Map<String, String> headers;
 
-    @Getter
-    final Map<String, String> cookies;
-
-    @Getter
-    @Setter
-    ProxyClientSettings proxyClientSettings;
-
-    @Getter
-    Consumer<HttpClient.Builder> onClientCreating;
-
-    @Getter
-    Consumer<HttpRequest.Builder> onRequestCreating;
+    private final Map<String, String> cookies;
 
     @Setter
-    @Getter
-    Duration timeout;
+    private ProxyClientSettings proxyClientSettings;
+
+    private Consumer<HttpClient.Builder> onClientCreating;
+
+    private Consumer<HttpRequest.Builder> onRequestCreating;
+
+    @Setter
+    private Duration timeout;
 
     public HttpClientSettings() {
         this.params = new TreeMap<>();
@@ -65,10 +59,8 @@ public class HttpClientSettings {
         this.cookies = new HashMap<>();
         this.timeout = Duration.ofSeconds(2);
         this.proxyClientSettings = new ProxyClientSettings();
-        this.onClientCreating = (x) -> {
-        };
-        this.onRequestCreating = (x) -> {
-        };
+        this.onClientCreating = (x) -> {};
+        this.onRequestCreating = (x) -> {};
     }
 
     /**
