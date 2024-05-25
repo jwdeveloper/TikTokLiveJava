@@ -105,17 +105,17 @@ public class HttpProxyClient extends HttpClient {
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
 					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
 					socksConnection.setReadTimeout(httpClientSettings.getTimeout().toMillisPart());
-					Map<String, String> requestHeaders = httpClientSettings.getHeaders();
-					requestHeaders.forEach(socksConnection::setRequestProperty);
+					httpClientSettings.getHeaders().forEach(socksConnection::setRequestProperty);
+
 					byte[] body = socksConnection.getInputStream().readAllBytes();
 
-					Map<String, List<String>> responseHeaders = socksConnection.getHeaderFields()
+					Map<String, List<String>> headers = socksConnection.getHeaderFields()
 						.entrySet()
 						.stream()
 						.filter(entry -> entry.getKey() != null)
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-					var responseInfo = createResponseInfo(socksConnection.getResponseCode(), responseHeaders);
+					var responseInfo = createResponseInfo(socksConnection.getResponseCode(), headers);
 
 					var response = createHttpResponse(body, toUrl(), responseInfo);
 
