@@ -106,9 +106,7 @@ public class HttpProxyClient extends HttpClient {
 					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
 					socksConnection.setReadTimeout(httpClientSettings.getTimeout().toMillisPart());
 					Map<String, String> requestHeaders = httpClientSettings.getHeaders();
-					for (Map.Entry<String, String> entry : requestHeaders.entrySet()) {
-						socksConnection.setRequestProperty(entry.getKey(), entry.getValue());
-					}
+					requestHeaders.forEach(socksConnection::setRequestProperty);
 					byte[] body = socksConnection.getInputStream().readAllBytes();
 
 					Map<String, List<String>> responseHeaders = socksConnection.getHeaderFields()
