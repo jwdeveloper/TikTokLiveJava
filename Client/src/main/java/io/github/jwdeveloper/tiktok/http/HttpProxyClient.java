@@ -105,6 +105,7 @@ public class HttpProxyClient extends HttpClient {
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
 					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
 					socksConnection.setReadTimeout(httpClientSettings.getTimeout().toMillisPart());
+					httpClientSettings.getHeaders().forEach(socksConnection::setRequestProperty);
 
 					byte[] body = socksConnection.getInputStream().readAllBytes();
 
