@@ -18,8 +18,8 @@ public class ActionResult<T> {
 		.setPrettyPrinting().create();
 
 	private boolean success = true;
-	private T content;
 	private String message;
+	private T content;
 	@Accessors(chain = true, fluent = true)
 	private ActionResult<?> previous;
 

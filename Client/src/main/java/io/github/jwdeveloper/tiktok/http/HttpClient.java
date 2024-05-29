@@ -49,6 +49,7 @@ public class HttpClient {
             var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
             var result = ActionResult.of(response);
             return switch (response.statusCode()) {
+                case 420 -> result.message("HttpResponse Code:", response.statusCode(), "| IP Cloudflare Blocked.").failure();
                 case 429 -> {
                     var wait = response.headers().firstValue("ratelimit-reset");
 					if (wait.isEmpty())
