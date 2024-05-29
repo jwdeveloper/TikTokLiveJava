@@ -30,6 +30,7 @@ import lombok.AllArgsConstructor;
 import java.net.*;
 import java.net.http.*;
 import java.nio.charset.*;
+import java.time.*;
 import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
@@ -47,7 +48,20 @@ public class HttpClient {
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
             var result = ActionResult.of(response);
-			return response.statusCode() != 200 ? result.message("HttpResponse Code: ", response.statusCode()).failure() : result.success();
+            return switch (response.statusCode()) {
+                case 429 -> {
+                    var wait = response.headers().firstValue("ratelimit-reset");
+					if (wait.isEmpty())
+                        yield result.message("HttpResponse Code:", response.statusCode(), "| Sign server rate limit reached. Try again later.").failure();
+                    Duration duration = Duration.ofSeconds(Long.parseLong(wait.get()));
+                    yield result.message("HttpResponse Code:", response.statusCode(),
+                        String.format("| Sign server rate limit reached. Try again in %02d:%02d.", duration.toMinutesPart(), duration.toSecondsPart())).failure();
+				}
+                case 500, 501, 502, 503 -> result.message("HttpResponse Code:", response.statusCode(), "| Sign server Error. Try again later.").failure();
+                case 504 -> result.message("HttpResponse Code:", response.statusCode(), "| Sign server Timeout. Try again later.").failure();
+                case 200 -> result.success();
+                default -> result.message("HttpResponse Code:", response.statusCode()).failure();
+            };
 		} catch (Exception e) {
             throw new TikTokLiveRequestException(e);
         }

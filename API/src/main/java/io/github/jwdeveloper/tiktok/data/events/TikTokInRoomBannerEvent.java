@@ -31,10 +31,10 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokInRoomBannerEvent extends TikTokHeaderEvent {
-  private final String json;
+	private final String json;
 
-  public TikTokInRoomBannerEvent(WebcastInRoomBannerMessage msg) {
-    super(msg.getHeader());
-    json = msg.getJson();
-  }
+	public TikTokInRoomBannerEvent(WebcastInRoomBannerMessage msg) {
+		super(msg.getHeader());
+		json = msg.getJson();
+	}
 }

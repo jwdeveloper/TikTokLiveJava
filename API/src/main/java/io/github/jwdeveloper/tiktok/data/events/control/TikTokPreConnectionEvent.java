@@ -30,12 +30,13 @@ import lombok.*;
 /**
  * Triggered before the connection is established.
  */
+@Getter
 @EventMeta(eventType = EventType.Control)
 public class TikTokPreConnectionEvent extends TikTokLiveClientEvent
 {
-	@Getter private final LiveUserData.Response userData;
-	@Getter private final LiveData.Response roomData;
-	@Getter @Setter boolean cancelConnection = false;
+	private final LiveUserData.Response userData;
+	private final LiveData.Response roomData;
+	@Setter boolean cancelConnection = false;
 
 	public TikTokPreConnectionEvent(LiveUserData.Response userData, LiveData.Response liveData) {
 		this.userData = userData;

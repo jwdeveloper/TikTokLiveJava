@@ -36,9 +36,9 @@ import lombok.Value;
 @Value
 @EventMeta(eventType = EventType.Message)
 public class TikTokEnvelopeEvent extends TikTokHeaderEvent {
-  User user;
-  public TikTokEnvelopeEvent(WebcastEnvelopeMessage msg) {
-    super(msg.getCommon());
-    user = User.map(msg.getEnvelopeInfo());
-  }
+	User user;
+	public TikTokEnvelopeEvent(WebcastEnvelopeMessage msg) {
+		super(msg.getCommon());
+		user = User.map(msg.getEnvelopeInfo());
+	}
 }

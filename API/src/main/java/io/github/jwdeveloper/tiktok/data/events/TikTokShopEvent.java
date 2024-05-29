@@ -32,25 +32,24 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokShopEvent extends TikTokHeaderEvent {
-  private final String title;
+	private final String title;
 
-  private final String price;
+	private final String price;
 
-  private final Picture picture;
+	private final Picture picture;
 
-  private final String shopUrl;
+	private final String shopUrl;
 
-  private final String shopName;
+	private final String shopName;
 
-  //Not working
-  public TikTokShopEvent(WebcastOecLiveShoppingMessage msg) {
-    super(msg.getCommon());
-    var data = msg.getShopData();
-    title = data.getTitle();
-    price = data.getPriceString();
-    picture = new Picture(data.getImageUrl());
-    shopUrl = data.getShopUrl();
-    shopName = data.getShopName();
-  }
-
+	//Not working
+	public TikTokShopEvent(WebcastOecLiveShoppingMessage msg) {
+		super(msg.getCommon());
+		var data = msg.getShopData();
+		title = data.getTitle();
+		price = data.getPriceString();
+		picture = new Picture(data.getImageUrl());
+		shopUrl = data.getShopUrl();
+		shopName = data.getShopName();
+	}
 }

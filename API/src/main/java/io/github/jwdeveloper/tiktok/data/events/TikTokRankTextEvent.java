@@ -32,15 +32,14 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokRankTextEvent extends TikTokHeaderEvent {
-  private final String eventType;
+	private final String eventType;
 
-  private final String label;
+	private final String label;
 
-  public TikTokRankTextEvent(WebcastRankTextMessage msg) {
-    super(msg.getCommon());
-    var text = Text.map(msg.getSelfGetBadgeMsg());
-    label = text.getPattern();
-    eventType = text.getKey();
-  }
-
+	public TikTokRankTextEvent(WebcastRankTextMessage msg) {
+		super(msg.getCommon());
+		var text = Text.map(msg.getSelfGetBadgeMsg());
+		label = text.getPattern();
+		eventType = text.getKey();
+	}
 }

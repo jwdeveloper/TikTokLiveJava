@@ -24,10 +24,8 @@ package io.github.jwdeveloper.tiktok.data.events.social;
 
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Value;
 
@@ -38,21 +36,21 @@ import lombok.Value;
 @EventMeta(eventType = EventType.Message)
 public class TikTokFollowEvent extends TikTokHeaderEvent
 {
-   User user;
-   int totalFollowers;
+    User user;
+    int totalFollowers;
 
-  public TikTokFollowEvent(WebcastSocialMessage msg) {
-    super(msg.getCommon());
-    user = User.map(msg.getUser());
-    totalFollowers = msg.getFollowCount();
-  }
+    public TikTokFollowEvent(WebcastSocialMessage msg) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        totalFollowers = msg.getFollowCount();
+    }
 
     public static TikTokFollowEvent of(String userName)
     {
         return new TikTokFollowEvent(WebcastSocialMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setNickname(userName)
-                        .build())
-                .build());
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setNickname(userName)
+                .build())
+            .build());
     }
 }

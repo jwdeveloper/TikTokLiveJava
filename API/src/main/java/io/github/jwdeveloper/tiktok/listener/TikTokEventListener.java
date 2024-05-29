@@ -22,51 +22,50 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 /**
- *
- * @see ListenersManager
- *
+ * ListenersManager
+ * <p>
  * TikTokEventListener is an alternative way of handing TikTok events.
+ * <p>
+ * {@code TikTokLive.newClient("someuser").addListener(listener);}
+ * <p>
+ * After registertion, all listeners are kept in Listener manager - {@link  LiveClient#getListenersManager()}
+ * <p>
+ * Method in TikTokEventListener should meet requirements below to be detected
+ * <p>- @TikTokEventObserver annotation
+ * <p>- 2 parameters of (LiveClient, Class extending TikTokEvent)
+ * <pre>
+ * {@code
+ * 	public static class CustomListener implements TikTokEventListener
+ *  {
+ *  	@TikTokEventObserver
+ *      public void onError(LiveClient liveClient, TikTokErrorEvent event)
+ *      {
+ *      	System.out.println(event.getException().getMessage());
+ *      }
  *
- *  TikTokLive.newClient("someuser").addListener(listener)
+ *      @TikTokEventObserver
+ *      public void onCommentMessage(LiveClient liveClient, TikTokCommentEvent event)
+ *      {
+ *          System.out.println(event.getText());
+ *      }
  *
- *  After registertion all listeners are kept in Listener manager
- *  that could be obtained by client.getListenerManager();
+ *      @TikTokEventObserver
+ *      public void onGiftMessage(LiveClient liveClient, TikTokGiftMessageEvent event)
+ *      {
+ *          System.out.println(event.getGift().getDescription());
+ *      }
  *
- *  Method in TikTokEventListener should meet 4 requirements to be detected
- *         - must have @TikTokEventHandler annotation
- *         - must have 2 parameters
- *         - first parameter must be LiveClient
- *         - second must be class that extending TikTokEvent
- *
- *  public static class CustomListener implements TikTokEventListener
- *     {
- *         @TikTokEventHandler
- *         public void onError(LiveClient liveClient, TikTokErrorEvent event)
- *         {
- *             System.out.println(event.getException().getMessage());
- *         }
- *
- *         @TikTokEventHandler
- *         public void onCommentMessage(LiveClient liveClient, TikTokCommentEvent event)
- *         {
- *             System.out.println(event.getText());
- *         }
- *
- *         @TikTokEventHandler
- *         public void onGiftMessage(LiveClient liveClient, TikTokGiftMessageEvent event)
- *         {
- *             System.out.println(event.getGift().getDescription());
- *         }
- *
- *         @TikTokEventHandler
- *         public void onAnyEvent(LiveClient liveClient, TikTokEvent event)
- *         {
- *             System.out.println(event.getClass().getSimpleName());
- *         }
- *     }
- *
+ *      @TikTokEventObserver
+ *      public void onAnyEvent(LiveClient liveClient, TikTokEvent event)
+ *      {
+ *          System.out.println(event.getClass().getSimpleName());
+ *      }
+ *   }
+ *  }
+ *  </pre>
  */
 public interface TikTokEventListener
 {

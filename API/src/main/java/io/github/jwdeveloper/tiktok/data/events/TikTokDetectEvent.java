@@ -30,14 +30,10 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokDetectEvent extends TikTokHeaderEvent {
-   String language;
+    private final String language;
 
-
-  public TikTokDetectEvent(WebcastMsgDetectMessage msg) {
-    super(msg.getCommon());
-    language = msg.getFromRegion();
-  }
-
-
-
+    public TikTokDetectEvent(WebcastMsgDetectMessage msg) {
+        super(msg.getCommon());
+        language = msg.getFromRegion();
+    }
 }

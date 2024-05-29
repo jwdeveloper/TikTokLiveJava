@@ -35,19 +35,18 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokShareEvent extends TikTokHeaderEvent {
-  private final User user;
-  private final int totalShares;
+	private final User user;
+	private final int totalShares;
 
-  public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
-    super(msg.getCommon());
-    user = User.map(msg.getUser());
-    this.totalShares = amount;
-  }
+	public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
+		super(msg.getCommon());
+		user = User.map(msg.getUser());
+		this.totalShares = amount;
+	}
 
-  public TikTokShareEvent(WebcastSocialMessage msg) {
-    super(msg.getCommon());
-    user = User.map(msg.getUser());
-    totalShares = 1;
-  }
-
+	public TikTokShareEvent(WebcastSocialMessage msg) {
+		super(msg.getCommon());
+		user = User.map(msg.getUser());
+		totalShares = 1;
+	}
 }
