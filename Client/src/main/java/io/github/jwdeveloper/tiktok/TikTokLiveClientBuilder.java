@@ -29,6 +29,7 @@ import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.*;
 import io.github.jwdeveloper.tiktok.data.events.http.TikTokHttpResponseEvent;
+import io.github.jwdeveloper.tiktok.data.events.link.*;
 import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.*;
 import io.github.jwdeveloper.tiktok.data.events.social.*;
@@ -44,13 +45,14 @@ import io.github.jwdeveloper.tiktok.mappers.*;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.mappers.handlers.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
-import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketClient;
-import io.github.jwdeveloper.tiktok.websocket.TikTokWebSocketOfflineClient;
+import io.github.jwdeveloper.tiktok.websocket.*;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+
+import static io.github.jwdeveloper.tiktok.messages.enums.LinkMessageType.*;
 
 public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
@@ -215,6 +217,33 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
             var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicArmies.class);
             return MappingResult.of(message, new TikTokLinkMicArmiesEvent(message));
         });
+        mapper.forMessage(WebcastLinkMessage.class, ((inputBytes, messageName, mapperHelper) -> {
+            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMessage.class);
+            return MappingResult.of(message, switch (message.getMessageType()) {
+                case TYPE_LINKER_INVITE -> new TikTokLinkInviteEvent(message);
+                case TYPE_LINKER_REPLY -> new TikTokLinkReplyEvent(message);
+                case TYPE_LINKER_CREATE -> new TikTokLinkCreateEvent(message);
+                case TYPE_LINKER_CLOSE -> new TikTokLinkCloseEvent(message);
+                case TYPE_LINKER_ENTER -> new TikTokLinkEnterEvent(message);
+                case TYPE_LINKER_LEAVE -> new TikTokLinkLeaveEvent(message);
+                case TYPE_LINKER_CANCEL_INVITE, TYPE_LINKER_CANCEL_APPLY -> new TikTokLinkCancelEvent(message);
+                case TYPE_LINKER_KICK_OUT -> new TikTokLinkKickOutEvent(message);
+                case TYPE_LINKER_LINKED_LIST_CHANGE -> new TikTokLinkLinkedListChangeEvent(message);
+                case TYPE_LINKER_UPDATE_USER -> new TikTokLinkUpdateUserEvent(message);
+                case TYPE_LINKER_WAITING_LIST_CHANGE, TYPE_LINKER_WAITING_LIST_CHANGE_V2 -> new TikTokLinkWaitListChangeEvent(message);
+                case TYPE_LINKER_MUTE -> new TikTokLinkMuteEvent(message);
+                case TYPE_LINKER_MATCH -> new TikTokLinkRandomMatchEvent(message);
+                case TYPE_LINKER_UPDATE_USER_SETTING -> new TikTokLinkUpdateUserSettingEvent(message);
+                case TYPE_LINKER_MIC_IDX_UPDATE -> new TikTokLinkMicIdxUpdateEvent(message);
+                case TYPE_LINKER_LINKED_LIST_CHANGE_V2 -> new TikTokLinkListChangeEvent(message);
+                case TYPE_LINKER_COHOST_LIST_CHANGE -> new TikTokLinkCohostListChangeEvent(message);
+                case TYPE_LINKER_MEDIA_CHANGE -> new TikTokLinkMediaChangeEvent(message);
+                case TYPE_LINKER_ACCEPT_NOTICE -> new TikTokLinkAcceptNoticeEvent(message);
+                case TYPE_LINKER_SYS_KICK_OUT -> new TikTokLinkSysKickOutEvent(message);
+                case TYPE_LINKMIC_USER_TOAST -> new TikTokLinkUserToastEvent(message);
+                default -> new TikTokLinkEvent(message);
+            });
+        }));
         // mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
         //  mapper.webcastObjectToConstructor(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
 
@@ -338,6 +367,111 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     public TikTokLiveClientBuilder onLink(EventConsumer<TikTokLinkEvent> event) {
         eventHandler.subscribe(TikTokLinkEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkInvite(EventConsumer<TikTokLinkInviteEvent> event) {
+        eventHandler.subscribe(TikTokLinkInviteEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkReply(EventConsumer<TikTokLinkReplyEvent> event) {
+        eventHandler.subscribe(TikTokLinkReplyEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkCreate(EventConsumer<TikTokLinkCreateEvent> event) {
+        eventHandler.subscribe(TikTokLinkCreateEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkClose(EventConsumer<TikTokLinkCloseEvent> event) {
+        eventHandler.subscribe(TikTokLinkCloseEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkEnter(EventConsumer<TikTokLinkEnterEvent> event) {
+        eventHandler.subscribe(TikTokLinkEnterEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkLeave(EventConsumer<TikTokLinkLeaveEvent> event) {
+        eventHandler.subscribe(TikTokLinkLeaveEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkCancel(EventConsumer<TikTokLinkCancelEvent> event) {
+        eventHandler.subscribe(TikTokLinkCancelEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkKickOut(EventConsumer<TikTokLinkKickOutEvent> event) {
+        eventHandler.subscribe(TikTokLinkKickOutEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkLinkedListChange(EventConsumer<TikTokLinkLinkedListChangeEvent> event) {
+        eventHandler.subscribe(TikTokLinkLinkedListChangeEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkUpdateUser(EventConsumer<TikTokLinkUpdateUserEvent> event) {
+        eventHandler.subscribe(TikTokLinkUpdateUserEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkWaitListChange(EventConsumer<TikTokLinkWaitListChangeEvent> event) {
+        eventHandler.subscribe(TikTokLinkWaitListChangeEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkMute(EventConsumer<TikTokLinkMuteEvent> event) {
+        eventHandler.subscribe(TikTokLinkMuteEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkRandomMatch(EventConsumer<TikTokLinkRandomMatchEvent> event) {
+        eventHandler.subscribe(TikTokLinkRandomMatchEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkUpdateUserSettings(EventConsumer<TikTokLinkUpdateUserSettingEvent> event) {
+        eventHandler.subscribe(TikTokLinkUpdateUserSettingEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkMicIdxUpdate(EventConsumer<TikTokLinkMicIdxUpdateEvent> event) {
+        eventHandler.subscribe(TikTokLinkMicIdxUpdateEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkListChange(EventConsumer<TikTokLinkListChangeEvent> event) {
+        eventHandler.subscribe(TikTokLinkListChangeEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkCohostListChange(EventConsumer<TikTokLinkCohostListChangeEvent> event) {
+        eventHandler.subscribe(TikTokLinkCohostListChangeEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkMediaChange(EventConsumer<TikTokLinkMediaChangeEvent> event) {
+        eventHandler.subscribe(TikTokLinkMediaChangeEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkAcceptNotice(EventConsumer<TikTokLinkAcceptNoticeEvent> event) {
+        eventHandler.subscribe(TikTokLinkAcceptNoticeEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkSysKickOut(EventConsumer<TikTokLinkSysKickOutEvent> event) {
+        eventHandler.subscribe(TikTokLinkSysKickOutEvent.class, event);
+        return this;
+    }
+
+    public TikTokLiveClientBuilder onLinkUserToast(EventConsumer<TikTokLinkUserToastEvent> event) {
+        eventHandler.subscribe(TikTokLinkUserToastEvent.class, event);
         return this;
     }
 

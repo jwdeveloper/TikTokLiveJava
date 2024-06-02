@@ -20,24 +20,24 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastImDeleteMessage;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokIMDeleteEvent extends TikTokHeaderEvent {
+public class TikTokLinkEvent extends TikTokHeaderEvent {
 
-    private final List<Long> msgIds, userIds;
-    public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
+    private final String extra, transferExtra;
+    private final long expireTimestamp;
+
+    public TikTokLinkEvent(WebcastLinkMessage msg) {
         super(msg.getCommon());
-        this.msgIds = msg.getDeleteMsgIdsListList();
-        this.userIds = msg.getDeleteUserIdsListList();
+        this.extra = msg.getExtra();
+        this.expireTimestamp = msg.getExpireTimestamp();
+        this.transferExtra = msg.getTransferExtra();
     }
 }

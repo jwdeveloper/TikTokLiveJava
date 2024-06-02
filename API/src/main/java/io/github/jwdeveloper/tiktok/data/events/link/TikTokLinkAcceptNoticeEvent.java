@@ -20,18 +20,26 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
 import io.github.jwdeveloper.tiktok.annotations.*;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokLinkEvent extends TikTokHeaderEvent {
+public class TikTokLinkAcceptNoticeEvent extends TikTokLinkEvent {
 
-    public TikTokLinkEvent(WebcastLinkMessage msg) {
-        super(msg.getCommon());
+    private final long fromUserId, fromRoomId, toUserId;
+
+    public TikTokLinkAcceptNoticeEvent(WebcastLinkMessage msg) {
+        super(msg);
+        if (!msg.hasAcceptNoticeContent())
+            throw new IllegalArgumentException("Expected WebcastLinkMessage with Accept Notice Content!");
+
+        var content = msg.getAcceptNoticeContent();
+        this.fromUserId = content.getFromUserId();
+        this.fromRoomId = content.getFromRoomId();
+        this.toUserId = content.getToUserId();
     }
 }

@@ -20,24 +20,36 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastImDeleteMessage;
+import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokIMDeleteEvent extends TikTokHeaderEvent {
+public class TikTokLinkKickOutEvent extends TikTokLinkEvent {
 
-    private final List<Long> msgIds, userIds;
-    public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
-        super(msg.getCommon());
-        this.msgIds = msg.getDeleteMsgIdsListList();
-        this.userIds = msg.getDeleteUserIdsListList();
+    private final long fromUserId;
+    private final KickOutReason kickOutReason;
+
+    public TikTokLinkKickOutEvent(WebcastLinkMessage msg) {
+        super(msg);
+        if (!msg.hasKickOutContent())
+            throw new IllegalArgumentException("Expected WebcastLinkMessage with Kick Out Content!");
+
+        var content = msg.getKickOutContent();
+        this.fromUserId = content.getFromUserId();
+        this.kickOutReason = KickOutReason.values()[content.getKickoutReasonValue()];
+    }
+
+    public enum KickOutReason {
+        KICKOUT_REASON_UNKNOWN,
+        KICKOUT_REASON_FIRST_FRAME_TIMEOUT,
+        KICKOUT_REASON_BY_HOST,
+        KICKOUT_REASON_RTC_LOST_CONNECTION,
+        KICKOUT_REASON_BY_PUNISH,
+        KICKOUT_REASON_BY_ADMIN,
+        KICKOUT_REASON_HOST_REMOVE_ALL_GUESTS
     }
 }

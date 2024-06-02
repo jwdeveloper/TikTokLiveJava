@@ -805,7 +805,7 @@ message WebcastLinkMessage {
   LinkerListChangeContent ListChangeContent = 20;
   CohostListChangeContent CohostListChangeContent = 21;
   LinkerMediaChangeContent MediaChangeContent = 22;
-  LinkerAcceptNoticeContent ReplyAcceptNoticeContent = 23;
+  LinkerAcceptNoticeContent AcceptNoticeContent = 23;
   LinkerSysKickOutContent SysKickOutContent = 101;
   LinkmicUserToastContent UserToastContent = 102;
   string extra = 200;

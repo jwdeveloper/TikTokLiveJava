@@ -20,24 +20,29 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastImDeleteMessage;
+import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.data.models.users.ListUser;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokIMDeleteEvent extends TikTokHeaderEvent {
+public class TikTokLinkEnterEvent extends TikTokLinkEvent {
 
-    private final List<Long> msgIds, userIds;
-    public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
-        super(msg.getCommon());
-        this.msgIds = msg.getDeleteMsgIdsListList();
-        this.userIds = msg.getDeleteUserIdsListList();
+    private final List<ListUser> listUsers;
+    private final int anchorMultiLiveEnum;
+
+    public TikTokLinkEnterEvent(WebcastLinkMessage msg) {
+        super(msg);
+        if (!msg.hasEnterContent())
+            throw new IllegalArgumentException("Expected WebcastLinkMessage with Enter Content!");
+
+        var content = msg.getEnterContent();
+        this.listUsers = content.getLinkedUsersListList().stream().map(ListUser::map).toList();
+        this.anchorMultiLiveEnum = content.getAnchorMultiLiveEnum();
     }
 }
