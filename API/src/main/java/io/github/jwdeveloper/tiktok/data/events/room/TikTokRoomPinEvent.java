@@ -33,15 +33,13 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Message)
 public class TikTokRoomPinEvent extends TikTokHeaderEvent
 {
+	private final TikTokCommentEvent pinnedMessage;
+	private final long timestamp;
 
-  private TikTokCommentEvent pinnedMessage;
-  private long timestamp;
-
-  public TikTokRoomPinEvent(WebcastRoomPinMessage msg, TikTokCommentEvent commentEvent)
-  {
-    super(msg.getCommon());
-    this.timestamp = msg.getTimestamp();
-    this.pinnedMessage = commentEvent;
-  }
-
+	public TikTokRoomPinEvent(WebcastRoomPinMessage msg, TikTokCommentEvent commentEvent)
+	{
+		super(msg.getCommon());
+		this.timestamp = msg.getTimestamp();
+		this.pinnedMessage = commentEvent;
+	}
 }

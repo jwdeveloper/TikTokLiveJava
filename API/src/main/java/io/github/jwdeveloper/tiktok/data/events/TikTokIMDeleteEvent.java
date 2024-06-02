@@ -34,9 +34,10 @@ import java.util.List;
 @EventMeta(eventType = EventType.Message)
 public class TikTokIMDeleteEvent extends TikTokHeaderEvent {
 
-    List<Long> userIds;
+    private final List<Long> msgIds, userIds;
     public TikTokIMDeleteEvent(WebcastImDeleteMessage msg) {
         super(msg.getCommon());
+        this.msgIds = msg.getDeleteMsgIdsListList();
         this.userIds = msg.getDeleteUserIdsListList();
     }
 }

@@ -20,24 +20,26 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
+import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
+import lombok.Getter;
 
-import io.github.jwdeveloper.tiktok.data.models.users.User;
-import lombok.Data;
-
-
-@Data
+@Getter
 @EventMeta(eventType = EventType.Message)
-public class CustomEvent extends TikTokHeaderEvent {
-    private final User user;
-    private final String title;
+public class TikTokLinkAcceptNoticeEvent extends TikTokLinkEvent {
 
-    public CustomEvent(User user, String title) {
-        this.user = user;
-        this.title = title;
+    private final long fromUserId, fromRoomId, toUserId;
+
+    public TikTokLinkAcceptNoticeEvent(WebcastLinkMessage msg) {
+        super(msg);
+        if (!msg.hasAcceptNoticeContent())
+            throw new IllegalArgumentException("Expected WebcastLinkMessage with Accept Notice Content!");
+
+        var content = msg.getAcceptNoticeContent();
+        this.fromUserId = content.getFromUserId();
+        this.fromRoomId = content.getFromRoomId();
+        this.toUserId = content.getToUserId();
     }
 }

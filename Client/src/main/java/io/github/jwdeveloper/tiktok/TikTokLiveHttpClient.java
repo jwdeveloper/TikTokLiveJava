@@ -56,7 +56,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     public TikTokLiveHttpClient(HttpClientFactory factory, LiveClientSettings settings) {
         this.httpFactory = factory;
         this.clientSettings = settings;
-        this.logger = LoggerFactory.create("HttpClient", clientSettings);
+        this.logger = LoggerFactory.create("HttpClient-"+hashCode(), clientSettings);
         liveUserDataMapper = new LiveUserDataMapper();
         liveDataMapper = new LiveDataMapper();
         giftsDataMapper = new GiftsDataMapper();
@@ -178,7 +178,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         try {
             var resultHeader = ActionResult.of(credentialsResponse.headers().firstValue("x-set-tt-cookie"));
             if (resultHeader.isFailure()) {
-                logger.warning("SignServer Headers: "+request.getRoomId()+" - "+credentialsResponse.headers().map());
+                logger.warning("Sign Server Headers: "+request.getRoomId()+" - "+credentialsResponse.headers().map());
                 throw new TikTokSignServerException("Sign server did not return the x-set-tt-cookie header - "+result);
             }
             var websocketCookie = resultHeader.getContent();

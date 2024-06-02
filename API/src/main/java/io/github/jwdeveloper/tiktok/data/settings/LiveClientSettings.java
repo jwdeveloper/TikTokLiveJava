@@ -178,6 +178,4 @@ public class LiveClientSettings {
         headers.put("Accept-Language", "en-US,en; q=0.9");
         return headers;
     }
-
-
 }

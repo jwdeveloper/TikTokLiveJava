@@ -20,24 +20,28 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 @EventMeta(eventType = EventType.Message)
-public class TikTokLinkEvent extends TikTokHeaderEvent {
+public class TikTokLinkLeaveEvent extends TikTokLinkEvent {
 
+    private final long userId, sendLeaveUid, leaveReason;
+    private final String linkmicIdStr;
 
-    public TikTokLinkEvent(WebcastLinkMessage msg) {
-        super(msg.getCommon());
+    public TikTokLinkLeaveEvent(WebcastLinkMessage msg) {
+        super(msg);
+        if (!msg.hasLeaveContent())
+            throw new IllegalArgumentException("Expected WebcastLinkMessage with Leave Content!");
 
+        var content = msg.getLeaveContent();
+        this.userId = content.getUserId();
+        this.linkmicIdStr = content.getLinkmicIdStr();
+        this.sendLeaveUid = content.getSendLeaveUid();
+        this.leaveReason = content.getLeaveReason();
     }
 }

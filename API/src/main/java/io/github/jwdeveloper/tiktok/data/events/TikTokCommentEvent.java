@@ -40,7 +40,7 @@ import java.util.List;
 public class TikTokCommentEvent extends TikTokHeaderEvent {
     private final User user;
     private final String text;
-    private final String getUserLanguage;
+    private final String userLanguage;
     private final User mentionedUser;
     private final List<Picture> pictures;
     private final boolean visibleToSender;
@@ -50,7 +50,7 @@ public class TikTokCommentEvent extends TikTokHeaderEvent {
         user = User.map(msg.getUser(), msg.getUserIdentity());
         text = msg.getContent();
         visibleToSender = msg.getVisibleToSender();
-        getUserLanguage = msg.getContentLanguage();
+        userLanguage = msg.getContentLanguage();
         mentionedUser = User.map(msg.getAtUser());
         pictures = msg.getEmotesListList().stream().map(e -> Picture.map(e.getEmote().getImage())).toList();
     }

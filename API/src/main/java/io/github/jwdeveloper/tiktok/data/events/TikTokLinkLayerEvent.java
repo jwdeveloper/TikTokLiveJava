@@ -33,11 +33,7 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Message)
 public class TikTokLinkLayerEvent extends TikTokHeaderEvent {
 
-
     public TikTokLinkLayerEvent(WebcastLinkLayerMessage msg) {
         super(msg.getCommon());
-
     }
-
-
 }

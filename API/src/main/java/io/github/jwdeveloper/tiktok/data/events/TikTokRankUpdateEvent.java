@@ -33,13 +33,11 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Message)
 public class TikTokRankUpdateEvent extends TikTokHeaderEvent {
 
-  public TikTokRankUpdateEvent(WebcastHourlyRankMessage msg) {
-    super(msg.getCommon());
+	public TikTokRankUpdateEvent(WebcastHourlyRankMessage msg) {
+		super(msg.getCommon());
+	}
 
-  }
-
-  public TikTokRankUpdateEvent(WebcastRankUpdateMessage msg) {
-    super(msg.getCommon());
-  }
-
+	public TikTokRankUpdateEvent(WebcastRankUpdateMessage msg) {
+		super(msg.getCommon());
+	}
 }

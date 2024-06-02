@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.gifts;
 
-//TODO it should be called GiftComboStateType
 public enum GiftComboStateType {
     Finished,
     Begin,

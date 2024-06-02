@@ -38,8 +38,7 @@ public class TikTokBarrageEvent extends TikTokHeaderEvent {
     private final Picture rightIcon;
     private final String eventName;
     private final int duration;
-
-    private BarrageParam barrageParam;
+    private final BarrageParam barrageParam;
 
     public TikTokBarrageEvent(WebcastBarrageMessage msg) {
         super(msg.getCommon());
@@ -49,6 +48,5 @@ public class TikTokBarrageEvent extends TikTokHeaderEvent {
         rightIcon = Picture.map(msg.getRightIcon());
         duration = msg.getDuration();
         barrageParam = BarrageParam.map(msg);
-
     }
 }

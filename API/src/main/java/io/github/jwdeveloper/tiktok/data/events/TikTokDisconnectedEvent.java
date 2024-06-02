@@ -30,9 +30,11 @@ import lombok.Getter;
  * Triggered when the connection gets disconnected. In that case you can call connect() again to have a reconnect logic.
  * Note that you should wait a little bit before attempting a reconnect to to avoid being rate-limited.
  */
+@Getter
 @EventMeta(eventType = EventType.Control)
 public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
-	@Getter private final String reason;
+	private final String reason;
+
 	public TikTokDisconnectedEvent(String reason) {
 		this.reason = reason.isBlank() ? "None" : reason;
 	}

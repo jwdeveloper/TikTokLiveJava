@@ -20,23 +20,27 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events.room;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
-import lombok.AllArgsConstructor;
+import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
-
-/**
-Triggered when LiveRoomInfo got updated such as likes, viewers, ranking ....
- */
 @Getter
-@AllArgsConstructor
 @EventMeta(eventType = EventType.Message)
-public class TikTokRoomInfoEvent extends TikTokEvent
-{
-    LiveRoomInfo roomInfo;
+public class TikTokLinkCancelEvent extends TikTokLinkEvent {
+
+    private final long fromUserId, toUserId, cancelType, actionId;
+
+    public TikTokLinkCancelEvent(WebcastLinkMessage msg) {
+        super(msg);
+        if (!msg.hasCancelContent())
+            throw new IllegalArgumentException("Expected WebcastLinkMessage with Cancel Content!");
+
+        var content = msg.getCancelContent();
+        this.fromUserId = content.getFromUserId();
+        this.toUserId = content.getToUserId();
+        this.cancelType = content.getCancelType();
+        this.actionId = content.getActionId();
+    }
 }

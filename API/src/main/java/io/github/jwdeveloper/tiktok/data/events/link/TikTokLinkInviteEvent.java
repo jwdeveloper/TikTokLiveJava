@@ -20,18 +20,27 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.models;
+package io.github.jwdeveloper.tiktok.data.events.link;
 
-import lombok.Value;
+import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
+import lombok.Getter;
 
-@Value
-public class EnumValue
-{
-    public int value;
-    public String name;
+@Getter
+@EventMeta(eventType = EventType.Message)
+public class TikTokLinkInviteEvent extends TikTokLinkEvent {
 
-    public static EnumValue Map(Enum<?> _enum)
-    {
-        return new EnumValue(_enum.ordinal() ,_enum.name());
-    }
+    private final long roomId;
+    private final User inviter;
+
+    public TikTokLinkInviteEvent(WebcastLinkMessage msg) {
+        super(msg);
+		if (!msg.hasInviteContent())
+			throw new IllegalArgumentException("Expected WebcastLinkMessage with Invite Content!");
+
+        var content = msg.getInviteContent();
+        this.roomId = content.getFromRoomId();
+        this.inviter = User.map(content.getFromUser());
+	}
 }

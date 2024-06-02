@@ -96,16 +96,17 @@ public class TikTokListenersManager implements ListenersManager {
                         m.isAnnotationPresent(TikTokEventObserver.class)).toList();
         var eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
         for (var method : methods) {
-            var eventClazz = method.getParameterTypes()[1];
+            var liveclientClass = method.getParameterTypes()[0];
+            var eventClass = method.getParameterTypes()[1];
 
-            if (eventClazz.isAssignableFrom(LiveClient.class) &&
-                    !eventClazz.equals(LiveClient.class)) {
-                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 1nd parameter must instance of " + LiveClient.class.getName());
+            if (!LiveClient.class.isAssignableFrom(liveclientClass) && !liveclientClass.equals(LiveClient.class)) {
+                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 1st parameter must be instance of " + LiveClient.class.getName()
+                    + " | Invalid parameter class: "+liveclientClass.getName());
             }
 
-            if (eventClazz.isAssignableFrom(TikTokEvent.class) &&
-                    !eventClazz.equals(TikTokEvent.class)) {
-                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 2nd parameter must instance of " + TikTokEvent.class.getName());
+            if (!TikTokEvent.class.isAssignableFrom(eventClass) && !eventClass.equals(TikTokEvent.class)) {
+                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 2nd parameter must be instance of " + TikTokEvent.class.getName()
+                    + " | Invalid parameter class: "+eventClass.getName());
             }
 
             EventConsumer eventMethodRef = (liveClient, event) ->
@@ -117,7 +118,7 @@ public class TikTokListenersManager implements ListenersManager {
                     throw new TikTokEventListenerMethodException(e);
                 }
             };
-            eventsMap.computeIfAbsent(eventClazz, (a) -> new ArrayList<>()).add(eventMethodRef);
+            eventsMap.computeIfAbsent(eventClass, (a) -> new ArrayList<>()).add(eventMethodRef);
         }
         return new ListenerBindingModel(listener, eventsMap);
     }
