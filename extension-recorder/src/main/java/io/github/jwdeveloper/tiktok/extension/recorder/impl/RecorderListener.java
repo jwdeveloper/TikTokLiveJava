@@ -76,7 +76,6 @@ public class RecorderListener implements LiveRecorder {
         if (isConnected())
             return;
 
-
         liveDownloadThread = new Thread(() -> {
             try {
                 liveClient.getLogger().info("Recording started");

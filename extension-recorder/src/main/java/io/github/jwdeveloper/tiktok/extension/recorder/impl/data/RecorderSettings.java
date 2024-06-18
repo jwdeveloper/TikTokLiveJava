@@ -39,7 +39,6 @@ public class RecorderSettings {
     private String format;
     private File outputFile;
     private Function<String,DownloadData> prepareDownloadData;
-    private boolean startOnConnected;
     private boolean stopOnDisconnect = true;
 
     public static RecorderSettings DEFAULT() {
