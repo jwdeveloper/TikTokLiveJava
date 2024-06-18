@@ -87,14 +87,13 @@ public class RecorderListener implements LiveRecorder {
                     connection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
 
-                var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
-                var file = new File(path);
+                var file = settings.getOutputFile();
                 file.getParentFile().mkdirs();
                 file.createNewFile();
 
                 try (
-                        var in = connection.getInputStream();
-                        var fos = new FileOutputStream(file)
+                    var in = connection.getInputStream();
+                    var fos = new FileOutputStream(file)
                 ) {
                     byte[] dataBuffer = new byte[1024];
                     int bytesRead;
@@ -113,11 +112,10 @@ public class RecorderListener implements LiveRecorder {
 
         var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
         liveClient.publishEvent(recordingStartedEvent);
-        if (recordingStartedEvent.isCanceled()) {
-            liveClient.getLogger().info("Recording cancelled");
-            return;
-        }
-        liveDownloadThread.start();
+        if (recordingStartedEvent.isCanceled())
+			liveClient.getLogger().info("Recording cancelled");
+		else
+            liveDownloadThread.start();
     }
 
     @TikTokEventObserver

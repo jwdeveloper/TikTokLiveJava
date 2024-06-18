@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveFormat;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.File;
 import java.util.function.Function;
 
 @Getter
@@ -36,8 +37,7 @@ public class RecorderSettings {
     private String ffmpegPath;
     private String quality;
     private String format;
-    private String outputPath;
-    private String outputFileName;
+    private File outputFile;
     private Function<String,DownloadData> prepareDownloadData;
     private boolean startOnConnected;
     private boolean stopOnDisconnect = true;

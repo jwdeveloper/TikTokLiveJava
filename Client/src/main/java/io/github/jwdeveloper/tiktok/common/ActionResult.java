@@ -100,8 +100,8 @@ public class ActionResult<T> {
 	public JsonObject toJson() {
 		JsonObject map = new JsonObject();
 		map.addProperty("success", success);
-		map.add("content", gson.toJsonTree(content));
 		map.addProperty("message", message);
+		map.add("content", gson.toJsonTree(content));
 		map.add("previous", hasPrevious() ? previous.toJson() : null);
 		return map;
 	}
