@@ -26,6 +26,8 @@ package io.github.jwdeveloper.tiktok;
 import io.github.jwdeveloper.tiktok.extension.recorder.TikTokLiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
 
+import java.io.File;
+
 public class RecorderExample {
 
     public static void main(String[] args) {
@@ -42,8 +44,7 @@ public class RecorderExample {
                 .addListener(TikTokLiveRecorder.use(recorderSettings ->
                 {
                     recorderSettings.setFfmpegPath("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\libs\\ffmpeg.exe");
-                    recorderSettings.setOutputPath("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\out");
-                    recorderSettings.setOutputFileName("test.flv");
+                    recorderSettings.setOutputFile(new File("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\out", "test.flv"));
                 }))
                 .onEvent(TikTokLiveRecorderStartedEvent.class, (liveClient, event) ->
                 {

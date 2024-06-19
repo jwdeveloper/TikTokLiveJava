@@ -37,10 +37,7 @@ import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class RecorderListener implements LiveRecorder {
 
@@ -78,7 +75,7 @@ public class RecorderListener implements LiveRecorder {
 
         liveDownloadThread = new Thread(() -> {
             try {
-                liveClient.getLogger().info("Recording started");
+                liveClient.getLogger().info("Recording started "+liveClient.getRoomInfo().getHostName());
                 var url = new URL(downloadData.getFullUrl());
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 var headers = LiveClientSettings.DefaultRequestHeaders();
