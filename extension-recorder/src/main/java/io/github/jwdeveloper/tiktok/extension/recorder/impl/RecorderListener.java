@@ -37,23 +37,23 @@ import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.function.Consumer;
+import java.util.function.*;
 
 public class RecorderListener implements LiveRecorder {
 
-    private final Consumer<RecorderSettings> consumer;
+    private final BiConsumer<RecorderSettings, LiveClient> consumer;
     private RecorderSettings settings;
     private DownloadData downloadData;
     private Thread liveDownloadThread;
 
-    public RecorderListener(Consumer<RecorderSettings> consumer) {
+    public RecorderListener(BiConsumer<RecorderSettings, LiveClient> consumer) {
         this.consumer = consumer;
     }
 
     @TikTokEventObserver
     private void onResponse(LiveClient liveClient, TikTokRoomDataResponseEvent event) {
         settings = RecorderSettings.DEFAULT();
-        consumer.accept(settings);
+        consumer.accept(settings, liveClient);
 
         var json = event.getLiveData().getJson();
 

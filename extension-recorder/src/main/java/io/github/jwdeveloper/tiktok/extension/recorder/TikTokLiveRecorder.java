@@ -25,18 +25,19 @@ package io.github.jwdeveloper.tiktok.extension.recorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.RecorderListener;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.RecorderSettings;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 
-import java.util.function.Consumer;
+import java.util.function.*;
 
 public class TikTokLiveRecorder
 {
-    public static LiveRecorder use(Consumer<RecorderSettings> consumer)
+    public static LiveRecorder use(BiConsumer<RecorderSettings, LiveClient> consumer)
     {
         return new RecorderListener(consumer);
     }
 
     public static LiveRecorder use()
     {
-        return use(x ->{});
+        return use((x,y) ->{});
     }
 }
