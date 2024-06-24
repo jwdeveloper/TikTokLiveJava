@@ -37,26 +37,23 @@ import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.function.*;
 
 public class RecorderListener implements LiveRecorder {
 
-    private final Consumer<RecorderSettings> consumer;
+    private final BiConsumer<RecorderSettings, LiveClient> consumer;
     private RecorderSettings settings;
     private DownloadData downloadData;
     private Thread liveDownloadThread;
 
-    public RecorderListener(Consumer<RecorderSettings> consumer) {
+    public RecorderListener(BiConsumer<RecorderSettings, LiveClient> consumer) {
         this.consumer = consumer;
     }
 
     @TikTokEventObserver
     private void onResponse(LiveClient liveClient, TikTokRoomDataResponseEvent event) {
         settings = RecorderSettings.DEFAULT();
-        consumer.accept(settings);
+        consumer.accept(settings, liveClient);
 
         var json = event.getLiveData().getJson();
 
@@ -76,10 +73,9 @@ public class RecorderListener implements LiveRecorder {
         if (isConnected())
             return;
 
-
         liveDownloadThread = new Thread(() -> {
             try {
-                liveClient.getLogger().info("Recording started");
+                liveClient.getLogger().info("Recording started "+liveClient.getRoomInfo().getHostName());
                 var url = new URL(downloadData.getFullUrl());
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 var headers = LiveClientSettings.DefaultRequestHeaders();
@@ -87,18 +83,17 @@ public class RecorderListener implements LiveRecorder {
                     connection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
 
-                var path = settings.getOutputPath() + File.separator + settings.getOutputFileName();
-                var file = new File(path);
+                var file = settings.getOutputFile();
                 file.getParentFile().mkdirs();
                 file.createNewFile();
 
                 try (
-                        var in = connection.getInputStream();
-                        var fos = new FileOutputStream(file)
+                    var in = connection.getInputStream();
+                    var fos = new FileOutputStream(file)
                 ) {
                     byte[] dataBuffer = new byte[1024];
                     int bytesRead;
-                    while (liveClient.getRoomInfo().getConnectionState() == ConnectionState.CONNECTED && (bytesRead = in.read(dataBuffer)) != -1) {
+                    while ((!settings.isStopOnDisconnect() || liveClient.getRoomInfo().getConnectionState() == ConnectionState.CONNECTED) && (bytesRead = in.read(dataBuffer)) != -1) {
                         fos.write(dataBuffer, 0, bytesRead);
                         fos.flush();
                     }
@@ -113,11 +108,10 @@ public class RecorderListener implements LiveRecorder {
 
         var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
         liveClient.publishEvent(recordingStartedEvent);
-        if (recordingStartedEvent.isCanceled()) {
-            liveClient.getLogger().info("Recording cancelled");
-            return;
-        }
-        liveDownloadThread.start();
+        if (recordingStartedEvent.isCanceled())
+			liveClient.getLogger().info("Recording cancelled");
+		else
+            liveDownloadThread.start();
     }
 
     @TikTokEventObserver
