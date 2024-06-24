@@ -93,7 +93,7 @@ public class RecorderListener implements LiveRecorder {
                 ) {
                     byte[] dataBuffer = new byte[1024];
                     int bytesRead;
-                    while (liveClient.getRoomInfo().getConnectionState() == ConnectionState.CONNECTED && (bytesRead = in.read(dataBuffer)) != -1) {
+                    while ((!settings.isStopOnDisconnect() || liveClient.getRoomInfo().getConnectionState() == ConnectionState.CONNECTED) && (bytesRead = in.read(dataBuffer)) != -1) {
                         fos.write(dataBuffer, 0, bytesRead);
                         fos.flush();
                     }
