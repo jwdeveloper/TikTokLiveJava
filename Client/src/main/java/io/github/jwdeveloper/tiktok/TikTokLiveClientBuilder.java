@@ -110,6 +110,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     public LiveClient build() {
         validate();
 
+        //Docs: https://github.com/jwdeveloper/DepenDance?tab=readme-ov-file#01-basic
         var dependance = Dependance.newContainer();
 
         //config
