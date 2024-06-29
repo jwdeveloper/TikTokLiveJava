@@ -125,7 +125,7 @@ public class TikTokLiveClient implements LiveClient {
         tikTokEventHandler.publish(this, new TikTokConnectingEvent());
         var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
-        liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
+        liveRoomInfo.setStartTime(userData.getStartTime());
         liveRoomInfo.setRoomId(userData.getRoomId());
 
         if (clientSettings.isFetchGifts())

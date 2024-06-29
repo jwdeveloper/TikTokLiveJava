@@ -23,12 +23,14 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class TikTokLive {
 
@@ -87,8 +89,17 @@ public class TikTokLive {
      *
      * @return LiveHttpClient
      */
+    public static LiveHttpClient requests(Consumer<LiveClientSettings> consumer) {
+        return new TikTokLiveHttpClient(consumer);
+    }
+
+    /**
+     * Use to get some data from TikTok about users are lives
+     *
+     * @return LiveHttpClient
+     */
     public static LiveHttpClient requests() {
-        return new TikTokLiveHttpClient();
+        return requests(liveClientSettings -> {});
     }
 
     private static GiftsManager giftsManager;

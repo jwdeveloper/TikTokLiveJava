@@ -117,11 +117,9 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         var listenerManager = new TikTokListenersManager(listeners, eventHandler);
 
-        var httpClientFactory = new HttpClientFactory(clientSettings);
-
         var liveHttpClient = clientSettings.isOffline() ?
                 new TikTokLiveHttpOfflineClient() :
-                new TikTokLiveHttpClient(httpClientFactory, clientSettings);
+                new TikTokLiveHttpClient(new HttpClientFactory(clientSettings));
 
         var eventsMapper = createMapper(giftsManager, tiktokRoomInfo);
         var messageHandler = new TikTokLiveMessageHandler(eventHandler, eventsMapper);

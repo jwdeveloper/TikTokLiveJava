@@ -32,6 +32,7 @@ import io.github.jwdeveloper.tiktok.http.mappers.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 
 import java.net.http.HttpResponse;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class TikTokLiveHttpClient implements LiveHttpClient
@@ -53,17 +54,18 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private final GiftsDataMapper giftsDataMapper;
     private final Logger logger;
 
-    public TikTokLiveHttpClient(HttpClientFactory factory, LiveClientSettings settings) {
+    public TikTokLiveHttpClient(HttpClientFactory factory) {
         this.httpFactory = factory;
-        this.clientSettings = settings;
+        this.clientSettings = factory.getLiveClientSettings();
         this.logger = LoggerFactory.create("HttpClient-"+hashCode(), clientSettings);
         liveUserDataMapper = new LiveUserDataMapper();
         liveDataMapper = new LiveDataMapper();
         giftsDataMapper = new GiftsDataMapper();
     }
 
-    public TikTokLiveHttpClient() {
-        this(new HttpClientFactory(LiveClientSettings.createDefault()), LiveClientSettings.createDefault());
+    public TikTokLiveHttpClient(Consumer<LiveClientSettings> consumer) {
+        this(new HttpClientFactory(LiveClientSettings.createDefault()));
+        consumer.accept(clientSettings);
     }
 
     public GiftsData.Response fetchRoomGiftsData(String room_id) {
@@ -191,7 +193,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
                     .withParam("internal_ext", webcastResponse.getInternalExt())
                     .withParams(webcastResponse.getRouteParamsMapMap())
                     .build()
-                    .toUrl();
+                    .toUri();
 
             return new LiveConnectionData.Response(websocketCookie, webSocketUrl, webcastResponse);
         } catch (InvalidProtocolBufferException e) {

@@ -23,7 +23,9 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.data.settings.*;
+import lombok.Getter;
 
+@Getter
 public class HttpClientFactory {
     private final LiveClientSettings liveClientSettings;
 

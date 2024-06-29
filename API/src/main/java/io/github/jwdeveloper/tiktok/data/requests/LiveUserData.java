@@ -27,18 +27,23 @@ import lombok.*;
 public class LiveUserData {
 
     @Getter
-    @AllArgsConstructor
     public static class Request {
-        private String userName;
+        private final String userName;
+
+        public Request(String userName) {
+            if (userName == null || userName.isBlank())
+                throw new IllegalArgumentException("Invalid empty username!");
+            this.userName = userName;
+        }
     }
 
     @Getter
     @AllArgsConstructor
     public static class Response {
-        private String json;
-        private UserStatus userStatus;
-        private String roomId;
-        private long startedAtTimeStamp;
+        private final String json;
+        private final UserStatus userStatus;
+        private final String roomId;
+        private final long startTime;
 
         public boolean isLiveOnline() {
             return userStatus == LiveUserData.UserStatus.Live || userStatus == LiveUserData.UserStatus.LivePaused;
