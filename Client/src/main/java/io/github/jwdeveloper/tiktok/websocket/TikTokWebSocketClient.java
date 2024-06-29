@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
+import io.github.jwdeveloper.dependance.injector.api.containers.Container;
 import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
