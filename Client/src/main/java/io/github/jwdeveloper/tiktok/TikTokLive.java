@@ -37,7 +37,7 @@ public class TikTokLive {
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
      *
-     * @param hostName profile name of Tiktok user could be found in profile link
+     * @param hostName profile name of TikTok user could be found in profile link
      * @return LiveClientBuilder
      */
     public static LiveClientBuilder newClient(String hostName) {
@@ -47,7 +47,7 @@ public class TikTokLive {
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
      *
-     * @param hostName profile name of Tiktok user could be found in profile link
+     * @param hostName profile name of TikTok user could be found in profile link
      * @return true if live is Online, false if is offline
      */
     public static boolean isLiveOnline(String hostName) {
@@ -57,7 +57,7 @@ public class TikTokLive {
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
      *
-     * @param hostName profile name of Tiktok user could be found in profile link
+     * @param hostName profile name of TikTok user could be found in profile link
      * @return true if live is Online, false if is offline
      */
     public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName) {
@@ -67,7 +67,7 @@ public class TikTokLive {
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
      *
-     * @param hostName profile name of Tiktok user could be found in profile link
+     * @param hostName profile name of TikTok user could be found in profile link
      * @return true is hostName name is valid and exists, false if not
      */
     public static boolean isHostNameValid(String hostName) {
@@ -77,7 +77,7 @@ public class TikTokLive {
     /**
      * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
      *
-     * @param hostName profile name of Tiktok user could be found in profile link
+     * @param hostName profile name of TikTok user could be found in profile link
      * @return true is hostName name is valid and exists, false if not
      */
     public static CompletableFuture<Boolean> isHostNameValidAsync(String hostName) {

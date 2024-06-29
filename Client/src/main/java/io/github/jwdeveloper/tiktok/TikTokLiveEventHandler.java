@@ -41,19 +41,14 @@ public class TikTokLiveEventHandler {
     public void publish(LiveClient tikTokLiveClient, TikTokEvent tikTokEvent) {
         if (events.containsKey(TikTokEvent.class)) {
             var handlers = events.get(TikTokEvent.class);
-            for (var handle : handlers) {
-                handle.onEvent(tikTokLiveClient, tikTokEvent);
-            }
+            handlers.forEach(handler -> handler.onEvent(tikTokLiveClient,tikTokEvent));
         }
-
 
         if (!events.containsKey(tikTokEvent.getClass())) {
             return;
         }
         var handlers = events.get(tikTokEvent.getClass());
-        for (var handler : handlers) {
-            handler.onEvent(tikTokLiveClient, tikTokEvent);
-        }
+        handlers.forEach(handler -> handler.onEvent(tikTokLiveClient,tikTokEvent));
     }
 
     public <T extends TikTokEvent> void subscribe(Class<?> clazz, EventConsumer<T> event) {
@@ -81,6 +76,5 @@ public class TikTokLiveEventHandler {
 
         var eventSet = events.get(clazz);
         eventSet.remove(consumer);
-
     }
 }

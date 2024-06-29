@@ -11,6 +11,12 @@
 
     <artifactId>Client</artifactId>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -24,7 +30,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.jwdeveloper.DepenDance</groupId>
+            <artifactId>DepenDance-Full</artifactId>
+            <version>0.0.18-Release</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>

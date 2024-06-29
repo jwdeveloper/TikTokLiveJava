@@ -22,6 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.dependance.Dependance;
+import io.github.jwdeveloper.dependance.api.DependanceContainer;
+import io.github.jwdeveloper.tiktok.mappers.MessagesMapperFactory;
 import io.github.jwdeveloper.tiktok.common.LoggerFactory;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
@@ -38,13 +41,15 @@ import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
+import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
 import io.github.jwdeveloper.tiktok.listener.*;
 import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.live.builder.*;
 import io.github.jwdeveloper.tiktok.mappers.*;
-import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
-import io.github.jwdeveloper.tiktok.mappers.handlers.*;
-import io.github.jwdeveloper.tiktok.messages.webcast.*;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokCommonEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokRoomInfoEventHandler;
+import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.websocket.*;
 
 import java.util.*;
@@ -52,28 +57,23 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import static io.github.jwdeveloper.tiktok.messages.enums.LinkMessageType.*;
-
 public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     protected final LiveClientSettings clientSettings;
     protected final TikTokLiveEventHandler eventHandler;
     protected final List<TikTokEventListener> listeners;
-    protected Consumer<TikTokMapper> onCustomMappings;
-    protected Logger logger;
-    protected GiftsManager giftsManager;
+    protected final List<Consumer<TikTokMapper>> onCustomMappings;
 
     public TikTokLiveClientBuilder(String userName) {
         this.clientSettings = LiveClientSettings.createDefault();
         this.clientSettings.setHostName(userName);
         this.eventHandler = new TikTokLiveEventHandler();
         this.listeners = new ArrayList<>();
-        this.onCustomMappings = (e) -> {
-        };
+        this.onCustomMappings = new ArrayList<>();
     }
 
-    public LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings) {
-        this.onCustomMappings = onCustomMappings;
+    public LiveClientBuilder onMapping(Consumer<TikTokMapper> consumer) {
+        this.onCustomMappings.add(consumer);
         return this;
     }
 
@@ -104,166 +104,73 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         var httpSettings = clientSettings.getHttpSettings();
         httpSettings.getParams().put("app_language", clientSettings.getClientLanguage());
         httpSettings.getParams().put("webcast_language", clientSettings.getClientLanguage());
-
-        this.logger = LoggerFactory.create(clientSettings.getHostName(), clientSettings);
-        this.giftsManager = clientSettings.isFetchGifts() ? TikTokLive.gifts() : new TikTokGiftsManager(List.of());
     }
 
+    //TODO each class registered to container should implement own interface,
     public LiveClient build() {
         validate();
 
-        var tiktokRoomInfo = new TikTokRoomInfo();
-        tiktokRoomInfo.setHostName(clientSettings.getHostName());
+        var dependance = Dependance.newContainer();
 
-        var listenerManager = new TikTokListenersManager(listeners, eventHandler);
+        //config
+        dependance.registerSingleton(LiveClientSettings.class, clientSettings);
+        dependance.registerSingleton(TikTokRoomInfo.class, container ->
+        {
+            var roomInfo = new TikTokRoomInfo();
+            roomInfo.setHostName(clientSettings.getHostName());
+            return roomInfo;
+        });
+        dependance.registerSingleton(Logger.class, LoggerFactory.create(clientSettings.getHostName(), clientSettings));
 
-        var liveHttpClient = clientSettings.isOffline() ?
-                new TikTokLiveHttpOfflineClient() :
-                new TikTokLiveHttpClient(new HttpClientFactory(clientSettings));
+        //messages
+        dependance.registerSingleton(TikTokLiveEventHandler.class, eventHandler);
+        dependance.registerSingleton(TikTokLiveMessageHandler.class);
+        dependance.registerSingleton(TikTokLiveMapper.class, (container) ->
+        {
+            var dependace = (DependanceContainer) container.find(DependanceContainer.class);
+            var mapper = MessagesMapperFactory.create(dependace);
+            onCustomMappings.forEach(action -> action.accept(mapper));
+            return mapper;
+        });
 
-        var eventsMapper = createMapper(giftsManager, tiktokRoomInfo);
-        var messageHandler = new TikTokLiveMessageHandler(eventHandler, eventsMapper);
+        //listeners
+        dependance.registerSingletonList(TikTokEventListener.class, (e) -> listeners);
+        dependance.registerSingleton(ListenersManager.class, TikTokListenersManager.class);
 
-        var webSocketClient = clientSettings.isOffline() ?
-                new TikTokWebSocketOfflineClient(eventHandler) :
-                new TikTokWebSocketClient(
-                        clientSettings,
-                        messageHandler,
-                        eventHandler);
+        //networking
+        dependance.registerSingleton(HttpClientFactory.class);
+        if (clientSettings.isOffline()) {
+            dependance.registerSingleton(SocketClient.class, TikTokWebSocketOfflineClient.class);
+            dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpOfflineClient.class);
+        } else {
+            dependance.registerSingleton(SocketClient.class, TikTokWebSocketClient.class);
+            dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpClient.class);
+        }
 
-        return new TikTokLiveClient(
-                messageHandler,
-                giftsManager,
-                tiktokRoomInfo,
-                liveHttpClient,
-                webSocketClient,
-                eventHandler,
-                clientSettings,
-                listenerManager,
-                logger);
+        //gifts
+        if (clientSettings.isFetchGifts()) {
+            dependance.registerSingleton(GiftsManager.class, TikTokLive.gifts());
+        } else {
+            dependance.registerSingleton(GiftsManager.class, new TikTokGiftsManager(List.of()));
+        }
+
+        //mapper
+        dependance.registerSingleton(TikTokGenericEventMapper.class);
+        dependance.registerSingleton(TikTokMapperHelper.class, TikTokLiveMapperHelper.class);
+        dependance.registerSingleton(TikTokLiveMapper.class);
+
+        //mapper handlers
+        dependance.registerSingleton(TikTokCommonEventHandler.class);
+        dependance.registerSingleton(TikTokGiftEventHandler.class);
+        dependance.registerSingleton(TikTokRoomInfoEventHandler.class);
+        dependance.registerSingleton(TikTokSocialMediaEventHandler.class);
+
+        //client
+        dependance.registerSingleton(LiveClient.class, TikTokLiveClient.class);
+
+        var container = dependance.build();
+        return container.find(LiveClient.class);
     }
-
-    public TikTokLiveMapper createMapper(GiftsManager giftsManager, TikTokRoomInfo roomInfo) {
-
-
-        var eventMapper = new TikTokGenericEventMapper();
-        var mapper = new TikTokLiveMapper(new TikTokLiveMapperHelper(eventMapper));
-
-        //ConnectionEvents events
-        var commonHandler = new TikTokCommonEventHandler();
-        var giftHandler = new TikTokGiftEventHandler(giftsManager, roomInfo);
-        var roomInfoHandler = new TikTokRoomInfoEventHandler(roomInfo);
-        var socialHandler = new TikTokSocialMediaEventHandler(roomInfo);
-
-
-        mapper.forMessage(WebcastControlMessage.class, commonHandler::handleWebcastControlMessage);
-
-        //Room status events
-        mapper.forMessage(WebcastLiveIntroMessage.class, roomInfoHandler::handleIntro);
-        mapper.forMessage(WebcastRoomUserSeqMessage.class, roomInfoHandler::handleUserRanking);
-        mapper.forMessage(WebcastCaptionMessage.class, (inputBytes, messageName, mapperHelper) ->
-        {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastCaptionMessage.class);
-            return MappingResult.of(messageObject, new TikTokCaptionEvent(messageObject));
-        });
-
-
-        //User Interactions events
-        mapper.forMessage(WebcastChatMessage.class, (inputBytes, messageName, mapperHelper) ->
-        {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
-            return MappingResult.of(messageObject, new TikTokCommentEvent(messageObject));
-        });
-        mapper.forMessage(WebcastSubNotifyMessage.class, (inputBytes, messageName, mapperHelper) ->
-        {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastSubNotifyMessage.class);
-            return MappingResult.of(messageObject, new TikTokSubscribeEvent(messageObject));
-        });
-        mapper.forMessage(WebcastEmoteChatMessage.class, (inputBytes, messageName, mapperHelper) ->
-        {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastEmoteChatMessage.class);
-            return MappingResult.of(messageObject, new TikTokEmoteEvent(messageObject));
-        });
-        mapper.forMessage(WebcastQuestionNewMessage.class, (inputBytes, messageName, mapperHelper) ->
-        {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastQuestionNewMessage.class);
-            return MappingResult.of(messageObject, new TikTokQuestionEvent(messageObject));
-        });
-
-        mapper.forMessage(WebcastLikeMessage.class, roomInfoHandler::handleLike);
-        mapper.forMessage(WebcastGiftMessage.class, giftHandler::handleGifts);
-        mapper.forMessage(WebcastSocialMessage.class, socialHandler::handle);
-        mapper.forMessage(WebcastMemberMessage.class, roomInfoHandler::handleMemberMessage);
-
-
-        //Host Interaction events
-        mapper.forMessage(WebcastPollMessage.class, commonHandler::handlePollEvent);
-        mapper.forMessage(WebcastRoomPinMessage.class, commonHandler::handlePinMessage);
-        mapper.forMessage(WebcastChatMessage.class, (inputBytes, messageName, mapperHelper) ->
-        {
-            var messageObject = mapperHelper.bytesToWebcastObject(inputBytes, WebcastChatMessage.class);
-            return MappingResult.of(messageObject, new TikTokCommentEvent(messageObject));
-        });
-
-
-        //LinkMic events
-        mapper.forMessage(WebcastLinkMicBattle.class, (inputBytes, messageName, mapperHelper) -> {
-            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicBattle.class);
-            return MappingResult.of(message, new TikTokLinkMicBattleEvent(message));
-        });
-        mapper.forMessage(WebcastLinkMicArmies.class, (inputBytes, messageName, mapperHelper) -> {
-            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicArmies.class);
-            return MappingResult.of(message, new TikTokLinkMicArmiesEvent(message));
-        });
-        mapper.forMessage(WebcastLinkMessage.class, ((inputBytes, messageName, mapperHelper) -> {
-            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMessage.class);
-            return MappingResult.of(message, switch (message.getMessageType()) {
-                case TYPE_LINKER_INVITE -> new TikTokLinkInviteEvent(message);
-                case TYPE_LINKER_REPLY -> new TikTokLinkReplyEvent(message);
-                case TYPE_LINKER_CREATE -> new TikTokLinkCreateEvent(message);
-                case TYPE_LINKER_CLOSE -> new TikTokLinkCloseEvent(message);
-                case TYPE_LINKER_ENTER -> new TikTokLinkEnterEvent(message);
-                case TYPE_LINKER_LEAVE -> new TikTokLinkLeaveEvent(message);
-                case TYPE_LINKER_CANCEL_INVITE, TYPE_LINKER_CANCEL_APPLY -> new TikTokLinkCancelEvent(message);
-                case TYPE_LINKER_KICK_OUT -> new TikTokLinkKickOutEvent(message);
-                case TYPE_LINKER_LINKED_LIST_CHANGE -> new TikTokLinkLinkedListChangeEvent(message);
-                case TYPE_LINKER_UPDATE_USER -> new TikTokLinkUpdateUserEvent(message);
-                case TYPE_LINKER_WAITING_LIST_CHANGE, TYPE_LINKER_WAITING_LIST_CHANGE_V2 -> new TikTokLinkWaitListChangeEvent(message);
-                case TYPE_LINKER_MUTE -> new TikTokLinkMuteEvent(message);
-                case TYPE_LINKER_MATCH -> new TikTokLinkRandomMatchEvent(message);
-                case TYPE_LINKER_UPDATE_USER_SETTING -> new TikTokLinkUpdateUserSettingEvent(message);
-                case TYPE_LINKER_MIC_IDX_UPDATE -> new TikTokLinkMicIdxUpdateEvent(message);
-                case TYPE_LINKER_LINKED_LIST_CHANGE_V2 -> new TikTokLinkListChangeEvent(message);
-                case TYPE_LINKER_COHOST_LIST_CHANGE -> new TikTokLinkCohostListChangeEvent(message);
-                case TYPE_LINKER_MEDIA_CHANGE -> new TikTokLinkMediaChangeEvent(message);
-                case TYPE_LINKER_ACCEPT_NOTICE -> new TikTokLinkAcceptNoticeEvent(message);
-                case TYPE_LINKER_SYS_KICK_OUT -> new TikTokLinkSysKickOutEvent(message);
-                case TYPE_LINKMIC_USER_TOAST -> new TikTokLinkUserToastEvent(message);
-                default -> new TikTokLinkEvent(message);
-            });
-        }));
-        // mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
-        //  mapper.webcastObjectToConstructor(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
-
-        //Rank events
-        //   mapper.webcastObjectToConstructor(WebcastRankTextMessage.class, TikTokRankTextEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastRankUpdateMessage.class, TikTokRankUpdateEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastHourlyRankMessage.class, TikTokRankUpdateEvent.class);
-
-        //Others events
-        //  mapper.webcastObjectToConstructor(WebcastInRoomBannerMessage.class, TikTokInRoomBannerEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastMsgDetectMessage.class, TikTokDetectEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastBarrageMessage.class, TikTokBarrageEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastUnauthorizedMemberMessage.class, TikTokUnauthorizedMemberEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastOecLiveShoppingMessage.class, TikTokShopEvent.class);
-        //   mapper.webcastObjectToConstructor(WebcastImDeleteMessage.class, TikTokIMDeleteEvent.class);
-        //  mapper.bytesToEvents(WebcastEnvelopeMessage.class, commonHandler::handleEnvelop);
-
-
-        onCustomMappings.accept(mapper);
-        return mapper;
-    }
-
 
     public LiveClient buildAndConnect() {
         var client = build();
@@ -275,6 +182,11 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return build().connectAsync();
     }
 
+    /**
+     * To do figure out how to use Annotation processor can could dynamically
+     * like Lombok generates methods for all possible events, everytime library
+     * is compiled
+     */
     public TikTokLiveClientBuilder onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event) {
         eventHandler.subscribe(TikTokUnhandledSocialEvent.class, event);
         return this;

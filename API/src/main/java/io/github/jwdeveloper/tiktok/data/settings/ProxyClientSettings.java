@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 
 @Getter
 @Setter
-public class ProxyClientSettings implements Iterator<ProxyData>
+public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyData>
 {
     private boolean enabled, autoDiscard = true, fallback = true;
     private Rotation rotation = Rotation.CONSECUTIVE;
@@ -114,6 +114,14 @@ public class ProxyClientSettings implements Iterator<ProxyData>
             ", index=" + index +
             ", type=" + type +
             '}';
+    }
+
+    /**
+     * With Iterable<?> interface you can use this object inside For loop!
+     */
+    @Override
+    public Iterator<ProxyData> iterator() {
+        return this;
     }
 
     public enum Rotation
