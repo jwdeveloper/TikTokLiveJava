@@ -69,9 +69,7 @@ public class Events_And_Gifts_Testing_Example
 
         var fakeGift = TikTokGiftEvent.of(roseGift);
         var fakeComboGift = TikTokGiftComboEvent.of(roseGift, 12, GiftComboStateType.Begin);
-
         var fakeMessage = TikTokCommentEvent.of("Mark", "Hello world");
-
         var fakeSubscriber = TikTokSubscribeEvent.of("Mark");
         var fakeFollow = TikTokFollowEvent.of("Mark");
         var fakeLike = TikTokLikeEvent.of("Mark", 12);

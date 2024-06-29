@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import io.github.jwdeveloper.dependance.injector.api.annotations.Inject;
 import io.github.jwdeveloper.tiktok.common.*;
 import io.github.jwdeveloper.tiktok.data.requests.*;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
@@ -54,6 +55,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private final GiftsDataMapper giftsDataMapper;
     private final Logger logger;
 
+    @Inject
     public TikTokLiveHttpClient(HttpClientFactory factory) {
         this.httpFactory = factory;
         this.clientSettings = factory.getLiveClientSettings();
