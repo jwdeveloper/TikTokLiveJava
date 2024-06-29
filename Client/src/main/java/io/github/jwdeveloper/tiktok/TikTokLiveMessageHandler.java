@@ -31,6 +31,7 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandl
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
+import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.Stopwatch;
 
@@ -41,9 +42,9 @@ public class TikTokLiveMessageHandler {
     private final TikTokLiveEventHandler tikTokEventHandler;
     private final TikTokLiveMapper mapper;
 
-    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, TikTokLiveMapper mapper) {
+    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, TikTokMapper mapper) {
         this.tikTokEventHandler = tikTokEventHandler;
-        this.mapper = mapper;
+        this.mapper = (TikTokLiveMapper)mapper;
     }
 
     public void handle(LiveClient client, WebcastResponse webcastResponse) {

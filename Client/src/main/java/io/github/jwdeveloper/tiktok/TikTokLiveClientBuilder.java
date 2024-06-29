@@ -115,18 +115,18 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //config
         dependance.registerSingleton(LiveClientSettings.class, clientSettings);
+        dependance.registerSingleton(Logger.class, LoggerFactory.create(clientSettings.getHostName(), clientSettings));
         dependance.registerSingleton(TikTokRoomInfo.class, container ->
         {
             var roomInfo = new TikTokRoomInfo();
             roomInfo.setHostName(clientSettings.getHostName());
             return roomInfo;
         });
-        dependance.registerSingleton(Logger.class, LoggerFactory.create(clientSettings.getHostName(), clientSettings));
 
         //messages
         dependance.registerSingleton(TikTokLiveEventHandler.class, eventHandler);
         dependance.registerSingleton(TikTokLiveMessageHandler.class);
-        dependance.registerSingleton(TikTokLiveMapper.class, (container) ->
+        dependance.registerSingleton(TikTokMapper.class, (container) ->
         {
             var dependace = (DependanceContainer) container.find(DependanceContainer.class);
             var mapper = MessagesMapperFactory.create(dependace);
@@ -165,16 +165,13 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         //mapper
         dependance.registerSingleton(TikTokGenericEventMapper.class);
         dependance.registerSingleton(TikTokMapperHelper.class, TikTokLiveMapperHelper.class);
-        dependance.registerSingleton(TikTokLiveMapper.class);
+        dependance.registerSingleton(TikTokMapper.class, TikTokLiveMapper.class);
 
         //mapper handlers
         dependance.registerSingleton(TikTokCommonEventHandler.class);
         dependance.registerSingleton(TikTokGiftEventHandler.class);
         dependance.registerSingleton(TikTokRoomInfoEventHandler.class);
         dependance.registerSingleton(TikTokSocialMediaEventHandler.class);
-
-
-
 
         //client
         dependance.registerSingleton(LiveClient.class, TikTokLiveClient.class);
