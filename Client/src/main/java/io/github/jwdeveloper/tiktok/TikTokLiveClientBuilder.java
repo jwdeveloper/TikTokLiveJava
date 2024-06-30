@@ -148,11 +148,11 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpClient.class);
         }
 
-        /** TODO in future, custom proxy implementation that can be provided via builder
-         *  if(customProxy != null)
-         *     dependance.registerSingleton(TikTokProxyProvider.class,customProxy);
-         *  else
-         *     dependance.registerSingleton(TikTokProxyProvider.class,DefaultProxyProvider.class);
+        /* TODO in future, custom proxy implementation that can be provided via builder
+         * if(customProxy != null)
+         *    dependance.registerSingleton(TikTokProxyProvider.class,customProxy);
+         * else
+         *    dependance.registerSingleton(TikTokProxyProvider.class,DefaultProxyProvider.class);
          */
 
         //gifts

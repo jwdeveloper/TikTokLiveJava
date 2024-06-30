@@ -44,7 +44,7 @@ public class TikTokLiveMessageHandler {
 
     public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, TikTokMapper mapper) {
         this.tikTokEventHandler = tikTokEventHandler;
-        this.mapper = (TikTokLiveMapper)mapper;
+        this.mapper = (TikTokLiveMapper) mapper;
     }
 
     public void handle(LiveClient client, WebcastResponse webcastResponse) {
@@ -62,20 +62,19 @@ public class TikTokLiveMessageHandler {
     public void handleSingleMessage(LiveClient client, WebcastResponse.Message message)
     {
         var messageClassName = message.getMethod();
-        if (!mapper.isRegistered(messageClassName)) {
-            tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
-            return;
-        }
-        var stopwatch = new Stopwatch();
-        stopwatch.start();
-        var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
-        var handlingTimeInMs = stopwatch.stop();
-        var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
+        if (!mapper.isRegistered(messageClassName))
+			tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
+		else {
+            var stopwatch = new Stopwatch();
+            stopwatch.start();
+            var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
+            var handlingTimeInMs = stopwatch.stop();
+            var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
 
-        for (var event : events) {
-            tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(message, event, metadata));
-            tikTokEventHandler.publish(client, event);
+            for (var event : events) {
+                tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(message, event, metadata));
+                tikTokEventHandler.publish(client, event);
+            }
         }
     }
-
 }

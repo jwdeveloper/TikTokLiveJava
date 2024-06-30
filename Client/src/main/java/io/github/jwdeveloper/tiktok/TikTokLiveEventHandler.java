@@ -26,10 +26,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TikTokLiveEventHandler {
     private final Map<Class<?>, Set<EventConsumer>> events;
@@ -39,16 +36,8 @@ public class TikTokLiveEventHandler {
     }
 
     public void publish(LiveClient tikTokLiveClient, TikTokEvent tikTokEvent) {
-        if (events.containsKey(TikTokEvent.class)) {
-            var handlers = events.get(TikTokEvent.class);
-            handlers.forEach(handler -> handler.onEvent(tikTokLiveClient,tikTokEvent));
-        }
-
-        if (!events.containsKey(tikTokEvent.getClass())) {
-            return;
-        }
-        var handlers = events.get(tikTokEvent.getClass());
-        handlers.forEach(handler -> handler.onEvent(tikTokLiveClient,tikTokEvent));
+        Optional.ofNullable(events.get(TikTokEvent.class)).ifPresent(handlers -> handlers.forEach(handler -> handler.onEvent(tikTokLiveClient, tikTokEvent)));
+        Optional.ofNullable(events.get(tikTokEvent.getClass())).ifPresent(handlers -> handlers.forEach(handler -> handler.onEvent(tikTokLiveClient, tikTokEvent)));
     }
 
     public <T extends TikTokEvent> void subscribe(Class<?> clazz, EventConsumer<T> event) {
@@ -60,21 +49,11 @@ public class TikTokLiveEventHandler {
     }
 
     public <T extends TikTokEvent> void unsubscribe(EventConsumer<T> consumer) {
-        for (var entry : events.entrySet()) {
-            entry.getValue().remove(consumer);
-        }
+		events.forEach((key, value) -> value.remove(consumer));
     }
 
     public <T extends TikTokEvent> void unsubscribe(Class<?> clazz, EventConsumer<T> consumer) {
-        if (clazz == null) {
-            return;
-        }
-
-        if (!events.containsKey(clazz)) {
-            return;
-        }
-
-        var eventSet = events.get(clazz);
-        eventSet.remove(consumer);
-    }
+		if (clazz != null)
+			Optional.ofNullable(events.get(clazz)).ifPresent(eventConsumers -> eventConsumers.remove(consumer));
+	}
 }

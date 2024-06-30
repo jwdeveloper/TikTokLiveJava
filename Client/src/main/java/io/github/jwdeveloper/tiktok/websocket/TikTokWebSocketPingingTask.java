@@ -24,8 +24,6 @@ package io.github.jwdeveloper.tiktok.websocket;
 
 import org.java_websocket.WebSocket;
 
-import java.util.Random;
-
 public class TikTokWebSocketPingingTask
 {
     private Thread thread;
@@ -36,8 +34,7 @@ public class TikTokWebSocketPingingTask
     public void run(WebSocket webSocket, long pingTaskTime)
     {
         stop();
-        thread = new Thread(() -> pingTask(webSocket, pingTaskTime));
-        thread.setName("pinging-task");
+        thread = new Thread(() -> pingTask(webSocket, pingTaskTime), "pinging-task");
         isRunning = true;
         thread.start();
     }
@@ -51,16 +48,13 @@ public class TikTokWebSocketPingingTask
 
     private void pingTask(WebSocket webSocket, long pingTaskTime)
     {
-        var random = new Random();
         while (isRunning) {
             try {
-                if (!webSocket.isOpen()) {
+                if (webSocket.isOpen()) {
+                    webSocket.sendPing();
+                    Thread.sleep(pingTaskTime+(int)(Math.random() * MAX_TIMEOUT));
+				} else
                     Thread.sleep(SLEEP_TIME);
-                    continue;
-                }
-                webSocket.sendPing();
-
-                Thread.sleep(pingTaskTime+random.nextInt(MAX_TIMEOUT));
             }
             catch (Exception e) {
                 //TODO we should display some kind of error message

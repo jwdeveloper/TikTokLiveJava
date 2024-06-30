@@ -41,7 +41,7 @@ public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyD
     private Consumer<ProxyData> onProxyUpdated = x -> {};
 
     public boolean addProxy(String addressPort) {
-        return proxyList.add(ProxyData.map(addressPort));
+        return addProxy(ProxyData.map(addressPort).toSocketAddress());
     }
 
     public boolean addProxy(String address, int port) {
@@ -117,7 +117,7 @@ public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyD
     }
 
     /**
-     * With Iterable<?> interface you can use this object inside For loop!
+     * With {@code Iterable<ProxyData>} interface, you can use this object inside for loop!
      */
     @Override
     public Iterator<ProxyData> iterator() {

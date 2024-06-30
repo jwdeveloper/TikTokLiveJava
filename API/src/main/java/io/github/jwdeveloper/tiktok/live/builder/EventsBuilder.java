@@ -52,76 +52,69 @@ public interface EventsBuilder<T> {
     /**
      * Invoked whenever any event is triggered
      *
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onEvent(EventConsumer<TikTokEvent> action);
 
     /**
      * Invoked when information about room (live) got updated such as viewer count, etc..
      *
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> action);
 
     /**
      * Invoked when someone send message to chat
-     *
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onComment(EventConsumer<TikTokCommentEvent> action);
 
-
     /**
      * Invoked when TikTokLiveJava makes http request and getting response
-     *
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onHttpResponse(EventConsumer<TikTokHttpResponseEvent> action);
 
     /**
      * Invoked when TikTok protocolBuffer data "message" was successfully mapped to event
      * events contains protocol-buffer "Message"  and  TikTokLiveJava "Event"
-     *
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> action);
 
     /**
      * Invoked when there was not found event mapper for TikTok protocolBuffer data "message"
-     *
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> action);
 
     /**
      * Invoked every time TikTok sends protocolBuffer data to websocket
      * Response contains list of messages that are later mapped to events
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> action);
 
-
     /**
      * Invoked for gifts that has no combo, or when combo finishes
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onGift(EventConsumer<TikTokGiftEvent> action);
 
     /**
      * Invoked for gifts that has combo options such as roses
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onGiftCombo(EventConsumer<TikTokGiftComboEvent> action);
-
 
     T onQuestion(EventConsumer<TikTokQuestionEvent> action);
 
@@ -145,36 +138,36 @@ public interface EventsBuilder<T> {
 
     /**
      * Invoked when client has been successfully connected to live
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onConnected(EventConsumer<TikTokConnectedEvent> action);
 
     /**
      * Invoked before client has been successfully connected to live
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onPreConnection(EventConsumer<TikTokPreConnectionEvent> action);
 
     /**
      * Invoked when client tries to reconnect
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onReconnecting(EventConsumer<TikTokReconnectingEvent> action);
 
     /**
      * Invoked when client disconnected
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onDisconnected(EventConsumer<TikTokDisconnectedEvent> action);
 
     /**
      * Invoked when exception was throed inside client or event handler
-     * @param action
-     * @return
+     * @param action consumable action
+     * @return self instance
      */
     T onError(EventConsumer<TikTokErrorEvent> action);
 
