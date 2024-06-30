@@ -32,13 +32,18 @@ import java.util.function.Function;
 public interface TikTokMapper {
 
     /**
-     * * if mapper is not found for messageName, TikTokLiveException is thrown
+     * when mapper is not found for messageName, TikTokLiveException is thrown
      *
      * @param messageName
      * @return TikTokMapperModel
      */
     TikTokMapperModel forMessage(String messageName);
 
+    /**
+     *
+     * @param mapperName protocol buffer class type
+     * @return
+     */
     TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName);
 
     TikTokMapperModel forMessage(String mapperName, MappingAction<MappingResult> onMapping);

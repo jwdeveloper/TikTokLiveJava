@@ -63,18 +63,20 @@ public class TikTokLiveMessageHandler {
     {
         var messageClassName = message.getMethod();
         if (!mapper.isRegistered(messageClassName))
-			tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
-		else {
-            var stopwatch = new Stopwatch();
-            stopwatch.start();
-            var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
-            var handlingTimeInMs = stopwatch.stop();
-            var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
+        {
+            tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
+            return;
+        }
 
-            for (var event : events) {
-                tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(message, event, metadata));
-                tikTokEventHandler.publish(client, event);
-            }
+        var stopwatch = new Stopwatch();
+        stopwatch.start();
+        var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
+        var handlingTimeInMs = stopwatch.stop();
+        var metadata = new MessageMetaData(Duration.ofNanos(handlingTimeInMs));
+
+        for (var event : events) {
+            tikTokEventHandler.publish(client, new TikTokWebsocketMessageEvent(message, event, metadata));
+            tikTokEventHandler.publish(client, event);
         }
     }
 }
