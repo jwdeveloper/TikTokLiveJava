@@ -53,7 +53,6 @@ public class TikTokLiveEventHandler {
     }
 
     public <T extends TikTokEvent> void unsubscribe(Class<?> clazz, EventConsumer<T> consumer) {
-		if (clazz != null)
-			Optional.ofNullable(events.get(clazz)).ifPresent(eventConsumers -> eventConsumers.remove(consumer));
+        Optional.ofNullable(clazz).map(events::get).ifPresent(consumers -> consumers.remove(consumer));
 	}
 }
