@@ -126,13 +126,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         //messages
         dependance.registerSingleton(TikTokLiveEventHandler.class, eventHandler);
         dependance.registerSingleton(TikTokLiveMessageHandler.class);
-        dependance.registerSingleton(TikTokMapper.class, (container) ->
-        {
-            var dependace = (DependanceContainer) container.find(DependanceContainer.class);
-            var mapper = MessagesMapperFactory.create(dependace);
-            onCustomMappings.forEach(action -> action.accept(mapper));
-            return mapper;
-        });
 
         //listeners
         dependance.registerSingletonList(TikTokEventListener.class, (e) -> listeners);
@@ -165,7 +158,13 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         //mapper
         dependance.registerSingleton(TikTokGenericEventMapper.class);
         dependance.registerSingleton(TikTokMapperHelper.class, TikTokLiveMapperHelper.class);
-        dependance.registerSingleton(TikTokMapper.class, TikTokLiveMapper.class);
+        dependance.registerSingleton(TikTokMapper.class, (container) ->
+        {
+            var dependace = (DependanceContainer) container.find(DependanceContainer.class);
+            var mapper = MessagesMapperFactory.create(dependace);
+            onCustomMappings.forEach(action -> action.accept(mapper));
+            return mapper;
+        });
 
         //mapper handlers
         dependance.registerSingleton(TikTokCommonEventHandler.class);
@@ -191,9 +190,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     }
 
     /**
-     * To do figure out how to use Annotation processor can could dynamically
-     * like Lombok generates methods for all possible events, everytime library
-     * is compiled
+     * To do figure out how to use Annotation processor.
+     * Goal is to generates methods for all possible events, everytime library is compiled
      */
     public TikTokLiveClientBuilder onUnhandledSocial(EventConsumer<TikTokUnhandledSocialEvent> event) {
         eventHandler.subscribe(TikTokUnhandledSocialEvent.class, event);

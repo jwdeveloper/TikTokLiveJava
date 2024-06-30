@@ -40,7 +40,8 @@ import static io.github.jwdeveloper.tiktok.messages.enums.LinkMessageType.*;
 public class MessagesMapperFactory {
     public static TikTokLiveMapper create(DependanceContainer container) {
 
-        var mapper = container.find(TikTokLiveMapper.class);
+        var helper = container.find(TikTokMapperHelper.class);
+        var mapper = new TikTokLiveMapper(helper);
 
         //ConnectionEvents events
         var commonHandler = container.find(TikTokCommonEventHandler.class);
