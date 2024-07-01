@@ -22,6 +22,7 @@ public class Main
 
         var output = System.getProperty("user.dir");
 
+
         DescriptionGenerator generator = Descrabble.create()
                 .withTemplate(targetFile)
                 .withVariable("version", version)

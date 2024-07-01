@@ -12,7 +12,7 @@
         <module>API</module>
         <module>Client</module>
         <module>Examples</module>
-        <module>Tools-ReadmeGenerator</module>
+        <module>tools-readme</module>
 
         <module>extension-recorder</module>
         <module>extension-collector</module>
