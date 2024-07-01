@@ -27,9 +27,7 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
 import io.github.jwdeveloper.tiktok.data.requests.*;
 import lombok.*;
 
-/**
- * Triggered before the connection is established.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Control)
 public class TikTokPreConnectionEvent extends TikTokLiveClientEvent

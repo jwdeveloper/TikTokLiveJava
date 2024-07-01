@@ -28,9 +28,6 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * General error event. You should handle this.
- */
 @Getter
 @AllArgsConstructor
 @EventMeta(eventType = EventType.Control)

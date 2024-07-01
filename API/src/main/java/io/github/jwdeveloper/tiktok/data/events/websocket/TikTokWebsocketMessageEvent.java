@@ -35,10 +35,7 @@ import lombok.Value;
 import java.time.Duration;
 
 
-/**
- * Triggered every time TikTok sends data. Data incoming as protobuf message.
- * You can deserialize the binary object depending on the use case.
- */
+
 @Getter
 @AllArgsConstructor
 @EventMeta(eventType = EventType.Debug)

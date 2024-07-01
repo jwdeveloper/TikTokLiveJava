@@ -31,9 +31,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
 
-/**
- * Triggered when a viewer sends likes to the streamer. For streams with many viewers, this event is not always triggered by TikTok.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokLikeEvent extends TikTokHeaderEvent

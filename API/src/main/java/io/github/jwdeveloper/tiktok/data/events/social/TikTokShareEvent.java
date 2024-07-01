@@ -29,9 +29,7 @@ import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
-/**
- * Triggers when a user shares the stream. Based on social event.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokShareEvent extends TikTokHeaderEvent {

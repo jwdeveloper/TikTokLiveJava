@@ -30,9 +30,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
-/**
-Triggered when LiveRoomInfo got updated such as likes, viewers, ranking ....
- */
+
 @Getter
 @AllArgsConstructor
 @EventMeta(eventType = EventType.Message)

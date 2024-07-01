@@ -27,26 +27,24 @@ import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  Goal of this class is to map ProtocolBuffer objects to TikTok Event in generic way
- *
- *  First parameter is ProtocolBuffer class type
- *  Second parameters is TikTokEvent class type
- *  Third parameters is bytes payload
- *
- *    mapToEvent(WebcastGiftMessage.class, TikTokGiftEvent.class, payload)
- *
- *    How does it work?
- *    1. Finds method `parseFrom(byte[] bytes)` inside ProtocolBuffer class
- *    2. put payload to the method methods and create new instance of ProtcolBuffer object
- *    3. Finds in TikTokEvent constructor that takes ProtocolBuffer type as parameter
- *    4. create new Instance in TikTokEvents using object from step 2 and constructor from step 3
- *
- *    methodCache and constructorCache are used to boost performance
+ *  <ul>
+ *      <li>First parameter is ProtocolBuffer class type</li>
+ *      <li>Second parameters is TikTokEvent class type</li>
+ *      <li>Third parameters is bytes payload</li>
+ *  </ul>
+ *  <p>mapToEvent(WebcastGiftMessage.class, TikTokGiftEvent.class, payload)</p>
+ *  <p>How does it work?</p>
+ *  <ol>
+ *      <li>Finds method `parseFrom(byte[] bytes)` inside ProtocolBuffer class</li>
+ *      <li>Put payload to the method methods and create new instance of ProtcolBuffer object</li>
+ *      <li>Finds in TikTokEvent constructor that takes ProtocolBuffer type as parameter</li>
+ *      <li>Create new Instance in TikTokEvents using object from step 2 and constructor from step 3</li>
+ *  </ol>
+ *   methodCache and constructorCache are used to boost performance
  */
 public class TikTokGenericEventMapper {
 
@@ -74,34 +72,27 @@ public class TikTokGenericEventMapper {
         }
     }
 
-    public Method getParsingMethod(Class<?> input) throws NoSuchMethodException {
-        if (methodCache.containsKey(input)) {
-            return methodCache.get(input);
-        }
-        var method = input.getDeclaredMethod("parseFrom", byte[].class);
-        methodCache.put(input, method);
-        return method;
+    public Method getParsingMethod(Class<?> input) throws RuntimeException {
+        return methodCache.computeIfAbsent(input, aClass -> {
+			try {
+				return aClass.getDeclaredMethod("parseFrom", byte[].class);
+			} catch (NoSuchMethodException e) {
+				throw new RuntimeException(e);
+			}
+		});
     }
 
     private Constructor<?> getParsingConstructor(Class<?> input, Class<?> output) {
-        var pair = new TypePair(input, output);
-        if (constructorCache.containsKey(pair)) {
-            return constructorCache.get(pair);
-        }
-
-        var optional = Arrays.stream(output.getConstructors())
+        return constructorCache.computeIfAbsent(new TypePair(input, output), pair -> {
+            var optional = Arrays.stream(output.getConstructors())
                 .filter(ea -> Arrays.stream(ea.getParameterTypes())
-                        .toList()
-                        .contains(input))
+                    .toList()
+                    .contains(input))
                 .findFirst();
 
-        if (optional.isEmpty()) {
-            throw new TikTokMessageMappingException(input, output, "Unable to find constructor with input class type");
-        }
-
-        constructorCache.put(pair, optional.get());
-        return optional.get();
+            if (optional.isEmpty())
+				throw new TikTokMessageMappingException(input, output, "Unable to find constructor with input class type");
+            return optional.get();
+        });
     }
-
-
 }

@@ -28,7 +28,7 @@ import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
 import io.github.jwdeveloper.tiktok.utils.ProtocolUtils;
 
-public class TikTokLiveMapperHelper implements TikTokMapperHelper {
+public class TikTokLiveMapperHelper implements LiveMapperHelper {
     private final TikTokGenericEventMapper genericMapper;
 
     public TikTokLiveMapperHelper(TikTokGenericEventMapper genericMapper) {

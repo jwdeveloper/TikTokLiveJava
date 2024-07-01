@@ -26,7 +26,7 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
 
-public interface TikTokMapperHelper {
+public interface LiveMapperHelper {
 
     /**
      * @param bytes        protocol buffer data bytes

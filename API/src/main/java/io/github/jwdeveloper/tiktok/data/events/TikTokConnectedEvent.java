@@ -25,9 +25,6 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
 
-/**
- * Triggered when the connection is successfully established.
- */
 @EventMeta(eventType = EventType.Control)
 public class TikTokConnectedEvent extends TikTokLiveClientEvent
 {

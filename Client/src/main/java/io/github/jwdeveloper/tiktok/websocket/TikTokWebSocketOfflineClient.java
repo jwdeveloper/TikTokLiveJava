@@ -27,13 +27,14 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 
 public class TikTokWebSocketOfflineClient implements SocketClient {
 
-    private final TikTokLiveEventHandler handler;
+    private final LiveEventsHandler handler;
     private LiveClient liveClient;
 
-    public TikTokWebSocketOfflineClient(TikTokLiveEventHandler handler) {
+    public TikTokWebSocketOfflineClient(LiveEventsHandler handler) {
         this.handler = handler;
     }
 

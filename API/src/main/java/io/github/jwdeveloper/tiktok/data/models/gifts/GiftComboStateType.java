@@ -23,9 +23,9 @@
 package io.github.jwdeveloper.tiktok.data.models.gifts;
 
 public enum GiftComboStateType {
-    Finished,
     Begin,
-    Active;
+    Active,
+    Finished;
 
     public static GiftComboStateType fromNumber(long number) {
         return switch ((int) number) {

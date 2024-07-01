@@ -29,9 +29,7 @@ import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastQuestionNewMessage;
 import lombok.Getter;
 
-/*
-Triggered every time someone asks a new question via the question feature.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokQuestionEvent extends TikTokHeaderEvent {

@@ -31,7 +31,7 @@ import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
 import io.github.jwdeveloper.tiktok.data.models.RankingUser;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
+import io.github.jwdeveloper.tiktok.mappers.LiveMapperHelper;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLiveIntroMessage;
@@ -86,7 +86,7 @@ public class TikTokRoomInfoEventHandler {
     }
 
     @SneakyThrows
-    public MappingResult handleMemberMessage(byte[] msg, String name, TikTokMapperHelper helper) {
+    public MappingResult handleMemberMessage(byte[] msg, String name, LiveMapperHelper helper) {
         var message = WebcastMemberMessage.parseFrom(msg);
 
         var event = switch (message.getAction()) {
@@ -103,7 +103,7 @@ public class TikTokRoomInfoEventHandler {
     }
 
     @SneakyThrows
-    public MappingResult handleLike(byte[] msg, String name, TikTokMapperHelper helper) {
+    public MappingResult handleLike(byte[] msg, String name, LiveMapperHelper helper) {
         var message = WebcastLikeMessage.parseFrom(msg);
         var event = new TikTokLikeEvent(message);
         var roomInfoEvent = this.handleRoomInfo(tikTokRoomInfo ->

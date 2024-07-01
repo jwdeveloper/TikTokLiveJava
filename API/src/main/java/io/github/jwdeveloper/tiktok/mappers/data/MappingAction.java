@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers.data;
 
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
+import io.github.jwdeveloper.tiktok.mappers.LiveMapperHelper;
 
 @FunctionalInterface
 public interface MappingAction<T> {
@@ -33,6 +33,6 @@ public interface MappingAction<T> {
      * @param mapperHelper utils and helper methods that can be use to debbug/display/deserialize protocol buffer data
      * @return
      */
-    T onMapping(byte[] inputBytes, String messageName, TikTokMapperHelper mapperHelper);
+    T onMapping(byte[] inputBytes, String messageName, LiveMapperHelper mapperHelper);
 
 }
