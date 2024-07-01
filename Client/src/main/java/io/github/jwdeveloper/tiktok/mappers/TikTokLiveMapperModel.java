@@ -75,5 +75,4 @@ public class TikTokLiveMapperModel implements TikTokMapperModel {
         return this;
     }
 
-
 }

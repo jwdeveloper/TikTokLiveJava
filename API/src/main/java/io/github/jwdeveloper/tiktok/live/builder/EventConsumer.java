@@ -25,7 +25,13 @@ package io.github.jwdeveloper.tiktok.live.builder;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
+@FunctionalInterface
 public interface EventConsumer<T extends TikTokEvent>
 {
+     /**
+      *
+      * @param liveClient TikTok live client
+      * @param event event data object
+      */
      void onEvent(LiveClient liveClient, T event);
 }

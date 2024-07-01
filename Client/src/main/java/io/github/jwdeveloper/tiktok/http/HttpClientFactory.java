@@ -23,7 +23,9 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.data.settings.*;
+import lombok.Getter;
 
+@Getter
 public class HttpClientFactory {
     private final LiveClientSettings liveClientSettings;
 
@@ -35,7 +37,9 @@ public class HttpClientFactory {
         return new HttpClientBuilder(url, liveClientSettings.getHttpSettings().clone());
     }
 
+
     //Does not contains default httpClientSettings, Params, headers, etd
+    //Edit: Do we even use it?
     public HttpClientBuilder clientEmpty(String url) {
         var settings = new HttpClientSettings();
         settings.setProxyClientSettings(liveClientSettings.getHttpSettings().getProxyClientSettings());

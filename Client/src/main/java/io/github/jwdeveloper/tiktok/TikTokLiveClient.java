@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.ByteString;
+import io.github.jwdeveloper.dependance.injector.api.annotations.Inject;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.*;
@@ -43,13 +44,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public class TikTokLiveClient implements LiveClient {
+public class TikTokLiveClient implements LiveClient
+{
     private final TikTokRoomInfo liveRoomInfo;
     private final LiveHttpClient httpClient;
     private final SocketClient webSocketClient;
     private final TikTokLiveEventHandler tikTokEventHandler;
     private final LiveClientSettings clientSettings;
-    private final TikTokListenersManager listenersManager;
+    private final ListenersManager listenersManager;
     private final Logger logger;
     private final GiftsManager giftsManager;
     private final TikTokLiveMessageHandler messageHandler;
@@ -62,7 +64,7 @@ public class TikTokLiveClient implements LiveClient {
             SocketClient webSocketClient,
             TikTokLiveEventHandler tikTokEventHandler,
             LiveClientSettings clientSettings,
-            TikTokListenersManager listenersManager,
+            ListenersManager listenersManager,
             Logger logger) {
         this.messageHandler = messageHandler;
         this.giftsManager = giftsManager;
@@ -125,7 +127,7 @@ public class TikTokLiveClient implements LiveClient {
         tikTokEventHandler.publish(this, new TikTokConnectingEvent());
         var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
-        liveRoomInfo.setStartTime(userData.getStartedAtTimeStamp());
+        liveRoomInfo.setStartTime(userData.getStartTime());
         liveRoomInfo.setRoomId(userData.getRoomId());
 
         if (clientSettings.isFetchGifts())

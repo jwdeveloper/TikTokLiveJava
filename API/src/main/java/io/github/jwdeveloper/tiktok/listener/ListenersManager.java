@@ -33,6 +33,7 @@ import java.util.List;
 public interface ListenersManager
 {
     List<TikTokEventListener> getListeners();
+
     void addListener(TikTokEventListener listener);
 
     void removeListener(TikTokEventListener listener);

@@ -97,7 +97,7 @@ public class HttpClientSettings {
         newSettings.getHeaders().putAll(new TreeMap<>(this.headers));
         newSettings.getCookies().putAll(new TreeMap<>(this.cookies));
         newSettings.getParams().putAll(new TreeMap<>(this.params));
-        newSettings.proxyClientSettings = this.proxyClientSettings;
+        newSettings.setProxyClientSettings(this.proxyClientSettings);
 
         return newSettings;
     }

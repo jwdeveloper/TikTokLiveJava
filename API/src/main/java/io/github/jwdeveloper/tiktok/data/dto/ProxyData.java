@@ -50,14 +50,10 @@ public class ProxyData
 
 			return new ProxyData(address, port);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Port must be a valid integer!");
+			throw new IllegalArgumentException("Port must be a valid integer!", e);
 		} catch (UnknownHostException e) {
-			throw new IllegalArgumentException("Address must be valid IPv4, IPv6, or domain name!");
+			throw new IllegalArgumentException("Address must be valid IPv4, IPv6, or domain name!", e);
 		}
-	}
-
-	public ProxyData clone() {
-		return new ProxyData(address, port);
 	}
 
 	public InetSocketAddress toSocketAddress() {

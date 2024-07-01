@@ -90,14 +90,14 @@ public class HttpClient {
         return toResponse().map(HttpResponse::body);
     }
 
-    public URI toUrl() {
+    public URI toUri() {
         var stringUrl = prepareUrlWithParameters(url, httpClientSettings.getParams());
         return URI.create(stringUrl);
     }
 
     protected HttpRequest prepareGetRequest() {
         var requestBuilder = HttpRequest.newBuilder().GET();
-        requestBuilder.uri(toUrl());
+        requestBuilder.uri(toUri());
         requestBuilder.timeout(httpClientSettings.getTimeout());
         httpClientSettings.getHeaders().forEach(requestBuilder::setHeader);
 

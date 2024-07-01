@@ -23,14 +23,10 @@
 package io.github.jwdeveloper.tiktok.mappers;
 
 import com.google.protobuf.GeneratedMessageV3;
-import io.github.jwdeveloper.tiktok.TikTokLive;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.mappers.data.MappingAction;
-import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
+import io.github.jwdeveloper.tiktok.mappers.data.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class TikTokLiveMapper implements TikTokMapper {
@@ -47,11 +43,7 @@ public class TikTokLiveMapper implements TikTokMapper {
 
     @Override
     public TikTokMapperModel forMessage(String messageName) {
-        if (!isRegistered(messageName)) {
-            var model = new TikTokLiveMapperModel(messageName);
-            mappers.put(messageName, model);
-        }
-        return mappers.get(messageName);
+        return mappers.computeIfAbsent(messageName, TikTokLiveMapperModel::new);
     }
 
     @Override
@@ -65,7 +57,6 @@ public class TikTokLiveMapper implements TikTokMapper {
         model.onMapping(onMapping);
         return model;
     }
-
 
     @Override
     public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, MappingAction<MappingResult> onMapping) {
@@ -84,7 +75,6 @@ public class TikTokLiveMapper implements TikTokMapper {
         return globalMapperModel;
     }
 
-
     public boolean isRegistered(String mapperName) {
         return mappers.containsKey(mapperName);
     }
@@ -94,23 +84,19 @@ public class TikTokLiveMapper implements TikTokMapper {
     }
 
     public List<TikTokEvent> handleMapping(String messageName, byte[] bytes) {
-        if (!isRegistered(messageName)) {
-            return List.of();
-        }
         var mapperModel = mappers.get(messageName);
+        if (mapperModel == null)
+            return List.of();
 
         var inputBytes = mapperModel.getOnBeforeMapping().onMapping(bytes, messageName, mapperUtils);
         var globalInputBytes = globalMapperModel.getOnBeforeMapping().onMapping(inputBytes, messageName, mapperUtils);
 
-
         var mappingResult = mapperModel.getOnMapping().onMapping(globalInputBytes, messageName, mapperUtils);
 
-        if (mappingResult == null) {
-            mappingResult = globalMapperModel.getOnMapping().onMapping(globalInputBytes, messageName, mapperUtils);
-        }
+        if (mappingResult == null)
+			mappingResult = globalMapperModel.getOnMapping().onMapping(globalInputBytes, messageName, mapperUtils);
 
         var afterMappingResult = mapperModel.getOnAfterMapping().apply(mappingResult);
-        var globalAfterMappingResult = globalMapperModel.getOnAfterMapping().apply(MappingResult.of(mappingResult.getSource(), afterMappingResult));
-        return globalAfterMappingResult;
+		return globalMapperModel.getOnAfterMapping().apply(MappingResult.of(mappingResult.getSource(), afterMappingResult));
     }
 }

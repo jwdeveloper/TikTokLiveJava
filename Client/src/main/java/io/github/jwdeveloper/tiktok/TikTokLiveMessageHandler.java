@@ -31,6 +31,7 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandl
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
+import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.Stopwatch;
 
@@ -41,9 +42,9 @@ public class TikTokLiveMessageHandler {
     private final TikTokLiveEventHandler tikTokEventHandler;
     private final TikTokLiveMapper mapper;
 
-    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, TikTokLiveMapper mapper) {
+    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, TikTokMapper mapper) {
         this.tikTokEventHandler = tikTokEventHandler;
-        this.mapper = mapper;
+        this.mapper = (TikTokLiveMapper) mapper;
     }
 
     public void handle(LiveClient client, WebcastResponse webcastResponse) {
@@ -61,10 +62,12 @@ public class TikTokLiveMessageHandler {
     public void handleSingleMessage(LiveClient client, WebcastResponse.Message message)
     {
         var messageClassName = message.getMethod();
-        if (!mapper.isRegistered(messageClassName)) {
+        if (!mapper.isRegistered(messageClassName))
+        {
             tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
             return;
         }
+
         var stopwatch = new Stopwatch();
         stopwatch.start();
         var events = mapper.handleMapping(messageClassName, message.getPayload().toByteArray());
@@ -76,5 +79,4 @@ public class TikTokLiveMessageHandler {
             tikTokEventHandler.publish(client, event);
         }
     }
-
 }

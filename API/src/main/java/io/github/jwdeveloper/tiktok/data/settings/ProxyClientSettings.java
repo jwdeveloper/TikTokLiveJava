@@ -31,17 +31,17 @@ import java.util.function.Consumer;
 
 @Getter
 @Setter
-public class ProxyClientSettings implements Iterator<ProxyData>
+public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyData>
 {
     private boolean enabled, autoDiscard = true, fallback = true;
     private Rotation rotation = Rotation.CONSECUTIVE;
     private final List<ProxyData> proxyList = new ArrayList<>();
-    private int index = -1;
+    private int index;
     private Proxy.Type type = Proxy.Type.DIRECT;
     private Consumer<ProxyData> onProxyUpdated = x -> {};
 
     public boolean addProxy(String addressPort) {
-        return proxyList.add(ProxyData.map(addressPort));
+        return addProxy(ProxyData.map(addressPort).toSocketAddress());
     }
 
     public boolean addProxy(String address, int port) {
@@ -57,33 +57,27 @@ public class ProxyClientSettings implements Iterator<ProxyData>
     }
 
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
         return !proxyList.isEmpty();
     }
 
     @Override
-    public ProxyData next() {
-        var nextProxy = switch (rotation)
-        {
-            case CONSECUTIVE -> {
-                index = (index+1) % proxyList.size();
-                yield proxyList.get(index).clone();
+    public synchronized ProxyData next() {
+        try {
+            var nextProxy = proxyList.get(index);
+            onProxyUpdated.accept(nextProxy);
+            return nextProxy;
+        } finally {
+            switch (rotation) {
+                case CONSECUTIVE -> index = ++index % proxyList.size();
+                case RANDOM -> index = (int) (Math.random() * proxyList.size());
+                case NONE -> index = Math.max(index, 0);
             }
-            case RANDOM -> {
-                index = new Random().nextInt(proxyList.size());
-                yield proxyList.get(index).clone();
-            }
-            case NONE -> {
-                index = Math.max(index, 0);
-                yield proxyList.get(index).clone();
-            }
-        };
-        onProxyUpdated.accept(nextProxy);
-        return nextProxy;
-	}
+        }
+    }
 
     @Override
-    public void remove() {
+    public synchronized void remove() {
         proxyList.remove(index);
     }
 
@@ -97,8 +91,8 @@ public class ProxyClientSettings implements Iterator<ProxyData>
         }
     }
 
-    public ProxyClientSettings clone()
-    {
+    @Override
+    public ProxyClientSettings clone() {
         ProxyClientSettings settings = new ProxyClientSettings();
         settings.setEnabled(enabled);
         settings.setRotation(rotation);
@@ -107,6 +101,27 @@ public class ProxyClientSettings implements Iterator<ProxyData>
         settings.setOnProxyUpdated(onProxyUpdated);
         proxyList.forEach(proxyData -> settings.addProxy(proxyData.getAddress(), proxyData.getPort()));
         return settings;
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyClientSettings{" +
+            "enabled=" + enabled +
+            ", autoDiscard=" + autoDiscard +
+            ", fallback=" + fallback +
+            ", rotation=" + rotation +
+            ", proxyList=" + proxyList +
+            ", index=" + index +
+            ", type=" + type +
+            '}';
+    }
+
+    /**
+     * With {@code Iterable<ProxyData>} interface, you can use this object inside for loop!
+     */
+    @Override
+    public Iterator<ProxyData> iterator() {
+        return this;
     }
 
     public enum Rotation

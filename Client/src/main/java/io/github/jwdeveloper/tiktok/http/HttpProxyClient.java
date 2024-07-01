@@ -95,7 +95,7 @@ public class HttpProxyClient extends HttpClient {
 				public X509Certificate[] getAcceptedIssuers() { return null; }
 			}}, null);
 
-			URL url = toUrl().toURL();
+			URL url = toUri().toURL();
 
 			if (proxySettings.hasNext()) {
 				try {
@@ -117,7 +117,7 @@ public class HttpProxyClient extends HttpClient {
 
 					var responseInfo = createResponseInfo(socksConnection.getResponseCode(), headers);
 
-					var response = createHttpResponse(body, toUrl(), responseInfo);
+					var response = createHttpResponse(body, toUri(), responseInfo);
 
 					return ActionResult.success(response);
 				} catch (IOException e) {
