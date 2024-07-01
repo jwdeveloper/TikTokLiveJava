@@ -29,13 +29,13 @@ import io.github.jwdeveloper.tiktok.mappers.data.*;
 import java.util.*;
 import java.util.function.Function;
 
-public class TikTokLiveMapper implements TikTokMapper {
+public class TikTokLiveMapper implements LiveMapper {
 
     private final Map<String, TikTokLiveMapperModel> mappers;
-    private final TikTokMapperHelper mapperUtils;
+    private final LiveMapperHelper mapperUtils;
     private final TikTokLiveMapperModel globalMapperModel;
 
-    public TikTokLiveMapper(TikTokMapperHelper mapperUtils) {
+    public TikTokLiveMapper(LiveMapperHelper mapperUtils) {
         this.mappers = new HashMap<>();
         this.mapperUtils = mapperUtils;
         this.globalMapperModel = new TikTokLiveMapperModel("any message");

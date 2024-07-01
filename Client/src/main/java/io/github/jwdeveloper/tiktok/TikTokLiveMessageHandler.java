@@ -30,21 +30,22 @@ import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketRespons
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.mappers.TikTokLiveMapper;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
+import io.github.jwdeveloper.tiktok.live.LiveMessagesHandler;
+import io.github.jwdeveloper.tiktok.mappers.LiveMapper;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.utils.Stopwatch;
 
 import java.time.Duration;
 
-public class TikTokLiveMessageHandler {
+public class TikTokLiveMessageHandler implements LiveMessagesHandler {
 
-    private final TikTokLiveEventHandler tikTokEventHandler;
-    private final TikTokLiveMapper mapper;
+    private final LiveEventsHandler tikTokEventHandler;
+    private final LiveMapper mapper;
 
-    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, TikTokMapper mapper) {
+    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, LiveMapper mapper) {
         this.tikTokEventHandler = tikTokEventHandler;
-        this.mapper = (TikTokLiveMapper) mapper;
+        this.mapper = mapper;
     }
 
     public void handle(LiveClient client, WebcastResponse webcastResponse) {
@@ -59,11 +60,9 @@ public class TikTokLiveMessageHandler {
         }
     }
 
-    public void handleSingleMessage(LiveClient client, WebcastResponse.Message message)
-    {
+    public void handleSingleMessage(LiveClient client, WebcastResponse.Message message) {
         var messageClassName = message.getMethod();
-        if (!mapper.isRegistered(messageClassName))
-        {
+        if (!mapper.isRegistered(messageClassName)) {
             tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));
             return;
         }

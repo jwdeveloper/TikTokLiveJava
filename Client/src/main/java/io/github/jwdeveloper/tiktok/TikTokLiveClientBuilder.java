@@ -27,17 +27,7 @@ import io.github.jwdeveloper.dependance.api.DependanceContainer;
 import io.github.jwdeveloper.dependance.implementation.DependanceContainerBuilder;
 import io.github.jwdeveloper.tiktok.mappers.MessagesMapperFactory;
 import io.github.jwdeveloper.tiktok.common.LoggerFactory;
-import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
-import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.*;
-import io.github.jwdeveloper.tiktok.data.events.http.TikTokHttpResponseEvent;
-import io.github.jwdeveloper.tiktok.data.events.link.*;
-import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.*;
-import io.github.jwdeveloper.tiktok.data.events.social.*;
-import io.github.jwdeveloper.tiktok.data.events.websocket.*;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
@@ -61,9 +51,9 @@ import java.util.logging.Logger;
 public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     protected final LiveClientSettings clientSettings;
-    protected final TikTokLiveEventHandler eventHandler;
+    protected final LiveEventsHandler eventHandler;
     protected final List<TikTokEventListener> listeners;
-    protected final List<Consumer<TikTokMapper>> onCustomMappings;
+    protected final List<Consumer<LiveMapper>> onCustomMappings;
     protected final List<Consumer<DependanceContainerBuilder>> onCustomDependencies;
 
     public TikTokLiveClientBuilder(String userName) {
@@ -75,7 +65,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         this.onCustomDependencies = new ArrayList<>();
     }
 
-    public LiveClientBuilder onMapping(Consumer<TikTokMapper> consumer) {
+    public LiveClientBuilder onMapping(Consumer<LiveMapper> consumer) {
         this.onCustomMappings.add(consumer);
         return this;
     }
@@ -133,8 +123,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         });
 
         //messages
-        dependance.registerSingleton(TikTokLiveEventHandler.class, eventHandler);
-        dependance.registerSingleton(TikTokLiveMessageHandler.class);
+        dependance.registerSingleton(LiveEventsHandler.class, eventHandler);
+        dependance.registerSingleton(LiveMessagesHandler.class,TikTokLiveMessageHandler.class);
 
         //listeners
         dependance.registerSingletonList(TikTokEventListener.class, (e) -> listeners);
@@ -142,6 +132,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //networking
         dependance.registerSingleton(HttpClientFactory.class);
+        dependance.registerSingleton(TikTokWebSocketPingingTask.class);
         if (clientSettings.isOffline()) {
             dependance.registerSingleton(SocketClient.class, TikTokWebSocketOfflineClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpOfflineClient.class);
@@ -166,8 +157,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //mapper
         dependance.registerSingleton(TikTokGenericEventMapper.class);
-        dependance.registerSingleton(TikTokMapperHelper.class, TikTokLiveMapperHelper.class);
-        dependance.registerSingleton(TikTokMapper.class, (container) ->
+        dependance.registerSingleton(LiveMapperHelper.class, TikTokLiveMapperHelper.class);
+        dependance.registerSingleton(LiveMapper.class, (container) ->
         {
             var dependace = (DependanceContainer) container.find(DependanceContainer.class);
             var mapper = MessagesMapperFactory.create(dependace);

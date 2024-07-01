@@ -28,7 +28,7 @@ import io.github.jwdeveloper.tiktok.data.events.gift.*;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.*;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapperHelper;
+import io.github.jwdeveloper.tiktok.mappers.LiveMapperHelper;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
@@ -48,7 +48,7 @@ public class TikTokGiftEventHandler {
     }
 
     @SneakyThrows
-    public MappingResult handleGifts(byte[] msg, String name, TikTokMapperHelper helper) {
+    public MappingResult handleGifts(byte[] msg, String name, LiveMapperHelper helper) {
         var currentMessage = WebcastGiftMessage.parseFrom(msg);
         var gifts = handleGift(currentMessage);
         return MappingResult.of(currentMessage, gifts);

@@ -23,12 +23,13 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 import java.util.*;
 
-public class TikTokLiveEventHandler {
+public class TikTokLiveEventHandler implements LiveEventsHandler {
     private final Map<Class<?>, Set<EventConsumer>> events;
 
     public TikTokLiveEventHandler() {

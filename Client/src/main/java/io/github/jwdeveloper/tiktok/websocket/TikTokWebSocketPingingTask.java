@@ -22,41 +22,37 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 import org.java_websocket.WebSocket;
 
-public class TikTokWebSocketPingingTask
-{
+public class TikTokWebSocketPingingTask {
     private Thread thread;
     private boolean isRunning = false;
     private final int MAX_TIMEOUT = 250;
     private final int SLEEP_TIME = 500;
 
-    public void run(WebSocket webSocket, long pingTaskTime)
-    {
+    public void run(WebSocket webSocket, long pingTaskTime) {
         stop();
         thread = new Thread(() -> pingTask(webSocket, pingTaskTime), "pinging-task");
         isRunning = true;
         thread.start();
     }
 
-    public void stop()
-    {
+    public void stop() {
         if (thread != null)
             thread.interrupt();
         isRunning = false;
     }
 
-    private void pingTask(WebSocket webSocket, long pingTaskTime)
-    {
+    private void pingTask(WebSocket webSocket, long pingTaskTime) {
         while (isRunning) {
             try {
                 if (webSocket.isOpen()) {
                     webSocket.sendPing();
-                    Thread.sleep(pingTaskTime+(int)(Math.random() * MAX_TIMEOUT));
-				} else
+                    Thread.sleep(pingTaskTime + (int) (Math.random() * MAX_TIMEOUT));
+                } else
                     Thread.sleep(SLEEP_TIME);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 //TODO we should display some kind of error message
                 isRunning = false;
             }

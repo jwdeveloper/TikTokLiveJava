@@ -26,7 +26,7 @@ import io.github.jwdeveloper.dependance.implementation.DependanceContainerBuilde
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
+import io.github.jwdeveloper.tiktok.mappers.LiveMapper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -42,7 +42,7 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      * @param onCustomMappings lambda method
      * @return
      */
-    LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings);
+    LiveClientBuilder onMapping(Consumer<LiveMapper> onCustomMappings);
 
 
     /**

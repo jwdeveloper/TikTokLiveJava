@@ -36,13 +36,4 @@ public class HttpClientFactory {
     public HttpClientBuilder client(String url) {
         return new HttpClientBuilder(url, liveClientSettings.getHttpSettings().clone());
     }
-
-
-    //Does not contains default httpClientSettings, Params, headers, etd
-    //Edit: Do we even use it?
-    public HttpClientBuilder clientEmpty(String url) {
-        var settings = new HttpClientSettings();
-        settings.setProxyClientSettings(liveClientSettings.getHttpSettings().getProxyClientSettings());
-        return new HttpClientBuilder(url, settings);
-    }
 }
