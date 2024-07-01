@@ -22,8 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.live.builder;
 
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.*;
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -55,7 +55,9 @@ public interface EventsBuilder<T> {
      * @param action consumable action
      * @return self instance
      */
-    T onEvent(EventConsumer<TikTokEvent> action);
+    default T onEvent(EventConsumer<TikTokEvent> action) {
+        return onEvent(TikTokEvent.class, action);
+    }
 
     /**
      * Invoked when information about room (live) got updated such as viewer count, etc..
@@ -63,113 +65,171 @@ public interface EventsBuilder<T> {
      * @param action consumable action
      * @return self instance
      */
-    T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> action);
+    default T onRoomInfo(EventConsumer<TikTokRoomInfoEvent> action) {
+        return onEvent(TikTokRoomInfoEvent.class, action);
+    }
 
     /**
      * Invoked when someone send message to chat
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onComment(EventConsumer<TikTokCommentEvent> action);
+    default T onComment(EventConsumer<TikTokCommentEvent> action) {
+        return onEvent(TikTokCommentEvent.class, action);
+    }
 
     /**
      * Invoked when TikTokLiveJava makes http request and getting response
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onHttpResponse(EventConsumer<TikTokHttpResponseEvent> action);
+    default T onHttpResponse(EventConsumer<TikTokHttpResponseEvent> action) {
+        return onEvent(TikTokHttpResponseEvent.class, action);
+    }
 
     /**
      * Invoked when TikTok protocolBuffer data "message" was successfully mapped to event
      * events contains protocol-buffer "Message"  and  TikTokLiveJava "Event"
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> action);
+    default T onWebsocketMessage(EventConsumer<TikTokWebsocketMessageEvent> action) {
+        return onEvent(TikTokWebsocketMessageEvent.class, action);
+    }
 
     /**
      * Invoked when there was not found event mapper for TikTok protocolBuffer data "message"
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> action);
+    default T onWebsocketUnhandledMessage(EventConsumer<TikTokWebsocketUnhandledMessageEvent> action) {
+        return onEvent(TikTokWebsocketUnhandledMessageEvent.class, action);
+    }
 
     /**
      * Invoked every time TikTok sends protocolBuffer data to websocket
      * Response contains list of messages that are later mapped to events
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> action);
+    default T onWebsocketResponse(EventConsumer<TikTokWebsocketResponseEvent> action) {
+        return onEvent(TikTokWebsocketResponseEvent.class, action);
+    }
 
     /**
      * Invoked for gifts that has no combo, or when combo finishes
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onGift(EventConsumer<TikTokGiftEvent> action);
+    default T onGift(EventConsumer<TikTokGiftEvent> action) {
+        return onEvent(TikTokGiftEvent.class, action);
+    }
 
     /**
      * Invoked for gifts that has combo options such as roses
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onGiftCombo(EventConsumer<TikTokGiftComboEvent> action);
+    default T onGiftCombo(EventConsumer<TikTokGiftComboEvent> action) {
+        return onEvent(TikTokGiftComboEvent.class, action);
+    }
 
-    T onQuestion(EventConsumer<TikTokQuestionEvent> action);
+    default T onQuestion(EventConsumer<TikTokQuestionEvent> action) {
+        return onEvent(TikTokQuestionEvent.class, action);
+    }
 
-    T onSubscribe(EventConsumer<TikTokSubscribeEvent> action);
+    default T onSubscribe(EventConsumer<TikTokSubscribeEvent> action) {
+        return onEvent(TikTokSubscribeEvent.class, action);
+    }
 
-    T onFollow(EventConsumer<TikTokFollowEvent> action);
+    default T onFollow(EventConsumer<TikTokFollowEvent> action) {
+        return onEvent(TikTokFollowEvent.class, action);
+    }
 
-    T onLike(EventConsumer<TikTokLikeEvent> action);
+    default T onLike(EventConsumer<TikTokLikeEvent> action) {
+        return onEvent(TikTokLikeEvent.class, action);
+    }
 
-    T onEmote(EventConsumer<TikTokEmoteEvent> action);
+    default T onEmote(EventConsumer<TikTokEmoteEvent> action) {
+        return onEvent(TikTokEmoteEvent.class, action);
+    }
 
-    T onJoin(EventConsumer<TikTokJoinEvent> action);
+    default T onJoin(EventConsumer<TikTokJoinEvent> action) {
+        return onEvent(TikTokJoinEvent.class, action);
+    }
 
-    T onShare(EventConsumer<TikTokShareEvent> action);
+    default T onShare(EventConsumer<TikTokShareEvent> action) {
+        return onEvent(TikTokShareEvent.class, action);
+    }
 
-    T onLivePaused(EventConsumer<TikTokLivePausedEvent> action);
+    default T onLivePaused(EventConsumer<TikTokLivePausedEvent> action) {
+        return onEvent(TikTokLivePausedEvent.class, action);
+    }
 
-    T onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> action);
+    default T onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> action) {
+        return onEvent(TikTokLiveUnpausedEvent.class, action);
+    }
 
-    T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> action);
+    default T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> action) {
+        return onEvent(TikTokLiveEndedEvent.class, action);
+    }
 
     /**
      * Invoked when client has been successfully connected to live
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onConnected(EventConsumer<TikTokConnectedEvent> action);
+    default T onConnected(EventConsumer<TikTokConnectedEvent> action) {
+        return onEvent(TikTokConnectedEvent.class, action);
+    }
 
     /**
      * Invoked before client has been successfully connected to live
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onPreConnection(EventConsumer<TikTokPreConnectionEvent> action);
+    default T onPreConnection(EventConsumer<TikTokPreConnectionEvent> action) {
+        return onEvent(TikTokPreConnectionEvent.class, action);
+    }
 
     /**
      * Invoked when client tries to reconnect
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onReconnecting(EventConsumer<TikTokReconnectingEvent> action);
+    default T onReconnecting(EventConsumer<TikTokReconnectingEvent> action) {
+        return onEvent(TikTokReconnectingEvent.class, action);
+    }
 
     /**
      * Invoked when client disconnected
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onDisconnected(EventConsumer<TikTokDisconnectedEvent> action);
+    default T onDisconnected(EventConsumer<TikTokDisconnectedEvent> action) {
+        return onEvent(TikTokDisconnectedEvent.class, action);
+    }
 
     /**
      * Invoked when exception was throed inside client or event handler
+     *
      * @param action consumable action
      * @return self instance
      */
-    T onError(EventConsumer<TikTokErrorEvent> action);
+    default T onError(EventConsumer<TikTokErrorEvent> action) {
+        return onEvent(TikTokErrorEvent.class, action);
+    }
 
 
     // TODO Figure out how those events works
@@ -216,4 +276,10 @@ public interface EventsBuilder<T> {
     //T onLinkMicBattle(TikTokEventConsumer<TikTokLinkMicBattleEvent> event);
 
     //T onUnhandledControl(TikTokEventConsumer<TikTokUnhandledControlEvent> event);
+
+    /**
+     * To do figure out how to use Annotation processor.
+     * Goal is to generates methods for all possible events, everytime library is compiled
+     */
+
 }

@@ -51,10 +51,6 @@ public class ReadmeGenerator {
         return version == null ? "NOT_FOUND" : version;
     }
 
-    public String getCodeExample(String path) {
-        var content = FilesUtility.loadFileContent(path);
-        content = content.substring(content.indexOf("*/") + 2);
-        return content;
-    }
+
 
 }
