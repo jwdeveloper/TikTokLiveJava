@@ -23,7 +23,12 @@
         <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -74,6 +79,12 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.jwdeveloper.DepenDance</groupId>
+            <artifactId>DepenDance-Full</artifactId>
+            <version>0.0.18-Release</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

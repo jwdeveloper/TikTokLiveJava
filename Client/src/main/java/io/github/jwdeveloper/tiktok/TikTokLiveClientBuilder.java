@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.dependance.Dependance;
 import io.github.jwdeveloper.dependance.api.DependanceContainer;
+import io.github.jwdeveloper.dependance.implementation.DependanceContainerBuilder;
 import io.github.jwdeveloper.tiktok.mappers.MessagesMapperFactory;
 import io.github.jwdeveloper.tiktok.common.LoggerFactory;
 import io.github.jwdeveloper.tiktok.data.events.*;
@@ -63,6 +64,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     protected final TikTokLiveEventHandler eventHandler;
     protected final List<TikTokEventListener> listeners;
     protected final List<Consumer<TikTokMapper>> onCustomMappings;
+    protected final List<Consumer<DependanceContainerBuilder>> onCustomDependencies;
 
     public TikTokLiveClientBuilder(String userName) {
         this.clientSettings = LiveClientSettings.createDefault();
@@ -70,6 +72,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         this.eventHandler = new TikTokLiveEventHandler();
         this.listeners = new ArrayList<>();
         this.onCustomMappings = new ArrayList<>();
+        this.onCustomDependencies = new ArrayList<>();
     }
 
     public LiveClientBuilder onMapping(Consumer<TikTokMapper> consumer) {
@@ -85,6 +88,12 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
     public TikTokLiveClientBuilder addListener(TikTokEventListener listener) {
         if (listener != null)
             listeners.add(listener);
+        return this;
+    }
+
+    @Override
+    public LiveClientBuilder customize(Consumer<DependanceContainerBuilder> onCustomizeDependencies) {
+        this.onCustomDependencies.add(onCustomizeDependencies);
         return this;
     }
 
@@ -174,6 +183,8 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //client
         dependance.registerSingleton(LiveClient.class, TikTokLiveClient.class);
+
+        onCustomDependencies.forEach(action -> action.accept(dependance));
 
         var container = dependance.build();
         return container.find(LiveClient.class);
