@@ -8,6 +8,7 @@ import io.github.jwdeveloper.tiktok.http.HttpClientBuilder;
 import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
 import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,8 @@ public class CusomizationExample {
                 })
                 .customize(container ->
                 {
-                    //overriding default implementation of GiftsManager, with own one
-                    container.registerSingleton(TikTokLiveEventHandler.class, customEventHandler);
+                    //overriding default implementation of LiveEventsHandler, with own one
+                    container.registerSingleton(LiveEventsHandler.class, customEventHandler);
                 }).build();
 
         client.connect();
