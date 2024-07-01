@@ -43,7 +43,7 @@ public class TikTokLiveMessageHandler implements LiveMessagesHandler {
     private final LiveEventsHandler tikTokEventHandler;
     private final LiveMapper mapper;
 
-    public TikTokLiveMessageHandler(TikTokLiveEventHandler tikTokEventHandler, LiveMapper mapper) {
+    public TikTokLiveMessageHandler(LiveEventsHandler tikTokEventHandler, LiveMapper mapper) {
         this.tikTokEventHandler = tikTokEventHandler;
         this.mapper = mapper;
     }

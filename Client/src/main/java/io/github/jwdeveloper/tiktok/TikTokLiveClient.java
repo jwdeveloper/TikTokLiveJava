@@ -55,15 +55,15 @@ public class TikTokLiveClient implements LiveClient
     private final ListenersManager listenersManager;
     private final Logger logger;
     private final GiftsManager giftManager;
-    private final TikTokLiveMessageHandler messageHandler;
+    private final LiveMessagesHandler messageHandler;
 
     public TikTokLiveClient(
-            TikTokLiveMessageHandler messageHandler,
+            LiveMessagesHandler messageHandler,
             GiftsManager giftsManager,
             TikTokRoomInfo tikTokLiveMeta,
             LiveHttpClient tiktokHttpClient,
             SocketClient webSocketClient,
-            TikTokLiveEventHandler tikTokEventHandler,
+            LiveEventsHandler tikTokEventHandler,
             LiveClientSettings clientSettings,
             ListenersManager listenersManager,
             Logger logger) {
