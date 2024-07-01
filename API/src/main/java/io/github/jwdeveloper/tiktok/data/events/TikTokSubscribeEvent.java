@@ -31,9 +31,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastMemberMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSubNotifyMessage;
 import lombok.Getter;
 
-/**
- * Triggers when a user creates a subscription.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokSubscribeEvent extends TikTokHeaderEvent {

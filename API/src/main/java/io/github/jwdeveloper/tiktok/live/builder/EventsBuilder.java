@@ -36,6 +36,7 @@ import io.github.jwdeveloper.tiktok.data.events.social.TikTokShareEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
+import io.github.jwdeveloper.tiktok.data.models.gifts.GiftComboStateType;
 
 
 public interface EventsBuilder<T> {
@@ -101,7 +102,7 @@ public interface EventsBuilder<T> {
     }
 
     /**
-     * Invoked when there was not found event mapper for TikTok protocolBuffer data "message"
+     * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
      *
      * @param action consumable action
      * @return self instance
@@ -132,51 +133,120 @@ public interface EventsBuilder<T> {
     }
 
     /**
-     * Invoked for gifts that has combo options such as roses
+     * Triggered every time gift is sent
      *
      * @param action consumable action
      * @return self instance
+     * @see GiftComboStateType it has 3 states
+     *
+     * <p>Example when user sends gift with combo</p>
+     * <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
+     * <p>Combo: 4 -> comboState = GiftSendType.Active</p>
+     * <p>Combo: 8 -> comboState = GiftSendType.Active</p>
+     * <p>Combo: 12 -> comboState = GiftSendType.Finished</p>
+     * <p>
+     * Remember if comboState is Finished both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
      */
     default T onGiftCombo(EventConsumer<TikTokGiftComboEvent> action) {
         return onEvent(TikTokGiftComboEvent.class, action);
     }
 
+    /**
+     * Triggered every time someone asks a new question via the question feature.
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onQuestion(EventConsumer<TikTokQuestionEvent> action) {
         return onEvent(TikTokQuestionEvent.class, action);
     }
 
+    /**
+     * Triggers when a user subscribe the streamer.
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onSubscribe(EventConsumer<TikTokSubscribeEvent> action) {
         return onEvent(TikTokSubscribeEvent.class, action);
     }
 
+    /**
+     * Triggers when a user follows the streamer. Based on social event.
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onFollow(EventConsumer<TikTokFollowEvent> action) {
         return onEvent(TikTokFollowEvent.class, action);
     }
 
+    /**
+     * Triggered when a viewer sends likes to the streamer. For streams with many viewers, this event is not always triggered by TikTok.
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onLike(EventConsumer<TikTokLikeEvent> action) {
         return onEvent(TikTokLikeEvent.class, action);
     }
 
+    /**
+     * Triggers when a user sends emote
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onEmote(EventConsumer<TikTokEmoteEvent> action) {
         return onEvent(TikTokEmoteEvent.class, action);
     }
 
+    /**
+     * Triggers when a user joins to the live
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onJoin(EventConsumer<TikTokJoinEvent> action) {
         return onEvent(TikTokJoinEvent.class, action);
     }
 
+    /**
+     * Triggers when a user shares the stream.
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onShare(EventConsumer<TikTokShareEvent> action) {
         return onEvent(TikTokShareEvent.class, action);
     }
 
+    /**
+     * Triggered when the live stream gets paused
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onLivePaused(EventConsumer<TikTokLivePausedEvent> action) {
         return onEvent(TikTokLivePausedEvent.class, action);
     }
 
+    /**
+     * Triggered when the live stream gets unpaused
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onLiveUnpaused(EventConsumer<TikTokLiveUnpausedEvent> action) {
         return onEvent(TikTokLiveUnpausedEvent.class, action);
     }
 
+    /**
+     * Triggered when the live stream gets terminated by the host. Will also trigger the TikTokDisconnectedEvent event.
+     *
+     * @param action consumable action
+     * @return self instance
+     */
     default T onLiveEnded(EventConsumer<TikTokLiveEndedEvent> action) {
         return onEvent(TikTokLiveEndedEvent.class, action);
     }
@@ -212,7 +282,8 @@ public interface EventsBuilder<T> {
     }
 
     /**
-     * Invoked when client disconnected
+     * Triggered when the connection gets disconnected. In that case you can call connect() again to have a reconnect logic.
+     * Note that you should wait a little bit before attempting a reconnect to avoid being rate-limited.
      *
      * @param action consumable action
      * @return self instance

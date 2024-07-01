@@ -29,9 +29,7 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.Getter;
 
 
-/**
- * Triggered every time a protobuf encoded webcast message arrives. You can deserialize the binary object depending on the use case.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Debug)
 public class TikTokWebsocketUnhandledMessageEvent extends TikTokUnhandledEvent<WebcastResponse.Message>
