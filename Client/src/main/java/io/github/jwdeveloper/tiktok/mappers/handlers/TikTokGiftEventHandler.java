@@ -55,11 +55,6 @@ public class TikTokGiftEventHandler {
     }
 
     public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage) {
-        var userId = currentMessage.getUser().getId();
-        var currentType = GiftComboStateType.fromNumber(currentMessage.getSendType());
-        var containsPreviousMessage = giftsMessages.containsKey(userId);
-
-
         //If gift is not streakable just return onGift event
         if (currentMessage.getGift().getType() != 1) {
             var comboEvent = getGiftComboEvent(currentMessage, GiftComboStateType.Finished);
@@ -67,7 +62,11 @@ public class TikTokGiftEventHandler {
             return List.of(comboEvent, giftEvent);
         }
 
-        if (!containsPreviousMessage) {
+        var userId = currentMessage.getUser().getId();
+        var currentType = GiftComboStateType.fromNumber(currentMessage.getSendType());
+        var previousMessage = giftsMessages.get(userId);
+
+        if (previousMessage == null) {
             if (currentType == GiftComboStateType.Finished) {
                 return List.of(getGiftEvent(currentMessage));
             } else {
@@ -76,7 +75,6 @@ public class TikTokGiftEventHandler {
             }
         }
 
-        var previousMessage = giftsMessages.get(userId);
         var previousType = GiftComboStateType.fromNumber(previousMessage.getSendType());
         if (currentType == GiftComboStateType.Active &&
                 previousType == GiftComboStateType.Active) {
@@ -114,9 +112,9 @@ public class TikTokGiftEventHandler {
             gift = giftsManager.getByName(giftMessage.getGift().getName());
         if (gift == Gift.UNDEFINED) {
             gift = new Gift(giftId,
-                    giftMessage.getGift().getName(),
-                    giftMessage.getGift().getDiamondCount(),
-                    Picture.map(giftMessage.getGift().getImage()));
+                giftMessage.getGift().getName(),
+                giftMessage.getGift().getDiamondCount(),
+                Picture.map(giftMessage.getGift().getImage()));
 
             giftsManager.attachGift(gift);
         }

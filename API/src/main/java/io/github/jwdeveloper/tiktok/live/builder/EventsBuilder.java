@@ -123,8 +123,11 @@ public interface EventsBuilder<T> {
     }
 
     /**
-     * Invoked for gifts that has no combo, or when combo finishes
-     *
+     * Triggers for these different reasons:
+     * <ol>
+     *     <li>User sends gifts that have no combo (most of expensive gifts)</li>
+     *     <li>{@link TikTokGiftComboEvent} has combaState = {@link GiftComboStateType#Finished}</li>
+     * </ol>
      * @param action consumable action
      * @return self instance
      */
@@ -133,19 +136,19 @@ public interface EventsBuilder<T> {
     }
 
     /**
-     * Triggered every time gift is sent
+     * Triggered every time a gift is sent
+     * <p>Example when user sends gift with combo</p>
+     * <ul>
+     *     <li>Combo: 1  -> comboState = {@link GiftComboStateType#Begin}</li>
+     *     <li>Combo: 4 -> comboState = {@link GiftComboStateType#Active}</li>
+     *     <li>Combo: 8 -> comboState = {@link GiftComboStateType#Active}</li>
+     *     <li>Combo: 12 -> comboState = {@link GiftComboStateType#Finished}</li>
+     * </ul>
+     * Both {@link TikTokGiftComboEvent} and {@link TikTokGiftEvent} events are triggered when comboState is Finished
      *
+     * @apiNote {@link GiftComboStateType} has 3 states: {@link GiftComboStateType#Begin Begin}, {@link GiftComboStateType#Active Active}, & {@link GiftComboStateType#Finished Finished}
      * @param action consumable action
      * @return self instance
-     * @see GiftComboStateType it has 3 states
-     *
-     * <p>Example when user sends gift with combo</p>
-     * <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
-     * <p>Combo: 4 -> comboState = GiftSendType.Active</p>
-     * <p>Combo: 8 -> comboState = GiftSendType.Active</p>
-     * <p>Combo: 12 -> comboState = GiftSendType.Finished</p>
-     * <p>
-     * Remember if comboState is Finished both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
      */
     default T onGiftCombo(EventConsumer<TikTokGiftComboEvent> action) {
         return onEvent(TikTokGiftComboEvent.class, action);

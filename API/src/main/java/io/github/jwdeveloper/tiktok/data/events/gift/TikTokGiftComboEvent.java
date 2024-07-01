@@ -29,8 +29,6 @@ import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
-
-
 @EventMeta(eventType = EventType.Message)
 @Getter
 public class TikTokGiftComboEvent extends TikTokGiftEvent {
@@ -43,12 +41,9 @@ public class TikTokGiftComboEvent extends TikTokGiftEvent {
 
     public static TikTokGiftComboEvent of(Gift gift, int combo, GiftComboStateType comboState) {
         return new TikTokGiftComboEvent(
-                gift,
-                new User(0L, "Test", new Picture("")),
-                WebcastGiftMessage
-                        .newBuilder()
-                        .setComboCount(combo)
-                        .build(),
-                comboState);
+            gift,
+            new User(0L, "Test", new Picture("")),
+            WebcastGiftMessage.newBuilder().setComboCount(combo).build(),
+            comboState);
     }
 }
