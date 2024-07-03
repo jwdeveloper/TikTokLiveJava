@@ -32,6 +32,7 @@ public class RecorderExample {
 
     public static void main(String[] args) {
 
+
         TikTokLive.newClient("bangbetmenygy")
                 .configure(liveClientSettings ->
                 {

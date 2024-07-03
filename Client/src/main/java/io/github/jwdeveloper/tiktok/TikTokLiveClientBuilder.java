@@ -65,7 +65,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         this.onCustomDependencies = new ArrayList<>();
     }
 
-    public LiveClientBuilder onMapping(Consumer<LiveMapper> consumer) {
+    public LiveClientBuilder mappings(Consumer<LiveMapper> consumer) {
         this.onCustomMappings.add(consumer);
         return this;
     }
