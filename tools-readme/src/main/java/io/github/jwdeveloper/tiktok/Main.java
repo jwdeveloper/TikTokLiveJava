@@ -1,8 +1,6 @@
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.descrabble.api.DescriptionGenerator;
-import io.github.jwdeveloper.descrabble.framework.Descrabble;
-import io.github.jwdeveloper.descrabble.plugin.github.DescrabbleGithub;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -23,16 +21,6 @@ public class Main
         var output = System.getProperty("user.dir");
 
 
-        DescriptionGenerator generator = Descrabble.create()
-                .withTemplate(targetFile)
-                .withVariable("version", version)
-                .withDecorator(new EventsDecorator())
-                .withPlugin(DescrabbleGithub.plugin("README.md"))
-                .build();
 
-
-        generator.generate(output);
-        targetFile.delete();
-        inputStream.close();
     }
 }

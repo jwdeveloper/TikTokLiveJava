@@ -35,12 +35,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.jwdeveloper.Descrabble</groupId>
-            <artifactId>Descrabble-Full</artifactId>
-            <version>0.0.11-Release</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.12</version>
