@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 
+import io.github.jwdeveloper.dependance.api.DependanceContainer;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
@@ -31,108 +32,127 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TikTokListenersManager implements ListenersManager {
-    private final LiveEventsHandler eventObserver;
-    private final List<ListenerBindingModel> bindingModels;
-    private final ExecutorService executorService;
 
-    public TikTokListenersManager(List<Object> listeners, LiveEventsHandler tikTokEventHandler) {
+    private final Map<Object, List<ListenerMethodInfo>> listeners;
+    private final LiveEventsHandler eventObserver;
+    private final ExecutorService executorService;
+    private final DependanceContainer dependanceContainer;
+
+
+    public TikTokListenersManager(LiveEventsHandler tikTokEventHandler,
+                                  DependanceContainer dependanceContainer) {
         this.eventObserver = tikTokEventHandler;
-        this.bindingModels = new ArrayList<>(listeners.size());
-        for (var listener : listeners) {
-            addListener(listener);
-        }
-        executorService = Executors.newFixedThreadPool(4);
+        this.dependanceContainer = dependanceContainer;
+        this.listeners = new HashMap<>();
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     @Override
     public List<Object> getListeners() {
-        return bindingModels.stream().map(ListenerBindingModel::getListener).toList();
+        return listeners.keySet().stream().toList();
     }
 
     @Override
     public void addListener(Object listener) {
-        var alreadyExists = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
-        if (alreadyExists.isPresent()) {
+        if (listeners.containsKey(listener)) {
             throw new TikTokLiveException("Listener " + listener.getClass() + " has already been registered");
         }
-        var bindingModel = bindToEvents(listener);
 
-        for (var eventEntrySet : bindingModel.getEvents().entrySet()) {
-            var eventType = eventEntrySet.getKey();
-            for (var methods : eventEntrySet.getValue()) {
-                eventObserver.subscribe(eventType, methods);
-            }
+        var methodsInfo = getMethodsInfo(listener);
+        for (var methodInfo : methodsInfo) {
+            eventObserver.subscribe(methodInfo.getEventType(), methodInfo.getAction());
         }
-        bindingModels.add(bindingModel);
+        listeners.put(listener, methodsInfo);
     }
 
     @Override
     public void removeListener(Object listener) {
-        var optional = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
-        if (optional.isEmpty()) {
+        if (!listeners.containsKey(listener)) {
             return;
         }
-
-        var bindingModel = optional.get();
-
-        for (var eventEntrySet : bindingModel.getEvents().entrySet()) {
-            var eventType = eventEntrySet.getKey();
-            for (var methods : eventEntrySet.getValue()) {
-                eventObserver.unsubscribe(eventType, methods);
-            }
+        var methodsInfo = listeners.get(listener);
+        for (var methodInfo : methodsInfo) {
+            eventObserver.unsubscribe(methodInfo.getEventType(), methodInfo.getAction());
         }
-        bindingModels.remove(optional.get());
+        listeners.remove(listener);
     }
 
-    private ListenerBindingModel bindToEvents(Object listener) {
-        var clazz = listener.getClass();
-        var methods = Arrays.stream(clazz.getDeclaredMethods())
-                .filter(m ->
-                        m.getParameterCount() >= 1 &&
-                                m.isAnnotationPresent(TikTokEventObserver.class))
+    private List<ListenerMethodInfo> getMethodsInfo(Object listener) {
+        return Arrays.stream(listener.getClass().getDeclaredMethods())
+                .filter(e -> e.isAnnotationPresent(TikTokEventObserver.class))
+                .filter(e -> e.getParameterCount() >= 1)
+                .map(method -> getSingleMethodInfo(listener, method))
+                .sorted(Comparator.comparingInt(a -> a.getEventType().getName().length()))
+                .sorted(Comparator.comparingInt(a -> a.getPriority().priorityValue))
                 .toList();
-        var eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
-        for (var method : methods) {
-            var annotation = method.getAnnotation(TikTokEventObserver.class);
-            var tiktokEventsParameters = Arrays.stream(method.getParameters())
-                    .filter(parameter ->
-                            TikTokEvent.class.isAssignableFrom(parameter.getType()) ||
-                                    parameter.getType().equals(TikTokEvent.class))
-                    .toList();
-            if (tiktokEventsParameters.size() != 1) {
-                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() must have only one parameter that inherits from class " + TikTokEvent.class.getName());
-            }
+    }
 
-            var eventType = tiktokEventsParameters.get(0).getType();
-            EventConsumer eventMethodRef = (liveClient, event) ->
+    private ListenerMethodInfo getSingleMethodInfo(Object listener, Method method) {
+
+        method.setAccessible(true);
+        var annotation = method.getAnnotation(TikTokEventObserver.class);
+        var tiktokEventType = Arrays.stream(method.getParameterTypes())
+                .filter(TikTokEvent.class::isAssignableFrom)
+                .findFirst()
+                .orElseThrow(() -> new TikTokEventListenerMethodException("Method " + method.getName() + "() must have only one parameter that inherits from class " + TikTokEvent.class.getName()));
+
+        var info = new ListenerMethodInfo();
+        info.setListener(listener);
+        info.setAsync(annotation.async());
+        info.setPriority(annotation.priority());
+        info.setEventType(tiktokEventType);
+        info.setAction(createAction(listener, method, tiktokEventType));
+
+        if (info.isAsync()) {
+            var action = info.getAction();
+            info.setAction((liveClient, event) ->
             {
-                if (annotation.async()) {
-                    executorService.submit(() ->
-                    {
-                        try {
-                            method.setAccessible(true);
-                            method.invoke(listener, liveClient, event);
-                        } catch (Exception e) {
-                            throw new TikTokEventListenerMethodException(e);
-                        }
-                    });
-                    return;
-                }
-
-                try {
-                    method.setAccessible(true);
-                    method.invoke(listener, liveClient, event);
-                } catch (Exception e) {
-                    throw new TikTokEventListenerMethodException(e);
-                }
-            };
-            eventsMap.computeIfAbsent(eventType, (a) -> new ArrayList<>()).add(eventMethodRef);
+                executorService.submit(() ->
+                {
+                    action.onEvent(liveClient, event);
+                });
+            });
         }
-        return new ListenerBindingModel(listener, eventsMap);
+        return info;
+    }
+
+
+    //I know, implementation of this might look complicated
+    private EventConsumer createAction(Object listener, Method method, Class tiktokEventType) {
+        AtomicReference<Object> eventObjectRef = new AtomicReference<>();
+        var methodContainer = dependanceContainer.createChildContainer()
+                .configure(configuration ->
+                {
+                    //Modfying container, so it returns TikTokEvent object instance,
+                    //when TikTokEvent type is encountered in the methods parameters
+                    configuration.onInjection(injectionEvent ->
+                    {
+                        if (injectionEvent.input().isAssignableFrom(tiktokEventType)) {
+                            return eventObjectRef.get();
+                        }
+                        return injectionEvent.output();
+                    });
+                })
+                .build();
+
+        return (liveClient, event) ->
+        {
+            try {
+                eventObjectRef.set(event);
+                //Creating list of input objects based on method parameters
+                //Objects are received from container
+                var parameters = methodContainer.resolveParameters(method);
+                method.invoke(listener, parameters);
+            } catch (Exception e) {
+                throw new TikTokEventListenerMethodException(e);
+            }
+        };
     }
 }

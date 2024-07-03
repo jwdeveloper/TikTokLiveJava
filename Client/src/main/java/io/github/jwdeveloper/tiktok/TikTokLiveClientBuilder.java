@@ -128,11 +128,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         dependance.registerSingleton(LiveMessagesHandler.class, TikTokLiveMessageHandler.class);
 
         //listeners
-        dependance.registerSingleton(ListenersManager.class, container ->
-        {
-            var eventHandlers = (LiveEventsHandler) container.find(LiveEventsHandler.class);
-            return new TikTokListenersManager(listeners, eventHandlers);
-        });
+        dependance.registerSingleton(ListenersManager.class, TikTokListenersManager.class);
 
         //networking
         dependance.registerSingleton(HttpClientFactory.class);
@@ -182,6 +178,10 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         onCustomDependencies.forEach(action -> action.accept(dependance));
 
         var container = dependance.build();
+
+        var listenerManager = container.find(ListenersManager.class);
+        listeners.forEach(listenerManager::addListener);
+
         return container.find(LiveClient.class);
     }
 

@@ -22,18 +22,26 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
+import io.github.jwdeveloper.tiktok.annotations.Priority;
+
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
+import lombok.Data;
 
-import lombok.Value;
-
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
 
 
-@Value
-public class ListenerBindingModel
-{
-    Object listener;
+@Data
+public class ListenerMethodInfo {
+    private Object listener;
 
-    Map<Class<?>, List<EventConsumer<?>>> events;
+    private Class eventType;
+
+    private Method method;
+
+    private Priority priority;
+
+    private boolean async;
+
+    private EventConsumer action = (a, b) -> {
+    };
 }
