@@ -89,7 +89,6 @@ public class TikTokListenersManager implements ListenersManager {
                 .filter(e -> e.isAnnotationPresent(TikTokEventObserver.class))
                 .filter(e -> e.getParameterCount() >= 1)
                 .map(method -> getSingleMethodInfo(listener, method))
-                .sorted(Comparator.comparingInt(a -> a.getEventType().getName().length()))
                 .sorted(Comparator.comparingInt(a -> a.getPriority().priorityValue))
                 .toList();
     }
