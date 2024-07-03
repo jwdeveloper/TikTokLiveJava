@@ -131,9 +131,6 @@ public class TikTokLiveClient implements LiveClient
         roomInfo.setStartTime(userData.getStartTime());
         roomInfo.setRoomId(userData.getRoomId());
 
-        if (clientSettings.isFetchGifts())
-            giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
-
         if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
             throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName());
 
@@ -164,6 +161,9 @@ public class TikTokLiveClient implements LiveClient
         tikTokEventHandler.publish(this, preconnectEvent);
         if (preconnectEvent.isCancelConnection())
             throw new TikTokLiveException("TikTokPreConnectionEvent cancelled connection!");
+
+        if (clientSettings.isFetchGifts())
+            giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
 
         var liveConnectionRequest = new LiveConnectionData.Request(userData.getRoomId());
         var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
