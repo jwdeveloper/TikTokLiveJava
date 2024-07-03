@@ -26,7 +26,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TikTokEventObserver
-{
+public @interface TikTokEventObserver {
 
+    Priority priority() default Priority.NORMAL;
+
+    /**
+     * when true, action is invoked on the another thread
+     * @return
+     */
+    boolean async();
 }

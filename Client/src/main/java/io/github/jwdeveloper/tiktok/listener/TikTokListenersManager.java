@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 
-import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
@@ -32,30 +31,31 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TikTokListenersManager implements ListenersManager {
     private final LiveEventsHandler eventObserver;
     private final List<ListenerBindingModel> bindingModels;
+    private final ExecutorService executorService;
 
-    public TikTokListenersManager(List<TikTokEventListener> listeners, LiveEventsHandler tikTokEventHandler) {
+    public TikTokListenersManager(List<Object> listeners, LiveEventsHandler tikTokEventHandler) {
         this.eventObserver = tikTokEventHandler;
         this.bindingModels = new ArrayList<>(listeners.size());
         for (var listener : listeners) {
             addListener(listener);
         }
+        executorService = Executors.newFixedThreadPool(4);
     }
 
     @Override
-    public List<TikTokEventListener> getListeners() {
+    public List<Object> getListeners() {
         return bindingModels.stream().map(ListenerBindingModel::getListener).toList();
     }
 
     @Override
-    public void addListener(TikTokEventListener listener) {
+    public void addListener(Object listener) {
         var alreadyExists = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
         if (alreadyExists.isPresent()) {
             throw new TikTokLiveException("Listener " + listener.getClass() + " has already been registered");
@@ -72,7 +72,7 @@ public class TikTokListenersManager implements ListenersManager {
     }
 
     @Override
-    public void removeListener(TikTokEventListener listener) {
+    public void removeListener(Object listener) {
         var optional = bindingModels.stream().filter(e -> e.getListener() == listener).findAny();
         if (optional.isEmpty()) {
             return;
@@ -89,29 +89,41 @@ public class TikTokListenersManager implements ListenersManager {
         bindingModels.remove(optional.get());
     }
 
-    private ListenerBindingModel bindToEvents(TikTokEventListener listener) {
-
+    private ListenerBindingModel bindToEvents(Object listener) {
         var clazz = listener.getClass();
-        var methods = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
-                m.getParameterCount() == 2 &&
-                        m.isAnnotationPresent(TikTokEventObserver.class)).toList();
+        var methods = Arrays.stream(clazz.getDeclaredMethods())
+                .filter(m ->
+                        m.getParameterCount() >= 1 &&
+                                m.isAnnotationPresent(TikTokEventObserver.class))
+                .toList();
         var eventsMap = new HashMap<Class<?>, List<EventConsumer<?>>>();
         for (var method : methods) {
-            var liveclientClass = method.getParameterTypes()[0];
-            var eventClass = method.getParameterTypes()[1];
-
-            if (!LiveClient.class.isAssignableFrom(liveclientClass) && !liveclientClass.equals(LiveClient.class)) {
-                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 1st parameter must be instance of " + LiveClient.class.getName()
-                    + " | Invalid parameter class: "+liveclientClass.getName());
+            var annotation = method.getAnnotation(TikTokEventObserver.class);
+            var tiktokEventsParameters = Arrays.stream(method.getParameters())
+                    .filter(parameter ->
+                            TikTokEvent.class.isAssignableFrom(parameter.getType()) ||
+                                    parameter.getType().equals(TikTokEvent.class))
+                    .toList();
+            if (tiktokEventsParameters.size() != 1) {
+                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() must have only one parameter that inherits from class " + TikTokEvent.class.getName());
             }
 
-            if (!TikTokEvent.class.isAssignableFrom(eventClass) && !eventClass.equals(TikTokEvent.class)) {
-                throw new TikTokEventListenerMethodException("Method " + method.getName() + "() 2nd parameter must be instance of " + TikTokEvent.class.getName()
-                    + " | Invalid parameter class: "+eventClass.getName());
-            }
-
+            var eventType = tiktokEventsParameters.get(0).getType();
             EventConsumer eventMethodRef = (liveClient, event) ->
             {
+                if (annotation.async()) {
+                    executorService.submit(() ->
+                    {
+                        try {
+                            method.setAccessible(true);
+                            method.invoke(listener, liveClient, event);
+                        } catch (Exception e) {
+                            throw new TikTokEventListenerMethodException(e);
+                        }
+                    });
+                    return;
+                }
+
                 try {
                     method.setAccessible(true);
                     method.invoke(listener, liveClient, event);
@@ -119,7 +131,7 @@ public class TikTokListenersManager implements ListenersManager {
                     throw new TikTokEventListenerMethodException(e);
                 }
             };
-            eventsMap.computeIfAbsent(eventClass, (a) -> new ArrayList<>()).add(eventMethodRef);
+            eventsMap.computeIfAbsent(eventType, (a) -> new ArrayList<>()).add(eventMethodRef);
         }
         return new ListenerBindingModel(listener, eventsMap);
     }

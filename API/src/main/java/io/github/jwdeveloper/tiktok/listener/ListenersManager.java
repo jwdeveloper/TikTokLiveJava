@@ -27,14 +27,13 @@ import java.util.List;
 /**
  *  You can dynamically add or removing TikTokEventListener
  *
- * @see TikTokEventListener
  *
  */
 public interface ListenersManager
 {
-    List<TikTokEventListener> getListeners();
+    List<Object> getListeners();
 
-    void addListener(TikTokEventListener listener);
+    void addListener(Object listener);
 
-    void removeListener(TikTokEventListener listener);
+    void removeListener(Object listener);
 }

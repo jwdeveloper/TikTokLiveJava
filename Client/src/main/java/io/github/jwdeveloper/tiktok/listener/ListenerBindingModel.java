@@ -33,8 +33,7 @@ import java.util.Map;
 @Value
 public class ListenerBindingModel
 {
-
-    TikTokEventListener listener;
+    Object listener;
 
     Map<Class<?>, List<EventConsumer<?>>> events;
 }

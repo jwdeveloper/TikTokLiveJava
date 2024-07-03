@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.listener;
 
 import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.annotations.Priority;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -48,23 +49,23 @@ class TikTokListenersManagerTest {
     @BeforeEach
     void setUp() {
         eventObserver = Mockito.mock(TikTokLiveEventHandler.class);
-        List<TikTokEventListener> listeners = new ArrayList<>();
+        List<Object> listeners = new ArrayList<>();
         tikTokListenersManager = new TikTokListenersManager(listeners, eventObserver);
     }
 
     @Test
     void addListener() {
-        TikTokEventListener listener =new TikTokEventListenerTest();
+        Object listener =new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
 
-        List<TikTokEventListener> listeners = tikTokListenersManager.getListeners();
+        List<Object> listeners = tikTokListenersManager.getListeners();
         assertEquals(1, listeners.size());
         assertSame(listener, listeners.get(0));
     }
 
     @Test
     void addListener_alreadyRegistered_throwsException() {
-        TikTokEventListener listener = new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
 
         Exception exception = assertThrows(TikTokLiveException.class, () -> {
@@ -76,22 +77,22 @@ class TikTokListenersManagerTest {
 
     @Test
     void removeListener() {
-        TikTokEventListener listener = new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
         tikTokListenersManager.removeListener(listener);
 
-        List<TikTokEventListener> listeners = tikTokListenersManager.getListeners();
+        List<Object> listeners = tikTokListenersManager.getListeners();
         assertTrue(listeners.isEmpty());
     }
 
     @Test
     void removeListener_notRegistered_doesNotThrow() {
-        TikTokEventListener listener = new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         assertDoesNotThrow(() -> tikTokListenersManager.removeListener(listener));
     }
 
 
-    public static class TikTokEventListenerTest implements TikTokEventListener
+    public static class TikTokEventListenerTest
     {
         @TikTokEventObserver
         public void onJoin(LiveClient client, TikTokJoinEvent joinEvent)
@@ -99,7 +100,7 @@ class TikTokListenersManagerTest {
 
         }
 
-        @TikTokEventObserver
+        @TikTokEventObserver(priority = Priority.NORMAL,async=true)
         public void onGift(LiveClient client, TikTokGiftEvent giftMessageEvent)
         {
 

@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok.websocket;
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
@@ -40,9 +39,9 @@ import java.util.*;
 
 public class TikTokWebSocketListener extends WebSocketClient {
 
-    private final LiveMessagesHandler messageHandler;
-    private final LiveEventsHandler tikTokEventHandler;
-    private final LiveClient tikTokLiveClient;
+    private final LiveMessagesHandler messagesHandler;
+    private final LiveEventsHandler eventHandler;
+    private final LiveClient liveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
@@ -51,9 +50,9 @@ public class TikTokWebSocketListener extends WebSocketClient {
                                    LiveEventsHandler tikTokEventHandler,
                                    LiveClient tikTokLiveClient) {
         super(serverUri, new Draft_6455(), httpHeaders, connectTimeout);
-        this.messageHandler = messageHandler;
-        this.tikTokEventHandler = tikTokEventHandler;
-        this.tikTokLiveClient = tikTokLiveClient;
+        this.messagesHandler = messageHandler;
+        this.eventHandler = tikTokEventHandler;
+        this.liveClient = tikTokLiveClient;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
         try {
             handleBinary(bytes.array());
         } catch (Exception e) {
-            tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(e));
+            eventHandler.publish(liveClient, new TikTokErrorEvent(e));
         }
         if (isOpen()) {
             sendPing();
@@ -85,12 +84,12 @@ public class TikTokWebSocketListener extends WebSocketClient {
                 this.send(pushFrameBuilder.build().toByteArray());
             }
         }
-        messageHandler.handle(tikTokLiveClient, webcastResponse);
+        messagesHandler.handle(liveClient, webcastResponse);
     }
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        tikTokEventHandler.publish(tikTokLiveClient, new TikTokConnectedEvent());
+        eventHandler.publish(liveClient, new TikTokConnectedEvent());
         if (isOpen()) {
             sendPing();
         }
@@ -98,13 +97,13 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        tikTokEventHandler.publish(tikTokLiveClient, new TikTokDisconnectedEvent(reason));
-        tikTokLiveClient.disconnect();
+        eventHandler.publish(liveClient, new TikTokDisconnectedEvent(reason));
+        liveClient.disconnect();
     }
 
     @Override
     public void onError(Exception error) {
-        tikTokEventHandler.publish(tikTokLiveClient, new TikTokErrorEvent(error));
+        eventHandler.publish(liveClient, new TikTokErrorEvent(error));
         if (isOpen()) {
             sendPing();
         }
@@ -132,6 +131,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onMessage(String s) {
-        // System.err.println(s);
+        //TODO we are not using this method, however I wounder if there might be
+        //so messages that are send as String from TikTok, for example some Jsons
     }
 }

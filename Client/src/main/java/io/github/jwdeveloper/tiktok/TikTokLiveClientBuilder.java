@@ -52,7 +52,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
     protected final LiveClientSettings clientSettings;
     protected final LiveEventsHandler eventHandler;
-    protected final List<TikTokEventListener> listeners;
+    protected final List<Object> listeners;
     protected final List<Consumer<LiveMapper>> onCustomMappings;
     protected final List<Consumer<DependanceContainerBuilder>> onCustomDependencies;
 
@@ -75,7 +75,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    public TikTokLiveClientBuilder addListener(TikTokEventListener listener) {
+    public TikTokLiveClientBuilder addListener(Object listener) {
         if (listener != null)
             listeners.add(listener);
         return this;
@@ -97,6 +97,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         if (clientSettings.getHostName().startsWith("@"))
             clientSettings.setHostName(clientSettings.getHostName().substring(1));
 
+        //TODO 250 Magic number
         if (clientSettings.getPingInterval() < 250)
             throw new TikTokLiveException("Minimum allowed ping interval is 250 millseconds");
 
@@ -124,20 +125,23 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //messages
         dependance.registerSingleton(LiveEventsHandler.class, eventHandler);
-        dependance.registerSingleton(LiveMessagesHandler.class,TikTokLiveMessageHandler.class);
+        dependance.registerSingleton(LiveMessagesHandler.class, TikTokLiveMessageHandler.class);
 
         //listeners
-        dependance.registerSingletonList(TikTokEventListener.class, (e) -> listeners);
-        dependance.registerSingleton(ListenersManager.class, TikTokListenersManager.class);
+        dependance.registerSingleton(ListenersManager.class, container ->
+        {
+            var eventHandlers = (LiveEventsHandler) container.find(LiveEventsHandler.class);
+            return new TikTokListenersManager(listeners, eventHandlers);
+        });
 
         //networking
         dependance.registerSingleton(HttpClientFactory.class);
         dependance.registerSingleton(TikTokWebSocketPingingTask.class);
         if (clientSettings.isOffline()) {
-            dependance.registerSingleton(SocketClient.class, TikTokWebSocketOfflineClient.class);
+            dependance.registerSingleton(LiveSocketClient.class, TikTokWebSocketOfflineClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpOfflineClient.class);
         } else {
-            dependance.registerSingleton(SocketClient.class, TikTokWebSocketClient.class);
+            dependance.registerSingleton(LiveSocketClient.class, TikTokWebSocketClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpClient.class);
         }
 
