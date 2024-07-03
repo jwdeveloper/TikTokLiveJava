@@ -78,14 +78,9 @@ public class TikTokLiveClient implements LiveClient
         this.logger = logger;
     }
 
-
     public void connectAsync(Consumer<LiveClient> onConnection) {
-        CompletableFuture.runAsync(() -> {
-            connect();
-            onConnection.accept(this);
-        });
+        connectAsync().thenAccept(onConnection);
     }
-
 
     public CompletableFuture<LiveClient> connectAsync() {
         return CompletableFuture.supplyAsync(() -> {
@@ -135,7 +130,7 @@ public class TikTokLiveClient implements LiveClient
             throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName());
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
-            throw new TikTokLiveOfflineHostException("User not found: " + roomInfo.getHostName());
+            throw new TikTokLiveUnknownHostException("User not found: " + roomInfo.getHostName());
 
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
@@ -144,7 +139,7 @@ public class TikTokLiveClient implements LiveClient
             throw new TikTokLiveException("Livestream for " + roomInfo.getHostName() + " is 18+ or age restricted!");
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound)
-            throw new TikTokLiveOfflineHostException("LiveStream for " + roomInfo.getHostName() + " could not be found.");
+            throw new TikTokLiveUnknownHostException("LiveStream for " + roomInfo.getHostName() + " could not be found.");
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline)
             throw new TikTokLiveOfflineHostException("LiveStream for " + roomInfo.getHostName() + " not found, is the Host offline?");
