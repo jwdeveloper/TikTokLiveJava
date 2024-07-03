@@ -23,11 +23,8 @@
 package io.github.jwdeveloper.tiktok.mappers;
 
 import io.github.jwdeveloper.dependance.api.DependanceContainer;
-import io.github.jwdeveloper.dependance.injector.api.containers.Container;
-import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.link.*;
-import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokCommonEventHandler;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
@@ -40,7 +37,7 @@ import static io.github.jwdeveloper.tiktok.messages.enums.LinkMessageType.*;
 public class MessagesMapperFactory {
     public static TikTokLiveMapper create(DependanceContainer container) {
 
-        var helper = container.find(TikTokMapperHelper.class);
+        var helper = container.find(LiveMapperHelper.class);
         var mapper = new TikTokLiveMapper(helper);
 
         //ConnectionEvents events

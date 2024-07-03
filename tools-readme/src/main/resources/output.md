@@ -405,9 +405,9 @@ TikTokLive.newClient("host-name")
   <p>>Combo: 1  -> comboState = GiftSendType.Begin</p>
   <p>Combo: 4 -> comboState = GiftSendType.Active</p>
   <p>Combo: 8 -> comboState = GiftSendType.Active</p>
-  <p>Combo: 12 -> comboState = GiftSendType.Finsihed</p>
+  <p>Combo: 12 -> comboState = GiftSendType.Finished</p>
   <p>
-  Remember if comboState is Finsihed both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
+  Remember if comboState is Finished both TikTokGiftComboEvent and TikTokGiftEvent event gets triggered
  
 
 ```java

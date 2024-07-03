@@ -1,0 +1,70 @@
+<container>
+    <image width="15%"
+           image="https://raw.githubusercontent.com/jwdeveloper/DepenDance/master/Tools-Readme/src/main/resources/logo.svg">
+    </image>
+</container>
+
+<container>
+    <title>TikTok Live Java</title>
+    <br>
+    <i align="center">*❤️❤️🎁 *Connect to TikTok live in 3 lines* 🎁❤️❤️*</i>
+    <br>
+    <container>
+        <image width="20%" image="https://jitpack.io/v/jwdeveloper/DepenDance.svg"
+               open="https://jitpack.io/#jwdeveloper/DepenDance"></image>
+        <image image="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white"
+               open="https://discord.gg/2hu6fPPeF7"></image>
+        <image image="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"></image>
+    </container>
+</container>
+
+<text>
+    A Java library inspired by [TikTokLive](https://github.com/isaackogan/TikTokLive) and [TikTokLiveSharp](https://github.com/frankvHoof93/TikTokLiveSharp). Use it to receive live stream events such as comments and gifts in realtime from [TikTok LIVE](https://www.tiktok.com/live) by connecting to TikTok's internal WebCast push service.
+    The library includes a wrapper that connects to the WebCast service using just the username (`uniqueId`). This allows you to connect to your own live chat as well as the live chat of other streamers.
+    No credentials are required. Events such as [Members Joining](#member), [Gifts](#gift), [Subscriptions](#subscribe), [Viewers](#roomuser), [Follows](#social), [Shares](#social), [Questions](#questionnew), [Likes](#like) and [Battles](#linkmicbattle) can be tracked.
+</text>
+
+<br>
+<code language="xml">
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+    <dependency>
+        <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
+        <artifactId>Client</artifactId>
+        <version>{{version}}</version>
+        <scope>compile</scope>
+    </dependency>
+</code>
+<br>
+
+
+<text>Lightweight dependency injection container that is both small and performance efficient</text>
+
+<title>Features</title>
+<br>
+<text>- [x] Injecting object via constructor</text>
+<br>
+<text>- [x] Method object providers</text>
+<br>
+<text>- [x] Class Scanner to avoid manual registration [Scanner](#autoscan)</text>
+<br>
+<text>- [x] You need to get [List of objects](#lists) in the constructor, no problem</text>
+<br>
+<text>- [x] Create [object instance](#object-instances) by yourself and register it to container!</text>
+<br>
+<text>- [x] Object lifetimes [SINGLETON, TRANSIENT] [see](#basic)</text>
+<br>
+<text>- [x] [Generic types](#generic-types)</text>
+<br>
+<text>- [x] [Many constructors](#manyconstructors)</text>
+<br>
+<text>- [x] Highly customizable, adjust container with build in [events](#events) system</text>
+<br>
+
+<title>Tutorial</title>
+
+

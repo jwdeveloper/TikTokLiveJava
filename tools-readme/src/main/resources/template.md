@@ -81,9 +81,10 @@ Do you prefer other programming languages?
 
 ## Events
 
-{{events-content}}
 
-{{for item of data }} 
+@{events-content}
+
+{{for item of data}} 
 
 {{if item is 2}}
 
@@ -101,7 +102,6 @@ my name is {{item.name}}
 ```java
 {{listener-content}}
 ```
-
 
 ## Contributing
 Your improvements are welcome! Feel free to open an <a href="https://github.com/jwdeveloper/TikTok-Live-Java/issues">issue</a> or <a href="https://github.com/jwdeveloper/TikTok-Live-Java/pulls">pull request</a>.

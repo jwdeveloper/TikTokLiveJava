@@ -27,6 +27,8 @@ import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokProtocolBufferException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
+import io.github.jwdeveloper.tiktok.live.LiveMessagesHandler;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
@@ -38,15 +40,15 @@ import java.util.*;
 
 public class TikTokWebSocketListener extends WebSocketClient {
 
-    private final TikTokLiveMessageHandler messageHandler;
-    private final TikTokLiveEventHandler tikTokEventHandler;
+    private final LiveMessagesHandler messageHandler;
+    private final LiveEventsHandler tikTokEventHandler;
     private final LiveClient tikTokLiveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
                                    int connectTimeout,
-                                   TikTokLiveMessageHandler messageHandler,
-                                   TikTokLiveEventHandler tikTokEventHandler,
+                                   LiveMessagesHandler messageHandler,
+                                   LiveEventsHandler tikTokEventHandler,
                                    LiveClient tikTokLiveClient) {
         super(serverUri, new Draft_6455(), httpHeaders, connectTimeout);
         this.messageHandler = messageHandler;

@@ -23,7 +23,6 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.ByteString;
-import io.github.jwdeveloper.dependance.injector.api.annotations.Inject;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.*;
@@ -38,37 +37,39 @@ import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.websocket.SocketClient;
+import lombok.Getter;
 
 import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+@Getter
 public class TikTokLiveClient implements LiveClient
 {
-    private final TikTokRoomInfo liveRoomInfo;
+    private final TikTokRoomInfo roomInfo;
     private final LiveHttpClient httpClient;
     private final SocketClient webSocketClient;
-    private final TikTokLiveEventHandler tikTokEventHandler;
+    private final LiveEventsHandler tikTokEventHandler;
     private final LiveClientSettings clientSettings;
     private final ListenersManager listenersManager;
     private final Logger logger;
-    private final GiftsManager giftsManager;
-    private final TikTokLiveMessageHandler messageHandler;
+    private final GiftsManager giftManager;
+    private final LiveMessagesHandler messageHandler;
 
     public TikTokLiveClient(
-            TikTokLiveMessageHandler messageHandler,
+            LiveMessagesHandler messageHandler,
             GiftsManager giftsManager,
             TikTokRoomInfo tikTokLiveMeta,
             LiveHttpClient tiktokHttpClient,
             SocketClient webSocketClient,
-            TikTokLiveEventHandler tikTokEventHandler,
+            LiveEventsHandler tikTokEventHandler,
             LiveClientSettings clientSettings,
             ListenersManager listenersManager,
             Logger logger) {
         this.messageHandler = messageHandler;
-        this.giftsManager = giftsManager;
-        this.liveRoomInfo = tikTokLiveMeta;
+        this.giftManager = giftsManager;
+        this.roomInfo = tikTokLiveMeta;
         this.httpClient = tiktokHttpClient;
         this.webSocketClient = webSocketClient;
         this.tikTokEventHandler = tikTokEventHandler;
@@ -77,14 +78,9 @@ public class TikTokLiveClient implements LiveClient
         this.logger = logger;
     }
 
-
     public void connectAsync(Consumer<LiveClient> onConnection) {
-        CompletableFuture.runAsync(() -> {
-            connect();
-            onConnection.accept(this);
-        });
+        connectAsync().thenAccept(onConnection);
     }
-
 
     public CompletableFuture<LiveClient> connectAsync() {
         return CompletableFuture.supplyAsync(() -> {
@@ -119,61 +115,61 @@ public class TikTokLiveClient implements LiveClient
     }
 
     public void tryConnect() {
-        if (!liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
+        if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
             throw new TikTokLiveException("Already connected");
         }
 
         setState(ConnectionState.CONNECTING);
         tikTokEventHandler.publish(this, new TikTokConnectingEvent());
-        var userDataRequest = new LiveUserData.Request(liveRoomInfo.getHostName());
+        var userDataRequest = new LiveUserData.Request(roomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
-        liveRoomInfo.setStartTime(userData.getStartTime());
-        liveRoomInfo.setRoomId(userData.getRoomId());
-
-        if (clientSettings.isFetchGifts())
-            giftsManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
+        roomInfo.setStartTime(userData.getStartTime());
+        roomInfo.setRoomId(userData.getRoomId());
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
-            throw new TikTokLiveOfflineHostException("User is offline: " + liveRoomInfo.getHostName());
+            throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName());
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
-            throw new TikTokLiveOfflineHostException("User not found: " + liveRoomInfo.getHostName());
+            throw new TikTokLiveUnknownHostException("User not found: " + roomInfo.getHostName());
 
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
 
         if (liveData.isAgeRestricted() && clientSettings.isThrowOnAgeRestriction())
-            throw new TikTokLiveException("Livestream for " + liveRoomInfo.getHostName() + " is 18+ or age restricted!");
+            throw new TikTokLiveException("Livestream for " + roomInfo.getHostName() + " is 18+ or age restricted!");
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound)
-            throw new TikTokLiveOfflineHostException("LiveStream for " + liveRoomInfo.getHostName() + " could not be found.");
+            throw new TikTokLiveUnknownHostException("LiveStream for " + roomInfo.getHostName() + " could not be found.");
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline)
-            throw new TikTokLiveOfflineHostException("LiveStream for " + liveRoomInfo.getHostName() + " not found, is the Host offline?");
+            throw new TikTokLiveOfflineHostException("LiveStream for " + roomInfo.getHostName() + " not found, is the Host offline?");
 
         tikTokEventHandler.publish(this, new TikTokRoomDataResponseEvent(liveData));
 
-        liveRoomInfo.setTitle(liveData.getTitle());
-        liveRoomInfo.setViewersCount(liveData.getViewers());
-        liveRoomInfo.setTotalViewersCount(liveData.getTotalViewers());
-        liveRoomInfo.setAgeRestricted(liveData.isAgeRestricted());
-        liveRoomInfo.setHost(liveData.getHost());
+        roomInfo.setTitle(liveData.getTitle());
+        roomInfo.setViewersCount(liveData.getViewers());
+        roomInfo.setTotalViewersCount(liveData.getTotalViewers());
+        roomInfo.setAgeRestricted(liveData.isAgeRestricted());
+        roomInfo.setHost(liveData.getHost());
 
         var preconnectEvent = new TikTokPreConnectionEvent(userData, liveData);
         tikTokEventHandler.publish(this, preconnectEvent);
         if (preconnectEvent.isCancelConnection())
             throw new TikTokLiveException("TikTokPreConnectionEvent cancelled connection!");
 
+        if (clientSettings.isFetchGifts())
+            giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
+
         var liveConnectionRequest = new LiveConnectionData.Request(userData.getRoomId());
         var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
         webSocketClient.start(liveConnectionData, this);
 
         setState(ConnectionState.CONNECTED);
-        tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(liveRoomInfo));
+        tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(roomInfo));
     }
 
     public void disconnect() {
-        if (liveRoomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
+        if (roomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
             return;
         }
         setState(ConnectionState.DISCONNECTED);
@@ -182,7 +178,7 @@ public class TikTokLiveClient implements LiveClient
 
     private void setState(ConnectionState connectionState) {
         logger.info("TikTokLive client state: " + connectionState.name());
-        liveRoomInfo.setConnectionState(connectionState);
+        roomInfo.setConnectionState(connectionState);
     }
 
     public void publishEvent(TikTokEvent event) {
@@ -203,22 +199,4 @@ public class TikTokLiveClient implements LiveClient
         messageHandler.handleSingleMessage(this, message);
     }
 
-    @Override
-    public GiftsManager getGiftManager() {
-        return giftsManager;
-    }
-
-    public LiveRoomInfo getRoomInfo() {
-        return liveRoomInfo;
-    }
-
-    @Override
-    public ListenersManager getListenersManager() {
-        return listenersManager;
-    }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
 }

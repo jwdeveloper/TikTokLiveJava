@@ -20,36 +20,11 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.common;
+package io.github.jwdeveloper.tiktok.exceptions;
 
-
-
-import java.io.IOException;
-import java.util.Base64;
-
-public class TikTokBaseTest
+public class TikTokLiveUnknownHostException extends TikTokLiveException
 {
-    public byte[] getFileBytes(String path)
-    {
-        try {
-            var stream = getClass().getClassLoader().getResourceAsStream(path);
-            var bytes=  stream.readAllBytes();
-            stream.close();
-            return bytes;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public byte[] getFileBytesUtf(String path)
-    {
-        try {
-            var stream = getClass().getClassLoader().getResourceAsStream(path);
-            var bytes=  stream.readAllBytes();
-            stream.close();
-            return Base64.getDecoder().decode(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public TikTokLiveUnknownHostException(String message) {
+        super(message);
     }
 }

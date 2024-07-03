@@ -22,10 +22,11 @@
  */
 package io.github.jwdeveloper.tiktok.live.builder;
 
+import io.github.jwdeveloper.dependance.implementation.DependanceContainerBuilder;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.mappers.TikTokMapper;
+import io.github.jwdeveloper.tiktok.mappers.LiveMapper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -41,7 +42,7 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      * @param onCustomMappings lambda method
      * @return
      */
-    LiveClientBuilder onMapping(Consumer<TikTokMapper> onCustomMappings);
+    LiveClientBuilder onMapping(Consumer<LiveMapper> onCustomMappings);
 
 
     /**
@@ -60,15 +61,26 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      */
     LiveClientBuilder addListener(TikTokEventListener listener);
 
+
     /**
+     * Allows you to use own implementation of internal TikTokLive dependencies,
+     * when the default implementation does not meet your needs
      *
+     *
+     * @param onCustomizeDependencies access to dependency container
+     * @return
+     */
+    LiveClientBuilder customize(Consumer<DependanceContainerBuilder> onCustomizeDependencies);
+
+    /**
+     * Builds new instance of the LiveClient
      * @return LiveClient object
      */
     LiveClient build();
 
     /**
-     *
-     * @return LiveClient object and connects to TikTok live
+     * Builds new instance of the LiveClient and connects to live
+     * @return LiveClient object
      */
     LiveClient buildAndConnect();
 

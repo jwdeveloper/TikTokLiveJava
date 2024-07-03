@@ -22,7 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.data.events.gift;
 
-
 import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
@@ -31,12 +30,6 @@ import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.Getter;
 
-
-/**
- * Triggered when user sends gifts that has
- * no combo (most of expensive gifts)
- * or if combo has finished
- */
 @EventMeta(eventType = EventType.Message)
 @Getter
 public class TikTokGiftEvent extends TikTokHeaderEvent {

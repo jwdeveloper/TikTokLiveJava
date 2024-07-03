@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Tools-ReadmeGenerator</artifactId>
+    <artifactId>tools-readme</artifactId>
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -24,9 +24,20 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.hubspot.jinjava</groupId>
+            <artifactId>jinjava</artifactId>
+            <version>2.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.13.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.jwdeveloper.Descrabble</groupId>
             <artifactId>Descrabble-Full</artifactId>
-            <version>0.0.7-Release</version>
+            <version>0.0.11-Release</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

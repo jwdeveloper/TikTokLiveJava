@@ -29,6 +29,8 @@ import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.settings.*;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
+import io.github.jwdeveloper.tiktok.live.LiveMessagesHandler;
 import org.java_websocket.client.WebSocketClient;
 
 import javax.net.ssl.*;
@@ -38,22 +40,23 @@ import java.util.HashMap;
 
 public class TikTokWebSocketClient implements SocketClient {
     private final LiveClientSettings clientSettings;
-    private final TikTokLiveMessageHandler messageHandler;
-    private final TikTokLiveEventHandler tikTokEventHandler;
-    private WebSocketClient webSocketClient;
-
+    private final LiveMessagesHandler messageHandler;
+    private final LiveEventsHandler tikTokEventHandler;
     private final TikTokWebSocketPingingTask pingingTask;
+    private WebSocketClient webSocketClient;
     private boolean isConnected;
 
     public TikTokWebSocketClient(
             LiveClientSettings clientSettings,
-            TikTokLiveMessageHandler messageHandler,
-            TikTokLiveEventHandler tikTokEventHandler) {
+            LiveMessagesHandler messageHandler,
+            LiveEventsHandler tikTokEventHandler,
+            TikTokWebSocketPingingTask pingingTask)
+    {
         this.clientSettings = clientSettings;
         this.messageHandler = messageHandler;
         this.tikTokEventHandler = tikTokEventHandler;
+        this.pingingTask = pingingTask;
         isConnected = false;
-        pingingTask = new TikTokWebSocketPingingTask();
     }
 
     @Override
@@ -64,7 +67,7 @@ public class TikTokWebSocketClient implements SocketClient {
 
         messageHandler.handle(liveClient, connectionData.getWebcastResponse());
 
-		var headers = new HashMap<>(clientSettings.getHttpSettings().getHeaders());
+        var headers = new HashMap<>(clientSettings.getHttpSettings().getHeaders());
         headers.put("Cookie", connectionData.getWebsocketCookies());
         webSocketClient = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
                 headers,
@@ -96,9 +99,15 @@ public class TikTokWebSocketClient implements SocketClient {
             if (proxySettings.getType() == Proxy.Type.SOCKS) {
                 SSLContext sc = SSLContext.getInstance("SSL");
                 sc.init(null, new TrustManager[]{new X509TrustManager() {
-                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
-                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
-                    public X509Certificate[] getAcceptedIssuers() { return null; }
+                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
+                    }
+
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
                 }}, null);
                 webSocketClient.setSocketFactory(sc.getSocketFactory());
             }

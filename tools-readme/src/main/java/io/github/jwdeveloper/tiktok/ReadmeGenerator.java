@@ -20,18 +20,36 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.gifts;
+package io.github.jwdeveloper.tiktok;
+import java.util.HashMap;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+public class ReadmeGenerator {
+    public static void main(String[] args) {
+        var generator = new ReadmeGenerator();
+        generator.generate();
 
+    }
 
-@ExtendWith(MockitoExtension.class)
+    public void generate() {
+        var template = FilesUtility.getFileFromResource(ReadmeGenerator.class, "template.md");
+        var variables = new HashMap<String, Object>();
 
-public class TikTokGiftManagerTest {
+        variables.put("version", getCurrentVersion());
+        variables.put("code-content", new CodeExamplesGenerator().run());
+        variables.put("events-content", new EventsInfoGenerator().run());
+        variables.put("listener-content",new ListenerExampleGenerator().run());
 
+        template = TemplateUtility.generateTemplate(template, variables);
+        var outputPath = "C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\Tools-ReadmeGenerator\\src\\main\\resources\\output.md";
+        FilesUtility.saveFile(outputPath, template);
+    }
 
+    public String getCurrentVersion() {
+        var version = System.getenv("version");
+        ;
 
+        return version == null ? "NOT_FOUND" : version;
+    }
 
 
 

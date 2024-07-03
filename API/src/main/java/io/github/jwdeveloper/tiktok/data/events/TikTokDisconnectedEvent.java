@@ -26,10 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
 import lombok.Getter;
 
-/**
- * Triggered when the connection gets disconnected. In that case you can call connect() again to have a reconnect logic.
- * Note that you should wait a little bit before attempting a reconnect to to avoid being rate-limited.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Control)
 public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {

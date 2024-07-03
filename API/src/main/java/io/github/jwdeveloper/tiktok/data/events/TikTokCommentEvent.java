@@ -32,9 +32,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-/**
- * Triggered every time a new chat comment arrives.
- */
+
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokCommentEvent extends TikTokHeaderEvent {
