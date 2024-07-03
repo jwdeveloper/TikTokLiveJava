@@ -22,16 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.users;
 
-import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 public class User {
@@ -49,12 +45,12 @@ public class User {
         return attributes.stream().toList();
     }
 
-    public boolean hasAttribute(UserAttribute userFlag) {
-        return attributes.contains(userFlag);
+    public boolean hasAttribute(UserAttribute attribute) {
+        return attributes.contains(attribute);
     }
 
-    public void addAttribute(UserAttribute... flags) {
-        this.attributes.addAll(Arrays.stream(flags).toList());
+    public void addAttribute(UserAttribute... attributes) {
+        this.attributes.addAll(List.of(attributes));
     }
 
     public boolean isGiftGiver() {
@@ -168,11 +164,11 @@ public class User {
     }
 
     public static User EMPTY = new User(0L,
-            "",
-            Picture.empty(),
-            0,
-            0,
-            List.of(Badge.empty()));
+        "",
+        Picture.empty(),
+        0,
+        0,
+        List.of(Badge.empty()));
 
     public static User map(io.github.jwdeveloper.tiktok.messages.data.User user) {
         return new User(user);
@@ -209,12 +205,12 @@ public class User {
 
     public static User map(WebcastEnvelopeMessage.EnvelopeInfo envelopeInfo) {
         return new User(0L,
-                //envelopeInfo.getSendUserId(),
-                envelopeInfo.getSendUserName(),
-                Picture.map(envelopeInfo.getSendUserAvatar()),
-                0,
-                0,
-                List.of(Badge.empty()));
+            //envelopeInfo.getSendUserId(),
+            envelopeInfo.getSendUserName(),
+            Picture.map(envelopeInfo.getSendUserAvatar()),
+            0,
+            0,
+            List.of(Badge.empty()));
     }
 
     @Override
