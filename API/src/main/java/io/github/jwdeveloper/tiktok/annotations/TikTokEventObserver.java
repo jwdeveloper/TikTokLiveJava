@@ -28,11 +28,15 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TikTokEventObserver {
 
+    /**
+     * When more than one method listen for certain Even, you can specify the method priority
+     * @return
+     */
     Priority priority() default Priority.NORMAL;
 
     /**
-     * when true, action is invoked on the another thread
+     * When true, action is invoked on the another thread
      * @return
      */
-    boolean async();
+    boolean async() default false;
 }
