@@ -69,7 +69,7 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
  */
 //TODO I think this interface can be removed, since we are using,
 //annotation @TikTokEventHandler to check methods that are events
-@Deprecated(forRemoval = true, since = "This interface is not longer needed, please remove it from your class")
+@Deprecated(forRemoval = true, since = "1.8.1 (This interface is not longer needed, please remove it from your class)")
 public interface TikTokEventListener {
 
 }

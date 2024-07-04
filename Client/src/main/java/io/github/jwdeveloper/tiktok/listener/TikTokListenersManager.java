@@ -28,7 +28,6 @@ import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
 
@@ -89,7 +88,7 @@ public class TikTokListenersManager implements ListenersManager {
                 .filter(e -> e.isAnnotationPresent(TikTokEventObserver.class))
                 .filter(e -> e.getParameterCount() >= 1)
                 .map(method -> getSingleMethodInfo(listener, method))
-                .sorted(Comparator.comparingInt(a -> a.getPriority().priorityValue))
+                .sorted(Comparator.comparingInt(a -> a.getPriority().value))
                 .toList();
     }
 
