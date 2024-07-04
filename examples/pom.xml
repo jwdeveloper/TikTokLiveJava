@@ -46,7 +46,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Examples</artifactId>
+    <artifactId>examples</artifactId>
     <dependencies>
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>

@@ -41,7 +41,6 @@ public class EventsInfoGenerator {
         System.out.println(res);
     }
 
-
     public String run() {
         var events = getEventsDtos();
         var builder = new StringBuilder();
