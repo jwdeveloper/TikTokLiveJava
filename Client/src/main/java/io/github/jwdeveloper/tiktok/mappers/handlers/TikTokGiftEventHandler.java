@@ -38,7 +38,6 @@ import java.util.*;
 public class TikTokGiftEventHandler {
     private final Map<Long, WebcastGiftMessage> giftsMessages;
     private final TikTokRoomInfo tikTokRoomInfo;
-
     private final GiftsManager giftsManager;
 
     public TikTokGiftEventHandler(GiftsManager giftsManager, TikTokRoomInfo tikTokRoomInfo) {

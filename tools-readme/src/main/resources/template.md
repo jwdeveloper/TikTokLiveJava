@@ -88,8 +88,6 @@ Do you prefer other programming languages?
 
 {{if item is 2}}
 
-my name is {{item.name}}
-
 {{else}}
 
 {{end}}
@@ -98,7 +96,6 @@ my name is {{item.name}}
 <br>
 
 ## Listeners
-
 ```java
 {{listener-content}}
 ```

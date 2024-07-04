@@ -99,7 +99,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //TODO 250 Magic number
         if (clientSettings.getPingInterval() < 250)
-            throw new TikTokLiveException("Minimum allowed ping interval is 250 millseconds");
+            throw new TikTokLiveException("Minimum allowed ping interval is 250 milliseconds");
 
         var httpSettings = clientSettings.getHttpSettings();
         httpSettings.getParams().put("app_language", clientSettings.getClientLanguage());
@@ -176,12 +176,10 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         dependance.registerSingleton(LiveClient.class, TikTokLiveClient.class);
 
         onCustomDependencies.forEach(action -> action.accept(dependance));
-
         var container = dependance.build();
 
         var listenerManager = container.find(ListenersManager.class);
         listeners.forEach(listenerManager::addListener);
-
         return container.find(LiveClient.class);
     }
 

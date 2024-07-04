@@ -129,7 +129,7 @@ public class TikTokListenersManager implements ListenersManager {
         var methodContainer = dependanceContainer.createChildContainer()
                 .configure(configuration ->
                 {
-                    //Modfying container, so it returns TikTokEvent object instance,
+                    //Modifying container, so it returns TikTokEvent object instance,
                     //when TikTokEvent type is encountered in the methods parameters
                     configuration.onInjection(injectionEvent ->
                     {

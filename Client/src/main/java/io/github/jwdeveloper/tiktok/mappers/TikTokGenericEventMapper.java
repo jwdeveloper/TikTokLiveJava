@@ -53,7 +53,7 @@ public class TikTokGenericEventMapper {
 
     private final Map<Class<?>, Method> methodCache;
     private final Map<TypePair, Constructor<?>> constructorCache;
-
+    private static final String PARSE_FIELD = "parseFrom";
     public TikTokGenericEventMapper() {
         this.methodCache = new HashMap<>();
         this.constructorCache = new HashMap<>();
@@ -75,7 +75,7 @@ public class TikTokGenericEventMapper {
     public Method getParsingMethod(Class<?> input) throws RuntimeException {
         return methodCache.computeIfAbsent(input, aClass -> {
 			try {
-				return aClass.getDeclaredMethod("parseFrom", byte[].class);
+				return aClass.getDeclaredMethod(PARSE_FIELD, byte[].class);
 			} catch (NoSuchMethodException e) {
 				throw new RuntimeException(e);
 			}
