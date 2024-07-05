@@ -29,10 +29,7 @@ import lombok.Getter;
 import java.util.*;
 
 @Getter
-public class Team1v1 extends Team
-{
-    /** Value >= 0 when finished otherwise -1 */
-    private final int totalPoints;
+public class Team1v1 extends Team {
     private final int winStreak;
     private final User host;
     private final List<Viewer> viewers;

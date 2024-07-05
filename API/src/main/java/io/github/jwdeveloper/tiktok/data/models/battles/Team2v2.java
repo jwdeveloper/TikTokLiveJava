@@ -30,9 +30,6 @@ import java.util.*;
 
 @Getter
 public class Team2v2 extends Team {
-    /** Value >= 0 when finished otherwise -1 */
-    private final int totalPoints;
-
     private final List<User> hosts;
     private final List<Viewer> viewers;
 

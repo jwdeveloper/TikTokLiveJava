@@ -43,8 +43,6 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
      true if battle is finished otherwise false
      */
     private final boolean finished;
-    @Getter(AccessLevel.NONE)
-    private final boolean oneVsOne;
     private final List<Team> teams;
 
     public TikTokLinkMicBattleEvent(WebcastLinkMicBattle msg) {
@@ -55,7 +53,6 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
         if (msg.getHostTeamCount() == 2) { // 1v1 battle
             teams.add(new Team1v1(msg.getHostTeam(0), msg));
             teams.add(new Team1v1(msg.getHostTeam(1), msg));
-            oneVsOne = true;
         } else { // 2v2 battle
             if (isFinished()) {
                 teams.add(new Team2v2(msg.getHostData2V2List().stream().filter(data -> data.getTeamNumber() == 1).findFirst().orElse(null), msg));
@@ -64,7 +61,6 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
                 teams.add(new Team2v2(msg.getHostTeam(0), msg.getHostTeam(1), msg));
                 teams.add(new Team2v2(msg.getHostTeam(2), msg.getHostTeam(3), msg));
             }
-            oneVsOne = false;
         }
 
         // Info:
@@ -74,10 +70,14 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
     }
 
     public boolean is1v1() {
-        return oneVsOne;
+        return teams.get(0) instanceof Team1v1;
     }
 
     public boolean is2v2() {
-        return !oneVsOne;
+        return teams.get(0) instanceof Team2v2;
+    }
+
+    public boolean isTie() {
+        return isFinished() && teams.get(0).getTotalPoints() == teams.get(1).getTotalPoints();
     }
 }
