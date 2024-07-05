@@ -20,7 +20,7 @@ public class TikTokLiveClientTests extends TikTokTestBase {
     public void onBeforeEachTest(LiveClientBuilder liveClientBuilder,
                                          DependanceContainerBuilder containerBuilder) {
 
-        liveClientBuilder.onMappings()
+
     }
 
     @Test
