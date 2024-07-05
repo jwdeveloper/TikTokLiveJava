@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.listener;
 
 import io.github.jwdeveloper.dependance.api.DependanceContainer;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
+import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokEventListenerMethodException;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
@@ -40,14 +41,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TikTokListenersManager implements ListenersManager {
 
     private final Map<Object, List<ListenerMethodInfo>> listeners;
-    private final LiveEventsHandler eventObserver;
+    private final LiveEventsHandler eventsHandler;
     private final ExecutorService executorService;
     private final DependanceContainer dependanceContainer;
 
 
     public TikTokListenersManager(LiveEventsHandler tikTokEventHandler,
                                   DependanceContainer dependanceContainer) {
-        this.eventObserver = tikTokEventHandler;
+        this.eventsHandler = tikTokEventHandler;
         this.dependanceContainer = dependanceContainer;
         this.listeners = new HashMap<>();
         executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -66,7 +67,7 @@ public class TikTokListenersManager implements ListenersManager {
 
         var methodsInfo = getMethodsInfo(listener);
         for (var methodInfo : methodsInfo) {
-            eventObserver.subscribe(methodInfo.getEventType(), methodInfo.getAction());
+            eventsHandler.subscribe(methodInfo.getEventType(), methodInfo.getAction());
         }
         listeners.put(listener, methodsInfo);
     }
@@ -78,7 +79,7 @@ public class TikTokListenersManager implements ListenersManager {
         }
         var methodsInfo = listeners.get(listener);
         for (var methodInfo : methodsInfo) {
-            eventObserver.unsubscribe(methodInfo.getEventType(), methodInfo.getAction());
+            eventsHandler.unsubscribe(methodInfo.getEventType(), methodInfo.getAction());
         }
         listeners.remove(listener);
     }
@@ -149,7 +150,7 @@ public class TikTokListenersManager implements ListenersManager {
                 var parameters = methodContainer.resolveParameters(method);
                 method.invoke(listener, parameters);
             } catch (Exception e) {
-                throw new TikTokEventListenerMethodException(e);
+                eventsHandler.publish(liveClient, new TikTokErrorEvent(new TikTokEventListenerMethodException(e)));
             }
         };
     }

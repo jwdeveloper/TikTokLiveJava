@@ -78,17 +78,6 @@ public class TikTokLiveClient implements LiveClient
         this.logger = logger;
     }
 
-    public void connectAsync(Consumer<LiveClient> onConnection) {
-        connectAsync().thenAccept(onConnection);
-    }
-
-    public CompletableFuture<LiveClient> connectAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            connect();
-            return this;
-        });
-    }
-
     public void connect() {
         try {
             tryConnect();
@@ -199,4 +188,15 @@ public class TikTokLiveClient implements LiveClient
         messageHandler.handleSingleMessage(this, message);
     }
 
+
+    public void connectAsync(Consumer<LiveClient> onConnection) {
+        connectAsync().thenAccept(onConnection);
+    }
+
+    public CompletableFuture<LiveClient> connectAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            connect();
+            return this;
+        });
+    }
 }

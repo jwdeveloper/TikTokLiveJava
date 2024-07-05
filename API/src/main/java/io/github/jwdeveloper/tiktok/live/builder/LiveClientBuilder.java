@@ -32,10 +32,11 @@ import java.util.function.Consumer;
 
 public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
 
+
     /**
      * This method is triggered after default mappings are registered
      * It could be used to OVERRIDE behaviour of mappings and implement custom behaviour
-     *
+     * <p>
      * Be aware if for example you override WebcastGiftEvent, onGiftEvent() will not be working
      *
      * @param onCustomMappings lambda method
@@ -43,18 +44,22 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      */
     LiveClientBuilder mappings(Consumer<LiveMapper> onCustomMappings);
 
+    @Deprecated(forRemoval = true, since = "1.8.2 use `mappings` method instead")
+    LiveClientBuilder onMappings(Consumer<LiveMapper> onCustomMappings);
 
     /**
      * Configuration of client settings
-     * @see LiveClientSettings
+     *
      * @param onConfigure
      * @return
+     * @see LiveClientSettings
      */
     LiveClientBuilder configure(Consumer<LiveClientSettings> onConfigure);
 
     /**
      * Adding events listener class, its fancy way to register events without using lamda method
      * but actual method in class that implements TikTokEventListener
+     *
      * @return
      */
     LiveClientBuilder addListener(Object listener);
@@ -64,7 +69,6 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      * Allows you to use own implementation of internal TikTokLive dependencies,
      * when the default implementation does not meet your needs
      *
-     *
      * @param onCustomizeDependencies access to dependency container
      * @return
      */
@@ -72,18 +76,19 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
 
     /**
      * Builds new instance of the LiveClient
+     *
      * @return LiveClient object
      */
     LiveClient build();
 
     /**
      * Builds new instance of the LiveClient and connects to live
+     *
      * @return LiveClient object
      */
     LiveClient buildAndConnect();
 
     /**
-     *
      * @return LiveClient object and connects to TikTok live asynchronously
      */
     CompletableFuture<LiveClient> buildAndConnectAsync();
