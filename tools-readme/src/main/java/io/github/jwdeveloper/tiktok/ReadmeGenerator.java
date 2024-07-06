@@ -27,7 +27,6 @@ public class ReadmeGenerator {
     public static void main(String[] args) {
         var generator = new ReadmeGenerator();
         generator.generate();
-
     }
 
     public void generate() {

@@ -30,7 +30,7 @@ public class CustomMappingExample {
 
     public static void main(String[] args) {
         TikTokLive.newClient("saszareznikow")
-                .onMapping(mapper ->
+                .mappings(mapper ->
                 {
                     mapper.forMessage(WebcastChatMessage.class)
                             .onBeforeMapping((inputBytes, messageName, mapperHelper) ->
@@ -56,7 +56,6 @@ public class CustomMappingExample {
                                 System.out.println("onAfter mapping, " + source.getClass().getSimpleName() + " was mapped to " + events.size() + " events");
                                 return events;
                             });
-
                     /*
                       There might be cast that we don't have Webcast class for incoming message from TikTok
                       `mapperHelper.bytesToProtoBufferStructure` but you can still investigate message structure

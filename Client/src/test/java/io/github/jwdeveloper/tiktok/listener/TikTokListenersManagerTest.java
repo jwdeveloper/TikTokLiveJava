@@ -22,7 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
+import io.github.jwdeveloper.dependance.Dependance;
+import io.github.jwdeveloper.dependance.api.DependanceContainer;
 import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.annotations.Priority;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -44,27 +47,34 @@ class TikTokListenersManagerTest {
 
     private TikTokLiveEventHandler eventObserver;
     private TikTokListenersManager tikTokListenersManager;
+    private DependanceContainer dependanceContainer;
+    private LiveClient liveClient;
 
     @BeforeEach
     void setUp() {
-        eventObserver = Mockito.mock(TikTokLiveEventHandler.class);
-        List<TikTokEventListener> listeners = new ArrayList<>();
-        tikTokListenersManager = new TikTokListenersManager(listeners, eventObserver);
+
+        liveClient = Mockito.mock(LiveClient.class);
+        eventObserver = new TikTokLiveEventHandler();
+
+        dependanceContainer = Dependance.newContainer()
+                .registerSingleton(LiveClient.class, liveClient)
+                .build();
+        tikTokListenersManager = new TikTokListenersManager(eventObserver, dependanceContainer);
     }
 
     @Test
     void addListener() {
-        TikTokEventListener listener =new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
 
-        List<TikTokEventListener> listeners = tikTokListenersManager.getListeners();
+        List<Object> listeners = tikTokListenersManager.getListeners();
         assertEquals(1, listeners.size());
         assertSame(listener, listeners.get(0));
     }
 
     @Test
     void addListener_alreadyRegistered_throwsException() {
-        TikTokEventListener listener = new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
 
         Exception exception = assertThrows(TikTokLiveException.class, () -> {
@@ -76,39 +86,56 @@ class TikTokListenersManagerTest {
 
     @Test
     void removeListener() {
-        TikTokEventListener listener = new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
         tikTokListenersManager.removeListener(listener);
 
-        List<TikTokEventListener> listeners = tikTokListenersManager.getListeners();
+        List<Object> listeners = tikTokListenersManager.getListeners();
         assertTrue(listeners.isEmpty());
     }
 
     @Test
+    public void shouldTriggerEvents() {
+
+        Object listener = new TikTokEventListenerTest();
+        tikTokListenersManager.addListener(listener);
+
+
+        var fakeGiftEvent = TikTokGiftEvent.of("TestRosa", 1, 1);
+        eventObserver.publish(liveClient, fakeGiftEvent);
+    }
+
+    @Test
     void removeListener_notRegistered_doesNotThrow() {
-        TikTokEventListener listener = new TikTokEventListenerTest();
+        Object listener = new TikTokEventListenerTest();
         assertDoesNotThrow(() -> tikTokListenersManager.removeListener(listener));
     }
 
 
-    public static class TikTokEventListenerTest implements TikTokEventListener
-    {
+    public static class TikTokEventListenerTest {
         @TikTokEventObserver
-        public void onJoin(LiveClient client, TikTokJoinEvent joinEvent)
-        {
-
+        public void onJoin(LiveClient client, TikTokJoinEvent joinEvent) {
+            System.out.println("Hello from on join" + client + " " + joinEvent);
         }
 
-        @TikTokEventObserver
-        public void onGift(LiveClient client, TikTokGiftEvent giftMessageEvent)
-        {
-
+        @TikTokEventObserver(priority = Priority.LOWEST)
+        public void onGift(LiveClient client, TikTokGiftEvent giftMessageEvent) {
+            System.out.println("Hello from onGift lowest priority" + client + " " + giftMessageEvent);
         }
 
-        @TikTokEventObserver
-        public void onEvent(LiveClient client, TikTokEvent event)
-        {
+        @TikTokEventObserver(priority = Priority.NORMAL)
+        public void onGift2(LiveClient client, TikTokGiftEvent giftMessageEvent) {
+            System.out.println("Hello from onGift normal priority " + client + " " + giftMessageEvent);
+        }
 
+        @TikTokEventObserver(priority = Priority.HIGHEST)
+        public void onGift3(LiveClient client, TikTokGiftEvent giftMessageEvent) {
+            System.out.println("Hello from onGift highest priority " + client + " " + giftMessageEvent);
+        }
+
+        @TikTokEventObserver(async = true)
+        public void onEvent(LiveClient client, TikTokEvent event) {
+            System.out.println("Hello from onEvent im running on the thread " + Thread.currentThread().getName());
         }
     }
 }

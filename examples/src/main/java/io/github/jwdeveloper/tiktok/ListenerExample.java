@@ -28,21 +28,18 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
 
 import java.io.IOException;
 
-public class ListenerExample
-{
+public class ListenerExample {
     // <code>
+
     /**
-     *
-     *  Listeners are an alternative way of handling events.
-     *  I would to suggest to use then when logic of handing event
-     *  is more complex
-     *
+     * Listeners are an alternative way of handling events.
+     * I would to suggest to use then when logic of handing event
+     * is more complex
      */
     public static void main(String[] args) throws IOException {
         showLogo();
@@ -55,24 +52,21 @@ public class ListenerExample
     }
 
     /**
-     *
-     *  Method in TikTokEventListener should meet 4 requirements to be detected
-     *         - must have @TikTokEventObserver annotation
-     *         - must have 2 parameters
-     *         - first parameter must be LiveClient
-     *         - second must be class that extending TikTokEvent
+     * Method must meet 2 requirements to be detected
+     * - must have @TikTokEventObserver annotation
+     * - must have 1 parameter of type that extending TikTokEvent
      */
 
-    public static class CustomListener implements TikTokEventListener {
+    public static class CustomListener {
 
         @TikTokEventObserver
-        public void onLike(LiveClient liveClient, TikTokLikeEvent event) {
+        public void onLike(TikTokLikeEvent event) {
             System.out.println(event.toString());
         }
 
         @TikTokEventObserver
-        public void onError(LiveClient liveClient, TikTokErrorEvent event) {
-          //  event.getException().printStackTrace();
+        public void onError(TikTokErrorEvent event, LiveClient liveClient) {
+            //  event.getException().printStackTrace();
         }
 
         @TikTokEventObserver
@@ -103,9 +97,8 @@ public class ListenerExample
     }
 
     // </code>
-    private static void showLogo()
-    {
-        System.out.println(ConsoleColors.GREEN+"""
+    private static void showLogo() {
+        System.out.println(ConsoleColors.GREEN + """
                                 
                  _____ _ _    _____     _    _     _          \s
                 |_   _(_) | _|_   _|__ | | _| |   (_)_   _____\s

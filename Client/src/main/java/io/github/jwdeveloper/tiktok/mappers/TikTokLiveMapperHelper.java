@@ -29,6 +29,9 @@ import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
 import io.github.jwdeveloper.tiktok.utils.ProtocolUtils;
 
 public class TikTokLiveMapperHelper implements LiveMapperHelper {
+
+    private static final String PACKAGE_PREFIX = "io.github.jwdeveloper.tiktok.messages.webcast.";
+
     private final TikTokGenericEventMapper genericMapper;
 
     public TikTokLiveMapperHelper(TikTokGenericEventMapper genericMapper) {
@@ -39,6 +42,7 @@ public class TikTokLiveMapperHelper implements LiveMapperHelper {
     public <T extends GeneratedMessageV3> T bytesToWebcastObject(byte[] bytes, Class<T> messageClass) {
         try {
             var parsingMethod = genericMapper.getParsingMethod(messageClass);
+            //NULL is passed, since Parsing method is Static
             var sourceObject = parsingMethod.invoke(null, bytes);
             return (T) sourceObject;
         } catch (Exception e) {
@@ -49,7 +53,7 @@ public class TikTokLiveMapperHelper implements LiveMapperHelper {
     @Override
     public Object bytesToWebcastObject(byte[] bytes, String messageName) {
         try {
-            var packageName = "io.github.jwdeveloper.tiktok.messages.webcast." + messageName;
+            var packageName = PACKAGE_PREFIX + messageName;
             var clazz = Class.forName(packageName);
             return bytesToWebcastObject(bytes, (Class<? extends GeneratedMessageV3>) clazz);
         } catch (Exception e) {
@@ -60,7 +64,7 @@ public class TikTokLiveMapperHelper implements LiveMapperHelper {
     @Override
     public boolean isMessageHasProtoClass(String messageName) {
         try {
-            var packageName = "io.github.jwdeveloper.tiktok.messages.webcast." + messageName;
+            var packageName = PACKAGE_PREFIX + messageName;
             Class.forName(packageName);
             return true;
         } catch (Exception e) {

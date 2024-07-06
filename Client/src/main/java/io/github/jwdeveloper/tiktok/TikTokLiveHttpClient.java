@@ -136,7 +136,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         var url = TIKTOK_URL_WEB + "api-live/user/room";
         var result = httpFactory.client(url)
             .withParam("uniqueId", request.getUserName())
-            .withParam("sourceType", "54")
+            .withParam("sourceType", "54") //MAGIC NUMBER, WHAT 54 means?
             .build()
             .toJsonResponse();
 
@@ -218,7 +218,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
         HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
             .withParam("client", "ttlive-java")
-            .withParam("uuc", "1")
+            .withParam("uuc", "1") //MAGIC NUMBER!
             .withParam("room_id", room_id);
 
         if (clientSettings.getApiKey() != null)

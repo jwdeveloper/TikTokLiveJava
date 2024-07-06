@@ -11,7 +11,7 @@
     <modules>
         <module>API</module>
         <module>Client</module>
-        <module>Examples</module>
+        <module>examples</module>
         <module>tools-readme</module>
 
         <module>extension-recorder</module>

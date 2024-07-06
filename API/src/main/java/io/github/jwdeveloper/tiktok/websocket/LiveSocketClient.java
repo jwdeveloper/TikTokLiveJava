@@ -20,21 +20,12 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.listener;
+package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.tiktok.live.builder.EventConsumer;
+import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
+import io.github.jwdeveloper.tiktok.live.LiveClient;
 
-import lombok.Value;
-
-import java.util.List;
-import java.util.Map;
-
-
-@Value
-public class ListenerBindingModel
-{
-
-    TikTokEventListener listener;
-
-    Map<Class<?>, List<EventConsumer<?>>> events;
+public interface LiveSocketClient {
+    void start(LiveConnectionData.Response webcastResponse, LiveClient tikTokLiveClient);
+    void stop();
 }

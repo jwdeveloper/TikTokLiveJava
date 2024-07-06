@@ -25,16 +25,13 @@ package io.github.jwdeveloper.tiktok.listener;
 import java.util.List;
 
 /**
- *  You can dynamically add or removing TikTokEventListener
- *
- * @see TikTokEventListener
- *
+ *  Manage events listeners objects
  */
 public interface ListenersManager
 {
-    List<TikTokEventListener> getListeners();
+    List<Object> getListeners();
 
-    void addListener(TikTokEventListener listener);
+    void addListener(Object listener);
 
-    void removeListener(TikTokEventListener listener);
+    void removeListener(Object listener);
 }

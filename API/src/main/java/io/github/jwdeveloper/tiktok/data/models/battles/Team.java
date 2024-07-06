@@ -22,7 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.battles;
 
+import lombok.Getter;
+
 public abstract class Team {
+    /** Value >= 0 when finished otherwise -1 */
+    @Getter protected int totalPoints;
+
     /**
      * Provides a check for verifying if this team represents a 1v1 Team.
      * @return true if this team is of type {@link Team1v1}, false otherwise.

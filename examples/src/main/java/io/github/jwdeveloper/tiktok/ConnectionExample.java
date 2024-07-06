@@ -37,9 +37,6 @@ public class ConnectionExample {
     public static void main(String[] args) throws IOException {
 
         showLogo();
-
-        var gifts = TikTokLive.gifts();
-
         TikTokLive.newClient(ConnectionExample.TIKTOK_HOSTNAME)
                 .configure(clientSettings ->
                 {

@@ -22,8 +22,6 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.dependance.injector.api.containers.Container;
-import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.settings.*;
@@ -38,7 +36,7 @@ import java.net.Proxy;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
-public class TikTokWebSocketClient implements SocketClient {
+public class TikTokWebSocketClient implements LiveSocketClient {
     private final LiveClientSettings clientSettings;
     private final LiveMessagesHandler messageHandler;
     private final LiveEventsHandler tikTokEventHandler;

@@ -34,11 +34,12 @@ public class TikTokLiveMapper implements LiveMapper {
     private final Map<String, TikTokLiveMapperModel> mappers;
     private final LiveMapperHelper mapperUtils;
     private final TikTokLiveMapperModel globalMapperModel;
+    private static final String GLOBAL_MESSAGE = "GLOBAL MESSAGE";
 
     public TikTokLiveMapper(LiveMapperHelper mapperUtils) {
         this.mappers = new HashMap<>();
         this.mapperUtils = mapperUtils;
-        this.globalMapperModel = new TikTokLiveMapperModel("any message");
+        this.globalMapperModel = new TikTokLiveMapperModel(GLOBAL_MESSAGE);
     }
 
     @Override
