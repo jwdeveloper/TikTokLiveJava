@@ -203,7 +203,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         }
     }
 
-    private ActionResult<HttpResponse<byte[]>> getStartingPayload(LiveConnectionData.Request request) {
+    protected ActionResult<HttpResponse<byte[]>> getStartingPayload(LiveConnectionData.Request request) {
         var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
         if (proxyClientSettings.isEnabled()) {
             while (proxyClientSettings.hasNext()) {
@@ -215,7 +215,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         return getByteResponse(request.getRoomId());
     }
 
-    private ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
+    protected ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
         HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
             .withParam("client", "ttlive-java")
             .withParam("uuc", "1") //MAGIC NUMBER!

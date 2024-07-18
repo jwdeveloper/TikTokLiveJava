@@ -26,7 +26,6 @@ import com.google.protobuf.ByteString;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.*;
-import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.requests.*;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
@@ -89,8 +88,7 @@ public class TikTokLiveClient implements LiveClient
             if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
                 try {
                     Thread.sleep(clientSettings.getRetryConnectionTimeout().toMillis());
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
                 logger.info("Reconnecting");
                 tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
                 this.connect();
@@ -132,8 +130,6 @@ public class TikTokLiveClient implements LiveClient
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline)
             throw new TikTokLiveOfflineHostException("LiveStream for " + roomInfo.getHostName() + " not found, is the Host offline?");
-
-        tikTokEventHandler.publish(this, new TikTokRoomDataResponseEvent(liveData));
 
         roomInfo.setTitle(liveData.getTitle());
         roomInfo.setViewersCount(liveData.getViewers());
