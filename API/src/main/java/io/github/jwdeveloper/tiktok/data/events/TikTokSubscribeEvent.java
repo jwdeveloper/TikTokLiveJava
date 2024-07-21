@@ -53,6 +53,7 @@ public class TikTokSubscribeEvent extends TikTokHeaderEvent {
     public static TikTokSubscribeEvent of(String userName) {
         return new TikTokSubscribeEvent(WebcastMemberMessage.newBuilder()
                 .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setDisplayId(userName)
                         .setNickname(userName)
                         .build())
                 .build());

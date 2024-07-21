@@ -53,4 +53,19 @@ public class ListUser
         AUDIO,
         VIDEO
     }
+
+    @Override
+    public String toString() {
+        return "ListUser{" +
+            "user=" + user +
+            ", linkType=" + linkType +
+            ", linkMicId=" + linkMicId +
+            ", linkStatus=" + linkStatus +
+            ", modifyTime=" + modifyTime +
+            ", linkerId=" + linkerId +
+            ", userPosition=" + userPosition +
+            ", silenceStatus=" + silenceStatus +
+            ", roleType=" + roleType +
+            "}";
+    }
 }

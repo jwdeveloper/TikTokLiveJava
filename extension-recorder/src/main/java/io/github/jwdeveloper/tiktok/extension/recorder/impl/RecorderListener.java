@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.extension.recorder.impl;
 import com.google.gson.JsonParser;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.*;
-import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
+import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
@@ -34,28 +34,29 @@ import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveReco
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.URL;
-import java.util.function.*;
+import java.net.URI;
+import java.net.http.*;
+import java.time.Duration;
+import java.util.function.BiConsumer;
 
 public class RecorderListener implements LiveRecorder {
 
     private final BiConsumer<RecorderSettings, LiveClient> consumer;
-    private RecorderSettings settings;
+    private final RecorderSettings settings;
     private DownloadData downloadData;
     private Thread liveDownloadThread;
 
     public RecorderListener(BiConsumer<RecorderSettings, LiveClient> consumer) {
         this.consumer = consumer;
+        this.settings = RecorderSettings.DEFAULT();
     }
 
     @TikTokEventObserver
-    private void onResponse(LiveClient liveClient, TikTokRoomDataResponseEvent event) {
-        settings = RecorderSettings.DEFAULT();
+    private void onResponse(LiveClient liveClient, TikTokPreConnectionEvent event) {
         consumer.accept(settings, liveClient);
 
-        var json = event.getLiveData().getJson();
+        var json = event.getUserData().getJson();
 
         liveClient.getLogger().info("Searching for live download url");
         downloadData = settings.getPrepareDownloadData() != null ?
@@ -70,26 +71,26 @@ public class RecorderListener implements LiveRecorder {
 
     @TikTokEventObserver
     private void onConnected(LiveClient liveClient, TikTokConnectedEvent event) {
-        if (isConnected())
+        if (isConnected() || downloadData.getDownloadLiveUrl().isEmpty())
             return;
 
         liveDownloadThread = new Thread(() -> {
             try {
                 liveClient.getLogger().info("Recording started "+liveClient.getRoomInfo().getHostName());
-                var url = new URL(downloadData.getFullUrl());
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                var headers = LiveClientSettings.DefaultRequestHeaders();
-                for (var entry : headers.entrySet()) {
-                    connection.setRequestProperty(entry.getKey(), entry.getValue());
-                }
+
+				HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(downloadData.getFullUrl())).GET();
+                for (var entry : LiveClientSettings.DefaultRequestHeaders().entrySet())
+					requestBuilder.header(entry.getKey(), entry.getValue());
+                HttpResponse<InputStream> serverResponse = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL)
+                    .connectTimeout(Duration.ofSeconds(10)).build().send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
 
                 var file = settings.getOutputFile();
                 file.getParentFile().mkdirs();
                 file.createNewFile();
 
                 try (
-                    var in = connection.getInputStream();
-                    var fos = new FileOutputStream(file)
+                    var in = serverResponse.body();
+                    var fos = new FileOutputStream(file, true)
                 ) {
                     byte[] dataBuffer = new byte[1024];
                     int bytesRead;
@@ -128,35 +129,38 @@ public class RecorderListener implements LiveRecorder {
 
 
     private DownloadData mapToDownloadData(String json) {
-
-        var parsedJson = JsonParser.parseString(json);
-        var jsonObject = parsedJson.getAsJsonObject();
-        var streamDataJson = jsonObject.getAsJsonObject("data")
-                .getAsJsonObject("stream_url")
-                .getAsJsonObject("live_core_sdk_data")
+        try {
+            var parsedJson = JsonParser.parseString(json);
+            var jsonObject = parsedJson.getAsJsonObject();
+            var streamDataJson = jsonObject.getAsJsonObject("data")
+                .getAsJsonObject("liveRoom")
+                .getAsJsonObject("streamData")
                 .getAsJsonObject("pull_data")
                 .get("stream_data")
                 .getAsString();
 
-        var streamDataJsonObject = JsonParser.parseString(streamDataJson).getAsJsonObject();
+            var streamDataJsonObject = JsonParser.parseString(streamDataJson).getAsJsonObject();
 
-        var urlLink = streamDataJsonObject.getAsJsonObject("data")
+            var urlLink = streamDataJsonObject.getAsJsonObject("data")
                 .getAsJsonObject(LiveQuality.origin.name())
                 .getAsJsonObject("main")
                 .get("flv")
                 .getAsString();
 
-        var sessionId = streamDataJsonObject.getAsJsonObject("common")
+            var sessionId = streamDataJsonObject.getAsJsonObject("common")
                 .get("session_id")
                 .getAsString();
 
-        //main
-        //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/stage/stream-3284937501738533765.flv?session_id=136-20240109000954BF818F1B3A8E5E39E238&_webnoredir=1
-        //Working
-        //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/game/stream-3284937501738533765_sd5.flv?_session_id=136-20240109001052D91FDBC00143211020C8.1704759052997&_webnoredir=1
-        //https://pull-f5-tt02.fcdn.eu.tiktokcdn.com/stage/stream-3861399216374940610_uhd5.flv?_session_id=136-20240109000223D0BAA1A83974490EE630.1704758544391&_webnoredir=1
+            //main
+            //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/stage/stream-3284937501738533765.flv?session_id=136-20240109000954BF818F1B3A8E5E39E238&_webnoredir=1
+            //Working
+            //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/game/stream-3284937501738533765_sd5.flv?_session_id=136-20240109001052D91FDBC00143211020C8.1704759052997&_webnoredir=1
+            //https://pull-f5-tt02.fcdn.eu.tiktokcdn.com/stage/stream-3861399216374940610_uhd5.flv?_session_id=136-20240109000223D0BAA1A83974490EE630.1704758544391&_webnoredir=1
 
-        return new DownloadData(urlLink, sessionId);
+            return new DownloadData(urlLink, sessionId);
+        } catch (Exception e) {
+            return new DownloadData("", "");
+        }
     }
 
     private boolean isConnected() {

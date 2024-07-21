@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
@@ -33,18 +34,27 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Message)
 public class TikTokShareEvent extends TikTokHeaderEvent {
-	private final User user;
-	private final int totalShares;
+    private final User user;
+    private final int totalShares;
 
-	public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
-		super(msg.getCommon());
-		user = User.map(msg.getUser());
-		this.totalShares = amount;
-	}
+    public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        this.totalShares = amount;
+    }
 
-	public TikTokShareEvent(WebcastSocialMessage msg) {
-		super(msg.getCommon());
-		user = User.map(msg.getUser());
-		totalShares = 1;
-	}
+    public TikTokShareEvent(WebcastSocialMessage msg) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        totalShares = 1;
+    }
+
+    public static TikTokShareEvent of(String userName, int shaders) {
+        return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setDisplayId(userName)
+                        .setNickname(userName)
+                        .build())
+                .build(), shaders);
+    }
 }

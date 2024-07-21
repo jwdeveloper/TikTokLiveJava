@@ -32,8 +32,7 @@ import lombok.Value;
 
 @Value
 @EventMeta(eventType = EventType.Message)
-public class TikTokFollowEvent extends TikTokHeaderEvent
-{
+public class TikTokFollowEvent extends TikTokHeaderEvent {
     User user;
     int totalFollowers;
 
@@ -43,12 +42,12 @@ public class TikTokFollowEvent extends TikTokHeaderEvent
         totalFollowers = msg.getFollowCount();
     }
 
-    public static TikTokFollowEvent of(String userName)
-    {
+    public static TikTokFollowEvent of(String userName) {
         return new TikTokFollowEvent(WebcastSocialMessage.newBuilder()
-            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                .setNickname(userName)
-                .build())
-            .build());
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setDisplayId(userName)
+                        .setNickname(userName)
+                        .build())
+                .build());
     }
 }
