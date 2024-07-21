@@ -6,7 +6,6 @@ import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
-import io.github.jwdeveloper.tiktok.data.events.http.TikTokRoomDataResponseEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
@@ -43,7 +42,6 @@ public class TikTokLiveClientTests extends TikTokTestBase {
         Assert.assertEquals(ConnectionState.CONNECTED, roomInfoMock().getConnectionState());
         AssertEvents(
                 TikTokConnectingEvent.class,
-                TikTokRoomDataResponseEvent.class,
                 TikTokPreConnectionEvent.class,
                 TikTokConnectedEvent.class,
                 TikTokRoomInfoEvent.class);
