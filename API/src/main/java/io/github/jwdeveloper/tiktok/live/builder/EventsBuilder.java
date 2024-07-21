@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.live.builder;
 
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
@@ -58,6 +59,18 @@ public interface EventsBuilder<T> {
      */
     default T onEvent(EventConsumer<TikTokEvent> action) {
         return onEvent(TikTokEvent.class, action);
+    }
+
+
+    /**
+     * As a first event after method `LiveClient::connect()` is performed
+     *
+     * @param action consumable action
+     * @return self instance
+     */
+    default T onConnecting(EventConsumer<TikTokConnectingEvent> action)
+    {
+        return onEvent(TikTokConnectingEvent.class, action);
     }
 
     /**

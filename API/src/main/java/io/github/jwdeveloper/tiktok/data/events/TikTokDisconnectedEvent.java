@@ -39,4 +39,10 @@ public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
 	public TikTokDisconnectedEvent() {
 		this("None");
 	}
+
+
+	public static TikTokDisconnectedEvent of(String reason)
+	{
+		return new TikTokDisconnectedEvent(reason);
+	}
 }

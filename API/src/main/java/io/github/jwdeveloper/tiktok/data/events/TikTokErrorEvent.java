@@ -25,13 +25,18 @@ package io.github.jwdeveloper.tiktok.data.events;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 @EventMeta(eventType = EventType.Control)
-public class TikTokErrorEvent extends TikTokLiveClientEvent
-{
+public class TikTokErrorEvent extends TikTokLiveClientEvent {
     private final Throwable exception;
+
+
+    public static TikTokErrorEvent of(String message) {
+        return new TikTokErrorEvent(new TikTokLiveException(message));
+    }
 }

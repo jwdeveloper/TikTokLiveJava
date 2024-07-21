@@ -29,4 +29,9 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
 public class TikTokConnectedEvent extends TikTokLiveClientEvent
 {
 
+
+    public static TikTokConnectedEvent of()
+    {
+        return new TikTokConnectedEvent();
+    }
 }
