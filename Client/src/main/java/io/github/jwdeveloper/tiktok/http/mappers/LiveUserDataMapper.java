@@ -23,9 +23,12 @@
 package io.github.jwdeveloper.tiktok.http.mappers;
 
 import com.google.gson.*;
+import io.github.jwdeveloper.tiktok.data.models.Picture;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class LiveUserDataMapper
@@ -40,17 +43,18 @@ public class LiveUserDataMapper
                 throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact the developer");
             }
             if (message.equals("user_not_found")) {
-                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1);
+                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1, null);
             }
             //live -> status 2
             //live paused -> 3
             //not live -> status 4
             var element = jsonObject.get("data");
             if (element.isJsonNull()) {
-                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1);
+                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1, null);
             }
             var data = element.getAsJsonObject();
             var user = data.getAsJsonObject("user");
+            var stats = data.getAsJsonObject("stats");
             var roomId = user.get("roomId").getAsString();
             var status = user.get("status").getAsInt();
 
@@ -64,10 +68,19 @@ public class LiveUserDataMapper
                 default -> LiveUserData.UserStatus.NotFound;
             };
 
-            return new LiveUserData.Response(json, statusEnum, roomId, startTime);
+            User foundUser = new User(
+                Long.parseLong(user.get("id").getAsString()),
+                user.get("uniqueId").getAsString(),
+                user.get("nickname").getAsString(),
+                new Picture(user.get("avatarLarger").getAsString()),
+                stats.get("followingCount").getAsLong(),
+                stats.get("followerCount").getAsLong(),
+                List.of());
+
+            return new LiveUserData.Response(json, statusEnum, roomId, startTime, foundUser);
         } catch (JsonSyntaxException | IllegalStateException e) {
             logger.warning("Malformed Json: '"+json+"' - Error Message: "+e.getMessage());
-            return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1);
+            return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1, null);
         }
     }
 }

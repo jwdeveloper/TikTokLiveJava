@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.data.requests;
 
+import io.github.jwdeveloper.tiktok.data.models.users.User;
 import lombok.*;
 
 public class LiveUserData {
@@ -44,6 +45,7 @@ public class LiveUserData {
         private final UserStatus userStatus;
         private final String roomId;
         private final long startTime;
+        private final User user;
 
         public boolean isLiveOnline() {
             return userStatus == LiveUserData.UserStatus.Live || userStatus == LiveUserData.UserStatus.LivePaused;
