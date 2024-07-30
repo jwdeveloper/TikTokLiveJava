@@ -82,9 +82,9 @@ public class LiveClientSettings {
 
     /**
      * Interval of time in milliseconds between pings to TikTok
-     * @apiNote Min: 250 (0.25 seconds), Default: 5000 (5 seconds)
+     * @apiNote Min: 250 (0.25 seconds), Default: 10000 (10 seconds - TikTok Default)
      */
-    private long pingInterval = 5000;
+    private long pingInterval = 10000;
 
     /** Throw an exception on 18+ Age Restriction */
     private boolean throwOnAgeRestriction;

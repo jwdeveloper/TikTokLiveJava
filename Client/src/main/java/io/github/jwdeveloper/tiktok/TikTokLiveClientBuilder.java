@@ -138,7 +138,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //networking
         dependance.registerSingleton(HttpClientFactory.class);
-        dependance.registerSingleton(TikTokWebSocketPingingTask.class);
+        dependance.registerSingleton(WebSocketHeartbeatTask.class);
         if (clientSettings.isOffline()) {
             dependance.registerSingleton(LiveSocketClient.class, TikTokWebSocketOfflineClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpOfflineClient.class);

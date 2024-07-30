@@ -40,7 +40,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
     private final LiveClientSettings clientSettings;
     private final LiveMessagesHandler messageHandler;
     private final LiveEventsHandler tikTokEventHandler;
-    private final TikTokWebSocketPingingTask pingingTask;
+    private final WebSocketHeartbeatTask heartbeatTask;
     private WebSocketClient webSocketClient;
     private boolean isConnected;
 
@@ -48,12 +48,12 @@ public class TikTokWebSocketClient implements LiveSocketClient {
             LiveClientSettings clientSettings,
             LiveMessagesHandler messageHandler,
             LiveEventsHandler tikTokEventHandler,
-            TikTokWebSocketPingingTask pingingTask)
+            WebSocketHeartbeatTask heartbeatTask)
     {
         this.clientSettings = clientSettings;
         this.messageHandler = messageHandler;
         this.tikTokEventHandler = tikTokEventHandler;
-        this.pingingTask = pingingTask;
+        this.heartbeatTask = heartbeatTask;
         isConnected = false;
     }
 
@@ -84,7 +84,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
     private void connectDefault() {
         try {
             webSocketClient.connect();
-            pingingTask.run(webSocketClient, clientSettings.getPingInterval());
+            heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
             isConnected = true;
         } catch (Exception e) {
             isConnected = false;
@@ -120,7 +120,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
                     proxySettings.remove();
                 continue;
             }
-            pingingTask.run(webSocketClient, clientSettings.getPingInterval());
+            heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
             isConnected = true;
             break;
         }
@@ -141,7 +141,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
     public void stop() {
         if (isConnected && webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.closeConnection(0, "");
-            pingingTask.stop();
+            heartbeatTask.stop();
         }
         webSocketClient = null;
         isConnected = false;
