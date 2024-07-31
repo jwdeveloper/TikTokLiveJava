@@ -34,7 +34,7 @@ public class WebSocketHeartbeatTask
 
     public void run(WebSocket webSocket, long pingTaskTime) {
         stop();
-        thread = new Thread(() -> heartbeatTask(webSocket, pingTaskTime), "pinging-task");
+        thread = new Thread(() -> heartbeatTask(webSocket, pingTaskTime), "heartbeat-task");
         isRunning = true;
         thread.start();
     }
