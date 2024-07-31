@@ -22,18 +22,19 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
 import org.java_websocket.WebSocket;
 
-public class TikTokWebSocketPingingTask {
+public class WebSocketHeartbeatTask
+{
     private Thread thread;
     private boolean isRunning = false;
     private final int MAX_TIMEOUT = 250;
     private final int SLEEP_TIME = 500;
+    private final byte[] heartbeatBytes = {58, 2, 104, 98}; // Byte Array of "3A026862" which is TikTok's custom heartbeat value
 
     public void run(WebSocket webSocket, long pingTaskTime) {
         stop();
-        thread = new Thread(() -> pingTask(webSocket, pingTaskTime), "pinging-task");
+        thread = new Thread(() -> heartbeatTask(webSocket, pingTaskTime), "heartbeat-task");
         isRunning = true;
         thread.start();
     }
@@ -44,11 +45,11 @@ public class TikTokWebSocketPingingTask {
         isRunning = false;
     }
 
-    private void pingTask(WebSocket webSocket, long pingTaskTime) {
+    private void heartbeatTask(WebSocket webSocket, long pingTaskTime) {
         while (isRunning) {
             try {
                 if (webSocket.isOpen()) {
-                    webSocket.sendPing();
+                    webSocket.send(heartbeatBytes);
                     Thread.sleep(pingTaskTime + (int) (Math.random() * MAX_TIMEOUT));
                 } else
                     Thread.sleep(SLEEP_TIME);
