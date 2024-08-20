@@ -87,7 +87,7 @@ dependencyResolutionManagement {
 	}
 
 dependencies {
-	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.5.0-Release'
+	        implementation 'com.github.jwdeveloper.TikTok-Live-Java:Client:1.8.5-Release'
 	}
 ```
 
