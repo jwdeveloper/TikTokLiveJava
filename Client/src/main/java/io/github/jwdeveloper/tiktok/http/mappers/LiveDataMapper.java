@@ -142,7 +142,7 @@ public class LiveDataMapper {
         var link = pictureElement.getAsJsonArray("url_list").get(1).getAsString();
         var picture = new Picture(link);
 
-        var user = new User(id, name, profileName, picture, followers, followingCount, new ArrayList<>());
+        var user = new User(id, name, profileName, picture, followingCount, followers, new ArrayList<>());
         user.addAttribute(UserAttribute.LiveHost);
         return user;
     }
