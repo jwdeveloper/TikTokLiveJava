@@ -27,6 +27,7 @@ import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GiftsDataMapper {
@@ -56,9 +57,13 @@ public class GiftsDataMapper {
         var parsedJson = JsonParser.parseString(json);
         var jsonObject = parsedJson.getAsJsonObject();
         if (jsonObject.get("data") instanceof JsonObject data && data.get("gifts") instanceof JsonArray giftArray) {
-            var gifts = giftArray.asList().parallelStream()
-                .map(this::mapSingleRoomGift)
-                .toList();
+            var gifts = new ArrayList<Gift>();
+
+            for(int i = 0; i < giftArray.size(); i++) {
+                JsonElement element = giftArray.get(i);
+                Gift gift = mapSingleRoomGift(element);
+                gifts.add(gift);
+            }
 
             return new GiftsData.Response(json, gifts);
         }
