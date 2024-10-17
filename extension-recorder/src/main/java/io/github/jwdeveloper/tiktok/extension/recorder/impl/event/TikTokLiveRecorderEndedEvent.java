@@ -23,20 +23,15 @@
 package io.github.jwdeveloper.tiktok.extension.recorder.impl.event;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.DownloadData;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
+import lombok.*;
 
-@AllArgsConstructor
 @Getter
-public class TikTokLiveRecorderStartedEvent extends TikTokEvent {
-    DownloadData downloadData;
+public class TikTokLiveRecorderEndedEvent extends TikTokEvent {
 
-    @Setter
-    boolean canceled;
+    private final RecorderSettings settings;
 
-    public TikTokLiveRecorderStartedEvent(DownloadData downloadData) {
-        this.downloadData = downloadData;
+    public TikTokLiveRecorderEndedEvent(RecorderSettings settings) {
+        this.settings = settings;
     }
 }
