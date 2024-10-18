@@ -24,7 +24,6 @@ package io.github.jwdeveloper.tiktok.live;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
-import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -81,9 +80,7 @@ public interface LiveClient {
     LiveRoomInfo getRoomInfo();
 
     /**
-     * Manage TikTokEventListener
-     *
-     * @see TikTokEventListener
+     * Manage TikTokEvent Listeners
      */
     ListenersManager getListenersManager();
 

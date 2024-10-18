@@ -707,7 +707,7 @@ public static void main(String[] args) throws IOException {
  *         - second must be class that extending TikTokEvent
  */
 
-public static class CustomListener implements TikTokEventListener {
+public static class CustomListener {
 
     @TikTokEventObserver
     public void onLike(LiveClient liveClient, TikTokLikeEvent event) {

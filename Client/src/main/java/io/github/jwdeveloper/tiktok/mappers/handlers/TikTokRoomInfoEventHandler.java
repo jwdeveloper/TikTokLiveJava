@@ -58,6 +58,7 @@ public class TikTokRoomInfoEventHandler {
     @SneakyThrows
     public TikTokEvent handleUserRanking(byte[] msg) {
         var message = WebcastRoomUserSeqMessage.parseFrom(msg);
+        var currentViewers = (int) message.getTotal();
         var totalUsers = message.getTotalUser();
         var userRanking = message.getRanksListList().stream().map(RankingUser::new)
                 .sorted((ru1, ru2) -> Integer.compare(ru2.getScore(), ru1.getScore()))
@@ -65,6 +66,7 @@ public class TikTokRoomInfoEventHandler {
 
         return handleRoomInfo(tikTokRoomInfo ->
         {
+            tikTokRoomInfo.setViewersCount(currentViewers);
             tikTokRoomInfo.setTotalViewersCount(totalUsers);
             tikTokRoomInfo.updateRanking(userRanking);
         });

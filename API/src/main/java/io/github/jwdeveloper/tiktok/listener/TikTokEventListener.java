@@ -38,9 +38,9 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
  * <p>- 2 parameters of (LiveClient, Class extending TikTokEvent)
  * <pre>
  * {@code
- * 	public static class CustomListener implements TikTokEventListener
+ * 	public static class CustomListener
  *  {
- *    @TikTokEventObserver
+ *      @TikTokEventObserver
  *      public void onError(LiveClient liveClient, TikTokErrorEvent event)
  *      {
  *      	System.out.println(event.getException().getMessage());
@@ -67,9 +67,7 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
  *  }
  *  </pre>
  */
-//TODO I think this interface can be removed, since we are using,
-//annotation @TikTokEventHandler to check methods that are events
-@Deprecated(forRemoval = true, since = "1.8.1 (This interface is not longer needed, please remove it from your class)")
+@Deprecated(forRemoval = true, since = "1.8.1 (This interface is not longer needed, please remove it from your class) | Removing in 1.9.0")
 public interface TikTokEventListener {
 
 }

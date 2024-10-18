@@ -30,7 +30,7 @@ import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.*;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 
@@ -38,14 +38,17 @@ import java.io.*;
 import java.net.URI;
 import java.net.http.*;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
 public class RecorderListener implements LiveRecorder {
 
     private final BiConsumer<RecorderSettings, LiveClient> consumer;
     private final RecorderSettings settings;
+    private final AtomicBoolean token = new AtomicBoolean();
     private DownloadData downloadData;
-    private Thread liveDownloadThread;
+    private CompletableFuture<Void> future;
 
     public RecorderListener(BiConsumer<RecorderSettings, LiveClient> consumer) {
         this.consumer = consumer;
@@ -74,59 +77,58 @@ public class RecorderListener implements LiveRecorder {
         if (isConnected() || downloadData.getDownloadLiveUrl().isEmpty())
             return;
 
-        liveDownloadThread = new Thread(() -> {
-            try {
-                liveClient.getLogger().info("Recording started "+liveClient.getRoomInfo().getHostName());
-
-				HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(downloadData.getFullUrl())).GET();
-                for (var entry : LiveClientSettings.DefaultRequestHeaders().entrySet())
-					requestBuilder.header(entry.getKey(), entry.getValue());
-                HttpResponse<InputStream> serverResponse = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL)
-                    .connectTimeout(Duration.ofSeconds(10)).build().send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-
-                var file = settings.getOutputFile();
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-
-                try (
-                    var in = serverResponse.body();
-                    var fos = new FileOutputStream(file, true)
-                ) {
-                    byte[] dataBuffer = new byte[1024];
-                    int bytesRead;
-                    while ((!settings.isStopOnDisconnect() || liveClient.getRoomInfo().getConnectionState() == ConnectionState.CONNECTED) && (bytesRead = in.read(dataBuffer)) != -1) {
-                        fos.write(dataBuffer, 0, bytesRead);
-                        fos.flush();
-                    }
-                } catch (IOException ignored) {
-                } finally {
-                    liveClient.getLogger().severe("Stopped recording " + liveClient.getRoomInfo().getHostName());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
+        var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData, settings);
         liveClient.publishEvent(recordingStartedEvent);
         if (recordingStartedEvent.isCanceled())
 			liveClient.getLogger().info("Recording cancelled");
 		else
-            liveDownloadThread.start();
+			future = CompletableFuture.runAsync(() -> {
+                try {
+                    liveClient.getLogger().info("Recording started "+liveClient.getRoomInfo().getHostName());
+
+                    HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(downloadData.getFullUrl())).GET();
+                    for (var entry : LiveClientSettings.DefaultRequestHeaders().entrySet())
+                        requestBuilder.header(entry.getKey(), entry.getValue());
+                    HttpResponse<InputStream> serverResponse = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL)
+                        .connectTimeout(Duration.ofSeconds(10)).build().send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+
+                    var file = settings.getOutputFile();
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+
+                    try (
+                        var in = serverResponse.body();
+                        var fos = new FileOutputStream(file, true)
+                    ) {
+                        byte[] dataBuffer = new byte[1024];
+                        int bytesRead;
+                        while (!token.get() && (!settings.isStopOnDisconnect() || liveClient.getRoomInfo().getConnectionState() == ConnectionState.CONNECTED) && (bytesRead = in.read(dataBuffer)) != -1) {
+                            fos.write(dataBuffer, 0, bytesRead);
+                            fos.flush();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        liveClient.getLogger().info("Stopped recording " + liveClient.getRoomInfo().getHostName());
+                        liveClient.publishEvent(new TikTokLiveRecorderEndedEvent(settings));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+			});
     }
 
     @TikTokEventObserver
     private void onDisconnected(LiveClient liveClient, TikTokDisconnectedEvent event) {
         if (isConnected() && settings.isStopOnDisconnect())
-            liveDownloadThread.interrupt();
+            token.set(true);
     }
 
     @TikTokEventObserver
     private void onLiveEnded(LiveClient liveClient, TikTokLiveEndedEvent event) {
         if (isConnected())
-            liveDownloadThread.interrupt();
+			token.set(true);
     }
-
 
     private DownloadData mapToDownloadData(String json) {
         try {
@@ -164,6 +166,6 @@ public class RecorderListener implements LiveRecorder {
     }
 
     private boolean isConnected() {
-        return liveDownloadThread != null && liveDownloadThread.isAlive();
+        return future != null && !future.isDone();
     }
 }

@@ -46,7 +46,7 @@ public class TikTokCommonEventHandler
         var message = WebcastControlMessage.parseFrom(msg);
         return switch (message.getAction()) {
             case STREAM_PAUSED -> new TikTokLivePausedEvent();
-            case STREAM_ENDED -> new TikTokLiveEndedEvent();
+            case STREAM_ENDED, STREAM_SUSPENDED -> new TikTokLiveEndedEvent();
             case STREAM_UNPAUSED -> new TikTokLiveUnpausedEvent();
             default -> new TikTokUnhandledControlEvent(message);
         };
