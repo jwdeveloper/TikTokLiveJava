@@ -77,7 +77,7 @@ public class RecorderListener implements LiveRecorder {
         if (isConnected() || downloadData.getDownloadLiveUrl().isEmpty())
             return;
 
-        var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData);
+        var recordingStartedEvent = new TikTokLiveRecorderStartedEvent(downloadData, settings);
         liveClient.publishEvent(recordingStartedEvent);
         if (recordingStartedEvent.isCanceled())
 			liveClient.getLogger().info("Recording cancelled");
