@@ -22,9 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.extension.recorder.api;
 
-import io.github.jwdeveloper.tiktok.listener.TikTokEventListener;
-
-public interface LiveRecorder extends TikTokEventListener {
+public interface LiveRecorder {
 
 
 }
