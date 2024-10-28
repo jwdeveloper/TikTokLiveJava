@@ -107,6 +107,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         return getGiftsData();
     }
 
+    @Deprecated(since = "1.8.6", forRemoval = true)
     public GiftsData.Response getGiftsData() {
         var result = httpFactory.client(TIKTOK_GIFTS_URL)
             .build()

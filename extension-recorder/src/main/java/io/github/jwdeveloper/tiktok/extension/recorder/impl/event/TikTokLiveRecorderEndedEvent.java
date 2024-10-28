@@ -20,9 +20,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.extension.recorder.api;
+package io.github.jwdeveloper.tiktok.extension.recorder.impl.event;
 
-public interface LiveRecorder {
+import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
+import lombok.*;
 
+@Getter
+public class TikTokLiveRecorderEndedEvent extends TikTokEvent {
 
+    private final RecorderSettings settings;
+
+    public TikTokLiveRecorderEndedEvent(RecorderSettings settings) {
+        this.settings = settings;
+    }
 }

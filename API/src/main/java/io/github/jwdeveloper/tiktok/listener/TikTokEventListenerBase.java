@@ -35,7 +35,7 @@ import io.github.jwdeveloper.tiktok.data.events.social.*;
 import io.github.jwdeveloper.tiktok.data.events.websocket.*;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
 
-public abstract class TikTokEventListenerBase implements TikTokEventListener
+public abstract class TikTokEventListenerBase
 {
 	public void onUnhandledSocial(LiveClient client, TikTokUnhandledSocialEvent event) {}
 

@@ -57,8 +57,7 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
     LiveClientBuilder configure(Consumer<LiveClientSettings> onConfigure);
 
     /**
-     * Adding events listener class, its fancy way to register events without using lamda method
-     * but actual method in class that implements TikTokEventListener
+     * Adds events listener class, its fancy way to register events without using lamda method
      *
      * @return
      */
