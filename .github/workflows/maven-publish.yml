@@ -53,7 +53,7 @@ jobs:
          restore-keys: ${{runner.os}}-m2
 
     - name: 7 Create Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
          name: ${{ steps.version.outputs.version_tag }}
          path: staging
