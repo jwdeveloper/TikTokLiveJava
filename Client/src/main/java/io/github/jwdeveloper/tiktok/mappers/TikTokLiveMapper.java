@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.mappers.data.*;
 
@@ -48,7 +48,7 @@ public class TikTokLiveMapper implements LiveMapper {
     }
 
     @Override
-    public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName) {
+    public TikTokMapperModel forMessage(Class<? extends GeneratedMessage> mapperName) {
         return forMessage(mapperName.getSimpleName());
     }
 
@@ -60,14 +60,14 @@ public class TikTokLiveMapper implements LiveMapper {
     }
 
     @Override
-    public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, MappingAction<MappingResult> onMapping) {
+    public TikTokMapperModel forMessage(Class<? extends GeneratedMessage> mapperName, MappingAction<MappingResult> onMapping) {
         var model = forMessage(mapperName);
         model.onMapping(onMapping);
         return model;
     }
 
     @Override
-    public TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, Function<byte[], TikTokEvent> onMapping) {
+    public TikTokMapperModel forMessage(Class<? extends GeneratedMessage> mapperName, Function<byte[], TikTokEvent> onMapping) {
         return forMessage(mapperName, (inputBytes, messageName, mapperHelper) -> MappingResult.of(inputBytes, onMapping.apply(inputBytes)));
     }
 
@@ -80,7 +80,7 @@ public class TikTokLiveMapper implements LiveMapper {
         return mappers.containsKey(mapperName);
     }
 
-    public <T extends GeneratedMessageV3> boolean isRegistered(Class<T> mapperName) {
+    public <T extends GeneratedMessage> boolean isRegistered(Class<T> mapperName) {
         return mappers.containsKey(mapperName.getSimpleName());
     }
 

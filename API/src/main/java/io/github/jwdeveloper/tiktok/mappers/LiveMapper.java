@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingAction;
 import io.github.jwdeveloper.tiktok.mappers.data.MappingResult;
@@ -44,13 +44,13 @@ public interface LiveMapper {
      * @param mapperName protocol buffer class type
      * @return
      */
-    TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName);
+    TikTokMapperModel forMessage(Class<? extends GeneratedMessage> mapperName);
 
     TikTokMapperModel forMessage(String mapperName, MappingAction<MappingResult> onMapping);
 
-    TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, MappingAction<MappingResult> onMapping);
+    TikTokMapperModel forMessage(Class<? extends GeneratedMessage> mapperName, MappingAction<MappingResult> onMapping);
 
-    TikTokMapperModel forMessage(Class<? extends GeneratedMessageV3> mapperName, Function<byte[], TikTokEvent> onMapping);
+    TikTokMapperModel forMessage(Class<? extends GeneratedMessage> mapperName, Function<byte[], TikTokEvent> onMapping);
 
     TikTokMapperModel forAnyMessage();
 
@@ -58,5 +58,5 @@ public interface LiveMapper {
 
     boolean isRegistered(String mapperName);
 
-    <T extends GeneratedMessageV3> boolean isRegistered(Class<T> mapperName);
+    <T extends GeneratedMessage> boolean isRegistered(Class<T> mapperName);
 }

@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
 
@@ -34,7 +34,7 @@ public interface LiveMapperHelper {
      * @param <T>          @messageClass must be class that is made by protocol buffer
      * @return object of type @messageClass
      */
-    <T extends GeneratedMessageV3> T bytesToWebcastObject(byte[] bytes, Class<T> messageClass);
+    <T extends GeneratedMessage> T bytesToWebcastObject(byte[] bytes, Class<T> messageClass);
 
     /**
      * @param bytes       protocol buffer data bytes
