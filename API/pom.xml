@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.24.1</version>
+            <version>4.28.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -51,6 +51,7 @@
                         </goals>
                         <configuration>
                             <includeMavenTypes>direct</includeMavenTypes>
+                            <protocVersion>4.28.3</protocVersion>
                             <inputDirectories>
                                 <include>src/main/proto</include>
                             </inputDirectories>

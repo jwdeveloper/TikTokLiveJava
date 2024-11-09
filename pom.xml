@@ -51,18 +51,22 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.1</version>
+                <version>4.6</version>
                 <configuration>
-                    <header>license.txt</header>
                     <properties>
-                        <license.owner>jwdeveloper</license.owner>
-                        <license.years>2023-2023</license.years>
-                        <license.email>jacekwoln@gmail.com</license.email>
+                        <owner>jwdeveloper</owner>
+                        <years>2023-2023</years>
+                        <email>jacekwoln@gmail.com</email>
                     </properties>
                     <aggregate>true</aggregate>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>license.txt</header>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
                 </configuration>
                 <executions>
                     <execution>
