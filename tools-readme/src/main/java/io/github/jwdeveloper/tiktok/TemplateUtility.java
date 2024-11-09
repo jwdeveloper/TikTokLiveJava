@@ -1,6 +1,5 @@
-
 /*
- * Copyright (c) 2023-2023 jwdeveloper jacekwoln@gmail.com
+ * Copyright (c) 2023-2024 jwdeveloper jacekwoln@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
