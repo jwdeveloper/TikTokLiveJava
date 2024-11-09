@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokMessageMappingException;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import io.github.jwdeveloper.tiktok.utils.ProtoBufferObject;
@@ -39,7 +39,7 @@ public class TikTokLiveMapperHelper implements LiveMapperHelper {
     }
 
     @Override
-    public <T extends GeneratedMessageV3> T bytesToWebcastObject(byte[] bytes, Class<T> messageClass) {
+    public <T extends GeneratedMessage> T bytesToWebcastObject(byte[] bytes, Class<T> messageClass) {
         try {
             var parsingMethod = genericMapper.getParsingMethod(messageClass);
             //NULL is passed, since Parsing method is Static
@@ -55,7 +55,7 @@ public class TikTokLiveMapperHelper implements LiveMapperHelper {
         try {
             var packageName = PACKAGE_PREFIX + messageName;
             var clazz = Class.forName(packageName);
-            return bytesToWebcastObject(bytes, (Class<? extends GeneratedMessageV3>) clazz);
+            return bytesToWebcastObject(bytes, (Class<? extends GeneratedMessage>) clazz);
         } catch (Exception e) {
             throw new TikTokMessageMappingException(messageName, e);
         }
