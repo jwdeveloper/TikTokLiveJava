@@ -61,7 +61,7 @@
                     <aggregate>true</aggregate>
                     <licenseSets>
                         <licenseSet>
-                            <header>${project.basedir}\..\license.txt</header>
+                            <header>license.txt</header>
                             <includes>
                                 <include>**/*.java</include>
                             </includes>
