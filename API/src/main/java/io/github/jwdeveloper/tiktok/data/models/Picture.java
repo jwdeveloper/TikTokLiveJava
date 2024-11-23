@@ -85,8 +85,7 @@ public class Picture {
             throw new TikTokLiveException("Unable map downloaded image", e);
         }
 
-        var bais = new ByteArrayInputStream(baos.toByteArray());
-        try {
+        try (var bais = new ByteArrayInputStream(baos.toByteArray())) {
             return ImageIO.read(bais);
         } catch (IOException e) {
             throw new TikTokLiveException("Unable map downloaded image bytes to Image", e);
@@ -95,6 +94,13 @@ public class Picture {
 
     public static Picture empty() {
         return new Picture("");
+    }
+
+    public Picture asUnsigned() {
+        if (link == null || link.isEmpty())
+            return this;
+        // p16-sign-va.tiktokcdn.com -> p16-va.tiktokcdn.com || p16-sign.tiktokcdn.com -> p16.tiktokcdn.com
+        return new Picture(link.replace("-sign-", "-").replace("-sign.", "."));
     }
 
     @Override

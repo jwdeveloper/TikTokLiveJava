@@ -29,11 +29,11 @@ import java.util.List;
 
 public class GiftsData
 {
-    @Getter
+    @Data
     @AllArgsConstructor
     public static final class Response
     {
-        private String json;
-        private List<Gift> gifts;
+        private final String json;
+        private final List<Gift> gifts;
     }
 }

@@ -31,7 +31,7 @@ public class LiveData {
     @Getter
     @AllArgsConstructor
     public static class Request {
-        private String roomId;
+        private final String roomId;
     }
 
     @Data
@@ -46,11 +46,7 @@ public class LiveData {
         private boolean ageRestricted;
         private User host;
         private LiveType liveType;
-        public Response() {
-
-        }
-
-
+        public Response() {}
     }
 
     public enum LiveStatus {

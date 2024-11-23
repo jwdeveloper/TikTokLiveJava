@@ -38,7 +38,7 @@ public class LiveUserData {
         }
     }
 
-    @Getter
+    @Data
     @AllArgsConstructor
     public static class Response {
         private final String json;
