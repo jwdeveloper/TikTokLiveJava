@@ -30,6 +30,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class Picture {
@@ -106,5 +107,15 @@ public class Picture {
     @Override
     public String toString() {
         return "Picture{link='" + link + "', image=" + image + "}";
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        return o == this || o instanceof Picture picture && picture.link != null && picture.link.equals(link);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(link);
     }
 }
