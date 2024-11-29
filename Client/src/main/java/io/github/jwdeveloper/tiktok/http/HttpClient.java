@@ -42,11 +42,11 @@ public class HttpClient {
     protected final String url;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
-    public ActionResult<HttpResponse<byte[]>> toResponse() {
+    public <T> ActionResult<HttpResponse<T>> toHttpResponse(HttpResponse.BodyHandler<T> handler) {
         var client = prepareClient();
         var request = prepareGetRequest();
         try {
-            var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            var response = client.send(request, handler);
             var result = ActionResult.of(response);
             return switch (response.statusCode()) {
                 case 420 -> result.message("HttpResponse Code:", response.statusCode(), "| IP Cloudflare Blocked.").failure();
@@ -68,8 +68,12 @@ public class HttpClient {
         }
     }
 
+    public <T> ActionResult<T> toResponse(HttpResponse.BodyHandler<T> handler) {
+        return toHttpResponse(handler).map(HttpResponse::body);
+    }
+
     public ActionResult<String> toJsonResponse() {
-        return toResponse().map(content -> new String(content.body(), charsetFrom(content.headers())));
+        return toResponse(HttpResponse.BodyHandlers.ofString());
     }
 
     private Charset charsetFrom(HttpHeaders headers) {
@@ -87,7 +91,7 @@ public class HttpClient {
     }
 
     public ActionResult<byte[]> toBinaryResponse() {
-        return toResponse().map(HttpResponse::body);
+        return toResponse(HttpResponse.BodyHandlers.ofByteArray());
     }
 
     public URI toUri() {

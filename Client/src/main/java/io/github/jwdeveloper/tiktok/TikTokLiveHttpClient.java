@@ -225,7 +225,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         if (clientSettings.getApiKey() != null)
             builder.withParam("apiKey", clientSettings.getApiKey());
 
-        var result = builder.build().toResponse();
+        var result = builder.build().toHttpResponse(HttpResponse.BodyHandlers.ofByteArray());
 
         if (result.isFailure())
             throw new TikTokSignServerException("Unable to get websocket connection credentials - "+result);

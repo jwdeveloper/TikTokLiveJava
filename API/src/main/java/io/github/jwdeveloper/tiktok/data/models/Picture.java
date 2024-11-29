@@ -30,6 +30,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class Picture {
@@ -85,8 +86,7 @@ public class Picture {
             throw new TikTokLiveException("Unable map downloaded image", e);
         }
 
-        var bais = new ByteArrayInputStream(baos.toByteArray());
-        try {
+        try (var bais = new ByteArrayInputStream(baos.toByteArray())) {
             return ImageIO.read(bais);
         } catch (IOException e) {
             throw new TikTokLiveException("Unable map downloaded image bytes to Image", e);
@@ -97,8 +97,25 @@ public class Picture {
         return new Picture("");
     }
 
+    public Picture asUnsigned() {
+        if (link == null || link.isEmpty())
+            return this;
+        // p16-sign-va.tiktokcdn.com -> p16-va.tiktokcdn.com || p16-sign.tiktokcdn.com -> p16.tiktokcdn.com
+        return new Picture(link.replace("-sign-", "-").replace("-sign.", "."));
+    }
+
     @Override
     public String toString() {
         return "Picture{link='" + link + "', image=" + image + "}";
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        return o == this || o instanceof Picture picture && picture.link != null && picture.link.equals(link);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(link);
     }
 }

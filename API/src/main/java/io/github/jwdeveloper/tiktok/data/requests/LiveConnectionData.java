@@ -28,20 +28,19 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.net.URI;
-import java.time.Duration;
 
 public class LiveConnectionData {
     @Getter
     @AllArgsConstructor
     public static class Request {
-        private String roomId;
+        private final String roomId;
     }
 
-    @Getter
+    @Data
     @AllArgsConstructor
     public static class Response {
-        private String websocketCookies;
-        private URI websocketUrl;
-        private WebcastResponse webcastResponse;
+        private final String websocketCookies;
+        private final URI websocketUrl;
+        private final WebcastResponse webcastResponse;
     }
 }

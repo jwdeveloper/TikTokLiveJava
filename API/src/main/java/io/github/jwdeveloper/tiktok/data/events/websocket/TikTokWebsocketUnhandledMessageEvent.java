@@ -28,8 +28,6 @@ import io.github.jwdeveloper.tiktok.data.events.common.TikTokUnhandledEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
 import lombok.Getter;
 
-
-
 @Getter
 @EventMeta(eventType = EventType.Debug)
 public class TikTokWebsocketUnhandledMessageEvent extends TikTokUnhandledEvent<WebcastResponse.Message>
