@@ -41,7 +41,7 @@
     <parent>
         <artifactId>TikTokLiveJava</artifactId>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
-        <version>1.8.10-Release</version>
+        <version>1.8.11-Release</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
