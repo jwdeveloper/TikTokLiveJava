@@ -25,6 +25,7 @@ package io.github.jwdeveloper.tiktok.data.events;
 import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.battles.*;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.*;
@@ -67,6 +68,20 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
         // - msg.getDetailsList() & msg.getViewerTeamList() both only have content when battle is finished
         // - msg.getDetailsCount() & msg.getViewerTeamCount() always is 2 only when battle is finished
         // - msg.getHostTeamCount() always is 2 for 1v1 or 4 for 2v2
+    }
+
+    public Team1v1 get1v1Team(String battleHostName) {
+        if (!is1v1())
+            throw new TikTokLiveException("Teams are not instance of 1v1 battle!");
+        return teams.stream().filter(team -> team.getAs1v1Team().getHost().getName().equals(battleHostName)).findFirst().map(Team::getAs1v1Team).orElse(null);
+    }
+
+    public Team2v2 get2v2Team(String battleHostName) {
+        if (!is2v2())
+            throw new TikTokLiveException("Teams are not instance of 2v2 battle!");
+        return teams.stream().filter(team ->
+            team.getAs2v2Team().getHosts().stream().anyMatch(user ->
+                user.getName().equals(battleHostName))).findFirst().map(Team::getAs2v2Team).orElse(null);
     }
 
     public boolean is1v1() {
