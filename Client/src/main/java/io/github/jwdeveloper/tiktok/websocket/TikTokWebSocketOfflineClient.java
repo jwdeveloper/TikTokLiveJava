@@ -48,6 +48,6 @@ public class TikTokWebSocketOfflineClient implements LiveSocketClient {
         if (liveClient == null) {
             return;
         }
-        handler.publish(liveClient, new TikTokDisconnectedEvent());
+        handler.publish(liveClient, new TikTokDisconnectedEvent("Stopping"));
     }
 }
