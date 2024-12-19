@@ -36,11 +36,6 @@ public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
 		this.reason = reason.isBlank() ? "None" : reason;
 	}
 
-	public TikTokDisconnectedEvent() {
-		this("None");
-	}
-
-
 	public static TikTokDisconnectedEvent of(String reason)
 	{
 		return new TikTokDisconnectedEvent(reason);
