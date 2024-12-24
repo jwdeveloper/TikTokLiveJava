@@ -74,11 +74,11 @@ public class TikTokWebSocketClient implements LiveSocketClient {
                 tikTokEventHandler,
                 liveClient);
 
-        // ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
-        // if (proxyClientSettings.isEnabled())
-        //     connectProxy(proxyClientSettings);
-        // else
-        connectDefault();
+        ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled() && proxyClientSettings.isAllowWebsocket())
+            connectProxy(proxyClientSettings);
+        else
+            connectDefault();
     }
 
     private void connectDefault() {
@@ -115,15 +115,14 @@ public class TikTokWebSocketClient implements LiveSocketClient {
         }
         while (proxySettings.hasNext()) {
             ProxyData proxyData = proxySettings.next();
-            if (!tryProxyConnection(proxySettings, proxyData)) {
-                if (proxySettings.isAutoDiscard())
-                    proxySettings.remove();
-                continue;
-            }
-            heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
-            isConnected = true;
-            break;
-        }
+			if (tryProxyConnection(proxySettings, proxyData)) {
+				heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
+				isConnected = true;
+				break;
+			}
+            if (proxySettings.isAutoDiscard())
+                proxySettings.remove();
+		}
         if (!isConnected)
             throw new TikTokLiveException("Failed to connect to the websocket");
     }
