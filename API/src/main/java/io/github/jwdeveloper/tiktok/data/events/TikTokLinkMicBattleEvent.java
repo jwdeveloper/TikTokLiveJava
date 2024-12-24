@@ -30,6 +30,8 @@ import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * Triggered every time a battle starts & ends
  */
@@ -73,21 +75,52 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
     public Team1v1 get1v1Team(String battleHostName) {
         if (!is1v1())
             throw new TikTokLiveException("Teams are not instance of 1v1 battle!");
-        if (team1.getAs1v1Team().getHost().getName().equals(battleHostName))
-            return team1.getAs1v1Team();
-        if (team2.getAs1v1Team().getHost().getName().equals(battleHostName))
-            return team2.getAs1v1Team();
-        return null;
+        List<Team> list = getTeams(battleHostName);
+        return list.isEmpty() ? null : list.get(0).getAs1v1Team();
     }
 
     public Team2v2 get2v2Team(String battleHostName) {
         if (!is2v2())
             throw new TikTokLiveException("Teams are not instance of 2v2 battle!");
-        if (team1.getAs2v2Team().getHosts().stream().anyMatch(user -> user.getName().equals(battleHostName)))
-            return team1.getAs2v2Team();
-        if (team2.getAs2v2Team().getHosts().stream().anyMatch(user -> user.getName().equals(battleHostName)))
-            return team2.getAs2v2Team();
-        return null;
+        List<Team> list = getTeams(battleHostName);
+        return list.isEmpty() ? null : list.get(0).getAs2v2Team();
+    }
+
+    /**
+     * @param battleHostName name of host to search
+     * @return Team1v1 instance not containing name of host */
+    public Team1v1 get1v1OpponentTeam(String battleHostName) {
+        if (!is1v1())
+            throw new TikTokLiveException("Teams are not instance of 1v1 battle!");
+		List<Team> list = getTeams(battleHostName);
+        return list.isEmpty() ? null : list.get(1).getAs1v1Team();
+    }
+
+    public Team2v2 get2x2OpponentTeam(String battleHostName) {
+        if (!is2v2())
+            throw new TikTokLiveException("Teams are not instance of 2v2 battle!");
+		List<Team> list = getTeams(battleHostName);
+        return list.isEmpty() ? null : list.get(1).getAs2v2Team();
+    }
+
+    /**
+     * @param battleHostName name of host to search
+     * @return {@link List<Team>} with host team first, then opponent team
+     * <p> Empty if host is in neither otherwise always 2 in length;
+     */
+    public List<Team> getTeams(String battleHostName) {
+        if (is1v1()) {
+            if (team1.getAs1v1Team().getHost().getName().equals(battleHostName))
+                return List.of(team1, team2);
+            if (team2.getAs1v1Team().getHost().getName().equals(battleHostName))
+                return List.of(team2, team1);
+        } else {
+            if (team1.getAs2v2Team().getHosts().stream().anyMatch(user -> user.getName().equals(battleHostName)))
+                return List.of(team1, team2);
+            if (team2.getAs2v2Team().getHosts().stream().anyMatch(user -> user.getName().equals(battleHostName)))
+                return List.of(team2, team1);
+        }
+        return List.of();
     }
 
     public boolean is1v1() {

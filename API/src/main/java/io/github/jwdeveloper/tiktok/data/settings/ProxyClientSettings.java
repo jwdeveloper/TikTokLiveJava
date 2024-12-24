@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 @Setter
 public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyData>
 {
-    private boolean enabled, autoDiscard = true, fallback = true;
+    private boolean enabled, autoDiscard = true, fallback = true, allowWebsocket = true;
     private Rotation rotation = Rotation.CONSECUTIVE;
     private final List<ProxyData> proxyList = new ArrayList<>();
     private int index;
