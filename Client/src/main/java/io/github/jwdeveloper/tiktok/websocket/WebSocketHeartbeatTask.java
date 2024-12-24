@@ -24,13 +24,15 @@ package io.github.jwdeveloper.tiktok.websocket;
 
 import org.java_websocket.WebSocket;
 
+import java.util.Base64;
+
 public class WebSocketHeartbeatTask
 {
     private Thread thread;
     private boolean isRunning = false;
     private final int MAX_TIMEOUT = 250;
     private final int SLEEP_TIME = 500;
-    private final byte[] heartbeatBytes = {58, 2, 104, 98}; // Byte Array of "3A026862" which is TikTok's custom heartbeat value
+    private final byte[] heartbeatBytes = Base64.getDecoder().decode("MgJwYjoCaGI="); // Used to be '3A026862' aka ':\x02hb', now is '2\x02pb:\x02hb'.
 
     public void run(WebSocket webSocket, long pingTaskTime) {
         stop();
@@ -58,6 +60,5 @@ public class WebSocketHeartbeatTask
                 isRunning = false;
             }
         }
-
     }
 }
