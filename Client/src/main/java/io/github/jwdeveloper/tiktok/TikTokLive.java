@@ -22,20 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
-import io.github.jwdeveloper.tiktok.live.GiftsManager;
 import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class TikTokLive {
+public class TikTokLive
+{
 
     /**
-     * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     * Example: {@code https://www.tiktok.com/@dostawcavideo} - hostName would be 'dostawcavideo'
      *
      * @param hostName profile name of TikTok user could be found in profile link
      * @return LiveClientBuilder
@@ -45,7 +43,7 @@ public class TikTokLive {
     }
 
     /**
-     * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     * Example: {@code https://www.tiktok.com/@dostawcavideo} - hostName would be 'dostawcavideo'
      *
      * @param hostName profile name of TikTok user could be found in profile link
      * @return true if live is Online, false if is offline
@@ -55,17 +53,17 @@ public class TikTokLive {
     }
 
     /**
-     * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     * Example: {@code https://www.tiktok.com/@dostawcavideo} - hostName would be 'dostawcavideo'
      *
      * @param hostName profile name of TikTok user could be found in profile link
-     * @return true if live is Online, false if is offline
+     * @return {@link CompletableFuture} of true if live is Online, false if is offline
      */
     public static CompletableFuture<Boolean> isLiveOnlineAsync(String hostName) {
         return CompletableFuture.supplyAsync(() -> isLiveOnline(hostName));
     }
 
     /**
-     * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     * Example: {@code https://www.tiktok.com/@dostawcavideo} - hostName would be 'dostawcavideo'
      *
      * @param hostName profile name of TikTok user could be found in profile link
      * @return true is hostName name is valid and exists, false if not
@@ -75,7 +73,7 @@ public class TikTokLive {
     }
 
     /**
-     * Example: https://www.tiktok.com/@dostawcavideo - hostName would be 'dostawcavideo'
+     * Example: {@code https://www.tiktok.com/@dostawcavideo} - hostName would be 'dostawcavideo'
      *
      * @param hostName profile name of TikTok user could be found in profile link
      * @return true is hostName name is valid and exists, false if not
@@ -100,21 +98,5 @@ public class TikTokLive {
      */
     public static LiveHttpClient requests() {
         return requests(liveClientSettings -> {});
-    }
-
-    private static GiftsManager giftsManager;
-
-    /**
-     * Fetch gifts from endpoint and returns GiftManager
-     *
-     * @return GiftsManager
-     */
-    public static GiftsManager gifts() {
-        if (giftsManager == null) {
-            synchronized (GiftsManager.class) {
-                giftsManager = new TikTokGiftsManager(requests().fetchGiftsData().getGifts());
-            }
-        }
-        return giftsManager;
     }
 }

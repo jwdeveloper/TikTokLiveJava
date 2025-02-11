@@ -36,11 +36,6 @@ import java.util.List;
 
 public class TikTokLiveHttpOfflineClient implements LiveHttpClient {
     @Override
-    public GiftsData.Response fetchGiftsData() {
-        return new GiftsData.Response("", List.of());
-    }
-
-    @Override
     public GiftsData.Response fetchRoomGiftsData(String room_id) {
         return new GiftsData.Response("", List.of());
     }

@@ -30,11 +30,6 @@ import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 public interface LiveHttpClient
 {
     /**
-     * @return {@link GiftsData.Response} list of gifts that are compiled and available on github
-     */
-    GiftsData.Response fetchGiftsData();
-
-    /**
      * @return {@link GiftsData.Response} list of gifts that are available in your region / livestream
      */
     GiftsData.Response fetchRoomGiftsData(String room_id);
