@@ -219,7 +219,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     protected ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
         HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
             .withParam("client", "ttlive-java")
-            .withParam("uuc", "1") //MAGIC NUMBER!
             .withParam("room_id", room_id);
 
         if (clientSettings.getApiKey() != null)

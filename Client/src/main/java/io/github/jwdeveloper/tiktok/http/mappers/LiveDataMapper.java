@@ -131,6 +131,7 @@ public class LiveDataMapper {
         var id = jsonElement.get("id").getAsLong();
         var name = jsonElement.get("display_id").getAsString();
         var profileName = jsonElement.get("nickname").getAsString();
+        var signature = jsonElement.get("bio_description").getAsString();
 
 
         var followElement = jsonElement.getAsJsonObject("follow_info");
@@ -142,7 +143,7 @@ public class LiveDataMapper {
         var link = pictureElement.getAsJsonArray("url_list").get(1).getAsString();
         var picture = new Picture(link);
 
-        var user = new User(id, name, profileName, picture, followingCount, followers, new ArrayList<>());
+        var user = new User(id, name, profileName, signature, picture, followingCount, followers, new ArrayList<>());
         user.addAttribute(UserAttribute.LiveHost);
         return user;
     }
