@@ -44,7 +44,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/fetch";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
-    public static final String TIKTOK_GIFTS_URL = "https://raw.githubusercontent.com/TikTok-LIVE-Private/GiftsGenerator/master/page/public/gifts.json";
     public static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
     public static final int TIKTOK_AGE_RESTRICTED_CODE = 4003110;
 
@@ -93,31 +92,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
         var json = result.getContent();
         return giftsDataMapper.mapRoom(json);
-    }
-
-    public GiftsData.Response fetchGiftsData() {
-        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
-        if (proxyClientSettings.isEnabled()) {
-            while (proxyClientSettings.hasNext()) {
-                try {
-                    return getGiftsData();
-                } catch (TikTokProxyRequestException ignored) {}
-            }
-        }
-        return getGiftsData();
-    }
-
-    @Deprecated(since = "1.8.6", forRemoval = true)
-    public GiftsData.Response getGiftsData() {
-        var result = httpFactory.client(TIKTOK_GIFTS_URL)
-            .build()
-            .toJsonResponse();
-
-        if (result.isFailure())
-            throw new TikTokLiveRequestException("Unable to fetch gifts information's - "+result);
-
-        var json = result.getContent();
-        return giftsDataMapper.map(json);
     }
 
     @Override

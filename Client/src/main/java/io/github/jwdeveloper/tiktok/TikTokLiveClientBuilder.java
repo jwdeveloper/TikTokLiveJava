@@ -70,12 +70,6 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
         return this;
     }
 
-    @Override
-    public LiveClientBuilder onMappings(Consumer<LiveMapper> onCustomMappings) {
-        mappings(onCustomMappings);
-        return this;
-    }
-
     public TikTokLiveClientBuilder configure(Consumer<LiveClientSettings> onConfigure) {
         onConfigure.accept(clientSettings);
         return this;
@@ -155,11 +149,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
          */
 
         //gifts
-        if (clientSettings.isFetchGifts()) {
-            dependance.registerSingleton(GiftsManager.class, TikTokLive.gifts());
-        } else {
-            dependance.registerSingleton(GiftsManager.class, new TikTokGiftsManager(List.of()));
-        }
+        dependance.registerSingleton(GiftsManager.class, new TikTokGiftsManager(List.of()));
 
         //mapper
         dependance.registerSingleton(TikTokGenericEventMapper.class);

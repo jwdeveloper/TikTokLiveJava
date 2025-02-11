@@ -30,9 +30,8 @@ import io.github.jwdeveloper.tiktok.mappers.LiveMapper;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
-
-
+public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder>
+{
     /**
      * This method is triggered after default mappings are registered
      * It could be used to OVERRIDE behaviour of mappings and implement custom behaviour
@@ -40,18 +39,15 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      * Be aware if for example you override WebcastGiftEvent, onGiftEvent() will not be working
      *
      * @param onCustomMappings lambda method
-     * @return
+     * @return {@link LiveClientBuilder}
      */
     LiveClientBuilder mappings(Consumer<LiveMapper> onCustomMappings);
-
-    @Deprecated(forRemoval = true, since = "1.8.2 use `mappings` method instead")
-    LiveClientBuilder onMappings(Consumer<LiveMapper> onCustomMappings);
 
     /**
      * Configuration of client settings
      *
-     * @param onConfigure
-     * @return
+     * @param onConfigure Consumer for {@link LiveClientSettings}
+     * @return {@link LiveClientBuilder}
      * @see LiveClientSettings
      */
     LiveClientBuilder configure(Consumer<LiveClientSettings> onConfigure);
@@ -59,7 +55,7 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
     /**
      * Adds events listener class, its fancy way to register events without using lamda method
      *
-     * @return
+     * @return {@link LiveClientBuilder}
      */
     LiveClientBuilder addListener(Object listener);
 
@@ -69,7 +65,7 @@ public interface LiveClientBuilder extends EventsBuilder<LiveClientBuilder> {
      * when the default implementation does not meet your needs
      *
      * @param onCustomizeDependencies access to dependency container
-     * @return
+     * @return {@link LiveClientBuilder}
      */
     LiveClientBuilder customize(Consumer<DependanceContainerBuilder> onCustomizeDependencies);
 
