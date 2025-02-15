@@ -103,6 +103,10 @@ public class HttpClient {
         var requestBuilder = HttpRequest.newBuilder().GET();
         requestBuilder.uri(toUri());
         requestBuilder.timeout(httpClientSettings.getTimeout());
+        if (!httpClientSettings.getCookies().isEmpty()) {
+            String cookieString = httpClientSettings.getCookies().entrySet().stream().map(e -> e.getKey()+"="+e.getValue()).collect(Collectors.joining("; "));
+            httpClientSettings.getHeaders().put("Cookie", cookieString);
+        }
         httpClientSettings.getHeaders().forEach(requestBuilder::setHeader);
 
         httpClientSettings.getOnRequestCreating().accept(requestBuilder);

@@ -53,7 +53,8 @@ public class HttpClientBuilder {
     }
 
     public HttpClientBuilder withCookie(String name, String value) {
-        httpClientSettings.getCookies().put(name, value);
+        if (name != null && value != null)
+            httpClientSettings.getCookies().put(name, value);
         return this;
     }
 
