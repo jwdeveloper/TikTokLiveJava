@@ -7,7 +7,7 @@
     <groupId>io.github.jwdeveloper.tiktok</groupId>
     <artifactId>TikTokLiveJava</artifactId>
     <packaging>pom</packaging>
-    <version>1.9.0-Release</version>
+    <version>1.9.1-Release</version>
     <modules>
         <module>API</module>
         <module>Client</module>
