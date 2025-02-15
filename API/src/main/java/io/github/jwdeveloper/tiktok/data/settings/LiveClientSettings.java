@@ -153,8 +153,8 @@ public class LiveClientSettings {
         clientParams.put("screen_height", 1152);
         clientParams.put("screen_width", 2048);
         clientParams.put("tz_name", "Europe/Berlin");
-        clientParams.put("referer", "https, //www.tiktok.com/");
-        clientParams.put("root_referer", "https, //www.tiktok.com/");
+        clientParams.put("referer", "https://www.tiktok.com/");
+        clientParams.put("root_referer", "https://www.tiktok.com/");
         clientParams.put("msToken", "");
         clientParams.put("version_code", 180800);
         clientParams.put("webcast_sdk_version", "1.3.0");
