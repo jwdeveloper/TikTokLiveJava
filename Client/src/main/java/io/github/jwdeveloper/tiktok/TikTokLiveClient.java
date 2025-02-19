@@ -140,7 +140,7 @@ public class TikTokLiveClient implements LiveClient
         var preconnectEvent = new TikTokPreConnectionEvent(userData, liveData);
         tikTokEventHandler.publish(this, preconnectEvent);
         if (preconnectEvent.isCancelConnection())
-            throw new TikTokLiveException("TikTokPreConnectionEvent cancelled connection!");
+            throw new TikTokLivePreConnectionException(preconnectEvent);
 
         if (clientSettings.isFetchGifts())
             giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
