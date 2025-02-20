@@ -59,8 +59,7 @@ public class GiftsDataMapper {
         if (jsonObject.get("data") instanceof JsonObject data && data.get("gifts") instanceof JsonArray giftArray) {
             var gifts = new ArrayList<Gift>();
 
-            for(int i = 0; i < giftArray.size(); i++) {
-                JsonElement element = giftArray.get(i);
+            for (JsonElement element : giftArray) {
                 Gift gift = mapSingleRoomGift(element);
                 gifts.add(gift);
             }

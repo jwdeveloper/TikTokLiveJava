@@ -114,10 +114,10 @@ public class TikTokLiveClient implements LiveClient
         roomInfo.setRoomId(userData.getRoomId());
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
-            throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName());
+            throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName(), userData, null);
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
-            throw new TikTokLiveUnknownHostException("User not found: " + roomInfo.getHostName());
+            throw new TikTokLiveUnknownHostException("User not found: " + roomInfo.getHostName(), userData, null);
 
         var liveDataRequest = new LiveData.Request(userData.getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
@@ -126,10 +126,10 @@ public class TikTokLiveClient implements LiveClient
             throw new TikTokLiveException("Livestream for " + roomInfo.getHostName() + " is 18+ or age restricted!");
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostNotFound)
-            throw new TikTokLiveUnknownHostException("LiveStream for " + roomInfo.getHostName() + " could not be found.");
+            throw new TikTokLiveUnknownHostException("LiveStream for " + roomInfo.getHostName() + " could not be found.", userData, liveData);
 
         if (liveData.getLiveStatus() == LiveData.LiveStatus.HostOffline)
-            throw new TikTokLiveOfflineHostException("LiveStream for " + roomInfo.getHostName() + " not found, is the Host offline?");
+            throw new TikTokLiveOfflineHostException("LiveStream for " + roomInfo.getHostName() + " not found, is the Host offline?", userData, liveData);
 
         roomInfo.setTitle(liveData.getTitle());
         roomInfo.setViewersCount(liveData.getViewers());
@@ -140,7 +140,7 @@ public class TikTokLiveClient implements LiveClient
         var preconnectEvent = new TikTokPreConnectionEvent(userData, liveData);
         tikTokEventHandler.publish(this, preconnectEvent);
         if (preconnectEvent.isCancelConnection())
-            throw new TikTokLiveException("TikTokPreConnectionEvent cancelled connection!");
+            throw new TikTokLivePreConnectionException(preconnectEvent);
 
         if (clientSettings.isFetchGifts())
             giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());

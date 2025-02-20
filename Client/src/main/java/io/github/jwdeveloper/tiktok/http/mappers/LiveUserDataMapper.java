@@ -72,6 +72,7 @@ public class LiveUserDataMapper
                 Long.parseLong(user.get("id").getAsString()),
                 user.get("uniqueId").getAsString(),
                 user.get("nickname").getAsString(),
+                user.get("signature").getAsString(),
                 new Picture(user.get("avatarLarger").getAsString()),
                 stats.get("followingCount").getAsLong(),
                 stats.get("followerCount").getAsLong(),

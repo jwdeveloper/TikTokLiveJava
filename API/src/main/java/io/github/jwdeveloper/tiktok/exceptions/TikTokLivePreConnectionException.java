@@ -20,30 +20,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.events.control;
+package io.github.jwdeveloper.tiktok.exceptions;
 
-import io.github.jwdeveloper.tiktok.annotations.*;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokLiveClientEvent;
-import io.github.jwdeveloper.tiktok.data.requests.*;
-import lombok.*;
-
+import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
+import lombok.Getter;
 
 @Getter
-@EventMeta(eventType = EventType.Control)
-public class TikTokPreConnectionEvent extends TikTokLiveClientEvent
+public class TikTokLivePreConnectionException extends TikTokLiveException
 {
-	private final LiveUserData.Response userData;
-	private final LiveData.Response roomData;
-	@Setter boolean cancelConnection = false;
-	@Setter String reason = "TikTokPreConnectionEvent cancelled connection!";
+    private final TikTokPreConnectionEvent preconnectEvent;
 
-	public TikTokPreConnectionEvent(LiveUserData.Response userData, LiveData.Response liveData) {
-		this.userData = userData;
-		this.roomData = liveData;
-	}
-
-	public void setCancelConnection(boolean cancelConnection, String reason) {
-		this.cancelConnection = cancelConnection;
-		this.reason = reason;
-	}
+    public TikTokLivePreConnectionException(TikTokPreConnectionEvent preconnectEvent) {
+        super(preconnectEvent.getReason());
+        this.preconnectEvent = preconnectEvent;
+    }
 }

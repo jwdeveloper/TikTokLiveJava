@@ -48,7 +48,6 @@ public class Gift {
         this.properties = properties;
     }
 
-
     public Gift(int id, String name, int diamondCost, String pictureLink) {
         this(id, name, diamondCost, new Picture(pictureLink), new JsonObject());
     }

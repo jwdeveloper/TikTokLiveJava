@@ -53,7 +53,10 @@ public class TikTokLiveHttpClient implements LiveHttpClient
      */
     public static String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
 
-    public static String TIKTOK_GIFTS_URL = "https://raw.githubusercontent.com/TikTok-LIVE-Private/GiftsGenerator/master/page/public/gifts.json";
+    /**
+     * Must end in a trailing '/' character.
+     */
+    public static final String TIKTOK_ROOM_GIFTS_URL = "https://webcast.tiktok.com/webcast/gift/list/";
     
     public static final int TIKTOK_AGE_RESTRICTED_CODE = 4003110;
 
@@ -104,31 +107,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         return giftsDataMapper.mapRoom(json);
     }
 
-    public GiftsData.Response fetchGiftsData() {
-        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
-        if (proxyClientSettings.isEnabled()) {
-            while (proxyClientSettings.hasNext()) {
-                try {
-                    return getGiftsData();
-                } catch (TikTokProxyRequestException ignored) {}
-            }
-        }
-        return getGiftsData();
-    }
-
-    @Deprecated(since = "1.8.6", forRemoval = true)
-    public GiftsData.Response getGiftsData() {
-        var result = httpFactory.client(TIKTOK_GIFTS_URL)
-            .build()
-            .toJsonResponse();
-
-        if (result.isFailure())
-            throw new TikTokLiveRequestException("Unable to fetch gifts information's - "+result);
-
-        var json = result.getContent();
-        return giftsDataMapper.map(json);
-    }
-
     @Override
     public LiveUserData.Response fetchLiveUserData(LiveUserData.Request request) {
         var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
@@ -147,6 +125,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         var result = httpFactory.client(url)
             .withParam("uniqueId", request.getUserName())
             .withParam("sourceType", "54") //MAGIC NUMBER, WHAT 54 means?
+            .withCookie("sessionid", clientSettings.getSessionId())
             .build()
             .toJsonResponse();
 
@@ -174,6 +153,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         var url = TIKTOK_URL_WEBCAST + "room/info";
         var result = httpFactory.client(url)
             .withParam("room_id", request.getRoomId())
+            .withCookie("sessionid", clientSettings.getSessionId())
             .build()
             .toJsonResponse();
 
@@ -228,7 +208,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     protected ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
         HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
             .withParam("client", "ttlive-java")
-            .withParam("uuc", "1") //MAGIC NUMBER!
             .withParam("room_id", room_id);
 
         if (clientSettings.getApiKey() != null)

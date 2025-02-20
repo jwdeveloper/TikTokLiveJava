@@ -22,9 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok.exceptions;
 
+import io.github.jwdeveloper.tiktok.data.requests.*;
+import lombok.Getter;
+
+@Getter
 public class TikTokLiveOfflineHostException extends TikTokLiveException
 {
-    public TikTokLiveOfflineHostException(String message) {
+    private final LiveUserData.Response userData;
+    private final LiveData.Response liveData;
+
+    public TikTokLiveOfflineHostException(String message, LiveUserData.Response userData, LiveData.Response liveData) {
         super(message);
+        this.userData = userData;
+        this.liveData = liveData;
     }
 }

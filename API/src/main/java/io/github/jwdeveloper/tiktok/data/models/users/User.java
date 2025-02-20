@@ -33,6 +33,7 @@ import java.util.*;
 public class User {
     private final Long id;
     private final String name;
+    private String signature;
     private String profileName;
     private Picture picture;
     private long following;
@@ -106,6 +107,7 @@ public class User {
     public User(Long id,
                 String name,
                 String profileName,
+                String signature,
                 Picture picture,
                 long following,
                 long followers,
@@ -113,6 +115,7 @@ public class User {
         this.id = id;
         this.name = name;
         this.profileName = profileName;
+        this.signature = signature;
         this.picture = picture;
         this.following = following;
         this.followers = followers;
@@ -133,7 +136,7 @@ public class User {
     }
 
     public User(long id, String name, String profileId, Picture picture) {
-        this(id, name, profileId, picture, 0, 0, List.of(Badge.empty()));
+        this(id, name, profileId, null, picture, 0, 0, List.of(Badge.empty()));
     }
 
     public User(WebcastLinkMicBattle.LinkMicBattleHost.HostGroup.Host host) {
@@ -142,6 +145,7 @@ public class User {
 
     public User(io.github.jwdeveloper.tiktok.messages.data.User user) {
         this(user.getId(), user.getDisplayId(), Picture.map(user.getAvatarThumb()));
+        signature = user.getBioDescription();
         profileName = user.getNickname();
         following = user.getFollowInfo().getFollowingCount();
         followers = user.getFollowInfo().getFollowerCount();

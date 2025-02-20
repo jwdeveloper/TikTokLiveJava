@@ -40,6 +40,10 @@ public class RecorderSettings {
     private File outputFile;
     private Function<String,DownloadData> prepareDownloadData;
     private boolean stopOnDisconnect = true;
+    /**
+     True to Cancel connection to live if the download url is not found
+     */
+    private boolean cancelConnectionIfNotFound = false;
 
     public static RecorderSettings DEFAULT() {
         return new RecorderSettings();

@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
         <artifactId>TikTokLiveJava</artifactId>
-        <version>1.8.13-Release</version>
+        <version>1.9.2-Release</version>
     </parent>
 
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>io.github.jwdeveloper.tiktok</groupId>
             <artifactId>API</artifactId>
-            <version>1.8.13-Release</version>
+            <version>1.9.2-Release</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

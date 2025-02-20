@@ -64,8 +64,7 @@ public class Events_And_Gifts_Testing_Example
                 })
                 .build();
 
-        var gifts = TikTokLive.gifts();
-        var roseGift = gifts.getByName("Rose");
+        var roseGift = client.getGiftManager().getByName("Rose");
 
         var fakeGift = TikTokGiftEvent.of(roseGift);
         var fakeComboGift = TikTokGiftComboEvent.of(roseGift, 12, GiftComboStateType.Begin);

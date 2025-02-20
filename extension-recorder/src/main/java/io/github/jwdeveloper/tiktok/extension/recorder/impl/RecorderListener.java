@@ -63,12 +63,14 @@ public class RecorderListener implements LiveRecorder {
 
         liveClient.getLogger().info("Searching for live download url");
         downloadData = settings.getPrepareDownloadData() != null ?
-                settings.getPrepareDownloadData().apply(json) :
-                mapToDownloadData(json);
+            settings.getPrepareDownloadData().apply(json) :
+            mapToDownloadData(json);
 
-        if (downloadData.getDownloadLiveUrl().isEmpty())
-            liveClient.getLogger().warning("Unable to find download live url!");
-        else
+        if (downloadData.getDownloadLiveUrl().isEmpty()) {
+			liveClient.getLogger().warning("Unable to find download live url!");
+            if (settings.isCancelConnectionIfNotFound())
+                event.setCancelConnection(true, "Unable to find download live url!");
+		} else
             liveClient.getLogger().info("Live download url found!");
     }
 
