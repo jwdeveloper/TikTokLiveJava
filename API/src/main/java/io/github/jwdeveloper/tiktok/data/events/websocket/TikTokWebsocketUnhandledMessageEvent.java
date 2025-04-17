@@ -25,18 +25,18 @@ package io.github.jwdeveloper.tiktok.data.events.websocket;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokUnhandledEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 import lombok.Getter;
 
 @Getter
 @EventMeta(eventType = EventType.Debug)
-public class TikTokWebsocketUnhandledMessageEvent extends TikTokUnhandledEvent<WebcastResponse.Message>
+public class TikTokWebsocketUnhandledMessageEvent extends TikTokUnhandledEvent<ProtoMessageFetchResult.BaseProtoMessage>
 {
-    public TikTokWebsocketUnhandledMessageEvent(WebcastResponse.Message data) {
+    public TikTokWebsocketUnhandledMessageEvent(ProtoMessageFetchResult.BaseProtoMessage data) {
         super(data);
     }
 
-    public WebcastResponse.Message getMessage()
+    public ProtoMessageFetchResult.BaseProtoMessage getMessage()
     {
         return this.getData();
     }

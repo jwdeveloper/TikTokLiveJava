@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.data.events.link;
 
 import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.messages.enums.MuteStatus;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
@@ -30,7 +31,8 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Message)
 public class TikTokLinkMuteEvent extends TikTokLinkEvent {
 
-    private final long userId, status;
+    private final long userId;
+    private final MuteStatus status;
 
     public TikTokLinkMuteEvent(WebcastLinkMessage msg) {
         super(msg);
@@ -40,5 +42,9 @@ public class TikTokLinkMuteEvent extends TikTokLinkEvent {
         var content = msg.getMuteContent();
         this.userId = content.getUserId();
         this.status = content.getStatus();
+    }
+
+    public boolean isMuted() {
+        return status == MuteStatus.MUTE_STATUS_MUTE;
     }
 }

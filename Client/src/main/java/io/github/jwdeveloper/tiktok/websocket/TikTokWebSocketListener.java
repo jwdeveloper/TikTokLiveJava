@@ -121,11 +121,11 @@ public class TikTokWebSocketListener extends WebSocketClient {
         }
     }
 
-    private WebcastResponse getWebResponseMessage(ByteString buffer) {
+    private ProtoMessageFetchResult getWebResponseMessage(ByteString buffer) {
         try {
-            return WebcastResponse.parseFrom(buffer);
+            return ProtoMessageFetchResult.parseFrom(buffer);
         } catch (Exception e) {
-            throw new TikTokProtocolBufferException("Unable to parse WebcastResponse", buffer.toByteArray(), e);
+            throw new TikTokProtocolBufferException("Unable to parse ProtoMessageFetchResult", buffer.toByteArray(), e);
         }
     }
 

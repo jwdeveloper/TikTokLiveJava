@@ -39,7 +39,7 @@ public class TikTokRoomPinEvent extends TikTokHeaderEvent
 	public TikTokRoomPinEvent(WebcastRoomPinMessage msg, TikTokCommentEvent commentEvent)
 	{
 		super(msg.getCommon());
-		this.timestamp = msg.getTimestamp();
+		this.timestamp = msg.getPinTime();
 		this.pinnedMessage = commentEvent;
 	}
 }

@@ -23,27 +23,21 @@
 package io.github.jwdeveloper.tiktok.data.models;
 
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-import io.github.jwdeveloper.tiktok.messages.data.LinkMicArmiesItems;
+import io.github.jwdeveloper.tiktok.messages.data.BattleUserArmies;
 import lombok.Value;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Value
 public class LinkMicArmy {
     Long armyId;
-    List<Army> armies;
+    int totalPoints;
+    Map<User, Integer> armies;
 
-    public LinkMicArmy(LinkMicArmiesItems army) {
-        armyId = army.getHostUserId();
-        armies = army.getBattleGroupsList()
-                .stream()
-                .map(x -> new Army(x.getUsersList().stream().map(User::map).toList(), x.getPoints()))
-                .toList();
-    }
-
-    @Value
-    public static class Army {
-        List<User> Users;
-        Integer Points;
+    public LinkMicArmy(BattleUserArmies userArmies) {
+        armyId = Long.parseLong(userArmies.getAnchorIdStr());
+        totalPoints = (int) userArmies.getHostScore();
+        armies = userArmies.getUserArmyList().stream().collect(Collectors.toMap(User::new, bua -> (int) bua.getScore()));
     }
 }

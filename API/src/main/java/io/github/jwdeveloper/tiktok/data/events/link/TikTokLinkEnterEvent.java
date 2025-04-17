@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.data.events.link;
 
 import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.models.users.ListUser;
+import io.github.jwdeveloper.tiktok.messages.enums.LinkmicMultiLiveEnum;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
@@ -34,7 +35,7 @@ import java.util.List;
 public class TikTokLinkEnterEvent extends TikTokLinkEvent {
 
     private final List<ListUser> listUsers;
-    private final int anchorMultiLiveEnum;
+    private final LinkmicMultiLiveEnum anchorMultiLiveEnum;
 
     public TikTokLinkEnterEvent(WebcastLinkMessage msg) {
         super(msg);

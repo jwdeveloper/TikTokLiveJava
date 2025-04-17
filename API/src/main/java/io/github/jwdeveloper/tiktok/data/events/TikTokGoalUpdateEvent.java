@@ -47,9 +47,9 @@ public class TikTokGoalUpdateEvent extends TikTokHeaderEvent {
         goalId = msg.getGoal().getId();
         description = msg.getGoal().getDescription();
         users = msg.getGoal()
-                .getContributorsListList()
-                .stream()
-                .map(u -> new User(u.getUserId(), u.getDisplayId(), Picture.map(u.getAvatar())))
-                .toList();
+            .getContributorsList()
+            .stream()
+            .map(u -> new User(u.getUserId(), u.getDisplayId(), Picture.map(u.getAvatar())))
+            .toList();
     }
 }

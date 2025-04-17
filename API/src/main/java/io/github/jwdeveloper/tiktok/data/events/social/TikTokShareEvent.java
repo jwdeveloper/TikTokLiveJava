@@ -22,11 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok.data.events.social;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLikeMessage;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastSocialMessage;
 import lombok.Getter;
 
@@ -52,7 +50,7 @@ public class TikTokShareEvent extends TikTokHeaderEvent {
     public static TikTokShareEvent of(String userName, int shaders) {
         return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
                 .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setDisplayId(userName)
+                        .setUsername(userName)
                         .setNickname(userName)
                         .build())
                 .build(), shaders);

@@ -30,7 +30,7 @@ import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.http.*;
 import io.github.jwdeveloper.tiktok.http.mappers.*;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 
 import java.net.http.HttpResponse;
 import java.util.function.Consumer;
@@ -163,7 +163,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
                 throw new TikTokSignServerException("Sign server did not return the x-set-tt-cookie header - "+result);
             }
             var websocketCookie = resultHeader.getContent();
-            var webcastResponse = WebcastResponse.parseFrom(credentialsResponse.body());
+            var webcastResponse = ProtoMessageFetchResult.parseFrom(credentialsResponse.body());
             var webSocketUrl = httpFactory
                     .client(webcastResponse.getPushServer())
                     .withParam("room_id", request.getRoomId())

@@ -58,7 +58,7 @@ public class TikTokCommentEvent extends TikTokHeaderEvent {
         var builder = WebcastChatMessage.newBuilder();
         builder.setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
                 .setNickname(userName)
-                .setDisplayId(userName)
+                .setUsername(userName)
                 .build());
         builder.setContentLanguage("en");
         builder.setVisibleToSender(true);

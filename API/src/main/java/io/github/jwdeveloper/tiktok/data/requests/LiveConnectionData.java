@@ -22,10 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.data.requests;
 
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
+import lombok.*;
 
 import java.net.URI;
 
@@ -41,6 +39,6 @@ public class LiveConnectionData {
     public static class Response {
         private final String websocketCookies;
         private final URI websocketUrl;
-        private final WebcastResponse webcastResponse;
+        private final ProtoMessageFetchResult webcastResponse;
     }
 }

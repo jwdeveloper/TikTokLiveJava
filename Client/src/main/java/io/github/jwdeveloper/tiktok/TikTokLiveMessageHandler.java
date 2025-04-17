@@ -25,15 +25,11 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketMessageEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketUnhandledMessageEvent;
+import io.github.jwdeveloper.tiktok.data.events.websocket.*;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
-import io.github.jwdeveloper.tiktok.live.LiveMessagesHandler;
+import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.mappers.LiveMapper;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 import io.github.jwdeveloper.tiktok.utils.Stopwatch;
 
 import java.time.Duration;
@@ -48,7 +44,7 @@ public class TikTokLiveMessageHandler implements LiveMessagesHandler {
         this.mapper = mapper;
     }
 
-    public void handle(LiveClient client, WebcastResponse webcastResponse) {
+    public void handle(LiveClient client, ProtoMessageFetchResult webcastResponse) {
         tikTokEventHandler.publish(client, new TikTokWebsocketResponseEvent(webcastResponse));
         for (var message : webcastResponse.getMessagesList()) {
             try {
@@ -60,7 +56,7 @@ public class TikTokLiveMessageHandler implements LiveMessagesHandler {
         }
     }
 
-    public void handleSingleMessage(LiveClient client, WebcastResponse.Message message) {
+    public void handleSingleMessage(LiveClient client, ProtoMessageFetchResult.BaseProtoMessage message) {
         var messageClassName = message.getMethod();
         if (!mapper.isRegistered(messageClassName)) {
             tikTokEventHandler.publish(client, new TikTokWebsocketUnhandledMessageEvent(message));

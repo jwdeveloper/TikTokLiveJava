@@ -22,8 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.data.events;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastInRoomBannerMessage;
 import lombok.Getter;
@@ -35,6 +34,6 @@ public class TikTokInRoomBannerEvent extends TikTokHeaderEvent {
 
 	public TikTokInRoomBannerEvent(WebcastInRoomBannerMessage msg) {
 		super(msg.getHeader());
-		json = msg.getJson();
+		json = msg.getExtraMap().toString();
 	}
 }

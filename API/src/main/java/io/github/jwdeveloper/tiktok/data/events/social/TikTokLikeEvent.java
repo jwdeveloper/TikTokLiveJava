@@ -62,7 +62,7 @@ public class TikTokLikeEvent extends TikTokHeaderEvent
                 .setCount(likes)
                 .setTotal(likes)
                 .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setDisplayId(userName)
+                        .setUsername(userName)
                         .setNickname(userName)
                         .build())
                 .build());

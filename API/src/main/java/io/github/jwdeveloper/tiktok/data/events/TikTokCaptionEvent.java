@@ -22,25 +22,36 @@
  */
 package io.github.jwdeveloper.tiktok.data.events;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastCaptionMessage;
 import lombok.Value;
+
+import java.util.*;
 
 @Value
 @EventMeta(eventType = EventType.Message)
 public class TikTokCaptionEvent extends TikTokHeaderEvent {
     Long captionTimeStamp;
-
-    String iSOLanguage;
-
-    String text;
+    List<CaptionContent> contents;
 
     public TikTokCaptionEvent(WebcastCaptionMessage msg) {
         super(msg.getCommon());
-        captionTimeStamp = msg.getTimeStamp();
-        iSOLanguage = msg.getCaptionData().getLanguage();
-        text = msg.getCaptionData().getText();
+        captionTimeStamp = msg.getTimestampMs();
+        contents = new ArrayList<>();
+        for (WebcastCaptionMessage.CaptionContent captionContent : msg.getContentList())
+			contents.add(new CaptionContent(captionContent));
+    }
+
+    @Value
+    public static class CaptionContent {
+        String iSOLanguage;
+
+        String text;
+
+        public CaptionContent(WebcastCaptionMessage.CaptionContent captionContent) {
+            this.iSOLanguage = captionContent.getLang();
+            this.text = captionContent.getContent();
+        }
     }
 }

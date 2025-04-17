@@ -31,9 +31,9 @@ import io.github.jwdeveloper.tiktok.data.requests.*;
 import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
-import io.github.jwdeveloper.tiktok.listener.*;
+import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.live.*;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
 import io.github.jwdeveloper.tiktok.websocket.LiveSocketClient;
 import lombok.Getter;
@@ -177,7 +177,7 @@ public class TikTokLiveClient implements LiveClient
     @Override
     public void publishMessage(String webcastMessageName, byte[] payload) {
 
-        var builder = WebcastResponse.Message.newBuilder();
+        var builder = ProtoMessageFetchResult.BaseProtoMessage.newBuilder();
         builder.setMethod(webcastMessageName);
         builder.setPayload(ByteString.copyFrom(payload));
         var message = builder.build();

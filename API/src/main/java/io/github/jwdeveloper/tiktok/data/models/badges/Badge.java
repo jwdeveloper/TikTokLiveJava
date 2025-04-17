@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.data.models.badges;
 public class Badge {
 
     public static Badge map(io.github.jwdeveloper.tiktok.messages.data.BadgeStruct badge) {
-        return switch (badge.getDisplayType()) {
+        return switch (badge.getBadgeDisplayType()) {
             case BADGEDISPLAYTYPE_TEXT -> new TextBadge(badge.getText());
             case BADGEDISPLAYTYPE_IMAGE -> new PictureBadge(badge.getImage());
             case BADGEDISPLAYTYPE_STRING -> new StringBadge(badge.getStr());

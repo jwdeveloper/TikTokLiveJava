@@ -22,10 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok.utils;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.UnknownFieldSet;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import com.google.protobuf.*;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 
 import java.util.Base64;
 
@@ -35,7 +33,7 @@ public class ProtocolUtils {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    public static String toBase64(WebcastResponse.Message bytes) {
+    public static String toBase64(ProtoMessageFetchResult.BaseProtoMessage bytes) {
         return Base64.getEncoder().encodeToString(bytes.toByteArray());
     }
 
@@ -107,9 +105,9 @@ public class ProtocolUtils {
         }
     }
 
-    public static WebcastResponse.Message fromBase64ToMessage(String base64) throws InvalidProtocolBufferException {
+    public static ProtoMessageFetchResult.BaseProtoMessage fromBase64ToMessage(String base64) throws InvalidProtocolBufferException {
         var bytes = fromBase64(base64);
-        return WebcastResponse.Message.parseFrom(bytes);
+        return ProtoMessageFetchResult.BaseProtoMessage.parseFrom(bytes);
     }
 
 

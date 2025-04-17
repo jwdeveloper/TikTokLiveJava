@@ -52,7 +52,7 @@ public class TikTokJoinEvent extends TikTokHeaderEvent {
     {
         return new TikTokJoinEvent(WebcastMemberMessage.newBuilder()
                 .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setDisplayId(userName)
+                        .setUsername(userName)
                         .setNickname(userName)
                         .build())
                 .build());

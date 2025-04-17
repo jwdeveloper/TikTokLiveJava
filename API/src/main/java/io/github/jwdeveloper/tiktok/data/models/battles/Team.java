@@ -22,53 +22,63 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.battles;
 
-import lombok.Getter;
+import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.enums.BattleType;
+import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
+import lombok.Data;
 
-public abstract class Team {
+import java.util.*;
+
+@Data
+public class Team {
+    /** TeamId used for all battle types */
+    private final long teamId;
     /** Value >= 0 when finished otherwise -1 */
-    @Getter protected int totalPoints;
+    private int totalPoints = -1;
+    /** Value >= 0 when battle type is {@link BattleType}.{@code BATTLE_TYPE_NORMAL_BATTLE} otherwise -1 */
+    private int winStreak = -1;
+    /** Up to N hosts */
+    private final List<User> hosts;
+    /** Populated when finished */
+    private Map<User, Integer> viewers = new HashMap<>();
 
-    /**
-     * Provides a check for verifying if this team represents a 1v1 Team.
-     * @return true if this team is of type {@link Team1v1}, false otherwise.
-     */
-    public boolean is1v1Team() {
-        return this instanceof Team1v1;
+    // public Team(WebcastLinkMicBattle.BattleUserInfoWrapper anchorInfo, WebcastLinkMicBattle msg) {
+    //     long hostId = anchorInfo.getUserId();
+    //     this.winStreak = msg.getBattleCombosOrDefault(hostId, WebcastLinkMicBattle.BattleComboInfo.newBuilder().setComboCount(-1).build()).getComboCount();
+    //     this.totalPoints = (int) msg.getBattleResultOrDefault(hostId, WebcastLinkMicBattle.BattleResult.newBuilder().setScore(-1).build()).getScore();
+    //     this.host = new User(anchorInfo.getUserInfo().getUser());
+    //     this.viewers = new HashMap<>();
+    //     Optional.ofNullable(msg.getArmiesMap().get(host.getId())).ifPresent(armies ->
+    //         armies.getUserArmiesList().forEach(userArmy ->
+    //             viewers.put(new User(userArmy), (int) userArmy.getScore())));
+    // }
+    //
+    // public Team(WebcastLinkMicBattle.BattleTeamResult battleTeamResult, WebcastLinkMicBattle msg) {
+    //     this.totalPoints = (int) battleTeamResult.getTotalScore();
+    //     var host = new User(msg.getAnchorInfoList().stream().filter(data -> data.getUserId() == battleTeamResult.getTeamUsers(0).getUserId()).findFirst().orElseThrow().getUserInfo().getUser());
+    //     var cohost = new User(msg.getAnchorInfoList().stream().filter(data -> data.getUserId() == battleTeamResult.getTeamUsers(1).getUserId()).findFirst().orElseThrow().getUserInfo().getUser());
+    //     this.hosts = List.of(host, cohost);
+    //     this.viewers = new HashMap<>();
+    //     Optional.ofNullable(msg.getArmiesMap().get(host.getId())).ifPresent(armies ->
+    //         armies.getUserArmiesList().forEach(userArmy ->
+    //             viewers.put(new User(userArmy), (int) userArmy.getScore())));
+    //     Optional.ofNullable(msg.getArmiesMap().get(cohost.getId())).ifPresent(armies ->
+    //         armies.getUserArmiesList().forEach(userArmy ->
+    //             viewers.put(new User(userArmy), (int) userArmy.getScore())));
+    // }
+    //
+    public Team(long teamId, List<User> hosts) {
+        this.teamId = teamId;
+        this.hosts = List.copyOf(hosts);
     }
 
-    /**
-     * Provides a check for verifying if this team represents a 1v1 Team.
-     * @return true if this team is of type {@link Team1v1}, false otherwise.
-     */
-    public boolean is2v2Team() {
-        return this instanceof Team2v2;
+    public Team(WebcastLinkMicBattle.BattleUserInfo anchorInfo) {
+        this.hosts = List.of(new User(anchorInfo.getUser()));
+        this.teamId = hosts.get(0).getId();
     }
 
-    /**
-     * Convenience method to get this team as a {@link Team1v1}. If this team is of some
-     * other type, an {@link IllegalStateException} will result. Hence it is best to use this method
-     * after ensuring that this element is of the desired type by calling {@link #is1v1Team()} first.
-     *
-     * @return this team as a {@link Team1v1}.
-     * @throws IllegalStateException if this team is of another type.
-     */
-    public Team1v1 getAs1v1Team() {
-        if (is1v1Team())
-            return (Team1v1) this;
-        throw new IllegalStateException("Not a 1v1Team: " + this);
-    }
-
-    /**
-     * Convenience method to get this team as a {@link Team2v2}. If this team is of some
-     * other type, an {@link IllegalStateException} will result. Hence it is best to use this method
-     * after ensuring that this element is of the desired type by calling {@link #is2v2Team()} first.
-     *
-     * @return this team as a {@link Team2v2}.
-     * @throws IllegalStateException if this team is of another type.
-     */
-    public Team2v2 getAs2v2Team() {
-        if (is2v2Team())
-            return (Team2v2) this;
-        throw new IllegalStateException("Not a 2v2Team: " + this);
+    public Team(WebcastLinkMicBattle.BattleUserInfo anchorInfo, WebcastLinkMicBattle.BattleComboInfo battleCombo) {
+        this(anchorInfo);
+        this.winStreak = (int) battleCombo.getComboCount();
     }
 }

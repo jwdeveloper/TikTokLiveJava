@@ -22,10 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok.live;
 
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 
 public interface LiveMessagesHandler {
-    void handle(LiveClient client, WebcastResponse webcastResponse);
+    void handle(LiveClient client, ProtoMessageFetchResult webcastResponse);
 
-    void handleSingleMessage(LiveClient client, WebcastResponse.Message message);
+    void handleSingleMessage(LiveClient client, ProtoMessageFetchResult.BaseProtoMessage message);
 }
