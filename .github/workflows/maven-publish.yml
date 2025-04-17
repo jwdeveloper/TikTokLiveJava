@@ -46,7 +46,7 @@ jobs:
       run: mkdir staging && cp Client/target/Client-${{steps.version.outputs.version_tag}}-all.jar staging
       
     - name: 5 set up a cache for maven
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
          path: ~/.m2
          key: ${{runner.os}}-m2-${{hashFiles('**/pom.xml')}}
