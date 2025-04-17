@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.data.models.users;
 
+import io.github.jwdeveloper.tiktok.messages.enums.*;
 import lombok.Getter;
 
 @Getter
@@ -29,14 +30,19 @@ public class ListUser
 {
     private final User user;
     private final LinkType linkType;
-    private final long linkMicId, linkStatus, modifyTime, linkerId;
-    private final int userPosition, silenceStatus, roleType;
+    private final long linkMicId;
+    private final LinkmicRoleType linkStatus;
+    private final long modifyTime;
+    private final long linkerId;
+    private final int userPosition;
+    private final LinkSilenceStatus silenceStatus;
+    private final LinkRoleType roleType;
 
     public ListUser(io.github.jwdeveloper.tiktok.messages.data.ListUser listUser) {
         this.user = User.map(listUser.getUser());
         this.linkMicId = listUser.getLinkmicId();
         this.linkStatus = listUser.getLinkStatus();
-        this.linkType = LinkType.values()[listUser.getLinkTypeValue()];
+        this.linkType = listUser.getLinkType();
         this.userPosition = listUser.getUserPosition();
         this.silenceStatus = listUser.getSilenceStatus();
         this.modifyTime = listUser.getModifyTime();
@@ -46,12 +52,6 @@ public class ListUser
 
     public static ListUser map(io.github.jwdeveloper.tiktok.messages.data.ListUser listUser) {
         return new ListUser(listUser);
-    }
-
-    public enum LinkType {
-        UNKNOWN,
-        AUDIO,
-        VIDEO
     }
 
     @Override

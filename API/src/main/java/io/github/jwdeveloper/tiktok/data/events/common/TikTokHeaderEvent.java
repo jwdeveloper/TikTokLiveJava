@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.data.events.common;
 
-import io.github.jwdeveloper.tiktok.messages.data.Common;
+import io.github.jwdeveloper.tiktok.messages.data.*;
 import lombok.Getter;
 
 @Getter
@@ -31,7 +31,7 @@ public class TikTokHeaderEvent extends TikTokEvent {
     private final long roomId;
     private final long timeStamp;
 
-    public TikTokHeaderEvent(Common header) {
+    public TikTokHeaderEvent(CommonMessageData header) {
         this(header.getMsgId(), header.getRoomId(), header.getCreateTime());
     }
 

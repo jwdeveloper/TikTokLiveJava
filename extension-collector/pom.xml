@@ -30,12 +30,6 @@
             <artifactId>mongodb-driver-sync</artifactId>
             <version>4.4.0</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.jwdeveloper.tiktok</groupId>
-            <artifactId>API</artifactId>
-            <version>1.9.2-Release</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 </project>

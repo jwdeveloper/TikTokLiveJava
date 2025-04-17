@@ -25,18 +25,14 @@ package io.github.jwdeveloper.tiktok.mappers.handlers;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
-import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEndEvent;
-import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollEvent;
-import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollStartEvent;
-import io.github.jwdeveloper.tiktok.data.events.poll.TikTokPollUpdateEvent;
+import io.github.jwdeveloper.tiktok.data.events.poll.*;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomPinEvent;
 import io.github.jwdeveloper.tiktok.data.models.chest.Chest;
 import io.github.jwdeveloper.tiktok.messages.enums.EnvelopeDisplay;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import lombok.SneakyThrows;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TikTokCommonEventHandler
 {
@@ -55,7 +51,7 @@ public class TikTokCommonEventHandler
     @SneakyThrows
     public TikTokEvent handlePinMessage(byte[] msg) {
         var pinMessage = WebcastRoomPinMessage.parseFrom(msg);
-        var chatMessage = WebcastChatMessage.parseFrom(pinMessage.getPinnedMessage());
+        var chatMessage = pinMessage.getChatMessage();
         var chatEvent = new TikTokCommentEvent(chatMessage);
         return new TikTokRoomPinEvent(pinMessage, chatEvent);
     }
@@ -75,7 +71,7 @@ public class TikTokCommonEventHandler
     @SneakyThrows
     public List<TikTokEvent> handleEnvelop(byte[] data) {
         var msg = WebcastEnvelopeMessage.parseFrom(data);
-        if (msg.getDisplay() != EnvelopeDisplay.EnvelopeDisplayNew) {
+        if (msg.getDisplay() != EnvelopeDisplay.ENVELOPE_DISPLAY_NEW) {
             return Collections.emptyList();
         }
         var totalDiamonds = msg.getEnvelopeInfo().getDiamondCount();

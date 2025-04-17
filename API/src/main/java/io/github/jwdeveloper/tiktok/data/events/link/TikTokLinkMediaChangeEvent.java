@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.data.events.link;
 
 import io.github.jwdeveloper.tiktok.annotations.*;
+import io.github.jwdeveloper.tiktok.messages.enums.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMessage;
 import lombok.Getter;
 
@@ -30,7 +31,11 @@ import lombok.Getter;
 @EventMeta(eventType = EventType.Message)
 public class TikTokLinkMediaChangeEvent extends TikTokLinkEvent {
 
-    private final long op, toUserId, anchorId, roomId, changeScene;
+    private final GuestMicCameraManageOp op;
+    private final long toUserId;
+    private final long anchorId;
+    private final long roomId;
+    private final GuestMicCameraChangeScene changeScene;
 
     public TikTokLinkMediaChangeEvent(WebcastLinkMessage msg) {
         super(msg);

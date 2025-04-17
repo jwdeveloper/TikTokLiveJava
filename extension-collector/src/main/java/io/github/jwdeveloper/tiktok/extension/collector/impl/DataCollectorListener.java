@@ -29,16 +29,14 @@ import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
 import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
 import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
-import io.github.jwdeveloper.tiktok.extension.collector.api.LiveDataCollector;
-import io.github.jwdeveloper.tiktok.extension.collector.api.Storage;
+import io.github.jwdeveloper.tiktok.extension.collector.api.*;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 import io.github.jwdeveloper.tiktok.utils.JsonUtil;
 import org.bson.Document;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Base64;
 
@@ -77,12 +75,12 @@ public class DataCollectorListener implements LiveDataCollector {
         includeError(liveClient, event);
     }
 
-    private void includeResponse(LiveClient liveClient, WebcastResponse message) {
+    private void includeResponse(LiveClient liveClient, ProtoMessageFetchResult message) {
         var messageContent = Base64.getEncoder().encodeToString(message.toByteArray());
         insertDocument(liveClient, createDocument("response", "webcast", messageContent));
     }
 
-    private void includeMessage(LiveClient liveClient, WebcastResponse.Message message) {
+    private void includeMessage(LiveClient liveClient, ProtoMessageFetchResult.BaseProtoMessage message) {
         var method = message.getMethod();
         var messageContent = Base64.getEncoder().encodeToString(message.getPayload().toByteArray());
         insertDocument(liveClient, createDocument("message", method, messageContent));

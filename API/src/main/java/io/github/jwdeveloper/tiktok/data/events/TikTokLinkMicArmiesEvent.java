@@ -22,16 +22,14 @@
  */
 package io.github.jwdeveloper.tiktok.data.events;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.data.models.LinkMicArmy;
-import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.messages.enums.LinkMicBattleStatus;
+import io.github.jwdeveloper.tiktok.data.models.*;
+import io.github.jwdeveloper.tiktok.messages.enums.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicArmies;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Triggered every time a battle participant receives points. Contains the current status of the battle and the army that suported the group.
@@ -47,13 +45,29 @@ public class TikTokLinkMicArmiesEvent extends TikTokHeaderEvent {
 
     private final Picture picture;
 
-    private final List<LinkMicArmy> armies;
+    private final Map<Long, LinkMicArmy> armies;
+
+    private final BattleType battleType;
 
     public TikTokLinkMicArmiesEvent(WebcastLinkMicArmies msg) {
         super(msg.getCommon());
-        battleId = msg.getId();
-        armies = msg.getBattleItemsList().stream().map(LinkMicArmy::new).toList();
-        picture = Picture.map(msg.getImage());
-        finished = msg.getBattleStatus() == LinkMicBattleStatus.ARMY_FINISHED;
+        System.out.println(msg);
+        battleId = msg.getBattleId();
+        armies = new HashMap<>();
+        picture = Picture.map(msg.getGifIconImage());
+        finished = msg.getTriggerReason() == TriggerReason.TRIGGER_REASON_BATTLE_END;
+        battleType = msg.getBattleSettings().getBattleType();
+
+        switch (battleType) {
+            case BATTLE_TYPE_NORMAL_BATTLE -> // 1v1 | Fields present - armies
+				msg.getArmiesMap().forEach((aLong, userArmies) -> armies.put(aLong, new LinkMicArmy(userArmies)));
+            case BATTLE_TYPE_TEAM_BATTLE -> // 2v2 | Fields present - team_armies
+				msg.getTeamArmiesList().forEach(teamArmy -> armies.put(teamArmy.getTeamId(), new LinkMicArmy(teamArmy.getUserArmies())));
+            case BATTLE_TYPE_INDIVIDUAL_BATTLE -> // 1v1v1 or 1v1v1v1 | Fields present - team_armies
+				msg.getTeamArmiesList().forEach(teamArmy -> armies.put(teamArmy.getTeamId(), new LinkMicArmy(teamArmy.getUserArmies())));
+            case BATTLE_TYPE_1_V_N -> { // 1 vs Many | Have no data for this yet
+                // Most complicated and uncommon battle type - When more data is collected, this will be updated.
+            }
+        }
     }
 }

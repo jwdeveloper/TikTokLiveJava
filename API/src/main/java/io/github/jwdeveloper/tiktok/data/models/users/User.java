@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.data.models.users;
 
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
+import io.github.jwdeveloper.tiktok.messages.data.BattleUserArmy;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import lombok.*;
 
@@ -139,12 +140,16 @@ public class User {
         this(id, name, profileId, null, picture, 0, 0, List.of(Badge.empty()));
     }
 
-    public User(WebcastLinkMicBattle.LinkMicBattleHost.HostGroup.Host host) {
-        this(host.getId(), host.getName(), host.getProfileId(), Picture.map(host.getImages(0)));
+    public User(WebcastLinkMicBattle.BattleUserInfo.BattleBaseUserInfo host) {
+        this(host.getUserId(), host.getDisplayId(), host.getNickName(), Picture.map(host.getAvatarThumb()));
+    }
+
+    public User(BattleUserArmy topViewer) {
+        this(topViewer.getUserId(), topViewer.getNickname(), Picture.map(topViewer.getAvatarThumb()));
     }
 
     public User(io.github.jwdeveloper.tiktok.messages.data.User user) {
-        this(user.getId(), user.getDisplayId(), Picture.map(user.getAvatarThumb()));
+        this(user.getId(), user.getUsername(), Picture.map(user.getAvatarThumb()));
         signature = user.getBioDescription();
         profileName = user.getNickname();
         following = user.getFollowInfo().getFollowingCount();

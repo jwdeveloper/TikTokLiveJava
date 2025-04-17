@@ -22,17 +22,11 @@
  */
 package io.github.jwdeveloper.tiktok.data.events.websocket;
 
-import io.github.jwdeveloper.tiktok.annotations.EventMeta;
-import io.github.jwdeveloper.tiktok.annotations.EventType;
+import io.github.jwdeveloper.tiktok.annotations.*;
 import io.github.jwdeveloper.tiktok.data.dto.MessageMetaData;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Value;
-
-import java.time.Duration;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
+import lombok.*;
 
 
 
@@ -47,7 +41,7 @@ public class TikTokWebsocketMessageEvent extends TikTokEvent {
      *  message.payload - Bytes array that contains actual data of message.
      *                    Example of parsing, WebcastGiftMessage giftMessage = WebcastGiftMessage.parseFrom(message.getPayload());
      */
-    private WebcastResponse.Message message;
+    private ProtoMessageFetchResult.BaseProtoMessage message;
 
     /*
      * TikTokLiveJava event that was created from TikTok message data

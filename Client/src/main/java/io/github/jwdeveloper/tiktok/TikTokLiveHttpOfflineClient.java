@@ -24,12 +24,9 @@ package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
-import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
-import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
-import io.github.jwdeveloper.tiktok.data.requests.LiveData;
-import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
+import io.github.jwdeveloper.tiktok.data.requests.*;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastResponse;
+import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 
 import java.net.URI;
 import java.util.List;
@@ -62,6 +59,6 @@ public class TikTokLiveHttpOfflineClient implements LiveHttpClient {
     public LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request) {
         return new LiveConnectionData.Response("",
                 URI.create("https://example.live"),
-                WebcastResponse.newBuilder().build());
+                ProtoMessageFetchResult.newBuilder().build());
     }
 }

@@ -40,9 +40,9 @@ public class TikTokQuestionEvent extends TikTokHeaderEvent {
     public TikTokQuestionEvent(WebcastQuestionNewMessage msg) {
         super(msg.getCommon());
         var data = msg.getDetails();
-        questionId = data.getId();
-        text = data.getText();
-        time = data.getTimeStamp();
+        questionId = data.getQuestionId();
+        text = data.getContent();
+        time = data.getCreateTime();
         user = User.map(data.getUser());
     }
 }
