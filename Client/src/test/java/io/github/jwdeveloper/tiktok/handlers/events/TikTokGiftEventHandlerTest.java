@@ -30,7 +30,6 @@ import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
 import io.github.jwdeveloper.tiktok.data.models.gifts.GiftComboStateType;
 import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
-import io.github.jwdeveloper.tiktok.messages.data.GiftStruct;
 import io.github.jwdeveloper.tiktok.messages.data.Image;
 import io.github.jwdeveloper.tiktok.messages.data.User;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
@@ -111,7 +110,7 @@ class TikTokGiftEventHandlerTest {
                                              int userId,
                                              boolean streakable) {
         var builder = WebcastGiftMessage.newBuilder();
-        var giftBuilder = GiftStruct.newBuilder();
+        var giftBuilder = io.github.jwdeveloper.tiktok.messages.data.Gift.newBuilder();
         var userBuilder = User.newBuilder();
 
 
