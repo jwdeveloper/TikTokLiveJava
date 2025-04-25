@@ -51,7 +51,6 @@ public class TikTokLinkMicArmiesEvent extends TikTokHeaderEvent {
 
     public TikTokLinkMicArmiesEvent(WebcastLinkMicArmies msg) {
         super(msg.getCommon());
-        System.out.println(msg);
         battleId = msg.getBattleId();
         armies = new HashMap<>();
         picture = Picture.map(msg.getGifIconImage());

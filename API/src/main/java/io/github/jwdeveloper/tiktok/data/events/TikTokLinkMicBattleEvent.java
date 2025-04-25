@@ -51,7 +51,6 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
 
     public TikTokLinkMicBattleEvent(WebcastLinkMicBattle msg) {
         super(msg.getCommon());
-        System.out.println(msg);
         battleId = msg.getBattleId();
         finished = msg.getAction() == BattleAction.BATTLE_ACTION_FINISH;
         battleType = msg.getBattleSetting().getBattleType();
