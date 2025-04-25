@@ -81,4 +81,8 @@ public class Team {
         this(anchorInfo);
         this.winStreak = (int) battleCombo.getComboCount();
     }
+
+    public boolean contains(String name) {
+        return hosts.stream().anyMatch(user -> user.getName().equals(name));
+    }
 }

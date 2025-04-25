@@ -128,4 +128,37 @@ public class TikTokLinkMicBattleEvent extends TikTokHeaderEvent
         int referencePoints = teams.get(0).getTotalPoints();
         return teams.stream().allMatch(team -> team.getTotalPoints() == referencePoints);
     }
+
+    /**
+     * @param battleHostName name of host to search
+     * @return Team instance containing name of host or null if no team found */
+    public Team getTeam(String battleHostName) {
+        List<Team> list = getTeams(battleHostName);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    /**
+     * @param battleHostName name of host to search
+     * @return Team instances not containing name of host */
+    public List<Team> getOpponentTeams(String battleHostName) {
+        List<Team> list = getTeams(battleHostName);
+        return list.isEmpty() ? null : list;
+    }
+
+    /**
+     * @param battleHostName name of host to search
+     * @return {@link List<Team>} with host team first, then opponent teams
+     * <p> If host is in neither or teams is empty, returns empty
+     * <p> Otherwise always teams.length in length;
+     */
+    public List<Team> getTeams(String battleHostName) {
+        if (teams.isEmpty() || teams.stream().noneMatch(team -> team.contains(battleHostName)))
+            return Collections.EMPTY_LIST;
+        Team hostTeam = teams.stream().filter(team -> team.contains(battleHostName)).findFirst().orElseThrow();
+        List<Team> opponentTeams = teams.stream().filter(team -> !team.contains(battleHostName)).toList();
+        List<Team> teams = new ArrayList<>();
+        teams.add(hostTeam);
+        teams.addAll(opponentTeams);
+        return teams;
+    }
 }
