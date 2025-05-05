@@ -154,12 +154,11 @@ public class TikTokLiveClient implements LiveClient
     }
 
     public void disconnect() {
-        if (roomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
-            return;
-        }
-        setState(ConnectionState.DISCONNECTED);
-        webSocketClient.stop();
-    }
+        if (webSocketClient.isConnected())
+            webSocketClient.stop();
+		if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
+			setState(ConnectionState.DISCONNECTED);
+	}
 
     private void setState(ConnectionState connectionState) {
         logger.info("TikTokLive client state: " + connectionState.name());
@@ -174,16 +173,15 @@ public class TikTokLiveClient implements LiveClient
     public void publishMessage(String webcastMessageName, String payloadBase64) {
         this.publishMessage(webcastMessageName, Base64.getDecoder().decode(payloadBase64));
     }
+
     @Override
     public void publishMessage(String webcastMessageName, byte[] payload) {
-
         var builder = ProtoMessageFetchResult.BaseProtoMessage.newBuilder();
         builder.setMethod(webcastMessageName);
         builder.setPayload(ByteString.copyFrom(payload));
         var message = builder.build();
         messageHandler.handleSingleMessage(this, message);
     }
-
 
     public void connectAsync(Consumer<LiveClient> onConnection) {
         connectAsync().thenAccept(onConnection);
