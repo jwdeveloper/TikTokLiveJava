@@ -113,6 +113,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             .withParam("uniqueId", request.getUserName())
             .withParam("sourceType", "54") //MAGIC NUMBER, WHAT 54 means?
             .withCookie("sessionid", clientSettings.getSessionId())
+            .withCookie("tt-target-idc", clientSettings.getTtTargetIdc())
             .build()
             .toJsonResponse();
 
@@ -141,6 +142,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         var result = httpFactory.client(url)
             .withParam("room_id", request.getRoomId())
             .withCookie("sessionid", clientSettings.getSessionId())
+            .withCookie("tt-target-idc", clientSettings.getTtTargetIdc())
             .build()
             .toJsonResponse();
 

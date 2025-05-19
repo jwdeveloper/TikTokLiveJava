@@ -90,10 +90,17 @@ public class LiveClientSettings {
     private boolean throwOnAgeRestriction;
 
     /**
-	 * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId
-	 * @see <a href="https://github.com/isaackogan/TikTok-Live-Connector#send-chat-messages">Documentation: How to obtain sessionId</a>
+	 * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId.
+     * <p>This requires {@link #ttTargetIdc} also being set correctly for sessionid to be effective.
+	 * @apiNote This cookie is supplied by <a href="https://www.tiktok.com">TikTok</a> and can be found in your browser cookies.
 	 */
     private String sessionId;
+
+    /**
+     * Used with {@link #sessionId} to verify it is valid and return extra chat messages and 18+ content.
+     * @apiNote This cookie is supplied by <a href="https://www.tiktok.com">TikTok</a> and can be found in your browser cookies.
+     */
+    private String ttTargetIdc;
 
     /**
      * Optional: By default roomID is fetched before connect to live, but you can set it manually
