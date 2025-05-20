@@ -130,7 +130,11 @@ public class TikTokWebSocketClient implements LiveSocketClient {
 
     public void stop() {
         if (isConnected()) {
-            webSocketClient.close();
+            try {
+                webSocketClient.closeBlocking();
+            } catch (InterruptedException e) {
+                throw new TikTokLiveException("Failed to stop the websocket");
+            }
             heartbeatTask.stop();
         }
         webSocketClient = null;
