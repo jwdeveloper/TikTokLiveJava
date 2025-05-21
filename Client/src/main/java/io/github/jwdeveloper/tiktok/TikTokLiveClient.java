@@ -153,9 +153,9 @@ public class TikTokLiveClient implements LiveClient
         tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(roomInfo));
     }
 
-    public void disconnect() {
+    public void disconnect(int type) {
         if (webSocketClient.isConnected())
-            webSocketClient.stop();
+            webSocketClient.stop(type);
 		if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
 			setState(ConnectionState.DISCONNECTED);
 	}

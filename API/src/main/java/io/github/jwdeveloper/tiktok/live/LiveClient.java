@@ -51,9 +51,17 @@ public interface LiveClient {
 
     /**
      * Disconnects the connection.
+     * @param type
+     * <p>0 - Normal - Initiates disconnection and returns
+     * <p>1 - Disconnects blocking and returns after closure
+     * <p>2 - Disconnects and kills connection to websocket
+     * <p>Default {@link #disconnect()} is 0
      */
-    void disconnect();
+    void disconnect(int type);
 
+    default void disconnect() {
+        disconnect(0);
+    }
 
     /**
      * Use to manually invoke event
