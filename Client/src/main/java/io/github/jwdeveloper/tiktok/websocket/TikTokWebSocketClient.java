@@ -28,6 +28,7 @@ import io.github.jwdeveloper.tiktok.data.settings.*;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.live.*;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.framing.CloseFrame;
 
 import javax.net.ssl.*;
 import java.net.Proxy;
@@ -56,18 +57,18 @@ public class TikTokWebSocketClient implements LiveSocketClient {
     @Override
     public void start(LiveConnectionData.Response connectionData, LiveClient liveClient) {
         if (isConnected())
-			stop();
+			stop(0);
 
         messageHandler.handle(liveClient, connectionData.getWebcastResponse());
 
         var headers = new HashMap<>(clientSettings.getHttpSettings().getHeaders());
         headers.put("Cookie", connectionData.getWebsocketCookies());
         webSocketClient = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
-                headers,
-                clientSettings.getHttpSettings().getTimeout().toMillisPart(),
-                messageHandler,
-                tikTokEventHandler,
-                liveClient);
+            headers,
+            clientSettings.getHttpSettings().getTimeout().toMillisPart(),
+            messageHandler,
+            tikTokEventHandler,
+            liveClient);
 
         ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
         if (proxyClientSettings.isEnabled() && proxyClientSettings.isAllowWebsocket())
@@ -128,9 +129,19 @@ public class TikTokWebSocketClient implements LiveSocketClient {
         }
     }
 
-    public void stop() {
+    public void stop(int type) {
         if (isConnected()) {
-            webSocketClient.close();
+            switch (type) {
+				case 1 -> {
+					try {
+						webSocketClient.closeBlocking();
+					} catch (InterruptedException e) {
+                        throw new TikTokLiveException("Failed to stop the websocket");
+                    }
+				}
+                case 2 -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
+                default -> webSocketClient.close();
+            }
             heartbeatTask.stop();
         }
         webSocketClient = null;

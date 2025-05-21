@@ -199,6 +199,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             .withParam("client", "ttlive-java")
             .withParam("room_id", room_id);
 
+        if (clientSettings.getSessionId() != null) // Allows receiving of all comments and Subscribe Events
+            builder.withParam("session_id", clientSettings.getSessionId());
         if (clientSettings.getApiKey() != null)
             builder.withParam("apiKey", clientSettings.getApiKey());
 
