@@ -61,6 +61,7 @@ public class LiveDataMapper {
             var statusId = status.getAsInt();
             var statusValue = switch (statusId) {
                 case 2 -> LiveData.LiveStatus.HostOnline;
+                case 3 -> LiveData.LiveStatus.HostPaused;
                 case 4 -> LiveData.LiveStatus.HostOffline;
                 default -> LiveData.LiveStatus.HostNotFound;
             };

@@ -52,6 +52,7 @@ public class LiveData {
     public enum LiveStatus {
         HostNotFound,
         HostOnline,
+        HostPaused,
         HostOffline,
     }
 
