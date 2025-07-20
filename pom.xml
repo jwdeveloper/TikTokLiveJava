@@ -48,36 +48,36 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.mycila</groupId>-->
-<!--                <artifactId>license-maven-plugin</artifactId>-->
-<!--                <version>4.6</version>-->
-<!--                <configuration>-->
-<!--                    <properties>-->
-<!--                        <owner>jwdeveloper</owner>-->
-<!--                        <years>2023-2024</years>-->
-<!--                        <email>jacekwoln@gmail.com</email>-->
-<!--                    </properties>-->
-<!--                    <aggregate>true</aggregate>-->
-<!--                    <licenseSets>-->
-<!--                        <licenseSet>-->
-<!--                            <header>license.txt</header>-->
-<!--                            <includes>-->
-<!--                                <include>**/*.java</include>-->
-<!--                            </includes>-->
-<!--                        </licenseSet>-->
-<!--                    </licenseSets>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>first</id>-->
-<!--                        <goals>-->
-<!--                            <goal>format</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>process-sources</phase>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.6</version>
+                <configuration>
+                    <properties>
+                        <owner>jwdeveloper</owner>
+                        <years>2023-2024</years>
+                        <email>jacekwoln@gmail.com</email>
+                    </properties>
+                    <aggregate>true</aggregate>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>license.txt</header>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
