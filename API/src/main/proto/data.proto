@@ -2121,6 +2121,24 @@ message PublicAreaMessageCommon {
   }
 }
 
+message BattleUserInfo {
+  BattleBaseUserInfo user = 1;
+  repeated BattleRivalTag tags = 2;
+
+  message BattleBaseUserInfo {
+    int64 user_id = 1;
+    string nick_name = 2;
+    Image avatar_thumb = 3;
+    string display_id = 4;
+  }
+
+  message BattleRivalTag {
+    Image bg_image = 1;
+    Image icon_image = 2;
+    string content = 3;
+  }
+}
+
 message GiftModeMeta {
   int64 gift_id = 1;
   string gift_name_key = 2;

@@ -104,7 +104,7 @@ public class MessagesMapperFactory {
             var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicArmies.class);
             return MappingResult.of(message, new TikTokLinkMicArmiesEvent(message));
         });
-        mapper.forMessage(WebcastLinkMessage.class, ((inputBytes, messageName, mapperHelper) -> {
+        mapper.forMessage(WebcastLinkMessage.class, (inputBytes, messageName, mapperHelper) -> {
             var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMessage.class);
             return MappingResult.of(message, switch (message.getMessageType()) {
                 case TYPE_LINKER_INVITE -> new TikTokLinkInviteEvent(message);
@@ -116,8 +116,7 @@ public class MessagesMapperFactory {
                 case TYPE_LINKER_KICK_OUT -> new TikTokLinkKickOutEvent(message);
                 case TYPE_LINKER_LINKED_LIST_CHANGE -> new TikTokLinkLinkedListChangeEvent(message);
                 case TYPE_LINKER_UPDATE_USER -> new TikTokLinkUpdateUserEvent(message);
-                case TYPE_LINKER_WAITING_LIST_CHANGE, TYPE_LINKER_WAITING_LIST_CHANGE_V2 ->
-                        new TikTokLinkWaitListChangeEvent(message);
+                case TYPE_LINKER_WAITING_LIST_CHANGE, TYPE_LINKER_WAITING_LIST_CHANGE_V2 -> new TikTokLinkWaitListChangeEvent(message);
                 case TYPE_LINKER_MUTE -> new TikTokLinkMuteEvent(message);
                 case TYPE_LINKER_MATCH -> new TikTokLinkRandomMatchEvent(message);
                 case TYPE_LINKER_UPDATE_USER_SETTING -> new TikTokLinkUpdateUserSettingEvent(message);
@@ -130,7 +129,11 @@ public class MessagesMapperFactory {
                 case TYPE_LINKMIC_USER_TOAST -> new TikTokLinkUserToastEvent(message);
                 default -> new TikTokLinkEvent(message);
             });
-        }));
+        });
+        mapper.forMessage(WebcastLinkMicBattleItemCard.class, (inputBytes, messageName, mapperHelper) -> {
+            var message = mapperHelper.bytesToWebcastObject(inputBytes, WebcastLinkMicBattleItemCard.class);
+            return MappingResult.of(message, new TikTokLinkMicBattleItemCard(message));
+        });
         // mapper.webcastObjectToConstructor(WebcastLinkMicMethod.class, TikTokLinkMicMethodEvent.class);
         //  mapper.webcastObjectToConstructor(WebcastLinkMicFanTicketMethod.class, TikTokLinkMicFanTicketEvent.class);
 
