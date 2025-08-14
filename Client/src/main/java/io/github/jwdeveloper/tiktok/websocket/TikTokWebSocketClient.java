@@ -142,7 +142,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
                 case 2 -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
                 default -> webSocketClient.close();
             }
-            heartbeatTask.stop();
+            heartbeatTask.stop(webSocketClient);
         }
         webSocketClient = null;
     }
