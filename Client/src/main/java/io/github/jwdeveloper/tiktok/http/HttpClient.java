@@ -40,11 +40,12 @@ public class HttpClient {
 
     protected final HttpClientSettings httpClientSettings;
     protected final String url;
+    protected final HttpRequest.BodyPublisher bodyPublisher;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
     public <T> ActionResult<HttpResponse<T>> toHttpResponse(HttpResponse.BodyHandler<T> handler) {
         var client = prepareClient();
-        var request = prepareGetRequest();
+        var request = prepareRequest();
         try {
             var response = client.send(request, handler);
             var result = ActionResult.of(response);
@@ -99,8 +100,13 @@ public class HttpClient {
         return URI.create(stringUrl);
     }
 
-    protected HttpRequest prepareGetRequest() {
-        var requestBuilder = HttpRequest.newBuilder().GET();
+    /**
+     * @return {@link HttpRequest} with default GET, otherwise POST if {@link #bodyPublisher} is not null
+     */
+    protected HttpRequest prepareRequest() {
+        var requestBuilder = HttpRequest.newBuilder();
+        if (bodyPublisher != null)
+            requestBuilder.POST(bodyPublisher);
         requestBuilder.uri(toUri());
         requestBuilder.timeout(httpClientSettings.getTimeout());
         if (!httpClientSettings.getCookies().isEmpty()) {
@@ -124,12 +130,10 @@ public class HttpClient {
     }
 
     protected String prepareUrlWithParameters(String url, Map<String, Object> parameters) {
-        if (parameters.isEmpty()) {
-            return url;
-        }
+        if (parameters.isEmpty())
+			return url;
 
-        return url + "?" + parameters.entrySet().stream().map(entry ->
-        {
+        return url + "?" + parameters.entrySet().stream().map(entry -> {
             var encodedKey = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8);
             var encodedValue = URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8);
             return encodedKey + "=" + encodedValue;

@@ -40,8 +40,8 @@ public class HttpProxyClient extends HttpClient {
 
 	private final ProxyClientSettings proxySettings;
 
-	public HttpProxyClient(HttpClientSettings httpClientSettings, String url) {
-		super(httpClientSettings, url);
+	public HttpProxyClient(HttpClientSettings httpClientSettings, String url, HttpRequest.BodyPublisher bodyPublisher) {
+		super(httpClientSettings, url, bodyPublisher);
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}
 
@@ -65,7 +65,7 @@ public class HttpProxyClient extends HttpClient {
 
 				httpClientSettings.getOnClientCreating().accept(builder);
 				var client = builder.build();
-				var request = prepareGetRequest();
+				var request = prepareRequest();
 
 				var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 				if (response.statusCode() != 200)

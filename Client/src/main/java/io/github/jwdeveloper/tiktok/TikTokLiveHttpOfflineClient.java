@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.data.requests.*;
 import io.github.jwdeveloper.tiktok.http.LiveHttpClient;
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 
 import java.net.URI;
@@ -45,20 +46,26 @@ public class TikTokLiveHttpOfflineClient implements LiveHttpClient {
     @Override
     public LiveData.Response fetchLiveData(LiveData.Request request) {
         return new LiveData.Response("",
-                LiveData.LiveStatus.HostOnline,
-                "offline live",
-                0,
-                0,
-                0,
-                false,
-                new User(0L, "offline user", new Picture("")),
-                LiveData.LiveType.SOLO);
+            LiveData.LiveStatus.HostOnline,
+            "offline live",
+            0,
+            0,
+            0,
+            false,
+            new User(0L, "offline user", new Picture("")),
+            LiveData.LiveType.SOLO);
     }
 
     @Override
     public LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request) {
         return new LiveConnectionData.Response("",
-                URI.create("https://example.live"),
-                ProtoMessageFetchResult.newBuilder().build());
+            URI.create("https://example.live"),
+            ProtoMessageFetchResult.newBuilder().build());
+    }
+
+    @Override
+    public boolean sendChat(LiveRoomInfo roomInfo, String content) {
+        // DO NOTHING
+        return false;
     }
 }
