@@ -30,13 +30,13 @@ import java.util.concurrent.*;
 public class WebSocketHeartbeatTask
 {
     // Single shared pool for all heartbeat tasks
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, r -> {
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, r -> {
         Thread t = new Thread(r, "heartbeat-pool");
         t.setDaemon(true);
         return t;
     });
-    private final Map<WebSocket, ScheduledFuture<?>> tasks = new ConcurrentHashMap<>();
-    private final Map<WebSocket, Long> commTime = new ConcurrentHashMap<>();
+    private static final Map<WebSocket, ScheduledFuture<?>> tasks = new ConcurrentHashMap<>();
+    private static final Map<WebSocket, Long> commTime = new ConcurrentHashMap<>();
 
     private final byte[] heartbeatBytes = Base64.getDecoder().decode("MgJwYjoCaGI="); // Used to be '3A026862' aka ':\x02hb', now is '2\x02pb:\x02hb'.
 
