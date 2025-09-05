@@ -183,6 +183,11 @@ public class TikTokLiveClient implements LiveClient
         messageHandler.handleSingleMessage(this, message);
     }
 
+    @Override
+    public boolean sendChat(String content) {
+        return httpClient.sendChat(roomInfo, content);
+    }
+
     public void connectAsync(Consumer<LiveClient> onConnection) {
         connectAsync().thenAccept(onConnection);
     }

@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.data.models.battles;
 
 import io.github.jwdeveloper.tiktok.data.models.users.User;
+import io.github.jwdeveloper.tiktok.messages.data.BattleUserInfo;
 import io.github.jwdeveloper.tiktok.messages.enums.BattleType;
 import io.github.jwdeveloper.tiktok.messages.webcast.WebcastLinkMicBattle;
 import lombok.Data;
@@ -72,12 +73,12 @@ public class Team {
         this.hosts = List.copyOf(hosts);
     }
 
-    public Team(WebcastLinkMicBattle.BattleUserInfo anchorInfo) {
+    public Team(BattleUserInfo anchorInfo) {
         this.hosts = List.of(new User(anchorInfo.getUser()));
         this.teamId = hosts.get(0).getId();
     }
 
-    public Team(WebcastLinkMicBattle.BattleUserInfo anchorInfo, WebcastLinkMicBattle.BattleComboInfo battleCombo) {
+    public Team(BattleUserInfo anchorInfo, WebcastLinkMicBattle.BattleComboInfo battleCombo) {
         this(anchorInfo);
         this.winStreak = (int) battleCombo.getComboCount();
     }

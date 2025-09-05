@@ -132,7 +132,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
 
         //networking
         dependance.registerSingleton(HttpClientFactory.class);
-        dependance.registerSingleton(WebSocketHeartbeatTask.class);
+        dependance.registerSingleton(WebSocketHeartbeatTask.class); // True global singleton - Static objects are located to serve as global
         if (clientSettings.isOffline()) {
             dependance.registerSingleton(LiveSocketClient.class, TikTokWebSocketOfflineClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpOfflineClient.class);

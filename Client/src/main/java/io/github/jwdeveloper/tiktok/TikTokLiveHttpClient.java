@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.github.jwdeveloper.dependance.injector.api.annotations.Inject;
 import io.github.jwdeveloper.tiktok.common.*;
@@ -30,9 +31,10 @@ import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 import io.github.jwdeveloper.tiktok.http.*;
 import io.github.jwdeveloper.tiktok.http.mappers.*;
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 
-import java.net.http.HttpResponse;
+import java.net.http.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -42,6 +44,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 	 * <a href="https://github-wiki-see.page/m/isaackogan/TikTokLive/wiki/All-About-Signatures">Signing API by Isaac Kogan</a>
 	 */
     private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/fetch";
+    private static final String TIKTOK_CHAT_URL = "https://tiktok.eulerstream.com/webcast/chat";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
     public static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
@@ -180,6 +183,33 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         } catch (InvalidProtocolBufferException e) {
             throw new TikTokSignServerException("Unable to parse websocket credentials response to WebcastResponse - "+result);
         }
+    }
+
+    @Override
+    public boolean sendChat(LiveRoomInfo roomInfo, String content) {
+        var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
+        if (proxyClientSettings.isEnabled()) {
+            while (proxyClientSettings.hasNext()) {
+                try {
+                    return requestSendChat(roomInfo, content);
+                } catch (TikTokProxyRequestException ignored) {}
+            }
+        }
+        return requestSendChat(roomInfo, content);
+    }
+
+    public boolean requestSendChat(LiveRoomInfo roomInfo, String content) {
+        JsonObject body = new JsonObject();
+        body.addProperty("content", content);
+        body.addProperty("sessionId", clientSettings.getSessionId());
+        body.addProperty("ttTargetIdc", clientSettings.getTtTargetIdc());
+        body.addProperty("roomId", roomInfo.getRoomId());
+        var result = httpFactory.client(TIKTOK_CHAT_URL)
+            .withHeader("Content-Type", "application/json")
+            .withBody(HttpRequest.BodyPublishers.ofString(body.toString()))
+            .build()
+            .toJsonResponse();
+        return result.isSuccess();
     }
 
     protected ActionResult<HttpResponse<byte[]>> getStartingPayload(LiveConnectionData.Request request) {

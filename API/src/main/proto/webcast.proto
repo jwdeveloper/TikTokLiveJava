@@ -1219,24 +1219,6 @@ message WebcastLinkMicBattle {
 //    BattleUserInfo user_info = 2;
 //  }
 
-  message BattleUserInfo {
-    BattleBaseUserInfo user = 1;
-    repeated BattleRivalTag tags = 2;
-
-    message BattleBaseUserInfo {
-      int64 user_id = 1;
-      string nick_name = 2;
-      Image avatar_thumb = 3;
-      string display_id = 4;
-    }
-
-    message BattleRivalTag {
-      Image bg_image = 1;
-      Image icon_image = 2;
-      string content = 3;
-    }
-  }
-
   message BattleABTestSetting {
     int64 uid = 1;
     BattleABTestList ab_test_list = 2;
@@ -1471,4 +1453,139 @@ message RoomVerifyMessage {
   string content = 3;
   int64 noticeType = 4;
   bool closeRoom = 5;
+}
+message WebcastLinkMicBattleItemCard {
+  CommonMessageData common = 1;
+  int64 battle_id = 2;
+  BattleCardMsgType msg_type = 3;
+  CardObtainGuide card_obtain_guide = 4;
+  UseCriticalStrikeCard use_critical_strike_card = 5;
+  UseSmokeCard use_smoke_card = 6;
+  AwardCardNotice award_card_notice = 7;
+  UseExtraTimeCard use_extra_time_card = 8;
+  UseSpecialEffectCard use_special_effect_card = 9;
+  UsePotionCard use_potion_card = 10;
+  UseWaveCard use_wave_card = 11;
+  SpecialEffectNotice special_effect_notice = 12;
+  UseTop2Card use_top2_card = 13;
+  UseTop3Card use_top3_card = 14;
+
+  message CardObtainGuide {
+    int32 not_in_use = 1;
+  }
+
+  message UseCriticalStrikeCard {
+    CriticalStrikeCardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+
+    message CriticalStrikeCardInfo {
+      string card_name_key = 1;
+      Image card_image = 2;
+      int64 send_time_sec = 3;
+      BattleUserInfo send_user = 4;
+      int64 effect_last_duration = 5;
+      int64 critical_strike_rate_low = 6;
+      int64 critical_strike_rate_high = 7;
+      int64 multiple = 8;
+      string gift_name_key = 9;
+      string rule_url = 10;
+      int64 effect_time_sec = 11;
+      int64 to_anchor_id = 12;
+      string to_anchor_id_str = 13;
+    }
+  }
+
+  message UseSmokeCard {
+    CommonCardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+  }
+
+  message AwardCardNotice {
+    Text display_content = 1;
+    repeated BattleUserInfo awarded_users = 2;
+  }
+
+  message UseExtraTimeCard {
+    ExtraTimeCardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+
+    message ExtraTimeCardInfo {
+      string card_name_key = 1;
+      Image card_image = 2;
+      int64 send_time_sec = 3;
+      BattleUserInfo send_user = 4;
+      int64 effect_last_duration = 5;
+      string rule_url = 6;
+      int64 effect_time_sec = 7;
+      int64 to_anchor_id = 8;
+      int64 extra_duration_sec = 9;
+      string to_anchor_id_str = 10;
+    }
+  }
+
+  message UseSpecialEffectCard {
+    CommonCardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+    repeated AnchorPair affected_anchor_pairs = 4;
+  }
+
+  message AnchorPair {
+    int64 source_anchor_id = 1;
+    int64 target_anchor_id = 2;
+  }
+
+  message UsePotionCard {
+    CommonCardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+  }
+
+  message UseWaveCard {
+    CommonCardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+  }
+
+  message CommonCardInfo {
+    string card_name_key = 1;
+    Image card_image = 2;
+    int64 send_time_sec = 3;
+    BattleUserInfo send_user = 4;
+    int64 effect_last_duration = 5;
+    string rule_url = 6;
+    int64 effect_time_sec = 7;
+    int64 to_anchor_id = 8;
+    string to_anchor_id_str = 9;
+  }
+
+  message SpecialEffectNotice {
+    int64 score = 1;
+    int64 from_user_id = 2;
+    int64 to_anchor_id = 3;
+    repeated AnchorPair affected_anchor_pairs = 4;
+  }
+
+  message UseTop2Card {
+    Top2CardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+
+    message Top2CardInfo {
+      CommonCardInfo common = 1;
+    }
+  }
+
+  message UseTop3Card {
+    Top3CardInfo card_info = 1;
+    int64 anchor_id = 2;
+    Text display_content = 3;
+
+    message Top3CardInfo {
+      CommonCardInfo common = 1;
+    }
+  }
 }

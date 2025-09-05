@@ -26,6 +26,7 @@ import io.github.jwdeveloper.tiktok.data.requests.GiftsData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveData;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
+import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
 
 public interface LiveHttpClient
 {
@@ -64,4 +65,6 @@ public interface LiveHttpClient
     }
 
     LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request);
+
+    boolean sendChat(LiveRoomInfo roomInfo, String content);
 }

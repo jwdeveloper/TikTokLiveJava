@@ -36,7 +36,6 @@ public interface LiveClient {
      */
     void connect();
 
-
     /**
      * Connects in asynchronous way
      * When connected Consumer returns instance of LiveClient
@@ -47,7 +46,6 @@ public interface LiveClient {
      * Connects in asynchronous way
      */
     CompletableFuture<LiveClient> connectAsync();
-
 
     /**
      * Disconnects the connection.
@@ -67,7 +65,6 @@ public interface LiveClient {
      * Use to manually invoke event
      */
     void publishEvent(TikTokEvent event);
-
 
     /**
      * @param webcastMessageName name of TikTok protocol-buffer message
@@ -96,4 +93,12 @@ public interface LiveClient {
      * Logger
      */
     Logger getLogger();
+
+    /**
+     * Send a chat message to the connected room
+     * @return true if successful, otherwise false
+     * @apiNote This is known to return true on some sessionIds despite failing!
+     * <p>We cannot fix this as it is a TikTok issue, not a library issue.
+     */
+    boolean sendChat(String content);
 }

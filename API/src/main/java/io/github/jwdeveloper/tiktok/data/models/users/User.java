@@ -24,7 +24,7 @@ package io.github.jwdeveloper.tiktok.data.models.users;
 
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.badges.Badge;
-import io.github.jwdeveloper.tiktok.messages.data.BattleUserArmy;
+import io.github.jwdeveloper.tiktok.messages.data.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.*;
 import lombok.*;
 
@@ -140,7 +140,7 @@ public class User {
         this(id, name, profileId, null, picture, 0, 0, List.of(Badge.empty()));
     }
 
-    public User(WebcastLinkMicBattle.BattleUserInfo.BattleBaseUserInfo host) {
+    public User(BattleUserInfo.BattleBaseUserInfo host) {
         this(host.getUserId(), host.getDisplayId(), host.getNickName(), Picture.map(host.getAvatarThumb()));
     }
 
