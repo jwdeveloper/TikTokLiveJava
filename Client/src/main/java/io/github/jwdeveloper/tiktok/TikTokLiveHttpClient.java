@@ -204,12 +204,11 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         body.addProperty("sessionId", clientSettings.getSessionId());
         body.addProperty("ttTargetIdc", clientSettings.getTtTargetIdc());
         body.addProperty("roomId", roomInfo.getRoomId());
-        var result = httpFactory.client(TIKTOK_CHAT_URL)
-            .withHeader("Content-Type", "application/json")
-            .withHeader("apiKey", clientSettings.getApiKey())
-            .withBody(HttpRequest.BodyPublishers.ofString(body.toString()))
-            .build()
-            .toJsonResponse();
+        HttpClientBuilder builder = httpFactory.client(TIKTOK_CHAT_URL)
+            .withHeader("Content-Type", "application/json");
+        if (clientSettings.getApiKey() != null)
+            builder.withHeader("apiKey", clientSettings.getApiKey());
+        var result = builder.withBody(HttpRequest.BodyPublishers.ofString(body.toString())).build().toJsonResponse();
         return result.isSuccess();
     }
 
