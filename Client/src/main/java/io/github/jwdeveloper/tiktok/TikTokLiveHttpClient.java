@@ -204,6 +204,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         body.addProperty("sessionId", clientSettings.getSessionId());
         body.addProperty("ttTargetIdc", clientSettings.getTtTargetIdc());
         body.addProperty("roomId", roomInfo.getRoomId());
+        if (clientSettings.getApiKey() != null)
+            body.addProperty("apiKey", clientSettings.getApiKey());
         var result = httpFactory.client(TIKTOK_CHAT_URL)
             .withHeader("Content-Type", "application/json")
             .withBody(HttpRequest.BodyPublishers.ofString(body.toString()))
