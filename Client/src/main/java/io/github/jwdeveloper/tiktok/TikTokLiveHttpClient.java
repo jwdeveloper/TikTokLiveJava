@@ -47,7 +47,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     private static final String TIKTOK_CHAT_URL = "https://tiktok.eulerstream.com/webcast/chat";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
-    public static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
+    private static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
+    private static final String TIKTOK_ROOM_INFO_URL = TIKTOK_URL_WEBCAST + "room/info";
     public static final int TIKTOK_AGE_RESTRICTED_CODE = 4003110;
 
     private final HttpClientFactory httpFactory;
@@ -141,8 +142,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     }
 
     public LiveData.Response getLiveData(LiveData.Request request) {
-        var url = TIKTOK_URL_WEBCAST + "room/info";
-        var result = httpFactory.client(url)
+        var result = httpFactory.client(TIKTOK_ROOM_INFO_URL)
             .withParam("room_id", request.getRoomId())
             .withCookie("sessionid", clientSettings.getSessionId())
             .withCookie("tt-target-idc", clientSettings.getTtTargetIdc())
