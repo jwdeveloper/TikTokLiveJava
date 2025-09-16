@@ -53,9 +53,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
     private final HttpClientFactory httpFactory;
     private final LiveClientSettings clientSettings;
-    private final LiveUserDataMapper liveUserDataMapper;
-    private final LiveDataMapper liveDataMapper;
-    private final GiftsDataMapper giftsDataMapper;
     private final Logger logger;
 
     @Inject
@@ -63,9 +60,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         this.httpFactory = factory;
         this.clientSettings = factory.getLiveClientSettings();
         this.logger = LoggerFactory.create("HttpClient-"+hashCode(), clientSettings);
-        liveUserDataMapper = new LiveUserDataMapper();
-        liveDataMapper = new LiveDataMapper();
-        giftsDataMapper = new GiftsDataMapper();
     }
 
     public TikTokLiveHttpClient(Consumer<LiveClientSettings> consumer) {
@@ -95,7 +89,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to fetch gifts information's - "+result);
 
         var json = result.getContent();
-        return giftsDataMapper.mapRoom(json);
+        return GiftsDataMapper.mapRoom(json);
     }
 
     @Override
@@ -125,7 +119,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to get information's about user - "+result);
 
         var json = result.getContent();
-        return liveUserDataMapper.map(json, logger);
+        return LiveUserDataMapper.map(json, logger);
     }
 
     @Override
@@ -153,7 +147,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to get info about live room - "+result);
 
         var json = result.getContent();
-        return liveDataMapper.map(json);
+        return LiveDataMapper.map(json);
     }
 
     @Override
@@ -207,7 +201,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         HttpClientBuilder builder = httpFactory.client(TIKTOK_CHAT_URL)
             .withHeader("Content-Type", "application/json");
         if (clientSettings.getApiKey() != null)
-            builder.withHeader("apiKey", clientSettings.getApiKey());
+            builder.withHeader("x-api-key", clientSettings.getApiKey());
         var result = builder.withBody(HttpRequest.BodyPublishers.ofString(body.toString())).build().toJsonResponse();
         return result.isSuccess();
     }
@@ -232,7 +226,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         if (clientSettings.getSessionId() != null) // Allows receiving of all comments and Subscribe Events
             builder.withParam("session_id", clientSettings.getSessionId());
         if (clientSettings.getApiKey() != null)
-            builder.withParam("apiKey", clientSettings.getApiKey());
+            builder.withHeader("x-api-key", clientSettings.getApiKey());
 
         var result = builder.build().toHttpResponse(HttpResponse.BodyHandlers.ofByteArray());
 

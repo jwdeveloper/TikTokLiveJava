@@ -32,7 +32,7 @@ import java.util.List;
 
 public class GiftsDataMapper {
 
-    public GiftsData.Response map(String json) {
+    public static GiftsData.Response map(String json) {
         var parsedJson = JsonParser.parseString(json);
         var jsonObject = parsedJson.getAsJsonObject();
         var gifts = jsonObject.entrySet()
@@ -43,7 +43,7 @@ public class GiftsDataMapper {
         return new GiftsData.Response(json, gifts);
     }
 
-    private Gift mapSingleGift(JsonElement jsonElement) {
+    private static Gift mapSingleGift(JsonElement jsonElement) {
         var jsonObject = jsonElement.getAsJsonObject();
 
         var id = jsonObject.get("id").getAsInt();
@@ -53,7 +53,7 @@ public class GiftsDataMapper {
         return new Gift(id, name, diamondCost, new Picture(image), jsonObject);
     }
 
-    public GiftsData.Response mapRoom(String json) {
+    public static GiftsData.Response mapRoom(String json) {
         var parsedJson = JsonParser.parseString(json);
         var jsonObject = parsedJson.getAsJsonObject();
         if (jsonObject.get("data") instanceof JsonObject data && data.get("gifts") instanceof JsonArray giftArray) {
@@ -69,7 +69,7 @@ public class GiftsDataMapper {
         return new GiftsData.Response("", List.of());
     }
 
-    private Gift mapSingleRoomGift(JsonElement jsonElement) {
+    private static Gift mapSingleRoomGift(JsonElement jsonElement) {
         var jsonObject = jsonElement.getAsJsonObject();
 
         var id = jsonObject.get("id").getAsInt();

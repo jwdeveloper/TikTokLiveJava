@@ -39,9 +39,9 @@ import java.util.*;
 
 public class TikTokWebSocketListener extends WebSocketClient {
 
-    private final LiveMessagesHandler messagesHandler;
-    private final LiveEventsHandler eventHandler;
-    private final LiveClient liveClient;
+    protected final LiveMessagesHandler messagesHandler;
+    protected final LiveEventsHandler eventHandler;
+    protected final LiveClient liveClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
@@ -67,7 +67,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
         }
     }
 
-    private void handleBinary(byte[] buffer) {
+    protected void handleBinary(byte[] buffer) {
         var websocketPushFrameOptional = getWebcastPushFrame(buffer);
         if (websocketPushFrameOptional.isEmpty()) {
             return;
@@ -97,7 +97,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        eventHandler.publish(liveClient, new TikTokDisconnectedEvent(reason));
+        eventHandler.publish(liveClient, new TikTokDisconnectedEvent(code, reason));
         liveClient.disconnect();
     }
 
@@ -111,12 +111,8 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     private Optional<WebcastPushFrame> getWebcastPushFrame(byte[] buffer) {
         try {
-            var websocketMessage = WebcastPushFrame.parseFrom(buffer);
-            if (websocketMessage.getPayload().isEmpty()) {
-                return Optional.empty();
-            }
-            return Optional.of(websocketMessage);
-        } catch (Exception e) {
+            return Optional.of(WebcastPushFrame.parseFrom(buffer)).filter(msg -> !msg.getPayload().isEmpty());
+		} catch (Exception e) {
             throw new TikTokProtocolBufferException("Unable to parse WebcastPushFrame", buffer, e);
         }
     }

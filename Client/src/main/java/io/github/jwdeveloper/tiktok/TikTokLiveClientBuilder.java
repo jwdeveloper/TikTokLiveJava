@@ -42,6 +42,7 @@ import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokRoomInfoEventHandler;
 import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokSocialMediaEventHandler;
 import io.github.jwdeveloper.tiktok.websocket.*;
+import io.github.jwdeveloper.tiktok.websocket.euler.TikTokWebSocketEulerClient;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -137,7 +138,7 @@ public class TikTokLiveClientBuilder implements LiveClientBuilder {
             dependance.registerSingleton(LiveSocketClient.class, TikTokWebSocketOfflineClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpOfflineClient.class);
         } else {
-            dependance.registerSingleton(LiveSocketClient.class, TikTokWebSocketClient.class);
+            dependance.registerSingleton(LiveSocketClient.class, clientSettings.isUseEulerstreamWebsocket() ? TikTokWebSocketEulerClient.class : TikTokWebSocketClient.class);
             dependance.registerSingleton(LiveHttpClient.class, TikTokLiveHttpClient.class);
         }
 

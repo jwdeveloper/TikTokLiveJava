@@ -77,7 +77,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
             connectDefault();
     }
 
-    private void connectDefault() {
+    public void connectDefault() {
         try {
             webSocketClient.connect();
             heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());

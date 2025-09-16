@@ -79,11 +79,14 @@ public class TikTokLiveClient implements LiveClient
 
     public void connect() {
         try {
-            tryConnect();
+            if (clientSettings.isUseEulerstreamWebsocket())
+                tryEulerConnect();
+            else
+                tryConnect();
         } catch (TikTokLiveException e) {
             setState(ConnectionState.DISCONNECTED);
             tikTokEventHandler.publish(this, new TikTokErrorEvent(e));
-            tikTokEventHandler.publish(this, new TikTokDisconnectedEvent("Exception: "+e.getMessage()));
+            tikTokEventHandler.publish(this, new TikTokDisconnectedEvent(-1, "Exception: " + e.getMessage()));
 
             if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
                 try {
@@ -101,6 +104,17 @@ public class TikTokLiveClient implements LiveClient
         }
     }
 
+    private void tryEulerConnect() {
+        if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
+            throw new TikTokLiveException("Already connected");
+        }
+
+        setState(ConnectionState.CONNECTING);
+        tikTokEventHandler.publish(this, new TikTokConnectingEvent());
+        webSocketClient.start(null, this);
+        setState(ConnectionState.CONNECTED);
+    }
+
     public void tryConnect() {
         if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED)) {
             throw new TikTokLiveException("Already connected");
@@ -110,8 +124,7 @@ public class TikTokLiveClient implements LiveClient
         tikTokEventHandler.publish(this, new TikTokConnectingEvent());
         var userDataRequest = new LiveUserData.Request(roomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
-        roomInfo.setStartTime(userData.getStartTime());
-        roomInfo.setRoomId(userData.getRoomId());
+        roomInfo.copy(userData.getRoomInfo());
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
             throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName(), userData, null);
@@ -119,7 +132,7 @@ public class TikTokLiveClient implements LiveClient
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
             throw new TikTokLiveUnknownHostException("User not found: " + roomInfo.getHostName(), userData, null);
 
-        var liveDataRequest = new LiveData.Request(userData.getRoomId());
+        var liveDataRequest = new LiveData.Request(userData.getRoomInfo().getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
 
         if (liveData.isAgeRestricted() && clientSettings.isThrowOnAgeRestriction())
@@ -143,9 +156,9 @@ public class TikTokLiveClient implements LiveClient
             throw new TikTokLivePreConnectionException(preconnectEvent);
 
         if (clientSettings.isFetchGifts())
-            giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomId()).getGifts());
+            giftManager.attachGiftsList(httpClient.fetchRoomGiftsData(userData.getRoomInfo().getRoomId()).getGifts());
 
-        var liveConnectionRequest = new LiveConnectionData.Request(userData.getRoomId());
+        var liveConnectionRequest = new LiveConnectionData.Request(userData.getRoomInfo().getRoomId());
         var liveConnectionData = httpClient.fetchLiveConnectionData(liveConnectionRequest);
         webSocketClient.start(liveConnectionData, this);
 

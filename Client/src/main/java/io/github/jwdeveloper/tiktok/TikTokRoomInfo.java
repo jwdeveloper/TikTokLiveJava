@@ -32,37 +32,43 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Data
-public class TikTokRoomInfo implements LiveRoomInfo {
-    private String roomId;
+public class TikTokRoomInfo implements LiveRoomInfo
+{
+	private String roomId;
+	private int likesCount;
+	private int viewersCount;
+	private int totalViewersCount;
+	private long startTime;
+	private boolean ageRestricted;
+	private User host;
+	private List<RankingUser> usersRanking = new LinkedList<>();
+	private String hostName;
+	private String title;
+	private String language = "en";
+	private ConnectionState connectionState = ConnectionState.DISCONNECTED;
 
-    private int likesCount;
+	public boolean hasConnectionState(ConnectionState state) {
+		return connectionState == state;
+	}
 
-    private int viewersCount;
+	public void updateRanking(List<RankingUser> rankingUsers) {
+		usersRanking.clear();
+		usersRanking.addAll(rankingUsers);
+	}
 
-    private int totalViewersCount;
-
-    private long startTime;
-
-    private boolean ageRestricted;
-
-    private User host;
-
-    private List<RankingUser> usersRanking = new LinkedList<>();
-
-    private String hostName;
-
-    private String title;
-
-    private String language = "en";
-
-    private ConnectionState connectionState = ConnectionState.DISCONNECTED;
-
-    public boolean hasConnectionState(ConnectionState state) {
-        return connectionState == state;
-    }
-
-    public void updateRanking(List<RankingUser> rankingUsers) {
-        usersRanking.clear();
-        usersRanking.addAll(rankingUsers);
-    }
+	@Override
+	public void copy(LiveRoomInfo roomInfo) {
+		this.roomId = roomInfo.getRoomId();
+		this.likesCount = roomInfo.getLikesCount();
+		this.viewersCount = roomInfo.getViewersCount();
+		this.totalViewersCount = roomInfo.getTotalViewersCount();
+		this.startTime = roomInfo.getStartTime();
+		this.ageRestricted = roomInfo.isAgeRestricted();
+		this.host = roomInfo.getHost();
+		this.usersRanking = roomInfo.getUsersRanking();
+		this.hostName = roomInfo.getHostName();
+		this.title = roomInfo.getTitle();
+		this.language = roomInfo.getLanguage();
+		this.connectionState = roomInfo.getConnectionState();
+	}
 }

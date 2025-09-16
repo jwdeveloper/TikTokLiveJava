@@ -46,7 +46,7 @@ public class TikTokWebSocketOfflineClient implements LiveSocketClient {
     @Override
     public void stop(int type) {
 		if (liveClient != null)
-			handler.publish(liveClient, new TikTokDisconnectedEvent("Stopping"));
+			handler.publish(liveClient, new TikTokDisconnectedEvent(-1, "Stopping"));
 	}
 
     @Override
