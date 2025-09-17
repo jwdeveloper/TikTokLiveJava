@@ -58,6 +58,7 @@ public class TikTokRoomInfo implements LiveRoomInfo
 
 	@Override
 	public void copy(LiveRoomInfo roomInfo) {
+		if (roomInfo == null) return;
 		this.roomId = roomInfo.getRoomId();
 		this.likesCount = roomInfo.getLikesCount();
 		this.viewersCount = roomInfo.getViewersCount();
