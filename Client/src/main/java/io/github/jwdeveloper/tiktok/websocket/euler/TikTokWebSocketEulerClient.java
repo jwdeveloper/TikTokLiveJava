@@ -23,14 +23,14 @@
 package io.github.jwdeveloper.tiktok.websocket.euler;
 
 import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
-import io.github.jwdeveloper.tiktok.data.settings.*;
-import io.github.jwdeveloper.tiktok.exceptions.*;
+import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.websocket.*;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.CloseFrame;
 
-import java.net.*;
+import java.net.URI;
 import java.util.HashMap;
 
 public class TikTokWebSocketEulerClient implements LiveSocketClient {
@@ -53,7 +53,7 @@ public class TikTokWebSocketEulerClient implements LiveSocketClient {
     @Override
     public void start(LiveConnectionData.Response connectionData, LiveClient liveClient) {
         if (isConnected())
-			stop(0);
+			stop(LiveClientStopType.NORMAL);
 
         webSocketClient = new TikTokWebSocketEulerListener(
             URI.create("wss://ws.eulerstream.com?uniqueId=%s&apiKey=%s&features.rawMessages=true".formatted(liveClient.getRoomInfo().getHostName(), clientSettings.getApiKey())),
@@ -74,17 +74,17 @@ public class TikTokWebSocketEulerClient implements LiveSocketClient {
         }
     }
 
-    public void stop(int type) {
+    public void stop(LiveClientStopType type) {
         if (isConnected()) {
             switch (type) {
-                case 1 -> {
+                case CLOSE_BLOCKING -> {
                     try {
                         webSocketClient.closeBlocking();
                     } catch (InterruptedException e) {
                         throw new TikTokLiveException("Failed to stop the websocket");
                     }
                 }
-                case 2 -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
+                case DISCONNECT -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
                 default -> webSocketClient.close();
             }
         }

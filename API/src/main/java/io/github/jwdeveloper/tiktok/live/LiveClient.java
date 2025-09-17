@@ -24,6 +24,7 @@ package io.github.jwdeveloper.tiktok.live;
 
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.listener.ListenersManager;
+import io.github.jwdeveloper.tiktok.websocket.LiveClientStopType;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -49,16 +50,16 @@ public interface LiveClient {
 
     /**
      * Disconnects the connection.
-     * @param type
-     * <p>0 - Normal - Initiates disconnection and returns
-     * <p>1 - Disconnects blocking and returns after closure
-     * <p>2 - Disconnects and kills connection to websocket
-     * <p>Default {@link #disconnect()} is 0
+     * @param type {@code LiveClientStopType}
+     * @see LiveClientStopType
      */
-    void disconnect(int type);
+    void disconnect(LiveClientStopType type);
 
+    /**
+     * Disconnects with {@link LiveClientStopType#NORMAL}
+     */
     default void disconnect() {
-        disconnect(0);
+        disconnect(LiveClientStopType.NORMAL);
     }
 
     /**

@@ -22,35 +22,21 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.tiktok.data.events.TikTokConnectedEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokDisconnectedEvent;
-import io.github.jwdeveloper.tiktok.data.requests.LiveConnectionData;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
-
-public class TikTokWebSocketOfflineClient implements LiveSocketClient {
-
-    private final LiveEventsHandler handler;
-    private LiveClient liveClient;
-
-    public TikTokWebSocketOfflineClient(LiveEventsHandler handler) {
-        this.handler = handler;
-    }
-
-    @Override
-    public void start(LiveConnectionData.Response webcastResponse, LiveClient tikTokLiveClient) {
-        liveClient = tikTokLiveClient;
-        handler.publish(liveClient, new TikTokConnectedEvent());
-    }
-
-    @Override
-    public void stop(LiveClientStopType type) {
-		if (liveClient != null)
-			handler.publish(liveClient, new TikTokDisconnectedEvent("Stopping"));
-	}
-
-    @Override
-    public boolean isConnected() {
-        return false;
-    }
+public enum LiveClientStopType
+{
+    /**
+     * Initiates the websocket close handshake. This method does not block<br> In oder to make sure
+     * the connection is closed use {@link LiveClientStopType#CLOSE_BLOCKING}
+     */
+    NORMAL,
+    /**
+     * Same as {@link LiveClientStopType#NORMAL} but blocks until the websocket closed or failed to do so.<br>
+     *
+     * @apiNote Can throw {@link InterruptedException} when/if the threads get interrupted
+     */
+    CLOSE_BLOCKING,
+    /**
+     * This will close the connection immediately without a proper close handshake.
+     * The code and the message therefore won't be transferred over the wire also they will be forwarded to onClose/onWebsocketClose. */
+    DISCONNECT
 }

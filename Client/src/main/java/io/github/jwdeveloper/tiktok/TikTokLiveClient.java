@@ -35,7 +35,7 @@ import io.github.jwdeveloper.tiktok.listener.ListenersManager;
 import io.github.jwdeveloper.tiktok.live.*;
 import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
 import io.github.jwdeveloper.tiktok.models.ConnectionState;
-import io.github.jwdeveloper.tiktok.websocket.LiveSocketClient;
+import io.github.jwdeveloper.tiktok.websocket.*;
 import lombok.Getter;
 
 import java.util.Base64;
@@ -166,7 +166,7 @@ public class TikTokLiveClient implements LiveClient
         tikTokEventHandler.publish(this, new TikTokRoomInfoEvent(roomInfo));
     }
 
-    public void disconnect(int type) {
+    public void disconnect(LiveClientStopType type) {
         if (webSocketClient.isConnected())
             webSocketClient.stop(type);
 		if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
