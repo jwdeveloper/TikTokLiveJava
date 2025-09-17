@@ -94,6 +94,11 @@ public class LiveClientSettings {
      */
     private boolean useEulerstreamWebsocket;
 
+    /** Use Eulerstream.com enterprise endpoints
+     * @apiNote Requires API Key with
+     */
+    private boolean useEulerstreamEnterprise;
+
     /**
 	 * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId.
      * <p>This requires {@link #ttTargetIdc} also being set correctly for sessionid to be effective.

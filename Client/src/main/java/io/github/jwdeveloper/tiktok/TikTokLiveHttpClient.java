@@ -45,6 +45,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 	 */
     private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/fetch";
     private static final String TIKTOK_CHAT_URL = "https://tiktok.eulerstream.com/webcast/chat";
+    private static final String TIKTOK_SIGN_ENTERPRISE_API = "https://tiktok.enterprise.eulerstream.com/webcast/fetch";
+    private static final String TIKTOK_CHAT_ENTERPRISE_URL = "https://tiktok.enterprise.eulerstream.com/webcast/chat";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
     private static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
@@ -198,7 +200,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         body.addProperty("sessionId", clientSettings.getSessionId());
         body.addProperty("ttTargetIdc", clientSettings.getTtTargetIdc());
         body.addProperty("roomId", roomInfo.getRoomId());
-        HttpClientBuilder builder = httpFactory.client(TIKTOK_CHAT_URL)
+        HttpClientBuilder builder = httpFactory.client(clientSettings.isUseEulerstreamEnterprise() ? TIKTOK_CHAT_ENTERPRISE_URL : TIKTOK_CHAT_URL)
             .withHeader("Content-Type", "application/json");
         if (clientSettings.getApiKey() != null)
             builder.withHeader("x-api-key", clientSettings.getApiKey());
@@ -219,7 +221,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     }
 
     protected ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
-        HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
+        HttpClientBuilder builder = httpFactory.client(clientSettings.isUseEulerstreamEnterprise() ? TIKTOK_SIGN_ENTERPRISE_API : TIKTOK_SIGN_API)
             .withParam("client", "ttlive-java")
             .withParam("room_id", room_id);
 

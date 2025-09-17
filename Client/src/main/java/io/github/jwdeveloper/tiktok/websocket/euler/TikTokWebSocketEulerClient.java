@@ -55,8 +55,11 @@ public class TikTokWebSocketEulerClient implements LiveSocketClient {
         if (isConnected())
 			stop(LiveClientStopType.NORMAL);
 
+        String url = "wss://ws.eulerstream.com?uniqueId=%s&apiKey=%s&features.rawMessages=true".formatted(liveClient.getRoomInfo().getHostName(), clientSettings.getApiKey())
+                     + (clientSettings.isUseEulerstreamWebsocket() ? "&features.useEnterpriseApi=true" : "");
+
         webSocketClient = new TikTokWebSocketEulerListener(
-            URI.create("wss://ws.eulerstream.com?uniqueId=%s&apiKey=%s&features.rawMessages=true".formatted(liveClient.getRoomInfo().getHostName(), clientSettings.getApiKey())),
+            URI.create(url),
             new HashMap<>(clientSettings.getHttpSettings().getHeaders()),
             clientSettings.getHttpSettings().getTimeout().toMillisPart(),
             messageHandler,
