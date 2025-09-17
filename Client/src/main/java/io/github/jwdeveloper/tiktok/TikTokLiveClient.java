@@ -124,13 +124,14 @@ public class TikTokLiveClient implements LiveClient
         tikTokEventHandler.publish(this, new TikTokConnectingEvent());
         var userDataRequest = new LiveUserData.Request(roomInfo.getHostName());
         var userData = httpClient.fetchLiveUserData(userDataRequest);
-        roomInfo.copy(userData.getRoomInfo());
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.Offline)
             throw new TikTokLiveOfflineHostException("User is offline: " + roomInfo.getHostName(), userData, null);
 
         if (userData.getUserStatus() == LiveUserData.UserStatus.NotFound)
             throw new TikTokLiveUnknownHostException("User not found: " + roomInfo.getHostName(), userData, null);
+
+        roomInfo.copy(userData.getRoomInfo());
 
         var liveDataRequest = new LiveData.Request(userData.getRoomInfo().getRoomId());
         var liveData = httpClient.fetchLiveData(liveDataRequest);
