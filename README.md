@@ -70,7 +70,7 @@ Maven
          <dependency>
             <groupId>com.github.jwdeveloper.TikTok-Live-Java</groupId>
             <artifactId>Client</artifactId>
-             <version>1.10.0-Release</version>
+             <version>1.11.0-Release</version>
             <scope>compile</scope>
         </dependency>
    </dependencies>
