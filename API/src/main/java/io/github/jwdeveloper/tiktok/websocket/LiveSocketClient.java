@@ -27,6 +27,6 @@ import io.github.jwdeveloper.tiktok.live.LiveClient;
 
 public interface LiveSocketClient {
     void start(LiveConnectionData.Response webcastResponse, LiveClient tikTokLiveClient);
-    void stop(int type);
+    void stop(LiveClientStopType type);
     boolean isConnected();
 }

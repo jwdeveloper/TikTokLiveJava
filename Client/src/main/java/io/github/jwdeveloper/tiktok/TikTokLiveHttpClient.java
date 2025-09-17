@@ -45,6 +45,8 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 	 */
     private static final String TIKTOK_SIGN_API = "https://tiktok.eulerstream.com/webcast/fetch";
     private static final String TIKTOK_CHAT_URL = "https://tiktok.eulerstream.com/webcast/chat";
+    private static final String TIKTOK_SIGN_ENTERPRISE_API = "https://tiktok.enterprise.eulerstream.com/webcast/fetch";
+    private static final String TIKTOK_CHAT_ENTERPRISE_URL = "https://tiktok.enterprise.eulerstream.com/webcast/chat";
     private static final String TIKTOK_URL_WEB = "https://www.tiktok.com/";
     private static final String TIKTOK_URL_WEBCAST = "https://webcast.tiktok.com/webcast/";
     private static final String TIKTOK_ROOM_GIFTS_URL = TIKTOK_URL_WEBCAST+"gift/list/";
@@ -53,9 +55,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
 
     private final HttpClientFactory httpFactory;
     private final LiveClientSettings clientSettings;
-    private final LiveUserDataMapper liveUserDataMapper;
-    private final LiveDataMapper liveDataMapper;
-    private final GiftsDataMapper giftsDataMapper;
     private final Logger logger;
 
     @Inject
@@ -63,9 +62,6 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         this.httpFactory = factory;
         this.clientSettings = factory.getLiveClientSettings();
         this.logger = LoggerFactory.create("HttpClient-"+hashCode(), clientSettings);
-        liveUserDataMapper = new LiveUserDataMapper();
-        liveDataMapper = new LiveDataMapper();
-        giftsDataMapper = new GiftsDataMapper();
     }
 
     public TikTokLiveHttpClient(Consumer<LiveClientSettings> consumer) {
@@ -95,7 +91,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to fetch gifts information's - "+result);
 
         var json = result.getContent();
-        return giftsDataMapper.mapRoom(json);
+        return GiftsDataMapper.mapRoom(json);
     }
 
     @Override
@@ -125,7 +121,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to get information's about user - "+result);
 
         var json = result.getContent();
-        return liveUserDataMapper.map(json, logger);
+        return LiveUserDataMapper.map(json, logger);
     }
 
     @Override
@@ -153,7 +149,7 @@ public class TikTokLiveHttpClient implements LiveHttpClient
             throw new TikTokLiveRequestException("Unable to get info about live room - "+result);
 
         var json = result.getContent();
-        return liveDataMapper.map(json);
+        return LiveDataMapper.map(json);
     }
 
     @Override
@@ -204,10 +200,10 @@ public class TikTokLiveHttpClient implements LiveHttpClient
         body.addProperty("sessionId", clientSettings.getSessionId());
         body.addProperty("ttTargetIdc", clientSettings.getTtTargetIdc());
         body.addProperty("roomId", roomInfo.getRoomId());
-        HttpClientBuilder builder = httpFactory.client(TIKTOK_CHAT_URL)
+        HttpClientBuilder builder = httpFactory.client(clientSettings.isUseEulerstreamEnterprise() ? TIKTOK_CHAT_ENTERPRISE_URL : TIKTOK_CHAT_URL)
             .withHeader("Content-Type", "application/json");
         if (clientSettings.getApiKey() != null)
-            builder.withHeader("apiKey", clientSettings.getApiKey());
+            builder.withHeader("x-api-key", clientSettings.getApiKey());
         var result = builder.withBody(HttpRequest.BodyPublishers.ofString(body.toString())).build().toJsonResponse();
         return result.isSuccess();
     }
@@ -225,14 +221,14 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     }
 
     protected ActionResult<HttpResponse<byte[]>> getByteResponse(String room_id) {
-        HttpClientBuilder builder = httpFactory.client(TIKTOK_SIGN_API)
+        HttpClientBuilder builder = httpFactory.client(clientSettings.isUseEulerstreamEnterprise() ? TIKTOK_SIGN_ENTERPRISE_API : TIKTOK_SIGN_API)
             .withParam("client", "ttlive-java")
             .withParam("room_id", room_id);
 
         if (clientSettings.getSessionId() != null) // Allows receiving of all comments and Subscribe Events
             builder.withParam("session_id", clientSettings.getSessionId());
         if (clientSettings.getApiKey() != null)
-            builder.withParam("apiKey", clientSettings.getApiKey());
+            builder.withHeader("x-api-key", clientSettings.getApiKey());
 
         var result = builder.build().toHttpResponse(HttpResponse.BodyHandlers.ofByteArray());
 

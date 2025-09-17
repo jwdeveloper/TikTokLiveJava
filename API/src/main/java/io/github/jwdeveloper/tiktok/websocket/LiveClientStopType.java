@@ -20,44 +20,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.jwdeveloper.tiktok.data.requests;
+package io.github.jwdeveloper.tiktok.websocket;
 
-import io.github.jwdeveloper.tiktok.live.LiveRoomInfo;
-import lombok.*;
-
-public class LiveUserData {
-
-    @Getter
-    public static class Request {
-        private final String userName;
-
-        public Request(String userName) {
-            if (userName == null || userName.isBlank())
-                throw new IllegalArgumentException("Invalid empty username!");
-            this.userName = userName;
-        }
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class Response {
-        private final String json;
-        private final UserStatus userStatus;
-        private final LiveRoomInfo roomInfo;
-
-        public boolean isLiveOnline() {
-            return userStatus == LiveUserData.UserStatus.Live || userStatus == LiveUserData.UserStatus.LivePaused;
-        }
-
-        public boolean isHostNameValid() {
-            return userStatus != LiveUserData.UserStatus.NotFound;
-        }
-    }
-
-    public enum UserStatus {
-        NotFound,
-        Offline,
-        LivePaused,
-        Live,
-    }
+public enum LiveClientStopType
+{
+    /**
+     * Initiates the websocket close handshake. This method does not block<br> In oder to make sure
+     * the connection is closed use {@link LiveClientStopType#CLOSE_BLOCKING}
+     */
+    NORMAL,
+    /**
+     * Same as {@link LiveClientStopType#NORMAL} but blocks until the websocket closed or failed to do so.<br>
+     *
+     * @apiNote Can throw {@link InterruptedException} when/if the threads get interrupted
+     */
+    CLOSE_BLOCKING,
+    /**
+     * This will close the connection immediately without a proper close handshake.
+     * The code and the message therefore won't be transferred over the wire also they will be forwarded to onClose/onWebsocketClose. */
+    DISCONNECT
 }

@@ -89,6 +89,16 @@ public class LiveClientSettings {
     /** Throw an exception on 18+ Age Restriction */
     private boolean throwOnAgeRestriction;
 
+    /** Use Eulerstream.com websocket for events
+     * @apiNote Requires API Key
+     */
+    private boolean useEulerstreamWebsocket;
+
+    /** Use Eulerstream.com enterprise endpoints
+     * @apiNote Requires API Key with
+     */
+    private boolean useEulerstreamEnterprise;
+
     /**
 	 * Optional: Sometimes not every messages from chat are send to TikTokLiveJava to fix this issue you can set sessionId.
      * <p>This requires {@link #ttTargetIdc} also being set correctly for sessionid to be effective.

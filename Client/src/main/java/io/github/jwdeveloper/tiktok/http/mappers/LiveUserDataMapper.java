@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.http.mappers;
 
 import com.google.gson.*;
+import io.github.jwdeveloper.tiktok.*;
 import io.github.jwdeveloper.tiktok.data.models.Picture;
 import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
 
 public class LiveUserDataMapper
 {
-    public LiveUserData.Response map(String json, Logger logger) {
+    public static LiveUserData.Response map(String json, Logger logger) {
         try {
             var jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
@@ -43,14 +44,14 @@ public class LiveUserDataMapper
                 throw new TikTokLiveRequestException("fetchRoomIdFromTiktokApi -> Unable to fetch roomID, contact the developer");
             }
             if (message.equals("user_not_found")) {
-                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1, null);
+                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, null);
             }
             //live -> status 2
             //live paused -> 3
             //not live -> status 4
             var element = jsonObject.get("data");
             if (element.isJsonNull()) {
-                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1, null);
+                return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, null);
             }
             var data = element.getAsJsonObject();
             var user = data.getAsJsonObject("user");
@@ -58,8 +59,17 @@ public class LiveUserDataMapper
             var roomId = user.get("roomId").getAsString();
             var status = user.get("status").getAsInt();
 
+            TikTokRoomInfo roomInfo = new TikTokRoomInfo();
+            roomInfo.setRoomId(roomId);
+
             var liveRoom = data.getAsJsonObject("liveRoom");
-            long startTime = liveRoom.get("startTime").getAsLong();
+
+            roomInfo.setTitle(liveRoom.get("title").getAsString());
+            roomInfo.setStartTime(liveRoom.get("startTime").getAsLong());
+            roomInfo.setTitle(liveRoom.get("title").getAsString());
+            roomInfo.setViewersCount(liveRoom.getAsJsonObject("liveRoomStats").get("userCount").getAsInt());
+            roomInfo.setTotalViewersCount(liveRoom.getAsJsonObject("liveRoomStats").get("enterCount").getAsInt());
+            roomInfo.setAgeRestricted(jsonObject.get("statusCode").getAsInt() == TikTokLiveHttpClient.TIKTOK_AGE_RESTRICTED_CODE);
 
             var statusEnum = switch (status) {
                 case 2 -> LiveUserData.UserStatus.Live;
@@ -78,10 +88,13 @@ public class LiveUserDataMapper
                 stats.get("followerCount").getAsLong(),
                 List.of());
 
-            return new LiveUserData.Response(json, statusEnum, roomId, startTime, foundUser);
+            roomInfo.setHost(foundUser);
+            roomInfo.setHostName(foundUser.getName());
+
+            return new LiveUserData.Response(json, statusEnum, roomInfo);
         } catch (JsonSyntaxException | IllegalStateException e) {
             logger.warning("Malformed Json: '"+json+"' - Error Message: "+e.getMessage());
-            return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, "", -1, null);
+            return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, null);
         }
     }
 }

@@ -41,7 +41,7 @@ public class LiveDataMapper {
      * 3 - ?
      * 4 - Offline
      */
-    public LiveData.Response map(String json) {
+    public static LiveData.Response map(String json) {
         var response = new LiveData.Response();
 
         response.setJson(json);
@@ -128,7 +128,7 @@ public class LiveDataMapper {
         return response;
     }
 
-    public User getUser(JsonObject jsonElement) {
+    public static User getUser(JsonObject jsonElement) {
         var id = jsonElement.get("id").getAsLong();
         var name = jsonElement.get("display_id").getAsString();
         var profileName = jsonElement.get("nickname").getAsString();

@@ -57,7 +57,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
     @Override
     public void start(LiveConnectionData.Response connectionData, LiveClient liveClient) {
         if (isConnected())
-			stop(0);
+			stop(LiveClientStopType.NORMAL);
 
         messageHandler.handle(liveClient, connectionData.getWebcastResponse());
 
@@ -77,7 +77,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
             connectDefault();
     }
 
-    private void connectDefault() {
+    public void connectDefault() {
         try {
             webSocketClient.connect();
             heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
@@ -129,17 +129,17 @@ public class TikTokWebSocketClient implements LiveSocketClient {
         }
     }
 
-    public void stop(int type) {
+    public void stop(LiveClientStopType type) {
         if (isConnected()) {
             switch (type) {
-				case 1 -> {
+                case CLOSE_BLOCKING -> {
 					try {
 						webSocketClient.closeBlocking();
 					} catch (InterruptedException e) {
                         throw new TikTokLiveException("Failed to stop the websocket");
                     }
 				}
-                case 2 -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
+                case DISCONNECT -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
                 default -> webSocketClient.close();
             }
             heartbeatTask.stop(webSocketClient);
