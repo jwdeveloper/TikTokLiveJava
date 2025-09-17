@@ -30,6 +30,8 @@ import lombok.Getter;
 @Getter
 @EventMeta(eventType = EventType.Control)
 public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
+	public static int UNKNOWN_CLOSE_CODE = -1;
+
 	/** Valid CloseFrame code or -1 for unknown */
 	private final int code;
 	private final String reason;
@@ -37,5 +39,13 @@ public class TikTokDisconnectedEvent extends TikTokLiveClientEvent {
 	public TikTokDisconnectedEvent(int code, String reason) {
 		this.code = code;
 		this.reason = reason.isBlank() ? "None" : reason;
+	}
+
+	public TikTokDisconnectedEvent(String reason) {
+		this(UNKNOWN_CLOSE_CODE, reason);
+	}
+
+	public boolean isUnknownCloseCode() {
+		return this.code == UNKNOWN_CLOSE_CODE;
 	}
 }

@@ -86,7 +86,7 @@ public class TikTokLiveClient implements LiveClient
         } catch (TikTokLiveException e) {
             setState(ConnectionState.DISCONNECTED);
             tikTokEventHandler.publish(this, new TikTokErrorEvent(e));
-            tikTokEventHandler.publish(this, new TikTokDisconnectedEvent(-1, "Exception: " + e.getMessage()));
+            tikTokEventHandler.publish(this, new TikTokDisconnectedEvent("Exception: " + e.getMessage()));
 
             if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
                 try {
