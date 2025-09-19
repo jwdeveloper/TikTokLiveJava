@@ -70,6 +70,6 @@ public class TikTokRoomInfo implements LiveRoomInfo
 		this.hostName = roomInfo.getHostName();
 		this.title = roomInfo.getTitle();
 		this.language = roomInfo.getLanguage();
-		this.connectionState = roomInfo.getConnectionState();
+		// this.connectionState = roomInfo.getConnectionState(); // This should not be copied - Controlled elsewhere!
 	}
 }
