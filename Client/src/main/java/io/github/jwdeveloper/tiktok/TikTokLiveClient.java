@@ -89,12 +89,10 @@ public class TikTokLiveClient implements LiveClient
             tikTokEventHandler.publish(this, new TikTokDisconnectedEvent("Exception: " + e.getMessage()));
 
             if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
-                try {
-                    Thread.sleep(clientSettings.getRetryConnectionTimeout().toMillis());
-                } catch (Exception ignored) {}
                 logger.info("Reconnecting");
                 tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
-                this.connect();
+                connectAsyncWithRetry();
+                return;
             }
             throw e;
         } catch (Exception e) {
@@ -211,5 +209,21 @@ public class TikTokLiveClient implements LiveClient
             connect();
             return this;
         });
+    }
+
+    private CompletableFuture<LiveClient> connectAsyncWithRetry() {
+        var delay = clientSettings.getRetryConnectionTimeout();
+        CompletableFuture<LiveClient> result = new CompletableFuture<>();
+        CompletableFuture
+                .delayedExecutor(delay.toMillis(), java.util.concurrent.TimeUnit.MILLISECONDS)
+                .execute(() -> {
+                    try {
+                        connect();
+                        result.complete(this);
+                    } catch (Exception ex) {
+                        result.completeExceptionally(ex);
+                    }
+                });
+        return result;
     }
 }
