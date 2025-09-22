@@ -39,7 +39,8 @@ import io.github.jwdeveloper.tiktok.websocket.*;
 import lombok.Getter;
 
 import java.util.Base64;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -55,6 +56,50 @@ public class TikTokLiveClient implements LiveClient
     private final Logger logger;
     private final GiftsManager giftManager;
     private final LiveMessagesHandler messageHandler;
+    private static final Executor SHARED_EXECUTOR;
+    private static final ScheduledExecutorService SHARED_SCHEDULER;
+    private static final AtomicInteger THREAD_ID = new AtomicInteger();
+    private static final AtomicInteger SCHED_ID  = new AtomicInteger();
+
+    static {
+        ThreadFactory asyncFactory = runnable -> {
+            Thread thread = new Thread(runnable, "tiktok-live-async-" + THREAD_ID.incrementAndGet());
+            thread.setDaemon(true);
+            thread.setUncaughtExceptionHandler((th, ex) ->
+                Logger.getLogger(TikTokLiveClient.class.getName())
+                    .log(java.util.logging.Level.SEVERE, "Uncaught in " + th.getName(), ex));
+            return thread;
+        };
+
+        ThreadFactory schedulerFactory = runnable -> {
+            Thread thread = new Thread(runnable, "tiktok-live-scheduler-" + SCHED_ID.incrementAndGet());
+            thread.setDaemon(true);
+            thread.setUncaughtExceptionHandler((th, ex) ->
+                Logger.getLogger(TikTokLiveClient.class.getName())
+                    .log(java.util.logging.Level.SEVERE, "Uncaught in " + th.getName(), ex));
+            return thread;
+        };
+
+        int cores = Runtime.getRuntime().availableProcessors();
+        int core = Math.max(4, cores);
+        int max  = Math.min(256, cores * 16);
+        int qCap = Math.max(2000, max * 100);
+
+        SHARED_EXECUTOR = new ThreadPoolExecutor(
+            core,
+            max,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(qCap),
+            asyncFactory,
+            new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+        ((ThreadPoolExecutor) SHARED_EXECUTOR).allowCoreThreadTimeOut(true);
+
+        SHARED_SCHEDULER = new ScheduledThreadPoolExecutor(
+            Math.max(2, Math.min(4, cores)), schedulerFactory);
+        ((ScheduledThreadPoolExecutor) SHARED_SCHEDULER).setRemoveOnCancelPolicy(true);
+    }
 
     public TikTokLiveClient(
             LiveMessagesHandler messageHandler,
@@ -208,19 +253,17 @@ public class TikTokLiveClient implements LiveClient
     }
 
     public CompletableFuture<LiveClient> connectAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            connect();
-            return this;
-        });
+        return CompletableFuture.supplyAsync(() -> { connect(); return this; }, SHARED_EXECUTOR);
     }
 
     private void connectAsyncWithRetry() {
         var delay = clientSettings.getRetryConnectionTimeout();
-        CompletableFuture
-            .runAsync(this::connect, CompletableFuture.delayedExecutor(delay.toMillis(), java.util.concurrent.TimeUnit.MILLISECONDS))
-            .exceptionally(ex -> {
-                tikTokEventHandler.publish(this, new TikTokErrorEvent(ex));
-                return null;
-            });
+        SHARED_SCHEDULER.schedule(() ->
+            CompletableFuture.runAsync(this::connect, SHARED_EXECUTOR)
+                .exceptionally(ex -> {
+                    tikTokEventHandler.publish(this, new TikTokErrorEvent(ex)); return null;
+                }),
+            delay.toMillis(), TimeUnit.MILLISECONDS
+        );
     }
 }
