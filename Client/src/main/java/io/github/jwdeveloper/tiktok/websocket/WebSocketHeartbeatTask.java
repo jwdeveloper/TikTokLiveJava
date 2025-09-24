@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.websocket;
 
+import io.github.jwdeveloper.tiktok.common.AsyncHandler;
 import org.java_websocket.WebSocket;
 
 import java.util.*;
@@ -29,47 +30,30 @@ import java.util.concurrent.*;
 
 public class WebSocketHeartbeatTask
 {
-    // Single shared pool for all heartbeat tasks
-    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, r -> {
-        Thread t = new Thread(r, "heartbeat-pool");
-        t.setDaemon(true);
-        return t;
-    });
-    private static final Map<WebSocket, ScheduledFuture<?>> tasks = new ConcurrentHashMap<>();
-    private static final Map<WebSocket, Long> commTime = new ConcurrentHashMap<>();
+    private ScheduledFuture<?> task;
+    private Long commTime;
 
-    private final byte[] heartbeatBytes = Base64.getDecoder().decode("MgJwYjoCaGI="); // Used to be '3A026862' aka ':\x02hb', now is '2\x02pb:\x02hb'.
+    private final static byte[] heartbeatBytes = Base64.getDecoder().decode("MgJwYjoCaGI="); // Used to be '3A026862' aka ':\x02hb', now is '2\x02pb:\x02hb'.
 
     public void run(WebSocket webSocket, long pingTaskTime) {
-        stop(webSocket); // remove existing task if any
+        stop(); // remove existing task if any
 
-        tasks.put(webSocket, scheduler.scheduleAtFixedRate(() -> {
+        task = AsyncHandler.getHeartBeatScheduler().scheduleAtFixedRate(() -> {
             try {
                 if (webSocket.isOpen()) {
                     webSocket.send(heartbeatBytes);
-                    commTime.put(webSocket, System.currentTimeMillis());
-                } else {
-                    Long time = commTime.get(webSocket);
-                    if (time != null && System.currentTimeMillis() - time >= 60_000) // Stop if disconnected longer than 60s
-                        stop(webSocket);
-                }
+                    commTime = System.currentTimeMillis();
+                } else if (commTime != null && System.currentTimeMillis() - commTime >= 60_000) // Stop if disconnected longer than 60s
+					stop();
             } catch (Exception e) {
                 e.printStackTrace();
-                stop(webSocket);
+                stop();
             }
-        }, 0, pingTaskTime, TimeUnit.MILLISECONDS));
+        }, 0, pingTaskTime, TimeUnit.MILLISECONDS);
     }
 
-    public void stop(WebSocket webSocket) {
-        ScheduledFuture<?> future = tasks.remove(webSocket);
-        if (future != null)
-			future.cancel(true);
-        commTime.remove(webSocket);
-    }
-
-    public void shutdown() {
-        tasks.values().forEach(f -> f.cancel(true));
-        commTime.clear();
-        scheduler.shutdownNow();
+    public void stop() {
+        if (task != null)
+            task.cancel(true);
     }
 }

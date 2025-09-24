@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok;
 
 import com.google.protobuf.ByteString;
+import io.github.jwdeveloper.tiktok.common.AsyncHandler;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.control.*;
@@ -39,7 +40,7 @@ import io.github.jwdeveloper.tiktok.websocket.*;
 import lombok.Getter;
 
 import java.util.Base64;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -89,12 +90,11 @@ public class TikTokLiveClient implements LiveClient
             tikTokEventHandler.publish(this, new TikTokDisconnectedEvent("Exception: " + e.getMessage()));
 
             if (e instanceof TikTokLiveOfflineHostException && clientSettings.isRetryOnConnectionFailure()) {
-                try {
-                    Thread.sleep(clientSettings.getRetryConnectionTimeout().toMillis());
-                } catch (Exception ignored) {}
-                logger.info("Reconnecting");
-                tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
-                this.connect();
+                AsyncHandler.getReconnectScheduler().schedule(() -> {
+                    logger.info("Reconnecting");
+                    tikTokEventHandler.publish(this, new TikTokReconnectingEvent());
+                    this.connect();
+                }, clientSettings.getRetryConnectionTimeout().toMillis(), TimeUnit.MILLISECONDS);
             }
             throw e;
         } catch (Exception e) {
