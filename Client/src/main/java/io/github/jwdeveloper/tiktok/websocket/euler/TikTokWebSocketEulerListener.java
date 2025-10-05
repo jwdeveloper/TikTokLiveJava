@@ -56,7 +56,7 @@ public class TikTokWebSocketEulerListener extends TikTokWebSocketListener
                             switch (oMsg.get("type").getAsString()) { // Should only receive these 2 types ever
                                 case "workerInfo" -> liveClient.getLogger().info(oMsg.toString()); // Always 1st message
                                 case "roomInfo" -> { // Always 2nd message
-									LiveUserData.Response data = LiveUserDataMapper.map(oMsg.getAsJsonObject("data").getAsJsonObject("data").getAsJsonObject("raw").toString(), liveClient.getLogger());
+									LiveUserData.Response data = LiveUserDataMapper.map(oMsg.getAsJsonObject("data").getAsJsonObject("raw").toString(), liveClient.getLogger());
                                     liveClient.getRoomInfo().copy(data.getRoomInfo());
                                     eventHandler.publish(liveClient, new TikTokRoomInfoEvent(liveClient.getRoomInfo()));
                                 }
@@ -67,6 +67,7 @@ public class TikTokWebSocketEulerListener extends TikTokWebSocketListener
             } else
                 throw new IllegalArgumentException("Invalid JsonObject: "+element);
         } catch (Exception e) {
+            e.printStackTrace();
             eventHandler.publish(liveClient, new TikTokErrorEvent(e));
         }
         if (isOpen()) {

@@ -62,12 +62,11 @@ message Text {
     int32 type = 1;
     TextFormat format = 2;
     string stringValue = 11;
-    oneof textPieceType
-    {
-      TextPieceUser userValue = 21;
-      TextPieceGift giftValue = 22;
-    }
+    TextPieceUser userValue = 21;
+    TextPieceGift giftValue = 22;
+    TextPieceHeart heartValue = 23;
     TextPiecePatternRef patternRefValue = 24;
+    TextPieceImage imageValue = 25;
   }
 
   message TextFormat {
@@ -83,7 +82,7 @@ message Text {
 
   message TextPieceGift {
     int32 giftId = 1;
-    PatternRef nameRef = 2;
+    TextPiecePatternRef nameRef = 2;
     ShowType showType = 3; // Enum
     int64 colorId = 4;
   }
@@ -98,14 +97,17 @@ message Text {
     bool withColon = 2;
   }
 
-  message PatternRef {
-    string key = 1;
-    string default_pattern = 2;
-  }
-
   enum ShowType {
     SHOW_TYPE_NORMAL = 0;
     SHOW_TYPE_FADE_IN_OUT = 1;
+  }
+
+  message TextPieceHeart {
+    string color = 1;
+  }
+
+  message TextPieceImage {
+    Image image_model = 1;
   }
 
 }
@@ -151,7 +153,7 @@ message BadgeStruct {
   bool is_customized = 24;
 
   message CombineBadge {
-    int32 badge_display_type = 1;
+    BadgeDisplayType badge_display_type = 1;
     Image icon = 2;
     TextBadge text = 3;
     string str = 4;
