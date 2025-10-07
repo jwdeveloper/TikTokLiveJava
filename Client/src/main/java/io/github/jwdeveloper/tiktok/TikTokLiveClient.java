@@ -199,7 +199,12 @@ public class TikTokLiveClient implements LiveClient
 
     @Override
     public boolean sendChat(String content) {
-        return httpClient.sendChat(roomInfo, content);
+        return sendChat(content, clientSettings.getSessionId(), clientSettings.getTtTargetIdc());
+    }
+
+    @Override
+    public boolean sendChat(String content, String sessionId, String ttTargetIdc) {
+        return httpClient.sendChat(roomInfo, content, sessionId, ttTargetIdc);
     }
 
     public void connectAsync(Consumer<LiveClient> onConnection) {

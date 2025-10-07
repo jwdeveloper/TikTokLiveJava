@@ -182,23 +182,23 @@ public class TikTokLiveHttpClient implements LiveHttpClient
     }
 
     @Override
-    public boolean sendChat(LiveRoomInfo roomInfo, String content) {
+    public boolean sendChat(LiveRoomInfo roomInfo, String content, String sessionId, String ttTargetIdc) {
         var proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
         if (proxyClientSettings.isEnabled()) {
             while (proxyClientSettings.hasNext()) {
                 try {
-                    return requestSendChat(roomInfo, content);
+                    return requestSendChat(roomInfo, content, sessionId, ttTargetIdc);
                 } catch (TikTokProxyRequestException ignored) {}
             }
         }
-        return requestSendChat(roomInfo, content);
+        return requestSendChat(roomInfo, content, sessionId, ttTargetIdc);
     }
 
-    public boolean requestSendChat(LiveRoomInfo roomInfo, String content) {
+    public boolean requestSendChat(LiveRoomInfo roomInfo, String content, String sessionId, String ttTargetIdc) {
         JsonObject body = new JsonObject();
         body.addProperty("content", content);
-        body.addProperty("sessionId", clientSettings.getSessionId());
-        body.addProperty("ttTargetIdc", clientSettings.getTtTargetIdc());
+        body.addProperty("sessionId", sessionId);
+        body.addProperty("ttTargetIdc", ttTargetIdc);
         body.addProperty("roomId", roomInfo.getRoomId());
         HttpClientBuilder builder = httpFactory.client(clientSettings.isUseEulerstreamEnterprise() ? TIKTOK_CHAT_ENTERPRISE_URL : TIKTOK_CHAT_URL)
             .withHeader("Content-Type", "application/json");

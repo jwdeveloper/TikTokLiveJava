@@ -66,5 +66,5 @@ public interface LiveHttpClient
 
     LiveConnectionData.Response fetchLiveConnectionData(LiveConnectionData.Request request);
 
-    boolean sendChat(LiveRoomInfo roomInfo, String content);
+    boolean sendChat(LiveRoomInfo roomInfo, String content, String sessionId, String ttTargetIdc);
 }

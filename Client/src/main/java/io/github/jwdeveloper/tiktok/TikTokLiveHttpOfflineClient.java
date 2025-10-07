@@ -64,7 +64,7 @@ public class TikTokLiveHttpOfflineClient implements LiveHttpClient {
     }
 
     @Override
-    public boolean sendChat(LiveRoomInfo roomInfo, String content) {
+    public boolean sendChat(LiveRoomInfo roomInfo, String content, String sessionId, String ttTargetIdc) {
         // DO NOTHING
         return false;
     }

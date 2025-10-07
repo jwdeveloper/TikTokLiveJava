@@ -102,4 +102,12 @@ public interface LiveClient {
      * <p>We cannot fix this as it is a TikTok issue, not a library issue.
      */
     boolean sendChat(String content);
+
+    /**
+     * Send a chat message to the connected room
+     * @return true if successful, otherwise false
+     * @apiNote This is known to return true on some sessionIds despite failing!
+     * <p>We cannot fix this as it is a TikTok issue, not a library issue.
+     */
+    boolean sendChat(String content, String sessionId, String ttTargetIdc);
 }
