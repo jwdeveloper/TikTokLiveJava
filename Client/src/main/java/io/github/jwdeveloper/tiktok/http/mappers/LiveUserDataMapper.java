@@ -66,7 +66,6 @@ public class LiveUserDataMapper
 
             roomInfo.setTitle(liveRoom.get("title").getAsString());
             roomInfo.setStartTime(liveRoom.get("startTime").getAsLong());
-            roomInfo.setTitle(liveRoom.get("title").getAsString());
             roomInfo.setViewersCount(liveRoom.getAsJsonObject("liveRoomStats").get("userCount").getAsInt());
             roomInfo.setTotalViewersCount(liveRoom.getAsJsonObject("liveRoomStats").get("enterCount").getAsInt());
             roomInfo.setAgeRestricted(jsonObject.get("statusCode").getAsInt() == TikTokLiveHttpClient.TIKTOK_AGE_RESTRICTED_CODE);
@@ -92,9 +91,51 @@ public class LiveUserDataMapper
             roomInfo.setHostName(foundUser.getName());
 
             return new LiveUserData.Response(json, statusEnum, roomInfo);
-        } catch (JsonSyntaxException | IllegalStateException e) {
+        } catch (JsonSyntaxException | IllegalStateException | NullPointerException e) {
             logger.warning("Malformed Json: '"+json+"' - Error Message: "+e.getMessage());
             return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, null);
+        }
+    }
+
+    public static LiveUserData.Response mapEulerstream(JsonObject jsonObject, Logger logger) {
+        try {
+			JsonObject roomInfoJson = jsonObject.getAsJsonObject("roomInfo");
+			JsonObject userJson = jsonObject.getAsJsonObject("user");
+
+            var roomId = roomInfoJson.get("id").getAsString();
+            var status = roomInfoJson.get("status").getAsInt();
+
+            TikTokRoomInfo roomInfo = new TikTokRoomInfo();
+            roomInfo.setRoomId(roomId);
+            roomInfo.setTitle(roomInfoJson.get("title").getAsString());
+            roomInfo.setStartTime(roomInfoJson.get("startTime").getAsLong());
+            roomInfo.setViewersCount(roomInfoJson.get("currentViewers").getAsInt());
+            roomInfo.setTotalViewersCount(roomInfoJson.get("totalViewers").getAsInt());
+
+            var statusEnum = switch (status) {
+                case 2 -> LiveUserData.UserStatus.Live;
+                case 3 -> LiveUserData.UserStatus.LivePaused;
+                case 4 -> LiveUserData.UserStatus.Offline;
+                default -> LiveUserData.UserStatus.NotFound;
+            };
+
+            User foundUser = new User(
+                Long.parseLong(userJson.get("numericUid").getAsString()),
+                userJson.get("uniqueId").getAsString(),
+                userJson.get("nickname").getAsString(),
+                userJson.get("signature").getAsString(),
+                new Picture(userJson.get("avatarUrl").getAsString()),
+                userJson.get("following").getAsLong(),
+                userJson.get("followers").getAsLong(),
+                List.of());
+
+            roomInfo.setHost(foundUser);
+            roomInfo.setHostName(foundUser.getName());
+
+            return new LiveUserData.Response(jsonObject.toString(), statusEnum, roomInfo);
+        } catch (JsonSyntaxException | IllegalStateException | NullPointerException e) {
+            logger.warning("Malformed Json: '"+jsonObject.toString()+"' - Error Message: "+e.getMessage());
+            return new LiveUserData.Response(jsonObject.toString(), LiveUserData.UserStatus.NotFound, null);
         }
     }
 }
