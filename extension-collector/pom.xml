@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.jwdeveloper.tiktok</groupId>
         <artifactId>TikTokLiveJava</artifactId>
-        <version>1.11.6-Release</version>
+        <version>1.11.7-Release</version>
     </parent>
 
 
