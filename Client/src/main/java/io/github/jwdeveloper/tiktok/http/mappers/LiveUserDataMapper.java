@@ -29,7 +29,7 @@ import io.github.jwdeveloper.tiktok.data.models.users.User;
 import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class LiveUserDataMapper
@@ -109,7 +109,7 @@ public class LiveUserDataMapper
             roomInfo.setRoomId(roomId);
             roomInfo.setTitle(roomInfoJson.get("title").getAsString());
             roomInfo.setStartTime(roomInfoJson.get("startTime").getAsLong());
-            roomInfo.setViewersCount(roomInfoJson.get("currentViewers").getAsInt());
+            roomInfo.setViewersCount(Optional.ofNullable(roomInfoJson.get("currentViewers")).filter(JsonElement::isJsonPrimitive).map(JsonElement::getAsInt).orElse(0));
             roomInfo.setTotalViewersCount(roomInfoJson.get("totalViewers").getAsInt());
 
             var statusEnum = switch (status) {
