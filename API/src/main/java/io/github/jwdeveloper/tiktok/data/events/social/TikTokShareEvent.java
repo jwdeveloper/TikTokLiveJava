@@ -55,4 +55,13 @@ public class TikTokShareEvent extends TikTokHeaderEvent {
                         .build())
                 .build(), shaders);
     }
+
+    public static TikTokShareEvent of(User user, int shaders) {
+        return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setUsername(user.getName())
+                        .setNickname(user.getProfileName())
+                        .build())
+                .build(), shaders);
+    }
 }

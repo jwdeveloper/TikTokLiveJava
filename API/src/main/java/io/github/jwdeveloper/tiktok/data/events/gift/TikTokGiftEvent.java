@@ -50,16 +50,24 @@ public class TikTokGiftEvent extends TikTokHeaderEvent {
         combo = msg.getComboCount();
     }
 
-    public TikTokGiftEvent(Gift gift) {
+    public TikTokGiftEvent(Gift gift, User user, User toUser) {
         this.gift = gift;
-        user = new User(0L, "sender", new Picture(""));
-        toUser = new User(0L, "receiver", new Picture(""));
+        this.user = user;
+        this.toUser = toUser;
         combo = 1;
     }
 
 
     public static TikTokGiftEvent of(Gift gift) {
-        return new TikTokGiftEvent(gift);
+        return new TikTokGiftEvent(
+            gift,
+            new User(0L, "sender", new Picture("")),
+            new User(0L, "reviever", new Picture(""))
+            );
+    }
+
+    public static TikTokGiftEvent of(Gift gift, User user, User toUser) {
+        return new TikTokGiftEvent(gift, user, toUser) ;
     }
 
     public static TikTokGiftEvent of(String name, int id, int diamonds) {

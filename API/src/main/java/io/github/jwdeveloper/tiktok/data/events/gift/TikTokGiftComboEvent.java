@@ -46,4 +46,11 @@ public class TikTokGiftComboEvent extends TikTokGiftEvent {
             WebcastGiftMessage.newBuilder().setComboCount(combo).build(),
             comboState);
     }
+
+    public static TikTokGiftComboEvent of(Gift gift, User user, int combo, GiftComboStateType comboState) {
+        return new TikTokGiftComboEvent(gift,
+            user,
+            WebcastGiftMessage.newBuilder().setComboCount(combo).build(),
+            comboState);
+    }
 }
