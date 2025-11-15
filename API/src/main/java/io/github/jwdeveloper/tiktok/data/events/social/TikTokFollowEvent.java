@@ -55,7 +55,7 @@ public class TikTokFollowEvent extends TikTokHeaderEvent {
         return new TikTokFollowEvent(WebcastSocialMessage.newBuilder()
                 .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
                         .setUsername(user.getName())
-                        .setNickname(user.getProfileName())
+                        .setNickname(user.getProfileName() != null ? user.getProfileName() : user.getName())
                         .setId(user.getId())
                         .build())
                 .build());
