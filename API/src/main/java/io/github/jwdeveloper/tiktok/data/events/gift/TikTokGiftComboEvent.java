@@ -39,6 +39,11 @@ public class TikTokGiftComboEvent extends TikTokGiftEvent {
         this.comboState = comboState;
     }
 
+    public TikTokGiftComboEvent(Gift gift, User host, User toUser, int combo, GiftComboStateType comboState) {
+        super(gift, host, toUser, combo);
+        this.comboState = comboState;
+    }
+
     public static TikTokGiftComboEvent of(Gift gift, int combo, GiftComboStateType comboState) {
         return new TikTokGiftComboEvent(
             gift,
@@ -47,10 +52,11 @@ public class TikTokGiftComboEvent extends TikTokGiftEvent {
             comboState);
     }
 
-    public static TikTokGiftComboEvent of(Gift gift, User user, int combo, GiftComboStateType comboState) {
+    public static TikTokGiftComboEvent of(Gift gift, User host, User toUser, int combo, GiftComboStateType comboState) {
         return new TikTokGiftComboEvent(gift,
-            user,
-            WebcastGiftMessage.newBuilder().setComboCount(combo).build(),
+            host,
+            toUser,
+            combo,
             comboState);
     }
 }
