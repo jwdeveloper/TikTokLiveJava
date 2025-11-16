@@ -67,4 +67,15 @@ public class TikTokLikeEvent extends TikTokHeaderEvent
                         .build())
                 .build());
     }
+
+    public static TikTokLikeEvent of(User user, int likes) {
+        return new TikTokLikeEvent(WebcastLikeMessage.newBuilder()
+                .setCount(likes)
+                .setTotal(likes)
+                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                        .setUsername(user.getName())
+                        .setNickname(user.getProfileName())
+                        .build())
+                .build());
+    }
 }
