@@ -39,8 +39,8 @@ public class TikTokGiftComboEvent extends TikTokGiftEvent {
         this.comboState = comboState;
     }
 
-        super(gift, host, toUser, combo);
     public TikTokGiftComboEvent(Gift gift, User host, User user, int combo, GiftComboStateType comboState) {
+        super(gift, user, host, combo);
         this.comboState = comboState;
     }
 
