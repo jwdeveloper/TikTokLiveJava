@@ -48,23 +48,22 @@ public class TikTokJoinEvent extends TikTokHeaderEvent {
         totalUsers = msg.getMemberCount();
     }
 
-    public static TikTokJoinEvent of(String userName)
-    {
+    public static TikTokJoinEvent of(String userName) {
         return new TikTokJoinEvent(WebcastMemberMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(userName)
-                        .setNickname(userName)
-                        .build())
-                .build());
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(userName)
+                .setNickname(userName)
+                .build())
+            .build());
     }
 
     public static TikTokJoinEvent of(User user) {
         return new TikTokJoinEvent(WebcastMemberMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(user.getName())
-                        .setNickname(user.getProfileName())
-                        .setId(user.getId())
-                        .build())
-                .build());
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(user.getName())
+                .setNickname(user.getProfileName())
+                .setId(user.getId())
+                .build())
+            .build());
     }
 }

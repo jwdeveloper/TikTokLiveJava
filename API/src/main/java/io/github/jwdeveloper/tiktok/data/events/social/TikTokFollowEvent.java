@@ -44,20 +44,20 @@ public class TikTokFollowEvent extends TikTokHeaderEvent {
 
     public static TikTokFollowEvent of(String userName) {
         return new TikTokFollowEvent(WebcastSocialMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(userName)
-                        .setNickname(userName)
-                        .build())
-                .build());
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(userName)
+                .setNickname(userName)
+                .build())
+            .build());
     }
 
     public static TikTokFollowEvent of(User user) {
         return new TikTokFollowEvent(WebcastSocialMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(user.getName())
-                        .setNickname(user.getProfileName() != null ? user.getProfileName() : user.getName())
-                        .setId(user.getId())
-                        .build())
-                .build());
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(user.getName())
+                .setNickname(user.getProfileName() != null ? user.getProfileName() : user.getName())
+                .setId(user.getId())
+                .build())
+            .build());
     }
 }

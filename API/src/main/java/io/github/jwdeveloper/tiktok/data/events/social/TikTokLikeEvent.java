@@ -56,26 +56,25 @@ public class TikTokLikeEvent extends TikTokHeaderEvent
         totalLikes = msg.getTotal();
     }
 
-    public static TikTokLikeEvent of(String userName, int likes)
-    {
+    public static TikTokLikeEvent of(String userName, int likes) {
         return new TikTokLikeEvent(WebcastLikeMessage.newBuilder()
-                .setCount(likes)
-                .setTotal(likes)
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(userName)
-                        .setNickname(userName)
-                        .build())
-                .build());
+            .setCount(likes)
+            .setTotal(likes)
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(userName)
+                .setNickname(userName)
+                .build())
+            .build());
     }
 
     public static TikTokLikeEvent of(User user, int likes) {
         return new TikTokLikeEvent(WebcastLikeMessage.newBuilder()
-                .setCount(likes)
-                .setTotal(likes)
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(user.getName())
-                        .setNickname(user.getProfileName())
-                        .build())
-                .build());
+            .setCount(likes)
+            .setTotal(likes)
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(user.getName())
+                .setNickname(user.getProfileName())
+                .build())
+            .build());
     }
 }

@@ -45,18 +45,10 @@ public class TikTokGiftComboEvent extends TikTokGiftEvent {
     }
 
     public static TikTokGiftComboEvent of(Gift gift, int combo, GiftComboStateType comboState) {
-        return new TikTokGiftComboEvent(
-            gift,
-            new User(0L, "Test", new Picture("")),
-            WebcastGiftMessage.newBuilder().setComboCount(combo).build(),
-            comboState);
+        return new TikTokGiftComboEvent(gift, new User(0L, "Test", new Picture("")), WebcastGiftMessage.newBuilder().setComboCount(combo).build(), comboState);
     }
 
     public static TikTokGiftComboEvent of(Gift gift, User host, User user, int combo, GiftComboStateType comboState) {
-        return new TikTokGiftComboEvent(gift,
-            host,
-            user,
-            combo,
-            comboState);
+        return new TikTokGiftComboEvent(gift, host, user, combo, comboState);
     }
 }

@@ -49,19 +49,19 @@ public class TikTokShareEvent extends TikTokHeaderEvent {
 
     public static TikTokShareEvent of(String userName, int shaders) {
         return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(userName)
-                        .setNickname(userName)
-                        .build())
-                .build(), shaders);
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(userName)
+                .setNickname(userName)
+                .build())
+            .build(), shaders);
     }
 
     public static TikTokShareEvent of(User user, int shaders) {
         return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
-                .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
-                        .setUsername(user.getName())
-                        .setNickname(user.getProfileName())
-                        .build())
-                .build(), shaders);
+            .setUser(io.github.jwdeveloper.tiktok.messages.data.User.newBuilder()
+                .setUsername(user.getName())
+                .setNickname(user.getProfileName())
+                .build())
+            .build(), shaders);
     }
 }
