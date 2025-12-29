@@ -31,9 +31,11 @@ import java.io.IOException;
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpResponse.ResponseInfo;
+import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 
 public class HttpProxyClient extends HttpClient {
@@ -45,14 +47,14 @@ public class HttpProxyClient extends HttpClient {
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}
 
-	public ActionResult<HttpResponse<byte[]>> toResponse() {
+	public <T> ActionResult<HttpResponse<T>> toHttpResponse(HttpResponse.BodyHandler<T> handler) {
 		return switch (proxySettings.getType()) {
-			case HTTP, DIRECT -> handleHttpProxyRequest();
-			default -> handleSocksProxyRequest();
+			case HTTP, DIRECT -> handleHttpProxyRequest(handler);
+			default -> handleSocksProxyRequest(handler);
 		};
 	}
 
-	public ActionResult<HttpResponse<byte[]>> handleHttpProxyRequest() {
+	public <T> ActionResult<HttpResponse<T>> handleHttpProxyRequest(HttpResponse.BodyHandler<T> handler) {
 		var builder = java.net.http.HttpClient.newBuilder()
 			.followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
 			.cookieHandler(new CookieManager())
@@ -67,7 +69,7 @@ public class HttpProxyClient extends HttpClient {
 				var client = builder.build();
 				var request = prepareRequest();
 
-				var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+				var response = client.send(request, handler);
 				if (response.statusCode() != 200)
 					continue;
 				return ActionResult.success(response);
@@ -77,7 +79,7 @@ public class HttpProxyClient extends HttpClient {
 				throw new TikTokProxyRequestException(e);
 			} catch (IOException e) {
 				if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
-					return super.toHttpResponse(HttpResponse.BodyHandlers.ofByteArray());
+					return super.toHttpResponse(handler);
 				throw new TikTokProxyRequestException(e);
 			} catch (Exception e) {
 				throw new TikTokLiveRequestException(e);
@@ -86,7 +88,7 @@ public class HttpProxyClient extends HttpClient {
 		throw new TikTokLiveRequestException("No more proxies available!");
 	}
 
-	private ActionResult<HttpResponse<byte[]>> handleSocksProxyRequest() {
+	private <T> ActionResult<HttpResponse<T>> handleSocksProxyRequest(HttpResponse.BodyHandler<T> handler) {
 		try {
 			SSLContext sc = SSLContext.getInstance("SSL");
 			sc.init(null, new TrustManager[]{ new X509TrustManager() {
@@ -95,7 +97,8 @@ public class HttpProxyClient extends HttpClient {
 				public X509Certificate[] getAcceptedIssuers() { return null; }
 			}}, null);
 
-			URL url = toUri().toURL();
+			URI uri = toUri();
+			URL url = uri.toURL();
 
 			if (proxySettings.hasNext()) {
 				try {
@@ -117,12 +120,22 @@ public class HttpProxyClient extends HttpClient {
 
 					var responseInfo = createResponseInfo(socksConnection.getResponseCode(), headers);
 
-					var response = createHttpResponse(body, toUri(), responseInfo);
+					HttpResponse.BodySubscriber<T> subscriber = handler.apply(responseInfo);
+
+					subscriber.onSubscribe(new Flow.Subscription() {
+						@Override public void request(long n) {}
+						@Override public void cancel() {}
+					});
+
+					subscriber.onNext(List.of(ByteBuffer.wrap(body)));
+					subscriber.onComplete();
+
+					var response = createHttpResponse(subscriber.getBody().toCompletableFuture().join(), uri, responseInfo);
 
 					return ActionResult.success(response);
 				} catch (IOException e) {
 					if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
-						return super.toHttpResponse(HttpResponse.BodyHandlers.ofByteArray());
+						return super.toHttpResponse(handler);
 					if (proxySettings.isAutoDiscard())
 						proxySettings.remove();
 					throw new TikTokProxyRequestException(e);
@@ -160,7 +173,7 @@ public class HttpProxyClient extends HttpClient {
 		};
 	}
 
-	private HttpResponse<byte[]> createHttpResponse(byte[] body,
+	private <T> HttpResponse<T> createHttpResponse(T body,
 												   URI uri,
 												   ResponseInfo info) {
 		return new HttpResponse<>()
@@ -176,7 +189,7 @@ public class HttpProxyClient extends HttpClient {
 			}
 
 			@Override
-			public Optional<HttpResponse<byte[]>> previousResponse() {
+			public Optional<HttpResponse<T>> previousResponse() {
 				return Optional.empty();
 			}
 
@@ -186,7 +199,7 @@ public class HttpProxyClient extends HttpClient {
 			}
 
 			@Override
-			public byte[] body() {
+			public T body() {
 				return body;
 			}
 

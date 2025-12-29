@@ -95,6 +95,9 @@ public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyD
     public ProxyClientSettings clone() {
         ProxyClientSettings settings = new ProxyClientSettings();
         settings.setEnabled(enabled);
+        settings.setAutoDiscard(autoDiscard);
+        settings.setFallback(fallback);
+        settings.setAllowWebsocket(allowWebsocket);
         settings.setRotation(rotation);
         settings.setIndex(index);
         settings.setType(type);

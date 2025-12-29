@@ -69,7 +69,7 @@ public class HttpClient {
         }
     }
 
-    public <T> ActionResult<T> toResponse(HttpResponse.BodyHandler<T> handler) {
+    protected <T> ActionResult<T> toResponse(HttpResponse.BodyHandler<T> handler) {
         return toHttpResponse(handler).map(HttpResponse::body);
     }
 
