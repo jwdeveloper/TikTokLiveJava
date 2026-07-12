@@ -4,9 +4,9 @@
 </a>
 </div>
 <div align="center" >
-<h1>TikTok Live Java</h1>
+<h1>TikTok LIVE API for Java</h1>
 
-❤️❤️🎁 *Connect to TikTok live in 3 lines* 🎁❤️❤️
+❤️❤️🎁 *Connect to TikTok LIVE in 3 lines* 🎁❤️❤️
 
 <div align="center" >
 <a href="https://jitpack.io/#jwdeveloper/TikTok-Live-Java" target="blank" >
@@ -43,6 +43,8 @@ Do you prefer other programming languages?
 - **Python** rewrite: [TikTokLive](https://github.com/isaackogan/TikTokLive) by [@isaackogan](https://github.com/isaackogan)
 - **Go** rewrite: [GoTikTokLive](https://github.com/Davincible/gotiktoklive) by [@Davincible](https://github.com/Davincible)
 - **C#** rewrite: [TikTokLiveSharp](https://github.com/frankvHoof93/TikTokLiveSharp) by [@frankvHoof93](https://github.com/frankvHoof93)
+
+See [Euler Stream](https://www.eulerstream.com/docs/api/quickstart) for quickstart instructions in multiple languages.
 
 **NOTE:** This is not an official API. It's a reverse engineering project.
 
