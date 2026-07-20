@@ -121,10 +121,10 @@ public class LiveUserDataMapper
 
             User foundUser = new User(
                 Long.parseLong(userJson.get("numericUid").getAsString()),
-                userJson.get("uniqueId").getAsString(),
-                userJson.get("nickname").getAsString(),
-                userJson.get("signature").getAsString(),
-                new Picture(userJson.get("avatarUrl").getAsString()),
+                userJson.get("uniqueId") instanceof JsonPrimitive prim ? prim.getAsString() : null,
+                userJson.get("nickname") instanceof JsonPrimitive prim ? prim.getAsString() : null,
+                userJson.get("signature") instanceof JsonPrimitive prim ? prim.getAsString() : null,
+                userJson.get("avatarUrl") instanceof JsonPrimitive prim ? new Picture(prim.getAsString()) : Picture.empty(),
                 userJson.get("following").getAsLong(),
                 userJson.get("followers").getAsLong(),
                 List.of());
