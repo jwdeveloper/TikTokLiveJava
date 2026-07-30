@@ -141,8 +141,8 @@ public class LiveDataMapper {
 
 
         var pictureElement = jsonElement.getAsJsonObject("avatar_large");
-        var link = pictureElement.getAsJsonArray("url_list").get(1).getAsString();
-        var picture = new Picture(link);
+        var urls = pictureElement.getAsJsonArray("url_list");
+        var picture = (urls == null || urls.isEmpty()) ? Picture.empty() : new Picture(urls.get(Math.max(1, urls.size() - 1)).getAsString());
 
         var user = new User(id, name, profileName, signature, picture, followingCount, followers, new ArrayList<>());
         user.addAttribute(UserAttribute.LiveHost);
