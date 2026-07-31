@@ -47,9 +47,11 @@ public class LiveDataMapper {
         response.setJson(json);
 
         var parsedJson = JsonParser.parseString(json);
-        var jsonObject = parsedJson.getAsJsonObject();
 
-
+		if (!(parsedJson instanceof JsonObject jsonObject)) {
+			throw new TikTokLiveRequestException("JsonObject not found in LiveData.Response");
+		}
+        
         if (!jsonObject.has("data")) {
             throw new TikTokLiveRequestException("Data section not found in LiveData.Response");
         }
