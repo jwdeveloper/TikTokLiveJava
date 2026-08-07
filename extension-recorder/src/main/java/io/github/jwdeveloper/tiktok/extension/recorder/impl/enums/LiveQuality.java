@@ -23,5 +23,5 @@
 package io.github.jwdeveloper.tiktok.extension.recorder.impl.enums;
 
 public enum LiveQuality {
-    origin, hd_60, ao, hd, sd, ld,uhd_60
+    origin, hd, sd, ld, hd_60, uhd_60, ao
 }

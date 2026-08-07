@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.extension.recorder.impl;
 
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
 import io.github.jwdeveloper.tiktok.data.events.*;
 import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
@@ -145,23 +145,27 @@ public class RecorderListener implements LiveRecorder {
 
             var streamDataJsonObject = JsonParser.parseString(streamDataJson).getAsJsonObject();
 
-            var urlLink = streamDataJsonObject.getAsJsonObject("data")
-                .getAsJsonObject(LiveQuality.origin.name())
-                .getAsJsonObject("main")
-                .get("flv")
-                .getAsString();
-
             var sessionId = streamDataJsonObject.getAsJsonObject("common")
                 .get("session_id")
                 .getAsString();
+
+            var streamData = streamDataJsonObject.getAsJsonObject("data");
+            for (LiveQuality quality : LiveQuality.values()) { // Order origin, hd, sd, ld, hd_60, uhd_60, ao
+                if (streamData.get(quality.name()) instanceof JsonObject validObject) {
+                    var urlLink = validObject
+                        .getAsJsonObject("main")
+                        .get("flv")
+                        .getAsString();
+                    return new DownloadData(urlLink, sessionId);
+                }
+            }
 
             //main
             //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/stage/stream-3284937501738533765.flv?session_id=136-20240109000954BF818F1B3A8E5E39E238&_webnoredir=1
             //Working
             //https://pull-f5-tt03.fcdn.eu.tiktokcdn.com/game/stream-3284937501738533765_sd5.flv?_session_id=136-20240109001052D91FDBC00143211020C8.1704759052997&_webnoredir=1
             //https://pull-f5-tt02.fcdn.eu.tiktokcdn.com/stage/stream-3861399216374940610_uhd5.flv?_session_id=136-20240109000223D0BAA1A83974490EE630.1704758544391&_webnoredir=1
-
-            return new DownloadData(urlLink, sessionId);
+            throw new IllegalArgumentException("Valid stream url cannot be found");
         } catch (Exception e) {
             return new DownloadData("", "");
         }

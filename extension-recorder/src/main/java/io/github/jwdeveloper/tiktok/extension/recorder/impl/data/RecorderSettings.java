@@ -22,10 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.extension.recorder.impl.data;
 
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
-import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveFormat;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.File;
 import java.util.function.Function;
@@ -34,11 +31,11 @@ import java.util.function.Function;
 @Setter
 public class RecorderSettings {
 
-    private String ffmpegPath;
-    private String quality;
-    private String format;
+    // private String ffmpegPath;
+    // private String quality;
+    // private String format;
     private File outputFile;
-    private Function<String,DownloadData> prepareDownloadData;
+    private Function<String, DownloadData> prepareDownloadData;
     private boolean stopOnDisconnect = true;
     /**
      True to Cancel connection to live if the download url is not found
@@ -49,11 +46,11 @@ public class RecorderSettings {
         return new RecorderSettings();
     }
 
-    public void setQuality(LiveQuality quality) {
+    /*public void setQuality(LiveQuality quality) {
         this.quality = quality.name();
     }
 
     public void setFormat(LiveFormat format) {
         this.format = format.name();
-    }
+    }*/
 }
