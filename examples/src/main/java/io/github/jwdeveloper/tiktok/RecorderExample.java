@@ -44,7 +44,7 @@ public class RecorderExample {
                 })
                 .addListener(TikTokLiveRecorder.use((recorderSettings, liveClient) ->
                 {
-                    recorderSettings.setFfmpegPath("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\libs\\ffmpeg.exe");
+                    // recorderSettings.setFfmpegPath("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\libs\\ffmpeg.exe");
                     recorderSettings.setOutputFile(new File("C:\\Users\\ja\\IdeaProjects\\TikTokLiveJava\\extension-recorder\\out", "test.flv"));
                 }))
                 .onEvent(TikTokLiveRecorderStartedEvent.class, (liveClient, event) ->
