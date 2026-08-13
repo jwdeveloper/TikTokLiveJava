@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.mappers.handlers;
 
+import io.github.jwdeveloper.dependance.injector.api.annotations.Inject;
 import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
 import io.github.jwdeveloper.tiktok.data.events.gift.*;
@@ -34,16 +35,53 @@ import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
 import lombok.SneakyThrows;
 
 import java.util.*;
+import java.util.function.LongSupplier;
 
 public class TikTokGiftEventHandler {
-    private final Map<Long, WebcastGiftMessage> giftsMessages;
+    /**
+     * A streak that has not been finished within this window is closed by its last active frame.
+     * TikTok does not guarantee a finishing frame (sendType 0) for every streak, and without this
+     * fallback such a gift would never raise onGift at all.
+     * <p>
+     * Measured from the last frame of the streak rather than its start, so an ongoing streak keeps
+     * extending it. Deliberately generous: streaks can run into the thousands and a lull between
+     * frames must not close one early, or the gift is split in half and the real finishing frame
+     * is then discarded as a duplicate.
+     */
+    private static final long DEFAULT_COMBO_TIMEOUT_MS = 300_000;
+
+    /**
+     * TikTok repeats the finishing frame of a streak under a fresh msgId within milliseconds.
+     * Finishing frames arriving inside this window after a streak was closed are ignored.
+     */
+    private static final long FINALIZED_RETENTION_MS = 60_000;
+
+    private final Map<String, ComboState> activeCombos;
+    private final Map<String, Long> finalizedCombos;
     private final TikTokRoomInfo tikTokRoomInfo;
     private final GiftsManager giftsManager;
+    private final long comboTimeoutMillis;
+    private final LongSupplier clock;
 
+    /**
+     * The constructor the container resolves. Annotated because the clock-injecting overload below
+     * makes this class ambiguous to the injector, which then refuses to register it at all.
+     */
+    @Inject
     public TikTokGiftEventHandler(GiftsManager giftsManager, TikTokRoomInfo tikTokRoomInfo) {
-        giftsMessages = new HashMap<>();
+        this(giftsManager, tikTokRoomInfo, DEFAULT_COMBO_TIMEOUT_MS, System::currentTimeMillis);
+    }
+
+    public TikTokGiftEventHandler(GiftsManager giftsManager,
+                                  TikTokRoomInfo tikTokRoomInfo,
+                                  long comboTimeoutMillis,
+                                  LongSupplier clock) {
+        this.activeCombos = new HashMap<>();
+        this.finalizedCombos = new HashMap<>();
         this.tikTokRoomInfo = tikTokRoomInfo;
         this.giftsManager = giftsManager;
+        this.comboTimeoutMillis = comboTimeoutMillis;
+        this.clock = clock;
     }
 
     @SneakyThrows
@@ -54,43 +92,80 @@ public class TikTokGiftEventHandler {
     }
 
     public List<TikTokEvent> handleGift(WebcastGiftMessage currentMessage) {
+        var now = clock.getAsLong();
+        var events = new ArrayList<>(flushTimedOutCombos(now));
+
         //If gift is not streakable just return onGift event
         if (currentMessage.getGift().getType() != 1) {
-            var comboEvent = getGiftComboEvent(currentMessage, GiftComboStateType.Finished);
-            var giftEvent = getGiftEvent(currentMessage);
-            return List.of(comboEvent, giftEvent);
+            events.add(getGiftComboEvent(currentMessage, GiftComboStateType.Finished));
+            events.add(getGiftEvent(currentMessage));
+            return events;
         }
 
-        var userId = currentMessage.getUser().getId();
+        var key = comboKey(currentMessage);
         var currentType = GiftComboStateType.fromNumber(currentMessage.getSendType());
-        var previousMessage = giftsMessages.get(userId);
 
-        if (previousMessage == null) {
-            if (currentType == GiftComboStateType.Finished) {
-                return List.of(getGiftEvent(currentMessage));
-            } else {
-                giftsMessages.put(userId, currentMessage);
-                return List.of(getGiftComboEvent(currentMessage, GiftComboStateType.Begin));
-            }
+        if (currentType == GiftComboStateType.Active) {
+            var previous = activeCombos.put(key, new ComboState(currentMessage, now));
+            events.add(getGiftComboEvent(currentMessage,
+                    previous == null ? GiftComboStateType.Begin : GiftComboStateType.Active));
+            return events;
         }
 
-        var previousType = GiftComboStateType.fromNumber(previousMessage.getSendType());
-        if (currentType == GiftComboStateType.Active &&
-                previousType == GiftComboStateType.Active) {
-            giftsMessages.put(userId, currentMessage);
-            return List.of(getGiftComboEvent(currentMessage, GiftComboStateType.Active));
+        //TikTok may repeat the finishing frame of a streak under a fresh msgId. Without this guard
+        //every repeat raises another onGift and the gift gets counted twice.
+        var finalizedUntil = finalizedCombos.get(key);
+        if (finalizedUntil != null && finalizedUntil > now)
+            return events;
+
+        var previous = activeCombos.remove(key);
+        finalizedCombos.put(key, now + FINALIZED_RETENTION_MS);
+        if (previous != null)
+            events.add(getGiftComboEvent(currentMessage, GiftComboStateType.Finished));
+        events.add(getGiftEvent(currentMessage));
+        return events;
+    }
+
+    /**
+     * Closes streaks that timed out waiting for their finishing frame. Runs lazily on every
+     * incoming gift, so a streak left open at the very end of a live may still be missed.
+     */
+    private List<TikTokEvent> flushTimedOutCombos(long now) {
+        finalizedCombos.values().removeIf(expiresAt -> expiresAt <= now);
+        if (activeCombos.isEmpty())
+            return List.of();
+
+        var events = new ArrayList<TikTokEvent>();
+        var iterator = activeCombos.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            var state = entry.getValue();
+            if (now - state.updatedAt() < comboTimeoutMillis)
+                continue;
+
+            iterator.remove();
+            finalizedCombos.put(entry.getKey(), now + FINALIZED_RETENTION_MS);
+            events.add(getGiftComboEvent(state.message(), GiftComboStateType.Finished));
+            events.add(getGiftEvent(state.message()));
         }
+        return events;
+    }
 
+    /**
+     * Identifies a single streak. Keying on the user alone lets concurrent streaks of the same
+     * user overwrite each other, and made one finishing frame wipe the state of every other user.
+     */
+    private String comboKey(WebcastGiftMessage message) {
+        var groupId = message.getGroupId() != 0
+                ? Long.toString(message.getGroupId())
+                : message.getOrderId();
+        if (groupId == null || groupId.isEmpty())
+            groupId = Long.toString(message.getCommon().getMsgId());
 
-        if (currentType == GiftComboStateType.Finished &&
-                previousType == GiftComboStateType.Active) {
-            giftsMessages.clear();
-            return List.of(
-                    getGiftComboEvent(currentMessage, GiftComboStateType.Finished),
-                    getGiftEvent(currentMessage));
-        }
+        return message.getUser().getId() + ":" + message.getGiftId() + ":" + groupId;
+    }
 
-        return List.of();
+    private record ComboState(WebcastGiftMessage message, long updatedAt) {
     }
 
 
