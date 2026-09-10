@@ -30,7 +30,7 @@ import io.github.jwdeveloper.tiktok.data.requests.LiveUserData;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveRequestException;
 
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class LiveUserDataMapper
 {
@@ -92,7 +92,7 @@ public class LiveUserDataMapper
 
             return new LiveUserData.Response(json, statusEnum, roomInfo);
         } catch (JsonSyntaxException | IllegalStateException | NullPointerException e) {
-            logger.warning("Malformed Json: '"+json+"' - Error Message: "+e.getMessage());
+            logger.log(Level.WARNING, "Malformed Json: '"+json+"' - Error Message: "+e.getMessage(), e);
             return new LiveUserData.Response(json, LiveUserData.UserStatus.NotFound, null);
         }
     }
@@ -107,10 +107,14 @@ public class LiveUserDataMapper
 
             TikTokRoomInfo roomInfo = new TikTokRoomInfo();
             roomInfo.setRoomId(roomId);
-            roomInfo.setTitle(roomInfoJson.get("title").getAsString());
-            roomInfo.setStartTime(roomInfoJson.get("startTime").getAsLong());
-            roomInfo.setViewersCount(Optional.ofNullable(roomInfoJson.get("currentViewers")).filter(JsonElement::isJsonPrimitive).map(JsonElement::getAsInt).orElse(0));
-            roomInfo.setTotalViewersCount(roomInfoJson.get("totalViewers").getAsInt());
+            if (roomInfoJson.get("title") instanceof JsonPrimitive p)
+                roomInfo.setTitle(p.getAsString());
+            if (roomInfoJson.get("startTime") instanceof JsonPrimitive p)
+                roomInfo.setStartTime(p.getAsLong());
+            if (roomInfoJson.get("currentViewers") instanceof JsonPrimitive p)
+                roomInfo.setViewersCount(p.getAsInt());
+            if (roomInfoJson.get("totalViewers") instanceof JsonPrimitive p)
+                roomInfo.setViewersCount(p.getAsInt());
 
             var statusEnum = switch (status) {
                 case 2 -> LiveUserData.UserStatus.Live;
@@ -125,8 +129,8 @@ public class LiveUserDataMapper
                 userJson.get("nickname") instanceof JsonPrimitive prim ? prim.getAsString() : null,
                 userJson.get("signature") instanceof JsonPrimitive prim ? prim.getAsString() : null,
                 userJson.get("avatarUrl") instanceof JsonPrimitive prim ? new Picture(prim.getAsString()) : Picture.empty(),
-                userJson.get("following").getAsLong(),
-                userJson.get("followers").getAsLong(),
+                userJson.get("following") instanceof JsonPrimitive prim ? prim.getAsLong() : 0,
+                userJson.get("followers") instanceof JsonPrimitive prim ? prim.getAsLong() : 0,
                 List.of());
 
             roomInfo.setHost(foundUser);
@@ -134,7 +138,7 @@ public class LiveUserDataMapper
 
             return new LiveUserData.Response(jsonObject.toString(), statusEnum, roomInfo);
         } catch (JsonSyntaxException | IllegalStateException | NullPointerException e) {
-            logger.warning("Malformed Json: '"+jsonObject.toString()+"' - Error Message: "+e.getMessage());
+            logger.log(Level.WARNING, "Malformed Json: '" + jsonObject.toString() + "' - Error Message: " + e.getMessage(), e);
             return new LiveUserData.Response(jsonObject.toString(), LiveUserData.UserStatus.NotFound, null);
         }
     }
