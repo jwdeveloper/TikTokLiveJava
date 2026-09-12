@@ -1,0 +1,224 @@
+/*
+ * Copyright (c) 2023-2024 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package io.github.jwdeveloper.tiktok.client.http;
+
+import io.github.jwdeveloper.tiktok.api.data.settings.HttpClientSettings;
+import io.github.jwdeveloper.tiktok.api.data.settings.ProxyClientSettings;
+import io.github.jwdeveloper.tiktok.api.exceptions.TikTokLiveRequestException;
+import io.github.jwdeveloper.tiktok.api.exceptions.TikTokProxyRequestException;
+import io.github.jwdeveloper.tiktok.client.common.ActionResult;
+
+import javax.net.ssl.*;
+import java.io.IOException;
+import java.net.*;
+import java.net.http.*;
+import java.net.http.HttpResponse.ResponseInfo;
+import java.nio.ByteBuffer;
+import java.security.*;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import java.util.concurrent.Flow;
+import java.util.stream.Collectors;
+
+public class HttpProxyClient extends HttpClient {
+
+	private final ProxyClientSettings proxySettings;
+
+	public HttpProxyClient(HttpClientSettings httpClientSettings, String url, HttpRequest.BodyPublisher bodyPublisher) {
+		super(httpClientSettings, url, bodyPublisher);
+		this.proxySettings = httpClientSettings.getProxyClientSettings();
+	}
+
+	public <T> ActionResult<HttpResponse<T>> toHttpResponse(HttpResponse.BodyHandler<T> handler) {
+		return switch (proxySettings.getType()) {
+			case HTTP, DIRECT -> handleHttpProxyRequest(handler);
+			default -> handleSocksProxyRequest(handler);
+		};
+	}
+
+	public <T> ActionResult<HttpResponse<T>> handleHttpProxyRequest(HttpResponse.BodyHandler<T> handler) {
+		var builder = java.net.http.HttpClient.newBuilder()
+			.followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
+			.cookieHandler(new CookieManager())
+			.connectTimeout(httpClientSettings.getTimeout());
+
+		while (proxySettings.hasNext()) {
+			try {
+				InetSocketAddress address = proxySettings.next().toSocketAddress();
+				builder.proxy(ProxySelector.of(address));
+
+				httpClientSettings.getOnClientCreating().accept(builder);
+				var client = builder.build();
+				var request = prepareRequest();
+
+				var response = client.send(request, handler);
+				if (response.statusCode() != 200)
+					continue;
+				return ActionResult.success(response);
+			} catch (HttpConnectTimeoutException | ConnectException e) {
+				if (proxySettings.isAutoDiscard())
+					proxySettings.remove();
+				throw new TikTokProxyRequestException(e);
+			} catch (IOException e) {
+				if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
+					return super.toHttpResponse(handler);
+				throw new TikTokProxyRequestException(e);
+			} catch (Exception e) {
+				throw new TikTokLiveRequestException(e);
+			}
+		}
+		throw new TikTokLiveRequestException("No more proxies available!");
+	}
+
+	private <T> ActionResult<HttpResponse<T>> handleSocksProxyRequest(HttpResponse.BodyHandler<T> handler) {
+		try {
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, new TrustManager[]{ new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+				public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+				public X509Certificate[] getAcceptedIssuers() { return null; }
+			}}, null);
+
+			URI uri = toUri();
+			URL url = uri.toURL();
+
+			if (proxySettings.hasNext()) {
+				try {
+					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxySettings.next().toSocketAddress());
+
+					HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection(proxy);
+					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
+					socksConnection.setConnectTimeout(httpClientSettings.getTimeout().toMillisPart());
+					socksConnection.setReadTimeout(httpClientSettings.getTimeout().toMillisPart());
+					httpClientSettings.getHeaders().forEach(socksConnection::setRequestProperty);
+
+					byte[] body = socksConnection.getInputStream().readAllBytes();
+
+					Map<String, List<String>> headers = socksConnection.getHeaderFields()
+						.entrySet()
+						.stream()
+						.filter(entry -> entry.getKey() != null)
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+					var responseInfo = createResponseInfo(socksConnection.getResponseCode(), headers);
+
+					HttpResponse.BodySubscriber<T> subscriber = handler.apply(responseInfo);
+
+					subscriber.onSubscribe(new Flow.Subscription() {
+						@Override public void request(long n) {}
+						@Override public void cancel() {}
+					});
+
+					subscriber.onNext(List.of(ByteBuffer.wrap(body)));
+					subscriber.onComplete();
+
+					var response = createHttpResponse(subscriber.getBody().toCompletableFuture().join(), uri, responseInfo);
+
+					return ActionResult.success(response);
+				} catch (IOException e) {
+					if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
+						return super.toHttpResponse(handler);
+					if (proxySettings.isAutoDiscard())
+						proxySettings.remove();
+					throw new TikTokProxyRequestException(e);
+				} catch (Exception e) {
+					throw new TikTokLiveRequestException(e);
+				}
+			}
+			throw new TikTokLiveRequestException("No more proxies available!");
+		} catch (NoSuchAlgorithmException | MalformedURLException | KeyManagementException e) {
+			// Should never be reached!
+			System.out.println("handleSocksProxyRequest: If you see this, message us on discord!");
+			e.printStackTrace();
+		} catch (TikTokLiveRequestException e) {
+			e.printStackTrace();
+		}
+		return ActionResult.failure();
+	}
+
+	private ResponseInfo createResponseInfo(int code, Map<String, List<String>> headers) {
+		return new ResponseInfo() {
+			@Override
+			public int statusCode() {
+				return code;
+			}
+
+			@Override
+			public HttpHeaders headers() {
+				return HttpHeaders.of(headers, (s, s1) -> s != null);
+			}
+
+			@Override
+			public java.net.http.HttpClient.Version version() {
+				return java.net.http.HttpClient.Version.HTTP_2;
+			}
+		};
+	}
+
+	private <T> HttpResponse<T> createHttpResponse(T body,
+												   URI uri,
+												   ResponseInfo info) {
+		return new HttpResponse<>()
+		{
+			@Override
+			public int statusCode() {
+				return info.statusCode();
+			}
+
+			@Override
+			public HttpRequest request() {
+				throw new UnsupportedOperationException("TODO");
+			}
+
+			@Override
+			public Optional<HttpResponse<T>> previousResponse() {
+				return Optional.empty();
+			}
+
+			@Override
+			public HttpHeaders headers() {
+				return info.headers();
+			}
+
+			@Override
+			public T body() {
+				return body;
+			}
+
+			@Override
+			public Optional<SSLSession> sslSession() {
+				throw new UnsupportedOperationException("TODO");
+			}
+
+			@Override
+			public URI uri() {
+				return uri;
+			}
+
+			@Override
+			public java.net.http.HttpClient.Version version() {
+				return info.version();
+			}
+		};
+	}
+}

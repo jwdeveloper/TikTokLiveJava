@@ -8,6 +8,7 @@
     <artifactId>TikTokLiveJava</artifactId>
     <packaging>pom</packaging>
     <version>1.11.18-Release</version>
+
     <modules>
         <module>API</module>
         <module>Client</module>
@@ -22,6 +23,7 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lombok.version>1.18.32</lombok.version>
     </properties>
     <repositories>
         <repository>
@@ -38,6 +40,13 @@
                 <configuration>
                     <source>16</source>
                     <target>16</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -91,7 +100,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

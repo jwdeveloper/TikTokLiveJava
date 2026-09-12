@@ -22,11 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.TikTokSubNotifyEvent;
-import io.github.jwdeveloper.tiktok.data.events.envelop.TikTokChestEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokSubNotifyEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.envelop.TikTokChestEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.utils.ConsoleColors;
 
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.logging.Level;

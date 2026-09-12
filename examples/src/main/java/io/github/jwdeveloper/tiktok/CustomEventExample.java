@@ -22,8 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.models.gifts.*;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 import lombok.AllArgsConstructor;
 
 public class CustomEventExample {

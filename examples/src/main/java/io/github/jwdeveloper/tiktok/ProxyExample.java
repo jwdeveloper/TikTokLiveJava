@@ -22,6 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 import java.net.Proxy;
 
 public class ProxyExample {

@@ -23,16 +23,18 @@
 package io.github.jwdeveloper.tiktok.extension.recorder.impl;
 
 import com.google.gson.*;
-import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.data.events.*;
-import io.github.jwdeveloper.tiktok.data.events.control.TikTokPreConnectionEvent;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.api.annotations.TikTokEventObserver;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokConnectedEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokDisconnectedEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokLiveEndedEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.control.TikTokPreConnectionEvent;
+import io.github.jwdeveloper.tiktok.api.data.settings.LiveClientSettings;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.*;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.enums.LiveQuality;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.*;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.models.ConnectionState;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.models.ConnectionState;
 
 import java.io.*;
 import java.net.URI;

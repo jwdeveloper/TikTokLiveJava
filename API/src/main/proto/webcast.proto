@@ -7,7 +7,7 @@ package TikTok;
 import "data.proto";
 import "enums.proto";
 
-option java_package = "io.github.jwdeveloper.tiktok.messages.webcast";
+option java_package = "io.github.jwdeveloper.tiktok.api.messages.webcast";
 option java_multiple_files = true;
 
 

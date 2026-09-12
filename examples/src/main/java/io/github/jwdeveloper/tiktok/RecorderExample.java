@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 import io.github.jwdeveloper.tiktok.extension.recorder.TikTokLiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.event.TikTokLiveRecorderStartedEvent;
 

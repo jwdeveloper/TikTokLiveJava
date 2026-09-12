@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2023-2024 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package io.github.jwdeveloper.tiktok.api.data.events.social;
+
+import io.github.jwdeveloper.tiktok.api.annotations.EventMeta;
+import io.github.jwdeveloper.tiktok.api.annotations.EventType;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokHeaderEvent;
+import io.github.jwdeveloper.tiktok.api.data.models.users.User;
+import io.github.jwdeveloper.tiktok.api.messages.webcast.WebcastSocialMessage;
+import lombok.Getter;
+
+
+@Getter
+@EventMeta(eventType = EventType.Message)
+public class TikTokShareEvent extends TikTokHeaderEvent {
+    private final User user;
+    private final int totalShares;
+
+    public TikTokShareEvent(WebcastSocialMessage msg, Integer amount) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        this.totalShares = amount;
+    }
+
+    public TikTokShareEvent(WebcastSocialMessage msg) {
+        super(msg.getCommon());
+        user = User.map(msg.getUser());
+        totalShares = 1;
+    }
+
+    public static TikTokShareEvent of(String userName, int shaders) {
+        return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
+            .setUser(io.github.jwdeveloper.tiktok.api.messages.data.User.newBuilder()
+                .setUsername(userName)
+                .setNickname(userName)
+                .build())
+            .build(), shaders);
+    }
+
+    public static TikTokShareEvent of(User user, int shaders) {
+        return new TikTokShareEvent(WebcastSocialMessage.newBuilder()
+            .setUser(io.github.jwdeveloper.tiktok.api.messages.data.User.newBuilder()
+                .setUsername(user.getName())
+                .setNickname(user.getProfileName())
+                .build())
+            .build(), shaders);
+    }
+}
