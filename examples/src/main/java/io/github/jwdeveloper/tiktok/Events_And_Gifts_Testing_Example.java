@@ -22,15 +22,16 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.TikTokCommentEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokSubscribeEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokFollowEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftComboStateType;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokCommentEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokSubscribeEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftComboEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.social.TikTokFollowEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.api.data.models.gifts.GiftComboStateType;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 
 public class Events_And_Gifts_Testing_Example
 {

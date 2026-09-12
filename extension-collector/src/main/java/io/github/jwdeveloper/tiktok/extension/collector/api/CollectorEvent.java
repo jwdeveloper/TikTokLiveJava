@@ -22,7 +22,7 @@
  */
 package io.github.jwdeveloper.tiktok.extension.collector.api;
 
-import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
 import org.bson.Document;
 
 public interface CollectorEvent {

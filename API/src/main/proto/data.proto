@@ -1,7 +1,7 @@
 syntax = "proto3";
 package TikTok;
 
-option java_package = "io.github.jwdeveloper.tiktok.messages.data";
+option java_package = "io.github.jwdeveloper.tiktok.api.messages.data";
 option java_multiple_files = true;
 
 import "enums.proto";

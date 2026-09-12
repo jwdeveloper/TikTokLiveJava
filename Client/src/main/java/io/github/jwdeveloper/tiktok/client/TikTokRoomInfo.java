@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2023-2024 jwdeveloper jacekwoln@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package io.github.jwdeveloper.tiktok.client;
+
+import io.github.jwdeveloper.tiktok.api.data.models.RankingUser;
+import io.github.jwdeveloper.tiktok.api.data.models.users.User;
+import io.github.jwdeveloper.tiktok.api.live.LiveRoomInfo;
+import io.github.jwdeveloper.tiktok.api.models.ConnectionState;
+import lombok.Data;
+
+import java.util.LinkedList;
+import java.util.List;
+
+@Data
+public class TikTokRoomInfo implements LiveRoomInfo
+{
+	private String roomId;
+	private int likesCount;
+	private int viewersCount;
+	private int totalViewersCount;
+	private long startTime;
+	private boolean ageRestricted;
+	private User host;
+	private List<RankingUser> usersRanking = new LinkedList<>();
+	private String hostName;
+	private String title;
+	private String language = "en";
+	private ConnectionState connectionState = ConnectionState.DISCONNECTED;
+
+	public boolean hasConnectionState(ConnectionState state) {
+		return connectionState == state;
+	}
+
+	public void updateRanking(List<RankingUser> rankingUsers) {
+		usersRanking.clear();
+		usersRanking.addAll(rankingUsers);
+	}
+
+	@Override
+	public void copy(LiveRoomInfo roomInfo) {
+		if (roomInfo == null) return;
+		this.roomId = roomInfo.getRoomId();
+		this.likesCount = roomInfo.getLikesCount();
+		this.viewersCount = roomInfo.getViewersCount();
+		this.totalViewersCount = roomInfo.getTotalViewersCount();
+		this.startTime = roomInfo.getStartTime();
+		this.ageRestricted = roomInfo.isAgeRestricted();
+		this.host = roomInfo.getHost();
+		this.usersRanking = roomInfo.getUsersRanking();
+		this.hostName = roomInfo.getHostName();
+		this.title = roomInfo.getTitle();
+		this.language = roomInfo.getLanguage();
+		// this.connectionState = roomInfo.getConnectionState(); // This should not be copied - Controlled elsewhere!
+	}
+}

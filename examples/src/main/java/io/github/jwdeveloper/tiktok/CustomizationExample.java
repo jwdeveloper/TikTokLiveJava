@@ -22,9 +22,12 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.live.*;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.live.LiveEventsHandler;
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
+import io.github.jwdeveloper.tiktok.client.TikTokLiveEventHandler;
 
 /**
  * When the default implementation does not meet your needs,
