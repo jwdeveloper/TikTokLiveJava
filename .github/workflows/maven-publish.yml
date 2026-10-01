@@ -34,7 +34,7 @@ jobs:
           bump_each_commit: false
    
     - name: 4. Update version in pom.xml (Release only)
-      run: mvn versions:set -DnewVersion=${{steps.version.outputs.version_tag}} 
+      run: mvn versions:set -DnewVersion=${{steps.version.outputs.version_tag}} -DgenerateBackupPoms=false
            
     - name: 5. Build with Maven
       run: mvn package -P publish --file pom.xml
