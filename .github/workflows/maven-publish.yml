@@ -11,15 +11,15 @@ jobs:
     - name: 1. Checkout main
       uses: actions/checkout@v5
       with:
-       fetch-depth: 0   
-    
+       fetch-depth: 0
+
     - name: 2. Set up JDK 16
       uses: actions/setup-java@v6
       with:
         java-version: '16'
         distribution: 'corretto'
         cache: maven
-        
+
     - name: 3. Create Versions
       id: version
       uses: PaulHatch/semantic-version@v6.0.2
@@ -32,10 +32,10 @@ jobs:
           change_path: "."
           short_tags: false
           bump_each_commit: false
-   
+
     - name: 4. Update version in pom.xml (Release only)
       run: mvn versions:set -DnewVersion=${{steps.version.outputs.version_tag}} -DgenerateBackupPoms=false
-           
+
     - name: 5. Build with Maven
       run: mvn package -P publish --file pom.xml
 
@@ -54,7 +54,8 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add -A
+        git add pom.xml
+        git add '**/pom.xml'
         git commit -m "Update version to ${{ steps.version.outputs.version_tag }}"
         git push origin HEAD:${{ github.ref_name }}
 
