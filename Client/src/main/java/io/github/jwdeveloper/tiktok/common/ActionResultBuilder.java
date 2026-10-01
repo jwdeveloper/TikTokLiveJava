@@ -49,6 +49,6 @@ public class ActionResultBuilder<T>
 	}
 
 	public ActionResult<T> failure() {
-		return ActionResult.success(content, message).previous(previous);
+		return ActionResult.failure(content, message).previous(previous);
 	}
 }

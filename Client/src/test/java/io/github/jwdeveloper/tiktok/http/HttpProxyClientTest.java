@@ -52,9 +52,14 @@ class HttpProxyClientTest {
         var selected = new ArrayList<ProxyData>();
         proxies.setOnProxyUpdated(selected::add);
         var transport = Mockito.mock(java.net.http.HttpClient.class);
+        var unavailable = response(503);
+        var rateLimited = response(429);
+        var blocked = response(420);
+        var serverFailure = response(500);
+        var notFound = response(404);
         var success = response(200);
         Mockito.when(transport.send(Mockito.any(HttpRequest.class), Mockito.<HttpResponse.BodyHandler<String>>any()))
-            .thenReturn(response(503), response(429), response(420), response(500), response(404), success);
+            .thenReturn(unavailable, rateLimited, blocked, serverFailure, notFound, success);
 
         var result = client(settings, transport).toHttpResponse(HttpResponse.BodyHandlers.ofString());
 
@@ -100,9 +105,10 @@ class HttpProxyClientTest {
         proxies.setOnProxyUpdated(selected::add);
         var transport = Mockito.mock(java.net.http.HttpClient.class);
         var directFailure = response(429);
+        var unexpectedSuccess = response(200);
         Mockito.when(transport.send(Mockito.any(HttpRequest.class), Mockito.<HttpResponse.BodyHandler<String>>any()))
             .thenThrow(new IOException("Proxy CONNECT failed with status 503"))
-            .thenReturn(directFailure, response(200));
+            .thenReturn(directFailure, unexpectedSuccess);
 
         var result = client(settings, transport).toHttpResponse(HttpResponse.BodyHandlers.ofString());
 
