@@ -31,11 +31,9 @@ package io.github.jwdeveloper.tiktok.annotations;
  * LOWEST 5th
  */
 public enum Priority {
-    LOWEST(2), LOW(1), NORMAL(0), HIGH(-1), HIGHEST(-2);
-
-    public final int value;
-
-    Priority(int value) {
-        this.value = value;
-    }
+    HIGHEST,
+    HIGH,
+    NORMAL,
+    LOW,
+    LOWEST
 }

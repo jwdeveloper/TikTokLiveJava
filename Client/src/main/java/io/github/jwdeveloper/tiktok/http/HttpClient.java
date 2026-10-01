@@ -30,8 +30,8 @@ import lombok.AllArgsConstructor;
 import java.net.*;
 import java.net.http.*;
 import java.nio.charset.*;
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.util.Map;
 import java.util.regex.*;
 import java.util.stream.Collectors;
 
@@ -41,30 +41,36 @@ public class HttpClient {
     protected final HttpClientSettings httpClientSettings;
     protected final String url;
     protected final HttpRequest.BodyPublisher bodyPublisher;
+    protected final HttpClientFactory httpClientFactory;
     private final Pattern pattern = Pattern.compile("charset=(.*?)(?=&|$)");
 
+    public HttpClient(HttpClientSettings httpClientSettings, String url, HttpRequest.BodyPublisher bodyPublisher) {
+        this(httpClientSettings, url, bodyPublisher, HttpClientFactory.forSettings(httpClientSettings));
+    }
+
     public <T> ActionResult<HttpResponse<T>> toHttpResponse(HttpResponse.BodyHandler<T> handler) {
-        var client = prepareClient();
-        var request = prepareRequest();
         try {
-            var response = client.send(request, handler);
+            var response = httpClientFactory.send(prepareRequest(), handler, null);
             var result = ActionResult.of(response);
             return switch (response.statusCode()) {
                 case 420 -> result.message("HttpResponse Code:", response.statusCode(), "| IP Cloudflare Blocked.").failure();
                 case 429 -> {
                     var wait = response.headers().firstValue("ratelimit-reset");
-					if (wait.isEmpty())
+                    if (wait.isEmpty())
                         yield result.message("HttpResponse Code:", response.statusCode(), "| Sign server rate limit reached. Try again later.").failure();
                     Duration duration = Duration.ofSeconds(Long.parseLong(wait.get()));
                     yield result.message("HttpResponse Code:", response.statusCode(),
                         String.format("| Sign server rate limit reached. Try again in %02d:%02d.", duration.toMinutesPart(), duration.toSecondsPart())).failure();
-				}
+                }
                 case 500, 501, 502, 503 -> result.message("HttpResponse Code:", response.statusCode(), "| Sign server Error. Try again later.").failure();
                 case 504 -> result.message("HttpResponse Code:", response.statusCode(), "| Sign server Timeout. Try again later.").failure();
                 case 200 -> result.success();
                 default -> result.message("HttpResponse Code:", response.statusCode()).failure();
             };
-		} catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new TikTokLiveRequestException(e);
+        } catch (Exception e) {
             throw new TikTokLiveRequestException(e);
         }
     }
@@ -117,16 +123,6 @@ public class HttpClient {
 
         httpClientSettings.getOnRequestCreating().accept(requestBuilder);
         return requestBuilder.build();
-    }
-
-    protected java.net.http.HttpClient prepareClient() {
-        var builder = java.net.http.HttpClient.newBuilder()
-            .followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
-            .cookieHandler(new CookieManager())
-            .connectTimeout(httpClientSettings.getTimeout());
-
-        httpClientSettings.getOnClientCreating().accept(builder);
-        return builder.build();
     }
 
     protected String prepareUrlWithParameters(String url, Map<String, Object> parameters) {

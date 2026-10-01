@@ -22,16 +22,54 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
+import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
+
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
- *  Manage events listeners objects
+ * Manages a collection of event listener objects and their configuration.
  */
 public interface ListenersManager
 {
+    /**
+     * Returns the listeners currently registered with this manager.
+     *
+     * @return list of registered listener objects
+     */
     List<Object> getListeners();
 
+    /**
+     * Registers a listener with this manager.
+     *
+     * @param listener listener object to register
+     */
     void addListener(Object listener);
 
+    /**
+     * Removes a listener from this manager.
+     *
+     * @param listener listener object to remove
+     */
     void removeListener(Object listener);
+
+    /**
+     * Sets the executor service used to process asynchronous event handling.
+     * If no executor is provided, implementations may lazily create an executor
+     * using {@link Executors#newCachedThreadPool()} when asynchronous handling
+     * is requested.
+     *
+     * @param executor executor service to use for asynchronous event handling
+     * @see TikTokEventObserver#async()
+     */
+    void setAsyncExecutor(ExecutorService executor);
+
+    /**
+     * Returns the executor service currently configured for asynchronous
+     * event handling.
+     *
+     * @return configured executor service, or {@code null} if none has been
+     *         provided or allocated
+     */
+    ExecutorService getAsyncExecutor();
 }

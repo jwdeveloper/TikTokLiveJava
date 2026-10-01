@@ -27,18 +27,21 @@ import lombok.*;
 
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 @Getter
 @Setter
 public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyData>
 {
-    private boolean enabled, autoDiscard = true, fallback = true, allowWebsocket = true;
-    private Rotation rotation = Rotation.CONSECUTIVE;
+    private volatile boolean enabled, autoDiscard = true, fallback = true, allowWebsocket = true;
+    private volatile Rotation rotation = Rotation.CONSECUTIVE;
     private final List<ProxyData> proxyList = new ArrayList<>();
     private int index;
-    private Proxy.Type type = Proxy.Type.DIRECT;
-    private Consumer<ProxyData> onProxyUpdated = x -> {};
+    private volatile Proxy.Type type = Proxy.Type.DIRECT;
+    private volatile Consumer<ProxyData> onProxyUpdated = x -> {};
+    @Getter(AccessLevel.NONE)
+    private final ThreadLocal<ProxyData> lastSelectedProxy = new ThreadLocal<>();
 
     public boolean addProxy(String addressPort) {
         return addProxy(ProxyData.map(addressPort).toSocketAddress());
@@ -48,12 +51,29 @@ public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyD
         return addProxy(new InetSocketAddress(address, port));
     }
 
-    public boolean addProxy(InetSocketAddress inetAddress) {
+    public synchronized boolean addProxy(InetSocketAddress inetAddress) {
         return proxyList.add(new ProxyData(inetAddress.getHostString(), inetAddress.getPort()));
     }
 
     public void addProxies(List<String> list) {
         list.forEach(this::addProxy);
+    }
+
+    /**
+     * Returns the mutable list for compatibility. Use {@link #getProxiesSnapshot()}
+     * for iteration while requests are selecting or discarding proxies, and use
+     * {@code addProxy} and {@code remove} to change the list concurrently.
+     */
+    public synchronized List<ProxyData> getProxyList() {
+        return proxyList;
+    }
+
+    public synchronized List<ProxyData> getProxiesSnapshot() {
+        return List.copyOf(proxyList);
+    }
+
+    public synchronized int getProxyCount() {
+        return proxyList.size();
     }
 
     @Override
@@ -63,25 +83,62 @@ public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyD
 
     @Override
     public synchronized ProxyData next() {
-        try {
-            var nextProxy = proxyList.get(index);
-            onProxyUpdated.accept(nextProxy);
-            return nextProxy;
-        } finally {
-            switch (rotation) {
-                case CONSECUTIVE -> index = ++index % proxyList.size();
-                case RANDOM -> index = (int) (Math.random() * proxyList.size());
-                case NONE -> index = Math.max(index, 0);
-            }
-        }
+        if (proxyList.isEmpty())
+            throw new NoSuchElementException("No more proxies available!");
+
+        normalizeIndex();
+        if (rotation == Rotation.RANDOM)
+            index = ThreadLocalRandom.current().nextInt(proxyList.size());
+
+        var nextProxy = proxyList.get(index);
+        if (rotation == Rotation.CONSECUTIVE)
+            index = (index + 1) % proxyList.size();
+
+        lastSelectedProxy.set(nextProxy);
+        onProxyUpdated.accept(nextProxy);
+        return nextProxy;
     }
 
+    /** Removes the most recent proxy selected by this thread. */
     @Override
     public synchronized void remove() {
-        proxyList.remove(index);
+        var selectedProxy = lastSelectedProxy.get();
+        if (selectedProxy == null)
+            throw new IllegalStateException("Call next() before removing a proxy!");
+        lastSelectedProxy.remove();
+        remove(selectedProxy);
     }
 
-    public void setIndex(int index) {
+    /**
+     * Removes the selected endpoint even if another request has advanced rotation.
+     * Returns false if another request has already removed it.
+     */
+    public synchronized boolean remove(ProxyData proxyData) {
+        Objects.requireNonNull(proxyData, "proxyData");
+        if (proxyData.equals(lastSelectedProxy.get()))
+            lastSelectedProxy.remove();
+
+        var removedIndex = proxyList.indexOf(proxyData);
+        if (removedIndex < 0)
+            return false;
+
+        proxyList.remove(removedIndex);
+        if (removedIndex < index)
+            index--;
+        normalizeIndex();
+        return true;
+    }
+
+    private void normalizeIndex() {
+        index = proxyList.isEmpty() ? 0 : Math.floorMod(index, proxyList.size());
+    }
+
+    public synchronized int getIndex() {
+        normalizeIndex();
+        return index;
+    }
+
+    public synchronized void setIndex(int index) {
         if (index == 0 && proxyList.isEmpty())
             this.index = 0;
         else {
@@ -91,23 +148,28 @@ public class ProxyClientSettings implements Iterator<ProxyData>, Iterable<ProxyD
         }
     }
 
+    public synchronized void setRotation(Rotation rotation) {
+        this.rotation = Objects.requireNonNull(rotation, "rotation");
+    }
+
     @Override
-    public ProxyClientSettings clone() {
+    public synchronized ProxyClientSettings clone() {
         ProxyClientSettings settings = new ProxyClientSettings();
         settings.setEnabled(enabled);
         settings.setAutoDiscard(autoDiscard);
         settings.setFallback(fallback);
         settings.setAllowWebsocket(allowWebsocket);
         settings.setRotation(rotation);
-        settings.setIndex(index);
         settings.setType(type);
         settings.setOnProxyUpdated(onProxyUpdated);
-        proxyList.forEach(proxyData -> settings.addProxy(proxyData.getAddress(), proxyData.getPort()));
+        settings.proxyList.addAll(proxyList);
+        normalizeIndex();
+        settings.setIndex(index);
         return settings;
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return "ProxyClientSettings{" +
             "enabled=" + enabled +
             ", autoDiscard=" + autoDiscard +

@@ -23,17 +23,67 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.data.settings.*;
+import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import lombok.Getter;
 
-@Getter
+import java.io.IOException;
+import java.net.*;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 public class HttpClientFactory {
+    @Getter
     private final LiveClientSettings liveClientSettings;
+    private RotatingProxySelector proxySelector;
+    private java.net.http.HttpClient httpClient;
 
     public HttpClientFactory(LiveClientSettings liveClientSettings) {
         this.liveClientSettings = liveClientSettings;
     }
 
     public HttpClientBuilder client(String url) {
-        return new HttpClientBuilder(url, liveClientSettings.getHttpSettings().clone());
+        return new HttpClientBuilder(url, liveClientSettings.getHttpSettings().clone(), this);
+    }
+
+    static HttpClientFactory forSettings(HttpClientSettings settings) {
+        var liveSettings = new LiveClientSettings();
+        liveSettings.setHttpSettings(settings);
+        return new HttpClientFactory(liveSettings);
+    }
+
+    /** Creates the owning LiveClient's transport once, after its settings have been configured. */
+    synchronized java.net.http.HttpClient getHttpClient() {
+        if (httpClient == null) {
+            var settings = liveClientSettings.getHttpSettings();
+            var builder = java.net.http.HttpClient.newBuilder()
+                .followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
+                .cookieHandler(new CookieManager())
+                .connectTimeout(settings.getTimeout());
+            var proxySettings = settings.getProxyClientSettings();
+            if (proxySettings.isEnabled() && proxySettings.getType() != Proxy.Type.SOCKS) {
+                proxySelector = new RotatingProxySelector();
+                builder.proxy(proxySelector);
+            }
+            settings.getOnClientCreating().accept(builder);
+            httpClient = builder.build();
+        }
+        return httpClient;
+    }
+
+    public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException {
+        return send(request, handler, null);
+    }
+
+    <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> handler, ProxyData endpoint) throws IOException, InterruptedException {
+        var client = getHttpClient();
+        var selector = proxySelector;
+        if (selector == null)
+            return client.send(request, handler);
+        var proxy = selector.bind(endpoint);
+        try {
+            return client.send(request, handler);
+        } finally {
+            selector.clear(proxy);
+        }
     }
 }

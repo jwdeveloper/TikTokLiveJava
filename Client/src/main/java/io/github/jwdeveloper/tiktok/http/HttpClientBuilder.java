@@ -31,17 +31,22 @@ import java.util.function.Consumer;
 public class HttpClientBuilder {
 
     private final HttpClientSettings httpClientSettings;
+    private final HttpClientFactory httpClientFactory;
     private String url;
     private HttpRequest.BodyPublisher bodyPublisher;
 
     public HttpClientBuilder(String url, HttpClientSettings httpClientSettings) {
+        this(url, httpClientSettings, HttpClientFactory.forSettings(httpClientSettings));
+    }
+
+    HttpClientBuilder(String url, HttpClientSettings httpClientSettings, HttpClientFactory httpClientFactory) {
         this.httpClientSettings = httpClientSettings;
+        this.httpClientFactory = httpClientFactory;
         this.url = url;
     }
 
     public HttpClientBuilder(String url) {
-        httpClientSettings = new HttpClientSettings();
-        this.url = url;
+        this(url, new HttpClientSettings());
     }
 
     public HttpClientBuilder withUrl(String url) {
@@ -49,6 +54,10 @@ public class HttpClientBuilder {
         return this;
     }
 
+    /**
+     * Configures this request's settings. For factory-created builders, configure transport options
+     * such as the connect timeout and {@code onClientCreating} on the owning LiveClient before its first request.
+     */
     public HttpClientBuilder withHttpClientSettings(Consumer<HttpClientSettings> consumer) {
         consumer.accept(httpClientSettings);
         return this;
@@ -88,7 +97,7 @@ public class HttpClientBuilder {
     public HttpClient build() {
         var proxyClientSettings = httpClientSettings.getProxyClientSettings();
         if (proxyClientSettings.isEnabled() && proxyClientSettings.hasNext())
-            return new HttpProxyClient(httpClientSettings, url, bodyPublisher);
-        return new HttpClient(httpClientSettings, url, bodyPublisher);
+            return new HttpProxyClient(httpClientSettings, url, bodyPublisher, httpClientFactory);
+        return new HttpClient(httpClientSettings, url, bodyPublisher, httpClientFactory);
     }
 }

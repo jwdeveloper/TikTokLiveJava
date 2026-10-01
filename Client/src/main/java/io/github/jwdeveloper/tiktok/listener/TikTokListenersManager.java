@@ -42,7 +42,7 @@ public class TikTokListenersManager implements ListenersManager {
 
     private final Map<Object, List<ListenerMethodInfo>> listeners;
     private final LiveEventsHandler eventsHandler;
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
     private final DependanceContainer dependanceContainer;
 
 
@@ -51,7 +51,6 @@ public class TikTokListenersManager implements ListenersManager {
         this.eventsHandler = tikTokEventHandler;
         this.dependanceContainer = dependanceContainer;
         this.listeners = new HashMap<>();
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     @Override
@@ -84,12 +83,22 @@ public class TikTokListenersManager implements ListenersManager {
         listeners.remove(listener);
     }
 
+    @Override
+    public void setAsyncExecutor(ExecutorService executor) {
+        this.executorService = executor;
+    }
+
+    @Override
+    public ExecutorService getAsyncExecutor() {
+        return executorService;
+    }
+
     private List<ListenerMethodInfo> getMethodsInfo(Object listener) {
         return Arrays.stream(listener.getClass().getDeclaredMethods())
                 .filter(e -> e.isAnnotationPresent(TikTokEventObserver.class))
                 .filter(e -> e.getParameterCount() >= 1)
                 .map(method -> getSingleMethodInfo(listener, method))
-                .sorted(Comparator.comparingInt(a -> a.getPriority().value))
+                .sorted(Comparator.comparingInt(a -> a.getPriority().ordinal()))
                 .toList();
     }
 
@@ -111,15 +120,23 @@ public class TikTokListenersManager implements ListenersManager {
 
         if (info.isAsync()) {
             var action = info.getAction();
+            var asyncExecutor = getOrCreateExecutorService();
             info.setAction((liveClient, event) ->
             {
-                executorService.submit(() ->
+                asyncExecutor.submit(() ->
                 {
                     action.onEvent(liveClient, event);
                 });
             });
         }
         return info;
+    }
+
+    private synchronized ExecutorService getOrCreateExecutorService() {
+        if (executorService == null) {
+            executorService = Executors.newCachedThreadPool();
+        }
+        return executorService;
     }
 
 

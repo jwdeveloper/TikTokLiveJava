@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok.http;
 
 import io.github.jwdeveloper.tiktok.common.ActionResult;
+import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
 import io.github.jwdeveloper.tiktok.data.settings.*;
 import io.github.jwdeveloper.tiktok.exceptions.*;
 
@@ -47,6 +48,11 @@ public class HttpProxyClient extends HttpClient {
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}
 
+	HttpProxyClient(HttpClientSettings httpClientSettings, String url, HttpRequest.BodyPublisher bodyPublisher, HttpClientFactory httpClientFactory) {
+		super(httpClientSettings, url, bodyPublisher, httpClientFactory);
+		this.proxySettings = httpClientSettings.getProxyClientSettings();
+	}
+
 	public <T> ActionResult<HttpResponse<T>> toHttpResponse(HttpResponse.BodyHandler<T> handler) {
 		return switch (proxySettings.getType()) {
 			case HTTP, DIRECT -> handleHttpProxyRequest(handler);
@@ -55,37 +61,33 @@ public class HttpProxyClient extends HttpClient {
 	}
 
 	public <T> ActionResult<HttpResponse<T>> handleHttpProxyRequest(HttpResponse.BodyHandler<T> handler) {
-		var builder = java.net.http.HttpClient.newBuilder()
-			.followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
-			.cookieHandler(new CookieManager())
-			.connectTimeout(httpClientSettings.getTimeout());
-
 		while (proxySettings.hasNext()) {
+			ProxyData endpoint = proxySettings.next();
 			try {
-				InetSocketAddress address = proxySettings.next().toSocketAddress();
-				builder.proxy(ProxySelector.of(address));
-
-				httpClientSettings.getOnClientCreating().accept(builder);
-				var client = builder.build();
-				var request = prepareRequest();
-
-				var response = client.send(request, handler);
+				var response = httpClientFactory.send(prepareRequest(), handler, endpoint);
 				if (response.statusCode() != 200)
 					continue;
 				return ActionResult.success(response);
 			} catch (HttpConnectTimeoutException | ConnectException e) {
 				if (proxySettings.isAutoDiscard())
-					proxySettings.remove();
+					proxySettings.remove(endpoint);
 				throw new TikTokProxyRequestException(e);
 			} catch (IOException e) {
-				if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
+				if (isUnsupportedProxy(e) && proxySettings.isFallback())
 					return super.toHttpResponse(handler);
 				throw new TikTokProxyRequestException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new TikTokLiveRequestException(e);
 			} catch (Exception e) {
 				throw new TikTokLiveRequestException(e);
 			}
 		}
 		throw new TikTokLiveRequestException("No more proxies available!");
+	}
+
+	private boolean isUnsupportedProxy(IOException exception) {
+		return exception.getMessage() != null && exception.getMessage().contains("503");
 	}
 
 	private <T> ActionResult<HttpResponse<T>> handleSocksProxyRequest(HttpResponse.BodyHandler<T> handler) {
@@ -101,8 +103,9 @@ public class HttpProxyClient extends HttpClient {
 			URL url = uri.toURL();
 
 			if (proxySettings.hasNext()) {
+				ProxyData endpoint = proxySettings.next();
 				try {
-					Proxy proxy = new Proxy(Proxy.Type.SOCKS, proxySettings.next().toSocketAddress());
+					Proxy proxy = new Proxy(Proxy.Type.SOCKS, endpoint.toSocketAddress());
 
 					HttpsURLConnection socksConnection = (HttpsURLConnection) url.openConnection(proxy);
 					socksConnection.setSSLSocketFactory(sc.getSocketFactory());
@@ -134,10 +137,10 @@ public class HttpProxyClient extends HttpClient {
 
 					return ActionResult.success(response);
 				} catch (IOException e) {
-					if (e.getMessage().contains("503") && proxySettings.isFallback()) // Indicates proxy protocol is not supported
+					if (isUnsupportedProxy(e) && proxySettings.isFallback()) // Indicates proxy protocol is not supported
 						return super.toHttpResponse(handler);
 					if (proxySettings.isAutoDiscard())
-						proxySettings.remove();
+						proxySettings.remove(endpoint);
 					throw new TikTokProxyRequestException(e);
 				} catch (Exception e) {
 					throw new TikTokLiveRequestException(e);

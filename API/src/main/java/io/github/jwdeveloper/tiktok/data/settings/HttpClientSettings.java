@@ -22,15 +22,11 @@
  */
 package io.github.jwdeveloper.tiktok.data.settings;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
+import java.net.http.*;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Consumer;
 
 
@@ -80,8 +76,11 @@ public class HttpClientSettings {
     }
 
     /**
-     * @param onClientCreating Every time new instance of Http client request in created this method will be triggered
-     *                         use to modify http client
+     * Configures the HTTP transport owned by a LiveClient. Called once, when that
+     * client's first HTTP request creates the transport.
+     * Use {@link #onRequestCreating(Consumer)} to customize individual requests.
+     *
+     * @param onClientCreating callback used to configure the HTTP client
      */
     public void onClientCreating(Consumer<HttpClient.Builder> onClientCreating) {
         this.onClientCreating = onClientCreating;

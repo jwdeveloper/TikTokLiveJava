@@ -114,7 +114,7 @@ public class TikTokWebSocketClient implements LiveSocketClient {
 				return;
 			}
             if (proxySettings.isAutoDiscard())
-                proxySettings.remove();
+                proxySettings.remove(proxyData);
 		}
         throw new TikTokLiveException("Failed to connect to the websocket");
     }

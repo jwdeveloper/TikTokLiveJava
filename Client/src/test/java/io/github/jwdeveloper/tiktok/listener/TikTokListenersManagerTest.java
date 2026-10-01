@@ -32,16 +32,19 @@ import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
 import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
 import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
 import io.github.jwdeveloper.tiktok.live.LiveClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 
 class TikTokListenersManagerTest {
 
@@ -62,6 +65,54 @@ class TikTokListenersManagerTest {
         tikTokListenersManager = new TikTokListenersManager(eventObserver, dependanceContainer);
     }
 
+    @AfterEach
+    void stopListenerExecutor() throws ReflectiveOperationException, InterruptedException {
+        var executor = getListenerExecutor();
+        if (executor != null) {
+            executor.shutdownNow();
+            assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS), "Listener executor did not terminate");
+        }
+    }
+
+    @Test
+    void synchronousListenersDoNotAllocateExecutor() throws ReflectiveOperationException {
+        assertNull(getListenerExecutor());
+        var listener = new SynchronousListener();
+        tikTokListenersManager.addListener(listener);
+        assertNull(getListenerExecutor());
+
+        var event = new TikTokEvent() {};
+        eventObserver.publish(liveClient, event);
+
+        assertSame(event, listener.receivedEvent);
+        assertSame(Thread.currentThread(), listener.callbackThread);
+        assertNull(getListenerExecutor());
+    }
+
+    @Test
+    void asynchronousListenerAllocatesCachedExecutorAndReceivesEvents()
+            throws ReflectiveOperationException, InterruptedException {
+        assertNull(getListenerExecutor());
+        var listener = new AsynchronousListener();
+        tikTokListenersManager.addListener(listener);
+
+        var executor = getListenerExecutor();
+        assertNotNull(executor);
+        assertTrue(executor instanceof ThreadPoolExecutor);
+        var cachedPool = (ThreadPoolExecutor) executor;
+        assertEquals(0, cachedPool.getCorePoolSize());
+        assertEquals(Integer.MAX_VALUE, cachedPool.getMaximumPoolSize());
+
+        var event = new TikTokEvent() {};
+        eventObserver.publish(liveClient, event);
+
+        assertTrue(listener.completed.await(5, TimeUnit.SECONDS), "Async listener was not invoked");
+        assertSame(event, listener.receivedEvent.get());
+        assertNotSame(Thread.currentThread(), listener.callbackThread.get());
+        assertTrue(cachedPool.getTaskCount() >= 1, "Callback did not use the listener executor");
+        assertSame(executor, getListenerExecutor());
+    }
+
     @Test
     void addListener() {
         Object listener = new TikTokEventListenerTest();
@@ -73,15 +124,18 @@ class TikTokListenersManagerTest {
     }
 
     @Test
-    void addListener_alreadyRegistered_throwsException() {
+    void addListener_alreadyRegistered_throwsException() throws ReflectiveOperationException {
         Object listener = new TikTokEventListenerTest();
         tikTokListenersManager.addListener(listener);
+        var executor = getListenerExecutor();
+        assertNotNull(executor);
 
         Exception exception = assertThrows(TikTokLiveException.class, () -> {
             tikTokListenersManager.addListener(listener);
         });
 
         assertEquals("Listener " + listener.getClass() + " has already been registered", exception.getMessage());
+        assertSame(executor, getListenerExecutor());
     }
 
     @Test
@@ -109,6 +163,36 @@ class TikTokListenersManagerTest {
     void removeListener_notRegistered_doesNotThrow() {
         Object listener = new TikTokEventListenerTest();
         assertDoesNotThrow(() -> tikTokListenersManager.removeListener(listener));
+    }
+
+    private ExecutorService getListenerExecutor() throws ReflectiveOperationException {
+        var field = TikTokListenersManager.class.getDeclaredField("executorService");
+        field.setAccessible(true);
+        return (ExecutorService) field.get(tikTokListenersManager);
+    }
+
+    public static class SynchronousListener {
+        private TikTokEvent receivedEvent;
+        private Thread callbackThread;
+
+        @TikTokEventObserver
+        public void onEvent(TikTokEvent event) {
+            receivedEvent = event;
+            callbackThread = Thread.currentThread();
+        }
+    }
+
+    public static class AsynchronousListener {
+        private final AtomicReference<TikTokEvent> receivedEvent = new AtomicReference<>();
+        private final AtomicReference<Thread> callbackThread = new AtomicReference<>();
+        private final CountDownLatch completed = new CountDownLatch(1);
+
+        @TikTokEventObserver(async = true)
+        public void onEvent(TikTokEvent event) {
+            receivedEvent.set(event);
+            callbackThread.set(Thread.currentThread());
+            completed.countDown();
+        }
     }
 
 
