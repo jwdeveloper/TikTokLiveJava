@@ -1,5 +1,5 @@
-<div align="center" >
-<a target="blank" >
+<div align="center">
+<a target="blank">
 <img src="https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/develop-1_0_0/Tools-ReadmeGenerator/src/main/resources/logo.svg" width="15%" >
 </a>
 </div>
