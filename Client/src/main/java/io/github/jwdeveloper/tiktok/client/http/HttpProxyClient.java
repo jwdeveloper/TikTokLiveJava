@@ -48,7 +48,7 @@ public class HttpProxyClient extends HttpClient {
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}
 
-	HttpProxyClient(HttpClientSettings httpClientSettings, String url, HttpRequest.BodyPublisher bodyPublisher, HttpClientFactory httpClientFactory) {
+	public HttpProxyClient(HttpClientSettings httpClientSettings, String url, HttpRequest.BodyPublisher bodyPublisher, HttpClientFactory httpClientFactory) {
 		super(httpClientSettings, url, bodyPublisher, httpClientFactory);
 		this.proxySettings = httpClientSettings.getProxyClientSettings();
 	}

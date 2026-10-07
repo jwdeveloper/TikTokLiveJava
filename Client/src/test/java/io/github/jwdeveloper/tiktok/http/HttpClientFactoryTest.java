@@ -53,14 +53,14 @@ class HttpClientFactoryTest {
         var first = factory.client(URL).withCookie("session", "first").build();
         var second = factory.client(URL).withCookie("session", "second").build();
 
-        assertNotSame(first.httpClientSettings, second.httpClientSettings);
-        assertNotSame(settings.getHttpSettings(), first.httpClientSettings);
+        assertNotSame(first.getHttpClientSettings(), second.getHttpClientSettings());
+        assertNotSame(settings.getHttpSettings(), first.getHttpClientSettings());
         assertEquals("session=first", first.prepareRequest().headers().firstValue("Cookie").orElseThrow());
         assertEquals("session=second", second.prepareRequest().headers().firstValue("Cookie").orElseThrow());
         assertTrue(settings.getHttpSettings().getCookies().isEmpty());
-        assertSame(factory, first.httpClientFactory);
-        assertSame(factory.getHttpClient(), first.httpClientFactory.getHttpClient());
-        assertSame(first.httpClientFactory.getHttpClient(), second.httpClientFactory.getHttpClient());
+        assertSame(factory, first.getHttpClientFactory());
+        assertSame(factory.getHttpClient(), first.getHttpClientFactory().getHttpClient());
+        assertSame(first.getHttpClientFactory().getHttpClient(), second.getHttpClientFactory().getHttpClient());
     }
 
     @Test
@@ -85,7 +85,7 @@ class HttpClientFactoryTest {
         var first = builder.build();
         var second = builder.withUrl(URL + "/second").build();
 
-        assertSame(first.httpClientFactory.getHttpClient(), second.httpClientFactory.getHttpClient());
+        assertSame(first.getHttpClientFactory().getHttpClient(), second.getHttpClientFactory().getHttpClient());
     }
 
     @Test
@@ -102,8 +102,8 @@ class HttpClientFactoryTest {
         var field = TikTokLiveHttpClient.class.getDeclaredField("httpFactory");
         field.setAccessible(true);
         var factory = (HttpClientFactory) field.get(requests);
-        var first = factory.client(URL).build().httpClientFactory.getHttpClient();
-        var second = factory.client(URL + "/second").build().httpClientFactory.getHttpClient();
+        var first = factory.client(URL).build().getHttpClientFactory().getHttpClient();
+        var second = factory.client(URL + "/second").build().getHttpClientFactory().getHttpClient();
 
         assertSame(first, second);
         assertSame(first, factory.getHttpClient());

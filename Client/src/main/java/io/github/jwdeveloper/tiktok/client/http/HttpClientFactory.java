@@ -51,7 +51,7 @@ public class HttpClientFactory {
     }
 
     /** Creates the owning LiveClient's transport once, after its settings have been configured. */
-    synchronized java.net.http.HttpClient getHttpClient() {
+    public synchronized java.net.http.HttpClient getHttpClient() {
         if (httpClient == null) {
             var settings = liveClientSettings.getHttpSettings();
             var builder = java.net.http.HttpClient.newBuilder()
@@ -73,7 +73,7 @@ public class HttpClientFactory {
         return send(request, handler, null);
     }
 
-    <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> handler, ProxyData endpoint) throws IOException, InterruptedException {
+    public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> handler, ProxyData endpoint) throws IOException, InterruptedException {
         var client = getHttpClient();
         var selector = proxySelector;
         if (selector == null)

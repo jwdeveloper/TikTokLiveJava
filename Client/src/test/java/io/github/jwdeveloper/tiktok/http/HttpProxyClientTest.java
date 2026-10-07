@@ -144,7 +144,7 @@ class HttpProxyClientTest {
         ownerSettings.setHttpSettings(settings);
         var factory = new HttpClientFactory(ownerSettings) {
             @Override
-            java.net.http.HttpClient getHttpClient() {
+            public java.net.http.HttpClient getHttpClient() {
                 return transport;
             }
         };

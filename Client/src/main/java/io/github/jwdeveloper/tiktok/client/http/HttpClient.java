@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.client.http;
 import io.github.jwdeveloper.tiktok.client.common.ActionResult;
 import io.github.jwdeveloper.tiktok.api.data.settings.HttpClientSettings;
 import io.github.jwdeveloper.tiktok.api.exceptions.TikTokLiveRequestException;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import java.net.*;
 import java.net.http.*;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.regex.*;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@AllArgsConstructor @Getter
 public class HttpClient {
 
     protected final HttpClientSettings httpClientSettings;
@@ -109,7 +109,7 @@ public class HttpClient {
     /**
      * @return {@link HttpRequest} with default GET, otherwise POST if {@link #bodyPublisher} is not null
      */
-    protected HttpRequest prepareRequest() {
+	public HttpRequest prepareRequest() {
         var requestBuilder = HttpRequest.newBuilder();
         if (bodyPublisher != null)
             requestBuilder.POST(bodyPublisher);
