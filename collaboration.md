@@ -57,7 +57,7 @@ Are you willing to help or improve TikTokLiveJava?
 
    - All the events can be found user `io.github.jwdeveloper.tiktok.data.events` 
    - All the class data that are used in events is under `io.github.jwdeveloper.tiktok.data.models`
-   - All the protocol-buffer classes will be generated at namespack `io.github.jwdeveloper.tiktok.messages` they are at location `API\target\classes\io\github\jwdeveloper\tiktok\messages`
+   - All the protocol-buffer classes will be generated at namespack `io.github.jwdeveloper.tiktok.api.messages` they are at location `API\target\classes\io\github\jwdeveloper\tiktok\messages`
 
   #### Client
 
@@ -109,7 +109,7 @@ package io.github.jwdeveloper.tiktok.data.events;
 import io.github.jwdeveloper.tiktok.annotations.EventMeta;
 import io.github.jwdeveloper.tiktok.annotations.EventType;
 import io.github.jwdeveloper.tiktok.data.events.common.TikTokHeaderEvent;
-import io.github.jwdeveloper.tiktok.messages.data.User;
+import io.github.jwdeveloper.tiktok.api.messages.data.User;
 import lombok.Data;
 
 
@@ -144,7 +144,7 @@ from TikTok.
             try {
                 WebcastGiftMessage tiktokData = WebcastGiftMessage.parseFrom(bytes);
 
-                io.github.jwdeveloper.tiktok.messages.data.User tiktokProtocolBufferUser = tiktokData.getUser();
+                io.github.jwdeveloper.tiktok.api.messages.data.User tiktokProtocolBufferUser = tiktokData.getUser();
                 io.github.jwdeveloper.tiktok.data.models.users.User tiktokLiveJavaUser = User.map(tiktokProtocolBufferUser);
 
                 return new CustomEvent(tiktokLiveJavaUser, "hello word");

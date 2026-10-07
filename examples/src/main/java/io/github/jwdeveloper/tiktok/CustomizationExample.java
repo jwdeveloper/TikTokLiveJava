@@ -22,9 +22,10 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.live.*;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.live.*;
+import io.github.jwdeveloper.tiktok.client.*;
 
 /**
  * When the default implementation does not meet your needs,
@@ -56,7 +57,8 @@ public class CustomizationExample {
     }
 
 
-    public static class CustomEventsHandler extends TikTokLiveEventHandler {
+    public static class CustomEventsHandler extends TikTokLiveEventHandler
+    {
 
         @Override
         public void publish(LiveClient tikTokLiveClient, TikTokEvent tikTokEvent) {

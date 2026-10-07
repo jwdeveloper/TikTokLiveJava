@@ -22,18 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok.extension.collector.impl;
 
-import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.control.TikTokConnectingEvent;
-import io.github.jwdeveloper.tiktok.data.events.room.TikTokRoomInfoEvent;
-import io.github.jwdeveloper.tiktok.data.events.websocket.TikTokWebsocketResponseEvent;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveMessageException;
+import io.github.jwdeveloper.tiktok.api.annotations.TikTokEventObserver;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.control.TikTokConnectingEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.room.TikTokRoomInfoEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.websocket.TikTokWebsocketResponseEvent;
+import io.github.jwdeveloper.tiktok.api.exceptions.TikTokLiveMessageException;
 import io.github.jwdeveloper.tiktok.extension.collector.api.*;
 import io.github.jwdeveloper.tiktok.extension.collector.api.settings.CollectorListenerSettings;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.messages.webcast.ProtoMessageFetchResult;
-import io.github.jwdeveloper.tiktok.utils.JsonUtil;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.messages.webcast.ProtoMessageFetchResult;
+import io.github.jwdeveloper.tiktok.api.utils.JsonUtil;
 import org.bson.Document;
 
 import java.io.*;

@@ -22,17 +22,18 @@
  */
 package io.github.jwdeveloper.tiktok.handlers.events;
 
-import io.github.jwdeveloper.tiktok.TikTokRoomInfo;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftComboEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.data.models.Picture;
-import io.github.jwdeveloper.tiktok.data.models.gifts.Gift;
-import io.github.jwdeveloper.tiktok.data.models.gifts.GiftComboStateType;
-import io.github.jwdeveloper.tiktok.gifts.TikTokGiftsManager;
-import io.github.jwdeveloper.tiktok.mappers.handlers.TikTokGiftEventHandler;
-import io.github.jwdeveloper.tiktok.messages.data.Image;
-import io.github.jwdeveloper.tiktok.messages.data.User;
-import io.github.jwdeveloper.tiktok.messages.webcast.WebcastGiftMessage;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.client.TikTokRoomInfo;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftComboEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.data.models.Picture;
+import io.github.jwdeveloper.tiktok.api.data.models.gifts.Gift;
+import io.github.jwdeveloper.tiktok.api.data.models.gifts.GiftComboStateType;
+import io.github.jwdeveloper.tiktok.client.gifts.TikTokGiftsManager;
+import io.github.jwdeveloper.tiktok.client.mappers.handlers.TikTokGiftEventHandler;
+import io.github.jwdeveloper.tiktok.api.messages.data.Image;
+import io.github.jwdeveloper.tiktok.api.messages.data.User;
+import io.github.jwdeveloper.tiktok.api.messages.webcast.WebcastGiftMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ class TikTokGiftEventHandlerTest {
     public void before() {
         var manager = new TikTokGiftsManager(List.of());
         var info = new TikTokRoomInfo();
-        info.setHost(new io.github.jwdeveloper.tiktok.data.models.users.User(123L, "test", new Picture("")));
+        info.setHost(new io.github.jwdeveloper.tiktok.api.data.models.users.User(123L, "test", new Picture("")));
         manager.attachGift(new Gift(123, "example", 123, "image.webp"));
         clock = new AtomicLong(1_000L);
         handler = new TikTokGiftEventHandler(manager, info, COMBO_TIMEOUT_MS, clock::get);
@@ -180,7 +181,7 @@ class TikTokGiftEventHandlerTest {
         Assertions.assertEquals(2, countGiftEvents(result));
     }
 
-    private GiftComboStateType comboStateOf(List<io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent> events) {
+    private GiftComboStateType comboStateOf(List<TikTokEvent> events) {
         return events.stream()
                 .filter(TikTokGiftComboEvent.class::isInstance)
                 .map(TikTokGiftComboEvent.class::cast)
@@ -189,7 +190,7 @@ class TikTokGiftEventHandlerTest {
                 .getComboState();
     }
 
-    private long countGiftEvents(List<io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent> events) {
+    private long countGiftEvents(List<TikTokEvent> events) {
         return events.stream().filter(e -> !(e instanceof TikTokGiftComboEvent)).count();
     }
 
@@ -210,7 +211,7 @@ class TikTokGiftEventHandlerTest {
                                              boolean streakable,
                                              long groupId) {
         var builder = WebcastGiftMessage.newBuilder();
-        var giftBuilder = io.github.jwdeveloper.tiktok.messages.data.Gift.newBuilder();
+        var giftBuilder = io.github.jwdeveloper.tiktok.api.messages.data.Gift.newBuilder();
         var userBuilder = User.newBuilder();
 
 

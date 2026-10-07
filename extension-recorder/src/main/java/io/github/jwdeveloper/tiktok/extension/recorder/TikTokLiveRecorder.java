@@ -25,7 +25,7 @@ package io.github.jwdeveloper.tiktok.extension.recorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.api.LiveRecorder;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.RecorderListener;
 import io.github.jwdeveloper.tiktok.extension.recorder.impl.data.RecorderSettings;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
 
 import java.util.function.*;
 

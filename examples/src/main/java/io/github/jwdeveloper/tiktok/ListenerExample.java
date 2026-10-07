@@ -22,14 +22,15 @@
  */
 package io.github.jwdeveloper.tiktok;
 
-import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.data.events.TikTokCommentEvent;
-import io.github.jwdeveloper.tiktok.data.events.TikTokErrorEvent;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokLikeEvent;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.utils.ConsoleColors;
+import io.github.jwdeveloper.tiktok.api.annotations.TikTokEventObserver;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokCommentEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokErrorEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.social.TikTokLikeEvent;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.utils.ConsoleColors;
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 
 import java.io.IOException;
 

@@ -22,16 +22,17 @@
  */
 package io.github.jwdeveloper.tiktok.listener;
 
+import io.github.jwdeveloper.tiktok.client.listener.TikTokListenersManager;
 import io.github.jwdeveloper.dependance.Dependance;
 import io.github.jwdeveloper.dependance.api.DependanceContainer;
-import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
-import io.github.jwdeveloper.tiktok.annotations.Priority;
-import io.github.jwdeveloper.tiktok.annotations.TikTokEventObserver;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.data.events.gift.TikTokGiftEvent;
-import io.github.jwdeveloper.tiktok.data.events.social.TikTokJoinEvent;
-import io.github.jwdeveloper.tiktok.exceptions.TikTokLiveException;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.client.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.api.annotations.Priority;
+import io.github.jwdeveloper.tiktok.api.annotations.TikTokEventObserver;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.gift.TikTokGiftEvent;
+import io.github.jwdeveloper.tiktok.api.data.events.social.TikTokJoinEvent;
+import io.github.jwdeveloper.tiktok.api.exceptions.TikTokLiveException;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

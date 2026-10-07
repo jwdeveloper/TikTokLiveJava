@@ -22,10 +22,11 @@
  */
 package io.github.jwdeveloper.tiktok.http;
 
-import io.github.jwdeveloper.tiktok.TikTokLiveHttpClient;
-import io.github.jwdeveloper.tiktok.data.dto.ProxyData;
-import io.github.jwdeveloper.tiktok.data.settings.HttpClientSettings;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.client.TikTokLiveHttpClient;
+import io.github.jwdeveloper.tiktok.api.data.dto.ProxyData;
+import io.github.jwdeveloper.tiktok.api.data.settings.HttpClientSettings;
+import io.github.jwdeveloper.tiktok.api.data.settings.LiveClientSettings;
+import io.github.jwdeveloper.tiktok.client.http.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

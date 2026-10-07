@@ -22,6 +22,8 @@
  */
 package io.github.jwdeveloper.tiktok;
 
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
+
 import java.time.Duration;
 import java.util.logging.Level;
 

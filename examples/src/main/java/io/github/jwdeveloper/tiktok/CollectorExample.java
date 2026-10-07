@@ -23,6 +23,7 @@
 package io.github.jwdeveloper.tiktok;
 
 
+import io.github.jwdeveloper.tiktok.client.TikTokLive;
 import io.github.jwdeveloper.tiktok.extension.collector.TikTokLiveCollector;
 
 import java.io.File;

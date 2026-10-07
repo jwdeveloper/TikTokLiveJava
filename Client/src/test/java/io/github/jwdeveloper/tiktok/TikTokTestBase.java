@@ -23,10 +23,11 @@
 package io.github.jwdeveloper.tiktok;
 
 import io.github.jwdeveloper.dependance.implementation.DependanceContainerBuilder;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
-import io.github.jwdeveloper.tiktok.live.LiveEventsHandler;
-import io.github.jwdeveloper.tiktok.live.builder.LiveClientBuilder;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
+import io.github.jwdeveloper.tiktok.api.live.LiveEventsHandler;
+import io.github.jwdeveloper.tiktok.api.live.builder.LiveClientBuilder;
+import io.github.jwdeveloper.tiktok.client.*;
 import io.github.jwdeveloper.tiktok.mocks.EventsHandlerMock;
 import lombok.Getter;
 import lombok.experimental.Accessors;

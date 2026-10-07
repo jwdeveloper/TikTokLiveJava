@@ -22,9 +22,9 @@
  */
 package io.github.jwdeveloper.tiktok.mocks;
 
-import io.github.jwdeveloper.tiktok.TikTokLiveEventHandler;
-import io.github.jwdeveloper.tiktok.data.events.common.TikTokEvent;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
+import io.github.jwdeveloper.tiktok.client.TikTokLiveEventHandler;
+import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;
+import io.github.jwdeveloper.tiktok.api.live.LiveClient;
 
 import java.util.ArrayList;
 import java.util.List;
