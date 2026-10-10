@@ -25,35 +25,47 @@ package io.github.jwdeveloper.tiktok.client.websocket;
 import io.github.jwdeveloper.tiktok.client.common.AsyncHandler;
 import org.java_websocket.WebSocket;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Base64;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class WebSocketHeartbeatTask
 {
     private ScheduledFuture<?> task;
-    private Long commTime;
+    private WebSocket webSocket;
 
     private final static byte[] heartbeatBytes = Base64.getDecoder().decode("MgJwYjoCaGI="); // Used to be '3A026862' aka ':\x02hb', now is '2\x02pb:\x02hb'.
 
-    public void run(WebSocket webSocket, long pingTaskTime) {
-        stop(); // remove existing task if any
-
-        task = AsyncHandler.getHeartBeatScheduler().scheduleAtFixedRate(() -> {
-            try {
-                if (webSocket.isOpen()) {
-                    webSocket.send(heartbeatBytes);
-                    commTime = System.currentTimeMillis();
-                } else if (commTime != null && System.currentTimeMillis() - commTime >= 60_000) // Stop if disconnected longer than 60s
-					stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-                stop();
-            }
-        }, 0, pingTaskTime, TimeUnit.MILLISECONDS);
+    public synchronized void run(WebSocket webSocket, long pingTaskTime) {
+        stop();
+        if (!webSocket.isOpen()) return;
+        this.webSocket = webSocket;
+        // The first tick uses this monitor too, so it cannot run before task is assigned.
+        task = AsyncHandler.getHeartBeatScheduler().scheduleAtFixedRate(() -> sendHeartbeat(webSocket), 0, pingTaskTime, TimeUnit.MILLISECONDS);
     }
 
-    public void stop() {
+    private synchronized void sendHeartbeat(WebSocket socket) {
+		if (webSocket == socket && task != null)
+			try {
+				if (socket.isOpen())
+					socket.send(heartbeatBytes);
+				else
+					stop();
+			} catch (Exception e) {
+				stop();
+				e.printStackTrace();
+			}
+	}
+
+    public synchronized void stop() {
         if (task != null)
-            task.cancel(true);
+            task.cancel(false);
+        task = null;
+        webSocket = null;
+    }
+
+    synchronized void stop(WebSocket socket) {
+        if (webSocket == socket)
+            stop();
     }
 }

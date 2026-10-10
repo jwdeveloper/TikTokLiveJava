@@ -42,6 +42,7 @@ public class TikTokWebSocketListener extends WebSocketClient {
     protected final LiveMessagesHandler messagesHandler;
     protected final LiveEventsHandler eventHandler;
     protected final LiveClient liveClient;
+    private final TikTokWebSocketClient socketClient;
 
     public TikTokWebSocketListener(URI serverUri,
                                    Map<String, String> httpHeaders,
@@ -49,10 +50,21 @@ public class TikTokWebSocketListener extends WebSocketClient {
                                    LiveMessagesHandler messageHandler,
                                    LiveEventsHandler tikTokEventHandler,
                                    LiveClient tikTokLiveClient) {
+        this(serverUri, httpHeaders, connectTimeout, messageHandler, tikTokEventHandler, tikTokLiveClient, null);
+    }
+
+    TikTokWebSocketListener(URI serverUri,
+                           Map<String, String> httpHeaders,
+                           int connectTimeout,
+                           LiveMessagesHandler messageHandler,
+                           LiveEventsHandler tikTokEventHandler,
+                           LiveClient tikTokLiveClient,
+                           TikTokWebSocketClient socketClient) {
         super(serverUri, new Draft_6455(), httpHeaders, connectTimeout);
         this.messagesHandler = messageHandler;
         this.eventHandler = tikTokEventHandler;
         this.liveClient = tikTokLiveClient;
+        this.socketClient = socketClient;
     }
 
     @Override
@@ -89,6 +101,10 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
+        if (socketClient != null && !socketClient.onOpen(this)) {
+            close();
+            return;
+        }
         eventHandler.publish(liveClient, new TikTokConnectedEvent());
         if (isOpen()) {
             sendPing();
@@ -97,12 +113,18 @@ public class TikTokWebSocketListener extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
+        if (socketClient != null) {
+            if (!socketClient.onClose(this, liveClient))
+                return;
+        } else
+            liveClient.disconnect();
         eventHandler.publish(liveClient, new TikTokDisconnectedEvent(code, reason));
-        liveClient.disconnect();
     }
 
     @Override
     public void onError(Exception error) {
+        if (socketClient != null)
+            socketClient.onError(this);
         eventHandler.publish(liveClient, new TikTokErrorEvent(error));
         if (isOpen()) {
             sendPing();

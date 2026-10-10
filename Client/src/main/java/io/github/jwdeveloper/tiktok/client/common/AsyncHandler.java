@@ -29,11 +29,17 @@ import java.util.concurrent.*;
 public class AsyncHandler
 {
 	@Getter
-	private static final ScheduledExecutorService heartBeatScheduler = Executors.newScheduledThreadPool(1, r -> {
-		Thread t = new Thread(r, "heartbeat-pool");
-		t.setDaemon(true);
-		return t;
-	});
+	private static final ScheduledExecutorService heartBeatScheduler;
+
+	static {
+		var temp = new ScheduledThreadPoolExecutor(1, r -> {
+			Thread t = new Thread(r, "heartbeat-pool");
+			t.setDaemon(true);
+			return t;
+		});
+		temp.setRemoveOnCancelPolicy(true);
+		heartBeatScheduler = temp;
+	}
 
 	@Getter
 	private static final ScheduledExecutorService reconnectScheduler = Executors.newScheduledThreadPool(0, r -> {

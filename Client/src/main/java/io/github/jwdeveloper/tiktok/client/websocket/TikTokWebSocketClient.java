@@ -42,7 +42,7 @@ public class TikTokWebSocketClient implements LiveSocketClient
     private final LiveMessagesHandler messageHandler;
     private final LiveEventsHandler tikTokEventHandler;
     private final WebSocketHeartbeatTask heartbeatTask;
-    private WebSocketClient webSocketClient;
+    private volatile WebSocketClient webSocketClient;
 
     public TikTokWebSocketClient(
             LiveClientSettings clientSettings,
@@ -58,31 +58,38 @@ public class TikTokWebSocketClient implements LiveSocketClient
 
     @Override
     public void start(LiveConnectionData.Response connectionData, LiveClient liveClient) {
-        if (isConnected())
-			stop(LiveClientStopType.NORMAL);
+        stop(LiveClientStopType.NORMAL);
 
         messageHandler.handle(liveClient, connectionData.getWebcastResponse());
 
         var headers = new HashMap<>(clientSettings.getHttpSettings().getHeaders());
         headers.put("Cookie", connectionData.getWebsocketCookies());
-        webSocketClient = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
+        var socket = new TikTokWebSocketListener(connectionData.getWebsocketUrl(),
             headers,
             clientSettings.getHttpSettings().getTimeout().toMillisPart(),
             messageHandler,
             tikTokEventHandler,
-            liveClient);
+            liveClient,
+            this);
+        synchronized (this) {
+            webSocketClient = socket;
+        }
 
         ProxyClientSettings proxyClientSettings = clientSettings.getHttpSettings().getProxyClientSettings();
-        if (proxyClientSettings.isEnabled() && proxyClientSettings.isAllowWebsocket())
-            connectProxy(proxyClientSettings);
-        else
-            connectDefault();
+        try {
+            if (proxyClientSettings.isEnabled() && proxyClientSettings.isAllowWebsocket())
+                connectProxy(proxyClientSettings);
+            else
+                connectDefault();
+        } catch (RuntimeException e) {
+            stop(LiveClientStopType.NORMAL);
+            throw e;
+        }
     }
 
     public void connectDefault() {
         try {
             webSocketClient.connect();
-            heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
         } catch (Exception e) {
             throw new TikTokLiveException("Failed to connect to the websocket", e);
         }
@@ -112,7 +119,6 @@ public class TikTokWebSocketClient implements LiveSocketClient
         while (proxySettings.hasNext()) {
             ProxyData proxyData = proxySettings.next();
 			if (tryProxyConnection(proxySettings, proxyData)) {
-				heartbeatTask.run(webSocketClient, clientSettings.getPingInterval());
 				return;
 			}
             if (proxySettings.isAutoDiscard())
@@ -132,24 +138,59 @@ public class TikTokWebSocketClient implements LiveSocketClient
     }
 
     public void stop(LiveClientStopType type) {
-        if (isConnected()) {
+        WebSocketClient socket;
+        synchronized (this) {
+            heartbeatTask.stop();
+            socket = webSocketClient;
+            webSocketClient = null;
+        }
+        if (socket != null && !socket.isClosed()) {
+            // No blocking wait for a handshake that has not completed.
+            if (!socket.isOpen()) {
+                socket.close(CloseFrame.NORMAL, "");
+                return;
+            }
             switch (type) {
                 case CLOSE_BLOCKING -> {
 					try {
-						webSocketClient.closeBlocking();
+						socket.closeBlocking();
 					} catch (InterruptedException e) {
-                        throw new TikTokLiveException("Failed to stop the websocket");
+                        Thread.currentThread().interrupt();
+                        throw new TikTokLiveException("Failed to stop the websocket", e);
                     }
 				}
-                case DISCONNECT -> webSocketClient.closeConnection(CloseFrame.NORMAL, "");
-                default -> webSocketClient.close();
+                case DISCONNECT -> socket.closeConnection(CloseFrame.NORMAL, "");
+                default -> socket.close();
             }
-            heartbeatTask.stop();
         }
+    }
+
+    synchronized boolean onOpen(WebSocketClient socket) {
+        if (webSocketClient != socket)
+            return false;
+        heartbeatTask.run(socket, clientSettings.getPingInterval());
+        return true;
+    }
+
+    synchronized boolean onClose(WebSocketClient socket, LiveClient liveClient) {
+        heartbeatTask.stop(socket);
+        if (webSocketClient == null)
+            return true;
+        if (webSocketClient != socket)
+            return false;
         webSocketClient = null;
+        // Detach first so disconnect does not try to close from within onClose.
+        liveClient.disconnect();
+        return true;
+    }
+
+    synchronized void onError(WebSocketClient socket) {
+        if (!socket.isOpen())
+            heartbeatTask.stop(socket);
     }
 
     public boolean isConnected() {
-        return webSocketClient != null && webSocketClient.isOpen();
+        var socket = webSocketClient;
+        return socket != null && socket.isOpen();
     }
 }

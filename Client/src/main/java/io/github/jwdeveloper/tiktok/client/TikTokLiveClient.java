@@ -168,9 +168,8 @@ public class TikTokLiveClient implements LiveClient
     }
 
     public void disconnect(LiveClientStopType type) {
-        if (webSocketClient.isConnected())
-            webSocketClient.stop(type);
-		if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
+        webSocketClient.stop(type);
+        if (!roomInfo.hasConnectionState(ConnectionState.DISCONNECTED))
 			setState(ConnectionState.DISCONNECTED);
 	}
 
