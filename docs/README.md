@@ -32,7 +32,7 @@ Facts come from the library source first, then the README, then `examples/`. Jav
 
 ## Hosting
 
-The site is served from Cloudflare Workers static assets at <https://ttlj.docs.isaackogan.com/>. `wrangler.jsonc` in this directory declares the asset directory and the custom domain for the `tiktoklivejava-docs` Worker; there is no Worker script. The GitHub workflow `.github/workflows/docs.yml` validates every pull request, runs the SEO gate (`pnpm --dir docs run seo`, which runs `scripts/verify-seo.mjs` over `dist`), and on pushes to `master` deploys when the repository has the `CLOUDFLARE_API_TOKEN` secret; the deploy also needs `CLOUDFLARE_ACCOUNT_ID`. A daily scheduled run checks out the upstream repository's `master` and deploys it, so the hosted site tracks upstream from the fork that holds the secrets.
+The site is served from Cloudflare Workers static assets at <https://ttlj.docs.isaackogan.com/>. `wrangler.jsonc` in this directory declares the asset directory and the HTML handling for the `tiktoklivejava-docs` Worker; there is no Worker script and no `routes` block, because a maintainer attached the custom domain to the Worker once and it survives deploys. The GitHub workflow `.github/workflows/docs.yml` validates every pull request, runs the SEO gate (`pnpm --dir docs run seo`, which runs `scripts/verify-seo.mjs` over `dist`), and on pushes to `master` redeploys the existing Worker when the repository has the `CLOUDFLARE_API_TOKEN` secret, a token scoped to Editor on that Worker only; the deploy also needs `CLOUDFLARE_ACCOUNT_ID`. A daily scheduled run checks out the upstream repository's `master` and deploys it, so the hosted site tracks upstream from the fork that holds the secrets; until upstream carries `docs/`, the workflow's `upstream` job detects that and the build is skipped.
 
 To deploy from a checkout after the installs above:
 
@@ -41,4 +41,4 @@ pnpm --dir docs build
 pnpm --dir docs run deploy:cloudflare
 ```
 
-See [Hosting](src/content/docs/hosting.md) for the configuration, secrets, and verification steps. `DOCS_SITE` defaults to the custom domain and `DOCS_BASE` to `/`; neither needs to be set.
+Wrangler uploads to the existing Worker and prints `No targets deployed`, which is expected: the config declares no routes and the custom domain stays attached. See [Hosting](src/content/docs/hosting.md) for the configuration, the one-time domain attachment, the secrets, and the verification steps. `DOCS_SITE` defaults to the custom domain and `DOCS_BASE` to `/`; neither needs to be set.

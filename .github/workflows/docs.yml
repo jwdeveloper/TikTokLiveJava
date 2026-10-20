@@ -1,0 +1,103 @@
+name: Documentation
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'API/**'
+      - 'Client/**'
+      - 'extension-recorder/**'
+      - 'extension-collector/**'
+      - 'README.md'
+      - '.github/workflows/docs.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'docs/**'
+      - 'API/**'
+      - 'Client/**'
+      - 'extension-recorder/**'
+      - 'extension-collector/**'
+      - 'README.md'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  upstream:
+    runs-on: ubuntu-latest
+    outputs:
+      has_docs: ${{ steps.probe.outputs.has_docs }}
+    steps:
+      - name: Check whether upstream carries the documentation
+        id: probe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # A scheduled run builds upstream master, which has nothing to build until docs/ is merged there.
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ] && ! gh api repos/jwdeveloper/TikTokLiveJava/contents/docs/package.json --silent; then
+            echo "::notice::jwdeveloper/TikTokLiveJava has no docs/package.json yet; skipping the scheduled build."
+            echo "has_docs=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_docs=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: upstream
+    if: needs.upstream.outputs.has_docs == 'true'
+    runs-on: ubuntu-latest
+    env:
+      # Deployment runs only where the Cloudflare secrets exist; forks and pull requests skip it.
+      DEPLOY_ENABLED: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - name: Check out upstream master
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v4
+        with:
+          repository: jwdeveloper/TikTokLiveJava
+          ref: master
+      - name: Check out the repository
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Build the library
+        run: mvn -q -pl API,Client,extension-recorder,extension-collector -am -DskipTests package
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pnpm
+        run: npm install --global pnpm@10.34.2
+      - name: Install documentation dependencies
+        run: pnpm --dir docs install --frozen-lockfile
+      - name: Test the documentation scripts
+        run: pnpm --dir docs test
+      - name: Validate and build documentation
+        run: pnpm --dir docs build
+      - name: Verify SEO invariants
+        run: pnpm --dir docs run seo
+      - name: Upload site for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/dist
+      - name: Deploy to Cloudflare Workers
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || github.event_name == 'schedule') && env.DEPLOY_ENABLED == 'true'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: docs
+          packageManager: pnpm
+          command: deploy
