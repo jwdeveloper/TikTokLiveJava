@@ -13,7 +13,7 @@ description: Build and connect a client, follow the connect sequence and its lif
 | `buildAndConnect()` | The connected `LiveClient` | A program that connects once. It throws when the connection fails. |
 | `buildAndConnectAsync()` | A `CompletableFuture<LiveClient>` | The calling thread must not wait. The future completes with the client, or exceptionally when the connection fails. |
 
-`LiveClient` has the matching methods. `connect()` blocks the calling thread while the client fetches the room data, signs, and starts the socket. `connectAsync()` runs `connect()` on the common pool and returns a `CompletableFuture<LiveClient>`; `connectAsync(Consumer<LiveClient>)` passes the connected client to the consumer. One connection per client: calling `connect()` while the state is `CONNECTING` or `CONNECTED` throws `TikTokLiveException` with the message `Already connected`. After a disconnect the same client can `connect()` again.
+`LiveClient` has the matching methods. `connect()` blocks the calling thread while the client fetches the room data, signs, and starts the socket. `connectAsync()` runs `connect()` on the common pool and returns a `CompletableFuture<LiveClient>`; `connectAsync(Consumer<LiveClient>)` passes the connected client to the consumer. One connection per client: calling `connect()` while the state is `CONNECTING` or `CONNECTED` throws `TikTokLiveException` with the message `Already connected`. That exception goes through the same failure branch as any other: the client sets the state to `DISCONNECTED` and publishes `TikTokErrorEvent` and `TikTokDisconnectedEvent` with the reason `Exception: Already connected`, while the existing socket stays open and keeps delivering events. The state no longer matches the socket, and the next `connect()` passes the state check and replaces the socket, closing the old one first. After a disconnect the same client can `connect()` again.
 
 ```java
 var client = TikTokLive.newClient("isaackogz")
@@ -52,7 +52,7 @@ In order, `connect()`:
 
 When a step throws a `TikTokLiveException`, `connect()` sets the state back to `DISCONNECTED`, publishes `TikTokErrorEvent` with the exception and then `TikTokDisconnectedEvent` with code `-1` and the reason `Exception: <message>`, and rethrows. `buildAndConnect()` and `connect()` throw it to the caller; `buildAndConnectAsync()` and `connectAsync()` complete their future exceptionally. Any other exception is logged with its stack trace and the client disconnects without throwing.
 
-With `useEulerstreamWebsocket` set to `true`, steps 2 to 6 are skipped: the client publishes `TikTokConnectingEvent`, opens `wss://ws.eulerstream.com` with your `apiKey`, and sets the state to `CONNECTED`. See [signing](/configuration/signing/).
+With `useEulerstreamWebsocket` set to `true`, `connect()` does none of steps 2 to 7: it publishes `TikTokConnectingEvent`, opens `wss://ws.eulerstream.com` with your `apiKey`, and sets the state to `CONNECTED`. It fills no room information and publishes no `TikTokRoomInfoEvent`; both come from the `roomInfo` message Euler Stream sends after the socket opens, so `getRoomInfo()` is still empty when `TikTokConnectedEvent` fires on that path. See [signing](/configuration/signing/).
 
 ## Lifecycle events
 
@@ -83,6 +83,8 @@ TikTokLive.newClient("isaackogz")
         .onError((client, event) -> event.getException().printStackTrace())
         .buildAndConnect();
 ```
+
+The `onPreConnection` handler and the room id printed by `onConnected` apply to the default path; with `useEulerstreamWebsocket`, the pre-connection event is not published and `getRoomId()` is `null` until the first `TikTokRoomInfoEvent`.
 
 ## Disconnect
 
@@ -139,7 +141,7 @@ while (true) {
 
 ## Room information
 
-`getRoomInfo()` returns the client's `LiveRoomInfo`. Before connecting it holds only `getHostName()` and the state `DISCONNECTED`. `connect()` fills it from TikTok's responses: `getRoomId()`, `getTitle()`, `getHost()`, `getStartTime()`, `getViewersCount()`, `getTotalViewersCount()`, and `isAgeRestricted()`, all set before `TikTokPreConnectionEvent` is published. While connected, the same object is updated in place and `TikTokRoomInfoEvent` (`onRoomInfo`) is published with it each time: viewer counts and `getUsersRanking()` from TikTok's room user messages, `getLikesCount()` from like messages, the host and `getLanguage()` from the live intro message. `getConnectionState()` is `CONNECTING`, `CONNECTED`, or `DISCONNECTED`.
+`getRoomInfo()` returns the client's `LiveRoomInfo`. Before connecting it holds only `getHostName()` and the state `DISCONNECTED`. On the default path, `connect()` fills it from TikTok's responses: `getRoomId()`, `getTitle()`, `getHost()`, `getStartTime()`, `getViewersCount()`, `getTotalViewersCount()`, and `isAgeRestricted()`, all set before `TikTokPreConnectionEvent` is published. With `useEulerstreamWebsocket`, `connect()` leaves it empty; the `roomInfo` message Euler Stream sends after the socket opens copies those fields in and publishes the first `TikTokRoomInfoEvent`. While connected, the same object is updated in place and `TikTokRoomInfoEvent` (`onRoomInfo`) is published with it each time: viewer counts and `getUsersRanking()` from TikTok's room user messages, `getLikesCount()` from like messages, the host and `getLanguage()` from the live intro message. `getConnectionState()` is `CONNECTING`, `CONNECTED`, or `DISCONNECTED`.
 
 ```java
 TikTokLive.newClient("isaackogz")
