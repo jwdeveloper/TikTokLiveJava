@@ -28,7 +28,7 @@ implementation 'com.github.jwdeveloper.TikTok-Live-Java:extension-recorder:1.13.
 `TikTokLiveRecorder.use((recorderSettings, client) -> ...)` returns the listener; pass it to `addListener`. The consumer runs on `TikTokPreConnectionEvent`, when the room information is already filled, so the settings can depend on the room. What happens, in order:
 
 1. On `TikTokPreConnectionEvent` the listener runs your consumer, then reads the room page JSON from the event and picks the stream: the first rendition present in the order `origin`, `hd`, `sd`, `ld`, `hd_60`, `uhd_60`, `ao`, and its `flv` URL, together with the session id. When no URL is found it logs a warning and, with `cancelConnectionIfNotFound` set, cancels the connection, so `connect()` throws `TikTokLivePreConnectionException`.
-2. On `TikTokConnectedEvent` it publishes `TikTokLiveRecorderStartedEvent`; a handler can call `setCanceled(true)` on it to skip the recording. Otherwise it starts a background task that requests the URL with the client's default headers and appends every byte received to `outputFile`, creating the parent directories first.
+2. On `TikTokConnectedEvent` it publishes `TikTokLiveRecorderStartedEvent`; a handler can call `setCanceled(true)` on it to skip the recording. Otherwise it starts a background task that requests the URL with the client's default headers and appends every byte received to `outputFile`, creating its parent directories first, which is why the path must include a directory component: a bare filename has no parent to create, and the task fails before writing anything.
 3. The task stops when the client's state leaves `CONNECTED` (with `stopOnDisconnect`, the default), when `TikTokDisconnectedEvent` or `TikTokLiveEndedEvent` arrives, or when TikTok closes the stream; then it logs `Stopped recording` and publishes `TikTokLiveRecorderEndedEvent`.
 
 The two events live in `io.github.jwdeveloper.tiktok.extension.recorder.impl.event` and have no builder method; subscribe with `onEvent`. `TikTokLiveRecorderStartedEvent` has `getDownloadData()`, with `getDownloadLiveUrl()`, `getSessionId()`, and `getFullUrl()`, the URL requested; both events have `getSettings()`.
@@ -60,7 +60,7 @@ The socket thread keeps the process alive while the client is connected, and the
 
 | Setter | Type | Default | Effect |
 | --- | --- | --- | --- |
-| `setOutputFile` | `File` | none | The file the stream is appended to. Required: without it the download task fails with a printed `NullPointerException` and no ended event. A second recording by the same listener appends to the same file. |
+| `setOutputFile` | `File` | none | The file the stream is appended to; its parent directories are created. Required, and the path must include a directory component, such as `new File("recordings", "clip.flv")`: without a file, or with a bare filename such as `new File("clip.flv")`, the download task fails with a printed `NullPointerException` and no ended event. A second recording by the same listener appends to the same file. |
 | `setStopOnDisconnect` | `boolean` | `true` | Stop writing as soon as the client's state is no longer `CONNECTED`, and on `TikTokDisconnectedEvent`. With `false`, the recording runs until the stream ends or TikTok closes it. |
 | `setCancelConnectionIfNotFound` | `boolean` | `false` | Cancel the connection from `TikTokPreConnectionEvent` when no stream URL is found, instead of connecting without recording. |
 | `setPrepareDownloadData` | `Function<String, DownloadData>` | none | Replaces the URL lookup. Receives the room page JSON and returns `new DownloadData(url, sessionId)`; `getFullUrl()` appends `_webnoredir=1&_session_id=<sessionId>` to the URL. |
@@ -76,7 +76,7 @@ import io.github.jwdeveloper.tiktok.extension.recorder.TikTokLiveRecorder;
 
 var client = TikTokLive.newClient("isaackogz")
         .addListener(TikTokLiveRecorder.use((recorderSettings, liveClient) ->
-                recorderSettings.setOutputFile(new File("clip.flv"))))
+                recorderSettings.setOutputFile(new File("recordings", "clip.flv"))))
         .buildAndConnect();
 
 Thread.sleep(60_000);

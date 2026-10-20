@@ -26,7 +26,7 @@ Handlers are matched by the event's exact class, so `onGift` is never called for
 
 ## Follow a streak while it runs
 
-`onGiftCombo` receives every frame. `getComboState()` is a `GiftComboStateType`: `Begin` on the first frame of a streak, `Active` on each later frame, and `Finished` on the final frame, on a non-streakable gift, and when a streak times out. `getCombo()` is the count so far and is cumulative, so display the latest value rather than adding the frames up. Count gifts in `onGift` or in the `Finished` branch here, not in both.
+`onGiftCombo` receives every frame. `getComboState()` is a `GiftComboStateType`: `Begin` on the first frame of a streak, `Active` on each later frame, and `Finished` on the final frame, on a non-streakable gift, and when a streak times out. `getCombo()` is the count so far and is cumulative, so display the latest value rather than adding the frames up. Count gifts in `onGift`, not in the `Finished` branch here: a streakable gift whose first frame is already its final one produces no combo frame at all, so counting here misses it.
 
 ```java
 TikTokLive.newClient("isaackogz")
@@ -42,7 +42,7 @@ TikTokLive.newClient("isaackogz")
         .buildAndConnect();
 ```
 
-A streakable gift produces `Begin`, zero or more `Active` frames, then `Finished`; a non-streakable gift produces a single `Finished` frame, followed by its `TikTokGiftEvent`. Whether a gift can streak is the gift type in the message, which the handler reads before it builds the events; the `Gift` object has no field for it, so tell the two kinds apart by whether a `Begin` frame arrived.
+A streakable gift produces `Begin`, zero or more `Active` frames, then `Finished`, but the handler publishes that `Finished` frame only when a `Begin` preceded it: a streakable gift whose first frame is already its final one produces no combo frame at all, only its `TikTokGiftEvent`. A non-streakable gift produces a single `Finished` frame, followed by its `TikTokGiftEvent`. Whether a gift can streak is the gift type in the message, which the handler reads before it builds the events; the `Gift` object has no field for it, so tell the two kinds apart by whether a `Begin` frame arrived.
 
 ## The gift list
 
