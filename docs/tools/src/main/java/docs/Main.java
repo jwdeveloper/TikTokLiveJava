@@ -29,7 +29,7 @@ public final class Main {
         System.exit(run(args, System.out, System.err));
     }
 
-    /** Runs a command; exit code 0 on success, 1 on failure, 2 on usage errors or an unimplemented command. */
+    /** Runs a command; exit code 0 on success, 1 on failure, 2 on usage errors. */
     static int run(String[] args, PrintStream out, PrintStream err) {
         if (args.length != 2) {
             err.println("usage: docs-tools <generate|check> <repository root>");
@@ -46,8 +46,13 @@ public final class Main {
                     return 1;
                 }
             case "check":
-                err.println("check: not implemented");
-                return 2;
+                try {
+                    return ContentCheck.run(repoRoot, out);
+                } catch (RuntimeException e) {
+                    err.println("check failed: " + e.getMessage());
+                    e.printStackTrace(err);
+                    return 1;
+                }
             default:
                 err.println("unknown command: " + args[0]);
                 return 2;
