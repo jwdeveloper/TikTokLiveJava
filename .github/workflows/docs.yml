@@ -29,11 +29,16 @@ permissions:
 
 concurrency:
   group: docs-${{ github.ref }}
-  cancel-in-progress: true
+  # A newer pull-request push replaces the running check. Master pushes and scheduled runs share the
+  # refs/heads/master group and queue instead, so neither cancels the other's deploy mid-upload.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   upstream:
     runs-on: ubuntu-latest
+    env:
+      # The scheduled build exists only to deploy; a repository without the Cloudflare secrets skips it.
+      DEPLOY_ENABLED: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
     outputs:
       has_docs: ${{ steps.probe.outputs.has_docs }}
     steps:
@@ -42,13 +47,33 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         # A scheduled run builds upstream master, which has nothing to build until docs/ is merged there.
+        # Only a 404 means "no docs"; any other failure to answer is reported, not treated as a skip.
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "schedule" ] && ! gh api repos/jwdeveloper/TikTokLiveJava/contents/docs/package.json --silent; then
-            echo "::notice::jwdeveloper/TikTokLiveJava has no docs/package.json yet; skipping the scheduled build."
-            echo "has_docs=false" >> "$GITHUB_OUTPUT"
-          else
+          if [ "$GITHUB_EVENT_NAME" != "schedule" ]; then
             echo "has_docs=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          if [ "$DEPLOY_ENABLED" != "true" ]; then
+            echo "::notice::The Cloudflare deploy secrets are absent; skipping the scheduled build, which exists only to deploy."
+            echo "has_docs=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          status=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/jwdeveloper/TikTokLiveJava/contents/docs/package.json) || status="curl exit $?"
+          case "$status" in
+            200)
+              echo "has_docs=true" >> "$GITHUB_OUTPUT"
+              ;;
+            404)
+              echo "::notice::jwdeveloper/TikTokLiveJava has no docs/package.json yet; skipping the scheduled build."
+              echo "has_docs=false" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Could not check jwdeveloper/TikTokLiveJava for docs/package.json: HTTP $status"
+              exit 1
+              ;;
+          esac
 
   build:
     needs: upstream
