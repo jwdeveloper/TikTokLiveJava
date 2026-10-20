@@ -27,7 +27,8 @@ export default defineConfig({
       description: 'Unofficial TikTok LIVE API for Java. Guides, events, and generated API reference.',
       favicon: '/favicon.png',
       head: [
-        { tag: 'meta', attrs: { property: 'og:image', content: 'https://raw.githubusercontent.com/jwdeveloper/TikTokLiveJava/master/tools-readme/src/main/resources/logo.svg' } },
+        // public/og-image.png is tools-readme/src/main/resources/logo.svg rendered with sharp: sharp(svg, { density: 144 }).resize(1200, 630, { fit: 'contain', background: '#fff' }).flatten({ background: '#fff' }).png()
+        { tag: 'meta', attrs: { property: 'og:image', content: 'https://ttlj.docs.isaackogan.com/og-image.png' } },
         { tag: 'meta', attrs: { property: 'og:image:alt', content: 'TikTokLiveJava, TikTok LIVE API for Java' } },
         { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
       ],
