@@ -14,8 +14,8 @@ TikTokLive.newClient("isaackogz")
         .configure(settings -> {
             var http = settings.getHttpSettings();
             http.setTimeout(Duration.ofSeconds(10));
-            http.getHeaders().put("Accept-Language", "de-DE,de;q=0.9");
-            http.getParams().put("tz_name", "Europe/Berlin");
+            http.getHeaders().put("Accept-Language", "fr-FR,fr;q=0.9");
+            http.getParams().put("tz_name", "Europe/Paris");
             http.onRequestCreating(request -> request.header("X-Request-Source", "my-bot"));
         })
         .buildAndConnect();
@@ -37,7 +37,7 @@ TikTokLive.newClient("isaackogz")
 
 ## The timeout and sub-second parts
 
-The HTTP transport and each request receive the whole `Duration`. The WebSocket handshake, and the SOCKS proxy path, receive `timeout.toMillisPart()`, the millisecond fraction of the duration (0 to 999), as a connect timeout in milliseconds. With a whole-second value such as the default that is `0`, which `Socket.connect` treats as no timeout. `Duration.ofMillis(2500)` gives the HTTP requests 2.5 seconds and the WebSocket handshake 500 milliseconds.
+The HTTP transport and each request receive the whole `Duration`. The WebSocket handshake, and the SOCKS proxy path, receive `timeout.toMillisPart()`, the millisecond fraction of the duration (0 to 999), as a connect timeout in milliseconds, and the SOCKS path uses the same value as its read timeout. With a whole-second value such as the default that is `0`, which `Socket.connect` treats as no timeout. `Duration.ofMillis(2500)` gives the HTTP requests 2.5 seconds and the WebSocket handshake 500 milliseconds.
 
 ## Default parameters and headers
 

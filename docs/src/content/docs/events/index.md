@@ -45,6 +45,8 @@ The client maps a message only when `MessagesMapperFactory` registers a handler 
 To produce one of them, register a mapping with `mappings` on the builder. The mapping receives the message bytes, deserialises them with the helper, and returns a `MappingResult` holding the message and the events to publish. The protobuf classes live in `io.github.jwdeveloper.tiktok.api.messages.webcast`.
 
 ```java
+import io.github.jwdeveloper.tiktok.api.data.events.TikTokRankTextEvent;
+import io.github.jwdeveloper.tiktok.api.mappers.data.MappingResult;
 import io.github.jwdeveloper.tiktok.api.messages.webcast.WebcastRankTextMessage;
 
 TikTokLive.newClient("isaackogz")

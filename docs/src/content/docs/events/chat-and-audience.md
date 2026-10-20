@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-Chat, membership, reactions, and social activity. The sender is `getUser()`, a `User` with `getId()`, `getName()` (the username), `getProfileName()` (the display name), `getPicture()`, `getFollowers()`, `getFollowing()`, `getBadges()`, and the attribute checks `isModerator()`, `isSubscriber()`, `isGiftGiver()`, `isFollower()`, `isLiveHost()`, `isMutualFollowingWithHost()`, `isAdmin()`, `isMuted()`, and `isBlocked()`. Which attributes are set depends on the message: comments and gifts carry a user identity that fills the first six, the other messages fill `isFollower()`, `isSubscriber()`, `isAdmin()`, `isMuted()`, and `isBlocked()` from the user object alone.
+Chat, membership, reactions, and social activity. The sender is `getUser()`, a `User` with `getId()`, `getName()` (the username), `getProfileName()` (the display name), `getPicture()`, `getFollowers()`, `getFollowing()`, `getBadges()`, and the attribute checks `isModerator()`, `isSubscriber()`, `isGiftGiver()`, `isFollower()`, `isLiveHost()`, `isMutualFollowingWithHost()`, `isAdmin()`, `isMuted()`, and `isBlocked()`. Which attributes are set depends on the message: every message sets `isFollower()`, `isSubscriber()`, `isAdmin()`, `isMuted()`, and `isBlocked()` from the user object; comments and gifts also carry a user identity, which adds `isModerator()`, `isGiftGiver()`, `isLiveHost()`, and `isMutualFollowingWithHost()`, so those four are `false` on every other message.
 
 Each section names the Webcast message and links its schema page, which lists every field. Events with a builder method name it; the others are registered with `onEvent(TikTokXEvent.class, handler)`. Replace `isaackogz` with a creator who is live.
 

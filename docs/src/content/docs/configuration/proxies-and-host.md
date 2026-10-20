@@ -58,7 +58,7 @@ For each HTTP request, the client builds `HttpProxyClient` when proxies are enab
 
 - With `HTTP` or `DIRECT`, a response other than 200 moves on to the next endpoint; `hasNext()` is `true` while the list is not empty, so endpoints that answer with another status are tried again in rotation. A connect timeout or `ConnectException` removes the endpoint when `autoDiscard` is `true` and throws `TikTokProxyRequestException`; the client's `fetch` methods catch that and start the request again while endpoints remain, then make one last attempt without a proxy. Any other `IOException` throws it too, unless `fallback` applies.
 - With `SOCKS`, one endpoint is tried per attempt; an `IOException` removes it when `autoDiscard` is `true` and throws `TikTokProxyRequestException`, with the same retry by the `fetch` methods.
-- `TikTokLiveRequestException` with the message `No more proxies available!` is thrown when the list runs empty inside one attempt.
+- `TikTokLiveRequestException` with the message `No more proxies available!` is raised when the list runs empty inside one attempt. The `HTTP` and `DIRECT` path throws it; the `SOCKS` path catches it, prints its stack trace, and returns a failed result instead.
 
 The signing request is repeated on `TikTokSignServerException` as well as on `TikTokProxyRequestException`, while endpoints remain and then once without a proxy; see [signing](/configuration/signing/).
 

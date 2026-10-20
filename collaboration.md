@@ -211,14 +211,15 @@ from the `API` and `Client` sources and the `.proto` files, and whose authored p
 under `docs/src/content/docs/`. It needs JDK 17 or newer, Maven, Node.js 24, and pnpm 10.34.2.
 From the repository root:
 
-```
+```sh
 npx -y pnpm@10.34.2 --dir docs install --frozen-lockfile
 npx -y pnpm@10.34.2 --dir docs build
 ```
 
 `build` builds the library modules, packages the tool under `docs/tools/`, runs the content
 check, generates the reference pages, and builds the site; `pnpm --dir docs dev` serves it
-locally after `pnpm --dir docs generate`. The content check fails the build when an event,
+locally after `pnpm --dir docs lib:build`, `pnpm --dir docs tools:build`, and
+`pnpm --dir docs generate`. The content check fails the build when an event,
 settings field, builder handler, exception, or extension is not named on a page, when a page
 links to Discord, when the README's events list and the `EventsBuilder` handlers disagree, or
 when a Java example does not compile. So when you add an event as described above, also add its

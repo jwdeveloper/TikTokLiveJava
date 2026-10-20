@@ -9,7 +9,7 @@ Two extension points add events. `publishEvent` dispatches any `TikTokEvent` sub
 
 ## Publish your own events
 
-A custom event is a class that extends `TikTokEvent`, an abstract class with no fields and a `toJson()` method. `client.publishEvent(event)` runs the handlers for the event's exact class and then the `TikTokEvent` catch-all, on the calling thread, before it returns, whether or not the client is connected. Subscribe with `onEvent(MyEvent.class, handler)` on the builder or with a listener method whose parameter is `MyEvent`; see [listeners](/guides/listeners/). `TikTokEmptyEvent` is a ready-made event with no fields for a plain trigger.
+A custom event is a class that extends `TikTokEvent`, an abstract class with no fields and a `toJson()` method. `client.publishEvent(event)` runs the `TikTokEvent` catch-all handlers first and then the handlers for the event's exact class, on the calling thread, before it returns, whether or not the client is connected. Subscribe with `onEvent(MyEvent.class, handler)` on the builder or with a listener method whose parameter is `MyEvent`; see [listeners](/guides/listeners/). `TikTokEmptyEvent` is a ready-made event with no fields for a plain trigger.
 
 The example sorts gifts into two tiers and publishes a tier event from the gift handler. The repository's version declares the event classes with Lombok's `@AllArgsConstructor`; plain constructors do the same without annotation processing.
 
@@ -111,7 +111,7 @@ TikTokLive.newClient("isaackogz")
 
 ## Wrap or replace a default mapping
 
-`forMessage` returns the message's `TikTokMapperModel`, the existing one for a message the defaults already map, with three hooks. `onBeforeMapping(action)` receives the bytes and returns the bytes to map. `onMapping(action)` replaces the mapping, and the default is lost: after `forMessage(WebcastGiftMessage.class).onMapping(...)`, `onGift` no longer fires unless your mapping builds the gift events itself. `onAfterMapping(function)` receives the `MappingResult`, with `getSource()` (the deserialised message, as `Object`) and `getEvents()`, and returns the list of events to publish, so it can add, drop, or replace events while the default mapping keeps running. `forAnyMessage()` returns a model whose hooks run for every registered message around the message's own; its `onMapping` runs only when the message's mapping returns `null`, and it never sees messages without a mapping.
+`forMessage` returns the message's `TikTokMapperModel`, the existing one for a message the defaults already map, with three hooks. `onBeforeMapping(action)` receives the bytes and returns the bytes to map. `onMapping(action)` replaces the mapping, and the default is lost: after `forMessage(WebcastGiftMessage.class).onMapping(...)`, `onGift` no longer fires unless your mapping builds the gift events itself. `onAfterMapping(function)` receives the `MappingResult`, with `getSource()` (the deserialised message, as `Object`) and `getEvents()`, and returns the list of events to publish, so it can add, drop, or replace events while the default mapping keeps running. `forAnyMessage()` returns a model whose hooks run for every registered message after the message's own at each stage: its `onBeforeMapping` receives the bytes the message's hook returned, its `onAfterMapping` receives the events the message's hook returned, and its `onMapping` runs only when the message's mapping returns `null`. It never sees messages without a mapping.
 
 ```java
 import io.github.jwdeveloper.tiktok.api.data.events.common.TikTokEvent;

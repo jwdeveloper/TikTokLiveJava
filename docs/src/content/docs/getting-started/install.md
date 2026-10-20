@@ -38,7 +38,7 @@ Add the repository and the dependency to `build.gradle`:
 ```groovy
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {

@@ -22,7 +22,7 @@ The fields are Lombok properties: `fetchGifts` is read with `isFetchGifts()` and
 
 ## Fields
 
-The defaults are the values after `TikTokLive.newClient`, which calls `createDefault()`. Two of them differ from the field initialisers, as noted.
+The defaults are the values after `TikTokLive.newClient`, which calls `createDefault()`. One of them, `printToConsole`, differs from the field initialiser, as noted; the other such default, the HTTP `timeout`, is on the [HTTP settings](/configuration/http-settings/) page.
 
 | Field | Type | Default | Effect |
 | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ Nothing else is validated: an `apiKey` or a session is checked only by the serve
 
 With `offline` set to `true`, `build()` wires `TikTokLiveHttpOfflineClient` and `TikTokWebSocketOfflineClient` in place of the real clients. No request leaves the process, and `sendChat` returns `false`. Use it to test handlers with `publishEvent`, which dispatches an event object to your handlers, and `publishMessage`, which runs a raw Webcast message through the same mapping as a socket message; both work whether or not the client is connected.
 
-In this checkout, `connect()` in offline mode stops with a logged `NullPointerException` before the stand-in socket starts, because the offline HTTP client returns no room info. `connect()` does not throw; it logs `Unhandled exception`, prints the stack trace, and sets the state back to `DISCONNECTED` without publishing `TikTokConnectedEvent`. `build()` and `publishEvent` are enough for a test, so skip `connect()`.
+In this checkout, `connect()` in offline mode stops with a logged `NullPointerException` before the stand-in socket starts, because the offline HTTP client returns no room info. `connect()` does not throw; it logs `Unhandled exception`, prints the stack trace, and sets the state back to `DISCONNECTED` without publishing `TikTokConnectedEvent`. The one exception is `useEulerstreamWebsocket` set as well, which skips the HTTP requests, so `connect()` reaches the stand-in socket and succeeds. `build()` and `publishEvent` are enough for a test, so skip `connect()`.
 
 ```java
 var client = TikTokLive.newClient("isaackogz")

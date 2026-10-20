@@ -86,7 +86,7 @@ client.disconnect();
 The file is the FLV stream as received, which VLC and `ffplay` open directly. To change the container without re-encoding:
 
 ```sh
-ffmpeg -i clip.flv -c copy clip.mp4
+ffmpeg -i recordings/clip.flv -c copy clip.mp4
 ```
 
 ## Requirements and limits

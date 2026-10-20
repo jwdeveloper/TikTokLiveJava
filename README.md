@@ -32,7 +32,6 @@ No credentials are required. Events such as [Members Joining](#member), [Gifts](
 Full documentation, guides and the complete event reference: [ttlj.docs.isaackogan.com](https://ttlj.docs.isaackogan.com/)
 
 
-
 <div align="center">
   <a href="https://www.youtube.com/watch?v=eerWGgUKc6c" align="right" target="blank"><img src="https://img.youtube.com/vi/eerWGgUKc6c/hqdefault.jpg" alt="IMAGE ALT TEXT" width="38%" align="right"></a>
 </div>
