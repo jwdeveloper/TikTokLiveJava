@@ -1,9 +1,9 @@
 # Starlight Documentation Site for TikTokLiveJava
 
 **Date:** 2026-10-20
-**Status:** Draft, awaiting approval
+**Status:** Implemented (approved 2026-10-20; rulings made during implementation are noted inline)
 **Upstream:** `jwdeveloper/TikTokLiveJava` (default branch `master`); the maintainer of this effort has no push rights there.
-**Working fork:** `isaackogan/TikTokLiveJava` (a real GitHub fork, in sync with upstream at `81f54d7`), local checkout `/Users/isaackogan/Documents/IdeaProjects/TikTokLiveJava`.
+**Working fork:** `isaackogan/TikTokLiveJava` (a real GitHub fork, in sync with upstream at `81f54d7`).
 **Reference implementations:** Node.js site https://ttlc.docs.isaackogan.com/ (repo `zerodytrash/TikTok-Live-Connector`, `docs/`), Python site https://ttl.docs.isaackogan.com/ (repo `isaackogan/TikTokLive`, `docs/`, design at `docs/superpowers/specs/2026-10-19-starlight-docs-design.md`).
 
 ## 1. Intent
