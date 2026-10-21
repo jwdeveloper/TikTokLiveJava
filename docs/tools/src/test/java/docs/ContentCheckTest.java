@@ -77,16 +77,19 @@ class ContentCheckTest {
     void checkEventsReportsMissingEvent(@TempDir Path site) throws IOException {
         write(site, "t.md", "The `TikTokCommentEvent` event.\n");
         write(site, "events/index.md", "| Event | Type | Description |\n|---|---|---|\n| `TikTokCommentEvent` | Message | A comment. |\n");
+        write(site, "events/chat.md", "## TikTokCommentEvent\n\nA comment.\n");
         var events = Map.of("TikTokCommentEvent", "Message", "TikTokNewShinyEvent", "Message");
         var failures = ContentCheck.checkEvents(events, ContentCheck.pages(site));
         assertTrue(failures.contains("Missing event documentation: TikTokNewShinyEvent"), failures.toString());
         assertTrue(failures.contains("Event catalog row missing: TikTokNewShinyEvent"), failures.toString());
+        assertTrue(failures.contains("Event section heading missing: TikTokNewShinyEvent"), failures.toString());
         assertFalse(failures.stream().anyMatch(f -> f.contains("TikTokCommentEvent")), failures.toString());
     }
 
     @Test
     void catalogRowTypeMustMatchAnnotation(@TempDir Path site) throws IOException {
         write(site, "events/index.md", "| Event | Type | Description |\n|---|---|---|\n| `TikTokCommentEvent` | Control | x |\n");
+        write(site, "events/chat.md", "## TikTokCommentEvent\n");
         var failures = ContentCheck.checkEvents(Map.of("TikTokCommentEvent", "Message"), ContentCheck.pages(site));
         assertEquals(List.of("Event catalog row is stale: TikTokCommentEvent"), failures);
     }
@@ -94,7 +97,26 @@ class ContentCheckTest {
     @Test
     void catalogRowAcceptsNoneForUnannotatedEvents(@TempDir Path site) throws IOException {
         write(site, "events/index.md", "| `TikTokHeaderEvent` | none | base |\n");
+        write(site, "events/debugging.md", "## `TikTokHeaderEvent`\n");
         assertEquals(List.of(), ContentCheck.checkEvents(Map.of("TikTokHeaderEvent", "none"), ContentCheck.pages(site)));
+    }
+
+    @Test
+    void eventSectionHeadingMustBeOnAGroupedEventsPage(@TempDir Path site) throws IOException {
+        // The catalog row alone used to satisfy the section: `mentioned()` counts the row's backticks.
+        write(site, "events/index.md", "| `TikTokCommentEvent` | Message | A comment. |\n\n## TikTokCommentEvent\n");
+        write(site, "guides/chat.md", "## TikTokCommentEvent\n");
+        write(site, "events/chat.md", "### TikTokCommentEvent\n\nA level-3 heading is not a section.\n");
+        var failures = ContentCheck.checkEvents(Map.of("TikTokCommentEvent", "Message"), ContentCheck.pages(site));
+        assertEquals(List.of("Event section heading missing: TikTokCommentEvent"), failures);
+
+        write(site, "events/chat.md", "## TikTokCommentEvent\n");
+        assertEquals(List.of(), ContentCheck.checkEvents(Map.of("TikTokCommentEvent", "Message"), ContentCheck.pages(site)));
+    }
+
+    @Test
+    void repositoryEventsHaveSectionsCatalogRowsAndMentions() {
+        assertEquals(List.of(), ContentCheck.checkEvents(ContentCheck.events(REPO), ContentCheck.pages(REPO.resolve(Main.CONTENT_DIR))));
     }
 
     @Test
@@ -141,6 +163,56 @@ class ContentCheckTest {
         assertTrue(unresolved.contains("README handler is not on EventsBuilder: onEvent"), unresolved.toString());
         assertTrue(unresolved.size() >= 40, "every item yields two failures when nothing resolves: " + unresolved.size());
         assertEquals(List.of(), ContentCheck.checkReadme(readme, ContentCheck.builderHandlers(REPO), ContentCheck.eventClassNames(REPO)));
+    }
+
+    @Test
+    void readmeLinksResolveToPagesAndHeadings(@TempDir Path site) throws IOException {
+        write(site, "index.md", "# Home\n");
+        write(site, "events/index.md", "## Catalog\n");
+        write(site, "events/control.md", "## TikTokConnectedEvent\n\n## connect() fails\n\n## The timeout and sub-second parts\n");
+        var readme = "Docs: https://ttlj.docs.isaackogan.com/\n"
+                + "- [onEvent](#onevent-tiktokevent) · [docs](https://ttlj.docs.isaackogan.com/events/)\n"
+                + "- [onConnected](#onconnected) · [docs](https://ttlj.docs.isaackogan.com/events/control/#tiktokconnectedevent)\n"
+                + "See https://ttlj.docs.isaackogan.com/events/control/#connect-fails and "
+                + "https://ttlj.docs.isaackogan.com/events/control#the-timeout-and-sub-second-parts.\n";
+        assertEquals(List.of(), ContentCheck.checkReadmeLinks(readme, ContentCheck.pages(site)));
+    }
+
+    @Test
+    void readmeLinkToMissingPageOrHeadingFails(@TempDir Path site) throws IOException {
+        write(site, "events/control.md", "## TikTokConnectedEvent\n");
+        var readme = "- [onComment](#oncomment) · [docs](https://ttlj.docs.isaackogan.com/events/chat/#tiktokcommentevent)\n"
+                + "- [onError](#onerror) · [docs](https://ttlj.docs.isaackogan.com/events/control/#tiktokerrorevent)\n"
+                + "- [onConnected](#onconnected) · [docs](https://ttlj.docs.isaackogan.com/events/control/#tiktokconnectedevent)\n";
+        assertEquals(List.of(
+                "README link has no page: https://ttlj.docs.isaackogan.com/events/chat/#tiktokcommentevent",
+                "README link has no heading: https://ttlj.docs.isaackogan.com/events/control/#tiktokerrorevent"),
+                ContentCheck.checkReadmeLinks(readme, ContentCheck.pages(site)));
+    }
+
+    @Test
+    void repositoryReadmeLinksResolve() throws IOException {
+        var readme = Files.readString(REPO.resolve("README.md"));
+        assertTrue(readme.contains(ContentCheck.SITE + "events/control/#tiktokconnectedevent"), "the README links the hosted event sections");
+        assertEquals(List.of(), ContentCheck.checkReadmeLinks(readme, ContentCheck.pages(REPO.resolve(Main.CONTENT_DIR))));
+    }
+
+    @Test
+    void slugMatchesStarlightAnchors() {
+        assertEquals("tiktokcommentevent", ContentCheck.slug("TikTokCommentEvent"));
+        assertEquals("tiktokcommentevent", ContentCheck.slug("`TikTokCommentEvent`"));
+        assertEquals("connect-fails", ContentCheck.slug("connect() fails"));
+        assertEquals("build-connect-or-both", ContentCheck.slug("Build, connect, or both"));
+        assertEquals(Set.of("a", "b-c"), ContentCheck.slugs("# A\n\ntext\n\n### B c\n"));
+    }
+
+    @Test
+    void fenceLanguageIsCaseInsensitive(@TempDir Path site) throws IOException {
+        write(site, "a.md", "```Java\nint a = 1;\n```\n\n```JAVA\nint b = 2;\n```\n\n```javascript\nconst c = 3;\n```\n");
+        var examples = ContentCheck.examples(ContentCheck.pages(site));
+        assertEquals(2, examples.size(), examples.toString());
+        assertEquals("int a = 1;", examples.get(0).code());
+        assertEquals("int b = 2;", examples.get(1).code());
     }
 
     @Test

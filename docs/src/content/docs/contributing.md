@@ -70,13 +70,13 @@ When a behaviour cannot be read from the code, run it against a live room and sa
 
 | Section | Passes when |
 | --- | --- |
-| `events` | Every concrete event class under `api/data/events` is named in backticks on some page and has a catalog row on `events/index.md` whose type cell equals its `@EventMeta` category (`Control`, `Message`, `Debug`, or `none`). |
+| `events` | Every concrete event class under `api/data/events` is named in backticks on some page, has a catalog row on `events/index.md` whose type cell equals its `@EventMeta` category (`Control`, `Message`, `Debug`, or `none`), and has a `## <EventClassName>` section on a grouped page under `events/` other than the catalog, which is what the README's hosted anchors point at. |
 | `settings` | Every field of `LiveClientSettings` and `HttpClientSettings` is named in backticks on some page. |
 | `builder` | Every public `on*` handler of `EventsBuilder` and every public method of `LiveClient` is named in backticks on some page. |
 | `exceptions` | Every class under `api/exceptions` is named in backticks on some page. |
 | `extensions` | `TikTokLiveRecorder` and `TikTokLiveCollector` are named in backticks on some page. |
 | `discord` | No page contains a Discord link domain. |
-| `readme` | Every `- [onX](#anchor)` item of the README's events list names an event class, the anchor's last segment, and an `EventsBuilder` handler. |
+| `readme` | Every `- [onX](#anchor)` item of the README's events list names an event class, the anchor's last segment, and an `EventsBuilder` handler; and every `https://ttlj.docs.isaackogan.com/...` link in the README resolves to an authored page and, with a fragment, to a heading on it whose slug (lowercase, non-alphanumerics as hyphens) equals the fragment. |
 | `examples` | Every Java fence compiles as described above; a deliberately wrong canary must fail, so an empty classpath cannot pass the section. |
 
 A failing section prints its first three failures with the offending name. The check tells you what is missing; it cannot tell whether a sentence is true, so verify behaviour in the source before describing it.

@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,9 +50,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * The {@code check} command: verifies that the authored pages cover the library (events, settings, handlers,
- * exceptions, extensions), reference no Discord link, agree with the README's events list, and that every Java
- * example compiles.
+ * The {@code check} command: verifies that the authored pages cover the library (events, each with a section on a
+ * grouped events page, settings, handlers, exceptions, extensions), reference no Discord link, agree with the
+ * README's events list and resolve its hosted links, and that every Java example compiles.
  */
 final class ContentCheck {
 
@@ -64,13 +65,20 @@ final class ContentCheck {
     static final List<String> SETTINGS_CLASSES = List.of("io.github.jwdeveloper.tiktok.api.data.settings.LiveClientSettings",
             "io.github.jwdeveloper.tiktok.api.data.settings.HttpClientSettings");
     static final String CATALOG_PAGE = "events/index.md";
+    /** The directory of the grouped event pages, each event's {@code ## <EventClassName>} section lives on one of them. */
+    static final String EVENTS_DIR = "events/";
     /** Category of an event class under the events package that carries no {@code @EventMeta}. */
     static final String NO_CATEGORY = "none";
     /** Generated directories under the content root; their pages are not authored documentation. */
     static final Set<String> GENERATED_DIRS = Set.of("api", "schema");
+    /** The site's origin: the README's hosted links start with it and are resolved against the authored pages. */
+    static final String SITE = "https://ttlj.docs.isaackogan.com/";
 
     private static final Pattern CATALOG_ROW = Pattern.compile("^\\s*\\|\\s*`(\\w+)`\\s*\\|\\s*(\\w+)\\s*\\|", Pattern.MULTILINE);
     private static final Pattern README_ITEM = Pattern.compile("^\\s*-\\s+\\[(on\\w+)]\\(#([\\w-]+)\\)", Pattern.MULTILINE);
+    private static final Pattern SITE_LINK = Pattern.compile(Pattern.quote(SITE) + "([\\w./-]*)(?:#([\\w-]+))?");
+    private static final Pattern EVENT_HEADING = Pattern.compile("^##\\s+`?(\\w+)`?\\s*$", Pattern.MULTILINE);
+    private static final Pattern HEADING = Pattern.compile("^#{1,6}\\s+(.+?)\\s*$", Pattern.MULTILINE);
     private static final Pattern DISCORD = Pattern.compile("(?i)discord\\.(com|gg)");
     private static final Pattern FENCE_OPEN = Pattern.compile("^\\s*(`{3,}|~{3,})\\s*(\\w*)(.*)$");
     private static final Pattern FENCE_CLOSE = Pattern.compile("^\\s*(`{3,}|~{3,})\\s*$");
@@ -98,7 +106,10 @@ final class ContentCheck {
         results.put("exceptions", checkNames("exception", exceptions, pages));
         results.put("extensions", checkNames("extension", EXTENSIONS, pages));
         results.put("discord", checkDiscord(pages));
-        results.put("readme", checkReadme(read(repoRoot.resolve("README.md")), builderHandlers(units), eventClassNames(units)));
+        var readme = read(repoRoot.resolve("README.md"));
+        var readmeFailures = new ArrayList<>(checkReadme(readme, builderHandlers(units), eventClassNames(units)));
+        readmeFailures.addAll(checkReadmeLinks(readme, pages));
+        results.put("readme", readmeFailures);
         results.put("examples", ExampleCompiler.compile(examples, repoRoot, ExampleCompiler.packages(units)));
         var failed = false;
         for (var section : SECTIONS) {
@@ -319,7 +330,7 @@ final class ContentCheck {
             }
             var close = FENCE_CLOSE.matcher(line);
             if (close.matches() && close.group(1).charAt(0) == fence.charAt(0) && close.group(1).length() >= fence.length()) {
-                if (lang.equals(language)) {
+                if (lang.equalsIgnoreCase(language)) {
                     bodies.add(dedent(body));
                 }
                 fence = null;
@@ -346,7 +357,11 @@ final class ContentCheck {
 
     // --- rules --------------------------------------------------------------------------------
 
-    /** Every event is named in backticks on some page and has a catalog row whose type equals its category. */
+    /**
+     * Every event is named in backticks on some page, has a catalog row whose type equals its category, and has a
+     * {@code ## <EventClassName>} section on a grouped page under {@code events/} other than the catalog: the
+     * README's hosted anchors point at those headings.
+     */
     static List<String> checkEvents(Map<String, String> events, List<Page> pages) {
         var failures = new ArrayList<String>();
         var catalog = pages.stream().filter(p -> p.path().equals(CATALOG_PAGE)).findFirst().map(Page::text).orElse(null);
@@ -358,10 +373,22 @@ final class ContentCheck {
         while (m.find()) {
             rows.putIfAbsent(m.group(1), m.group(2));
         }
+        var headings = new HashSet<String>();
+        for (var page : pages) {
+            if (page.path().startsWith(EVENTS_DIR) && !page.path().equals(CATALOG_PAGE)) {
+                var h = EVENT_HEADING.matcher(page.text());
+                while (h.find()) {
+                    headings.add(h.group(1));
+                }
+            }
+        }
         for (var entry : new TreeMap<>(events).entrySet()) {
             var name = entry.getKey();
             if (!mentioned(name, pages)) {
                 failures.add("Missing event documentation: " + name);
+            }
+            if (!headings.contains(name)) {
+                failures.add("Event section heading missing: " + name);
             }
             var type = rows.get(name);
             if (type == null) {
@@ -418,6 +445,60 @@ final class ContentCheck {
             }
         }
         return new ArrayList<>(failures);
+    }
+
+    /**
+     * Every hosted link in the README, {@code https://ttlj.docs.isaackogan.com/<path>#<fragment>}, names an authored
+     * page ({@code <path>.md} or {@code <path>/index.md}; {@code /} is {@code index.md}) and, when it has a fragment,
+     * a heading on that page whose slug equals it: lowercase, each run of non-alphanumerics one hyphen, as the README
+     * anchors are written.
+     */
+    static List<String> checkReadmeLinks(String readme, List<Page> pages) {
+        var byPath = new HashMap<String, Page>();
+        for (var page : pages) {
+            byPath.put(page.path(), page);
+        }
+        var failures = new LinkedHashSet<String>();
+        var m = SITE_LINK.matcher(readme);
+        while (m.find()) {
+            var fragment = m.group(2);
+            var url = SITE + m.group(1) + (fragment == null ? "" : "#" + fragment);
+            var page = page(byPath, m.group(1).replaceAll("/+$", ""));
+            if (page == null) {
+                failures.add("README link has no page: " + url);
+            } else if (fragment != null && !slugs(page.text()).contains(fragment)) {
+                failures.add("README link has no heading: " + url);
+            }
+        }
+        return new ArrayList<>(failures);
+    }
+
+    private static Page page(Map<String, Page> byPath, String path) {
+        if (path.isEmpty()) {
+            return byPath.get("index.md");
+        }
+        for (var candidate : List.of(path + ".md", path + ".mdx", path + "/index.md", path + "/index.mdx")) {
+            var page = byPath.get(candidate);
+            if (page != null) {
+                return page;
+            }
+        }
+        return null;
+    }
+
+    /** The slug of every heading on a page. */
+    static Set<String> slugs(String text) {
+        var slugs = new HashSet<String>();
+        var m = HEADING.matcher(text);
+        while (m.find()) {
+            slugs.add(slug(m.group(1)));
+        }
+        return slugs;
+    }
+
+    /** Starlight's anchor for a heading: lowercase, each run of non-alphanumerics one hyphen, none at the ends. */
+    static String slug(String heading) {
+        return heading.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "-").replaceAll("^-+|-+$", "");
     }
 
     private static boolean mentioned(String name, List<Page> pages) {
