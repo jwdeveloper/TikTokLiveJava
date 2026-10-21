@@ -417,7 +417,7 @@ final class ApiPages {
     private static String typePage(TypeInfo type, String sourceBaseUrl, Linker linker) {
         var javadoc = type.decl().getJavadoc();
         var summary = Markdown.summary(javadoc);
-        var description = summary.isEmpty() ? type.kind() + " " + type.fqcn() : summary;
+        var description = summary.isEmpty() ? type.kind() + " " + type.fqcn() : Markdown.plain(summary);
         var sb = new StringBuilder(Markdown.frontmatter(type.displayName(), description, type.displayName(), null));
         if (type.outer() != null) {
             sb.append("Nested in ").append(Markdown.link(Markdown.code(type.outer().displayName()), type.outer().url())).append(".\n\n");

@@ -29,6 +29,8 @@ import com.github.javaparser.javadoc.description.JavadocInlineTag;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -47,6 +49,10 @@ final class Markdown {
     private static final Pattern A_TAG = Pattern.compile("(?is)<a\\s+[^>]*href=\"([^\"]*)\"[^>]*>(.*?)</a>");
     private static final Pattern CODE_TAG = Pattern.compile("(?is)<(code|tt)>(.*?)</\\1>");
     private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[([^\\]]*)\\]\\([^)]*\\)");
+    /** A {@code <pre>} or {@code </pre>} tag; group 1 is the slash of a closing tag. */
+    private static final Pattern PRE_TAG = Pattern.compile("(?i)<(/?)pre>");
+    /** Stands in for a {@code <pre>} block while the surrounding text is escaped and tidied; private-use characters survive {@code trim()}. */
+    private static final String PRE_MARK = "\uE000PRE";
 
     private Markdown() {}
 
@@ -131,30 +137,42 @@ final class Markdown {
 
     // --- Javadoc ----------------------------------------------------------------------------
 
-    /** The first sentence of the Javadoc description as one plain line, or an empty string. */
+    /**
+     * The first sentence of the Javadoc description as one Markdown line, or an empty string. Links are reduced to
+     * their text and emphasis is dropped; tag-like {@code <} stays escaped, so the line can be written into a
+     * listing as it is. {@link #plain} removes the escapes for a quoted frontmatter value.
+     */
     static String summary(Optional<Javadoc> javadoc) {
-        var text = javadoc.map(j -> description(j.getDescription())).orElse("");
+        var text = javadoc.map(j -> description(j.getDescription(), false)).orElse("");
         if (text.isEmpty()) {
             return "";
         }
         var line = oneLine(text.split("\\n\\s*\\n", 2)[0]);
         var m = FIRST_SENTENCE.matcher(line);
         var sentence = m.find() ? m.group(1) : line;
-        return MARKDOWN_LINK.matcher(sentence).replaceAll("$1").replace("\\<", "<").replace("**", "");
+        return MARKDOWN_LINK.matcher(sentence).replaceAll("$1").replace("**", "");
     }
 
-    /** The whole Javadoc description on one line, with {@code @apiNote} appended, or an empty string. */
+    /** A {@link #summary} with its Markdown escapes removed, for a value {@link #jsonString} quotes. */
+    static String plain(String summary) {
+        return summary.replace("\\<", "<");
+    }
+
+    /**
+     * The whole Javadoc description on one line, with {@code @apiNote} appended, or an empty string. A
+     * {@code <pre>} block becomes a code span, since a fence cannot sit on a bullet.
+     */
     static String line(Optional<Javadoc> javadoc) {
         if (javadoc.isEmpty()) {
             return "";
         }
-        var sb = new StringBuilder(oneLine(description(javadoc.get().getDescription())));
+        var sb = new StringBuilder(oneLine(description(javadoc.get().getDescription(), false)));
         for (var tag : javadoc.get().getBlockTags()) {
             if (isNote(tag)) {
                 if (sb.length() > 0) {
                     sb.append(' ');
                 }
-                sb.append("Note: ").append(oneLine(description(tag.getContent())));
+                sb.append("Note: ").append(oneLine(description(tag.getContent(), false)));
             }
         }
         return sb.toString();
@@ -181,7 +199,7 @@ final class Markdown {
 
     /** The text of a block tag ({@code @param}, {@code @return}, {@code @throws}) as one Markdown line. */
     static String tagText(JavadocBlockTag tag) {
-        return oneLine(description(tag.getContent()));
+        return oneLine(description(tag.getContent(), false));
     }
 
     private static boolean isNote(JavadocBlockTag tag) {
@@ -196,17 +214,144 @@ final class Markdown {
         sb.append(text);
     }
 
-    /** Javadoc description elements as Markdown: inline tags become code spans, HTML becomes Markdown. */
+    /**
+     * Javadoc description elements as Markdown: inline tags become code spans, HTML becomes Markdown, and each
+     * {@code <pre>} block becomes a fenced block holding its text raw.
+     */
     static String description(JavadocDescription description) {
+        return description(description, true);
+    }
+
+    /**
+     * As {@link #description(JavadocDescription)}; with {@code fences} false, for single-line contexts, each
+     * {@code <pre>} block becomes a code span instead.
+     */
+    static String description(JavadocDescription description, boolean fences) {
         var sb = new StringBuilder();
+        var blocks = new ArrayList<String>();
+        PreBlock pre = null;
         for (var element : description.getElements()) {
             if (element instanceof JavadocInlineTag tag) {
-                sb.append(inlineTag(tag));
+                if (pre == null) {
+                    sb.append(inlineTag(tag));
+                } else {
+                    pre.tag(tag);
+                }
+                continue;
+            }
+            var text = element.toText();
+            var m = PRE_TAG.matcher(text);
+            int last = 0;
+            while (m.find()) {
+                var chunk = text.substring(last, m.start());
+                if (pre == null) {
+                    sb.append(html(chunk));
+                } else {
+                    pre.text(chunk);
+                }
+                var closing = !m.group(1).isEmpty();
+                if (closing && pre != null) {
+                    blocks.add(pre.toString());
+                    sb.append("\n\n").append(PRE_MARK).append(blocks.size() - 1).append("\uE001\n\n");
+                    pre = null;
+                } else if (!closing && pre == null) {
+                    pre = new PreBlock();
+                }
+                last = m.end();
+            }
+            var tail = text.substring(last);
+            if (pre == null) {
+                sb.append(html(tail));
             } else {
-                sb.append(html(element.toText()));
+                pre.text(tail);
             }
         }
-        return tidy(sb.toString());
+        if (pre != null) {
+            blocks.add(pre.toString());
+            sb.append("\n\n").append(PRE_MARK).append(blocks.size() - 1).append('\uE001');
+        }
+        var out = tidy(sb.toString());
+        for (int i = 0; i < blocks.size(); i++) {
+            var block = preBlock(blocks.get(i));
+            out = out.replace(PRE_MARK + i + '\uE001', fences ? "```\n" + block + "\n```" : code(oneLine(block)));
+        }
+        return out;
+    }
+
+    /**
+     * The raw text of one {@code <pre>} block as it is read: snippets as they are, inline tags by their content.
+     * JavaParser ends an inline tag at the first {@code }}, so a {@code {@code}} block containing braces arrives cut
+     * short; the brace it consumed is restored and the tag's real closing brace, the first one that unbalances the
+     * block, is dropped.
+     */
+    private static final class PreBlock {
+        private final StringBuilder sb = new StringBuilder();
+        /** Unmatched {@code {} of a cut-short {@code {@code}} tag still open, or -1 when none is pending. */
+        private int openBraces = -1;
+
+        void text(String text) {
+            if (openBraces < 0) {
+                sb.append(text);
+                return;
+            }
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                if (c == '{') {
+                    openBraces++;
+                } else if (c == '}' && --openBraces < 0) {
+                    sb.append(text, i + 1, text.length());
+                    return;
+                }
+                sb.append(c);
+            }
+        }
+
+        void tag(JavadocInlineTag tag) {
+            var content = tag.getContent();
+            switch (tag.getType()) {
+                case LINK, LINKPLAIN -> {
+                    var parts = content.trim().split("\\s+", 2);
+                    sb.append(parts.length > 1 ? parts[1] : parts[0]);
+                }
+                case INHERIT_DOC -> {
+                }
+                default -> {
+                    sb.append(content);
+                    var open = content.chars().filter(c -> c == '{').count() - content.chars().filter(c -> c == '}').count();
+                    if (open > 0) {
+                        sb.append('}');
+                        openBraces = (int) open - 1;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public String toString() {
+            return sb.toString();
+        }
+    }
+
+    /** A {@code <pre>} block's text for a fence: entities decoded, blank edges and common indentation removed, nothing escaped. */
+    private static String preBlock(String raw) {
+        var lines = new ArrayList<>(List.of(decode(raw).replace("\r", "").split("\n", -1)));
+        while (!lines.isEmpty() && lines.get(0).isBlank()) {
+            lines.remove(0);
+        }
+        while (!lines.isEmpty() && lines.get(lines.size() - 1).isBlank()) {
+            lines.remove(lines.size() - 1);
+        }
+        var indent = Integer.MAX_VALUE;
+        for (var line : lines) {
+            if (!line.isBlank()) {
+                indent = Math.min(indent, line.length() - line.stripLeading().length());
+            }
+        }
+        var sb = new StringBuilder();
+        for (var line : lines) {
+            sb.append(line.isBlank() ? "" : line.substring(indent)).append('\n');
+        }
+        return sb.toString().stripTrailing();
     }
 
     private static String inlineTag(JavadocInlineTag tag) {
@@ -224,13 +369,14 @@ final class Markdown {
         };
     }
 
-    /** The HTML subset Javadoc authors use, as Markdown; anything tag-like that remains is escaped. */
+    /**
+     * The HTML subset Javadoc authors use, as Markdown; anything tag-like that remains is escaped. {@code <pre>}
+     * blocks are cut out before this runs, see {@link #description(JavadocDescription, boolean)}.
+     */
     static String html(String text) {
-        var s = text.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&#64;", "@")
-                .replace("&nbsp;", " ").replace("&amp;", "&");
+        var s = decode(text);
         s = A_TAG.matcher(s).replaceAll(m -> Matcher.quoteReplacement(link(oneLine(m.group(2)), m.group(1))));
         s = CODE_TAG.matcher(s).replaceAll(m -> Matcher.quoteReplacement(code(oneLine(m.group(2)))));
-        s = s.replaceAll("(?i)<pre>\\s*", "\n\n```\n").replaceAll("(?i)\\s*</pre>", "\n```\n\n");
         s = s.replaceAll("(?i)</?p\\s*/?>", "\n\n");
         s = s.replaceAll("(?i)<br\\s*/?>", "\n");
         s = s.replaceAll("(?i)\\s*<li>\\s*", "\n- ").replaceAll("(?i)</li>\\s*", "\n");
@@ -238,6 +384,12 @@ final class Markdown {
         s = s.replaceAll("(?i)</?(b|strong)>", "**").replaceAll("(?i)</?(i|em)>", "*");
         s = s.replaceAll("(?i)<h[1-6]>", "\n\n**").replaceAll("(?i)</h[1-6]>", "**\n\n");
         return escape(s);
+    }
+
+    /** The HTML entities Javadoc authors use, decoded. */
+    private static String decode(String text) {
+        return text.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&#64;", "@")
+                .replace("&nbsp;", " ").replace("&amp;", "&");
     }
 
     /** Trims every line and collapses runs of blank lines. */
