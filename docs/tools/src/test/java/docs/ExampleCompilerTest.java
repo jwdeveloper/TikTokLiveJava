@@ -67,6 +67,26 @@ class ExampleCompilerTest {
     }
 
     @Test
+    void errorsOnHoistedImportsPointAtTheImportLine() {
+        var code = "int a = 1;\n\nimport does.not.Exist;\n\n" + FRAGMENT;
+        var f = ExampleCompiler.compile(List.of(new Example("p.md, example 2", code)), REPO);
+        assertEquals(1, f.size(), f.toString());
+        assertTrue(f.get(0).startsWith("p.md, example 2: line 3: "), f.get(0));
+        assertTrue(f.get(0).contains("does.not"), f.get(0));
+    }
+
+    @Test
+    void fullUnitsWithTheSameHelperClassDoNotCollide() {
+        var a = "public class MainA {\n    Object run() {\n        return new Helper();\n    }\n}\n\nclass Helper {\n}\n";
+        var b = a.replace("MainA", "MainB");
+        assertEquals(List.of(), ExampleCompiler.compile(List.of(new Example("a.md, example 1", a), new Example("b.md, example 1", b)), REPO));
+        var broken = b.replace("return new Helper();", "return new Helper().missing();");
+        var f = ExampleCompiler.compile(List.of(new Example("a.md, example 1", a), new Example("b.md, example 1", broken)), REPO);
+        assertEquals(1, f.size(), f.toString());
+        assertTrue(f.get(0).startsWith("b.md, example 1: line 3: "), f.get(0));
+    }
+
+    @Test
     void fullUnitCompilesAsIs() {
         var unit = """
                 import io.github.jwdeveloper.tiktok.api.annotations.TikTokEventObserver;

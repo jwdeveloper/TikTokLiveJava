@@ -2,7 +2,7 @@
 // temporary directory and runs verifySeo against it, so the gate's checks are
 // exercised without a real Astro build.
 //
-//   pnpm run test            (node --test scripts/)
+//   pnpm run test            (node --test "scripts/**/*.test.mjs")
 
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import { BASE_URL, verifySeo } from './verify-seo.mjs';
 
 /** Render one fixture page. `route` is the path under BASE_URL ('' for the homepage). */
-export function pageHtml({
+function pageHtml({
   route,
   title = 'Guide',
   canonical = BASE_URL + route,
@@ -75,7 +75,7 @@ function defaultFiles() {
  * Write a minimal built site into `dir`. `overrides` maps a relative path to
  * its content; a `null` value omits that file from the fixture.
  */
-export function writeFixtureSite(dir, overrides = {}) {
+function writeFixtureSite(dir, overrides = {}) {
   const files = { ...defaultFiles(), ...overrides };
   for (const [relative, content] of Object.entries(files)) {
     if (content === null) continue;
@@ -98,7 +98,7 @@ test('gatePassesOnFixtureSite', (t) => {
   const { passes, failures } = verifySeo(dir);
 
   assert.deepEqual(failures, []);
-  assert.ok(passes.length >= 15, `expected every check to run, got ${passes.length}`);
+  assert.equal(passes.length, 17, `every check runs once on the fixture, got ${passes.length}`);
 });
 
 test('failsWhenNestedPageLacksEulerLink', (t) => {

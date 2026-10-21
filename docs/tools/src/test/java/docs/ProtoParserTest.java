@@ -39,6 +39,7 @@ class ProtoParserTest {
     @Test
     void parsesMessagesEnumsAndNested() {
         var f = ProtoParser.parse(REPO.resolve("API/src/main/proto/webcast.proto"));
+        assertEquals("webcast", f.name());
         assertEquals("TikTok", f.pkg());
         assertEquals("io.github.jwdeveloper.tiktok.api.messages.webcast", f.javaPackage());
         assertTrue(f.messages().stream().anyMatch(m -> m.name().equals("WebcastChatMessage")));
@@ -87,7 +88,10 @@ class ProtoParserTest {
         var file = dir.resolve("fixture.proto");
         Files.writeString(file, source);
         var f = ProtoParser.parse(file);
+        assertEquals("fixture", f.name());
         assertEquals("Fixture", f.pkg());
+        assertEquals("notes", ProtoParser.parse("syntax = \"proto3\";", "dir/sub/Notes.proto").name(), "stem from a path");
+        assertEquals("inline", ProtoParser.parse("syntax = \"proto3\";", "inline").name(), "a bare label is its own stem");
         assertEquals("fixture.gen", f.javaPackage());
         assertEquals(1, f.messages().size());
         assertEquals(1, f.enums().size());

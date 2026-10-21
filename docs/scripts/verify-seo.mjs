@@ -32,7 +32,7 @@ const ANCHOR_TAG = /<a\b[^>]*>/gi;
 const CANONICAL_TAG = /<link\b[^>]*\brel="canonical"[^>]*>/gi;
 const HREF = /\bhref="([^"]*)"/i;
 const EULER_ANCHOR = new RegExp(
-  `<a\\b[^>]*href="[^"]*${EULER_HOST.replace('.', '\\.')}[^"]*"[^>]*>([\\s\\S]*?)</a>`,
+  `<a\\b[^>]*href="[^"]*${EULER_HOST.replace(/\./g, '\\.')}[^"]*"[^>]*>([\\s\\S]*?)</a>`,
   'gi',
 );
 

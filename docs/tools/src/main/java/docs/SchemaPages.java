@@ -68,8 +68,15 @@ final class SchemaPages {
         }
     }
 
-    /** The output directory for a file: the last segment of its {@code java_package} (or {@code package}). */
+    /**
+     * The output directory for a file: its name without the extension, so two files whose packages share a last
+     * segment keep separate directories; a file without a name falls back to the last segment of its
+     * {@code java_package} (or {@code package}).
+     */
     static String fileStem(ProtoFile file) {
+        if (!file.name().isEmpty()) {
+            return file.name();
+        }
         var pkg = file.javaPackage().isEmpty() ? file.pkg() : file.javaPackage();
         return pkg.substring(pkg.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
     }

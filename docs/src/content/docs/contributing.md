@@ -77,7 +77,7 @@ When a behaviour cannot be read from the code, run it against a live room and sa
 | `extensions` | `TikTokLiveRecorder` and `TikTokLiveCollector` are named in backticks on some page. |
 | `discord` | No page contains a Discord link domain. |
 | `readme` | Every `- [onX](#anchor)` item of the README's events list names an event class, the anchor's last segment, and an `EventsBuilder` handler; and every `https://ttlj.docs.isaackogan.com/...` link in the README resolves to an authored page and, with a fragment, to a heading on it whose slug (lowercase, non-alphanumerics as hyphens) equals the fragment. |
-| `examples` | Every Java fence compiles as described above; a deliberately wrong canary must fail, so an empty classpath cannot pass the section. |
+| `examples` | Every Java fence compiles as described above, and no fence on any page is left unclosed; a deliberately wrong canary must fail, so an empty classpath cannot pass the section. |
 
 A failing section prints its first three failures with the offending name. The check tells you what is missing; it cannot tell whether a sentence is true, so verify behaviour in the source before describing it.
 

@@ -76,6 +76,9 @@ final class ContentCheck {
 
     private static final Pattern CATALOG_ROW = Pattern.compile("^\\s*\\|\\s*`(\\w+)`\\s*\\|\\s*(\\w+)\\s*\\|", Pattern.MULTILINE);
     private static final Pattern README_ITEM = Pattern.compile("^\\s*-\\s+\\[(on\\w+)]\\(#([\\w-]+)\\)", Pattern.MULTILINE);
+    private static final Pattern EVENTS_HEADING = Pattern.compile("^##\\s+Events\\s*$", Pattern.MULTILINE);
+    /** A level-1 or level-2 heading other than a repeated {@code ## Events}: where the README's events list ends. */
+    private static final Pattern NEXT_SECTION = Pattern.compile("^#{1,2}\\s+(?!Events\\s*$).*$", Pattern.MULTILINE);
     private static final Pattern SITE_LINK = Pattern.compile(Pattern.quote(SITE) + "([\\w./-]*)(?:#([\\w-]+))?");
     private static final Pattern EVENT_HEADING = Pattern.compile("^##\\s+`?(\\w+)`?\\s*$", Pattern.MULTILINE);
     private static final Pattern HEADING = Pattern.compile("^#{1,6}\\s+(.+?)\\s*$", Pattern.MULTILINE);
@@ -99,6 +102,7 @@ final class ContentCheck {
         var exceptions = exceptions(units);
         var pages = pages(repoRoot.resolve(Main.CONTENT_DIR));
         var examples = examples(pages);
+        var exampleFailures = new ArrayList<>(unclosedFences(pages));
         var results = new LinkedHashMap<String, List<String>>();
         results.put("events", checkEvents(events, pages));
         results.put("settings", checkNames("settings field", settings, pages));
@@ -110,7 +114,8 @@ final class ContentCheck {
         var readmeFailures = new ArrayList<>(checkReadme(readme, builderHandlers(units), eventClassNames(units)));
         readmeFailures.addAll(checkReadmeLinks(readme, pages));
         results.put("readme", readmeFailures);
-        results.put("examples", ExampleCompiler.compile(examples, repoRoot, ExampleCompiler.packages(units)));
+        exampleFailures.addAll(ExampleCompiler.compile(examples, repoRoot, ExampleCompiler.packages(units)));
+        results.put("examples", exampleFailures);
         var failed = false;
         for (var section : SECTIONS) {
             var failures = results.get(section);
@@ -312,33 +317,64 @@ final class ContentCheck {
         return examples;
     }
 
-    /** The dedented bodies of the fences with the given language, at any indentation; other fences are skipped. */
+    /** The dedented bodies of the closed fences with the given language (compared ignoring case), at any indentation. */
     static List<String> fences(String text, String language) {
         var bodies = new ArrayList<String>();
+        for (var fence : scan(text)) {
+            if (fence.closed() && fence.language().equalsIgnoreCase(language)) {
+                bodies.add(dedent(fence.body()));
+            }
+        }
+        return bodies;
+    }
+
+    /** One failure per fence that is never closed: Markdown renders the rest of the page as code, and no example compiles. */
+    static List<String> unclosedFences(List<Page> pages) {
+        var failures = new ArrayList<String>();
+        for (var page : pages) {
+            for (var fence : scan(page.text())) {
+                if (!fence.closed()) {
+                    failures.add(page.path() + ": the fence opened at line " + fence.line() + " is never closed");
+                }
+            }
+        }
+        return failures;
+    }
+
+    /** One fenced block: its language tag, body lines, the line number of its opening fence, and whether it was closed. */
+    private record Fence(String language, List<String> body, int line, boolean closed) {}
+
+    private static List<Fence> scan(String text) {
+        var fences = new ArrayList<Fence>();
         String fence = null;
         String lang = null;
+        var openLine = 0;
         var body = new ArrayList<String>();
-        for (var line : text.split("\n", -1)) {
+        var lines = text.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            var line = lines[i];
             if (fence == null) {
                 var open = FENCE_OPEN.matcher(line);
                 if (open.matches()) {
                     fence = open.group(1);
                     lang = open.group(2);
-                    body.clear();
+                    openLine = i + 1;
+                    body = new ArrayList<>();
                 }
                 continue;
             }
             var close = FENCE_CLOSE.matcher(line);
             if (close.matches() && close.group(1).charAt(0) == fence.charAt(0) && close.group(1).length() >= fence.length()) {
-                if (lang.equalsIgnoreCase(language)) {
-                    bodies.add(dedent(body));
-                }
+                fences.add(new Fence(lang, body, openLine, true));
                 fence = null;
                 continue;
             }
             body.add(line);
         }
-        return bodies;
+        if (fence != null) {
+            fences.add(new Fence(lang, body, openLine, false));
+        }
+        return fences;
     }
 
     private static String dedent(List<String> lines) {
@@ -371,7 +407,9 @@ final class ContentCheck {
         var rows = new HashMap<String, String>();
         var m = CATALOG_ROW.matcher(catalog == null ? "" : catalog);
         while (m.find()) {
-            rows.putIfAbsent(m.group(1), m.group(2));
+            if (rows.putIfAbsent(m.group(1), m.group(2)) != null) {
+                failures.add("Event catalog row duplicated: " + m.group(1));
+            }
         }
         var headings = new HashSet<String>();
         for (var page : pages) {
@@ -423,8 +461,8 @@ final class ContentCheck {
     }
 
     /**
-     * Every {@code - [onX](#onx-tiktokxevent)} item of the README, whatever follows the link, names an event class
-     * (the anchor's last segment, compared case-insensitively) and an {@code EventsBuilder} handler.
+     * Every {@code - [onX](#onx-tiktokxevent)} item of the README's events list, whatever follows the link, names an
+     * event class (the anchor's last segment, compared case-insensitively) and an {@code EventsBuilder} handler.
      */
     static List<String> checkReadme(String readme, Collection<String> builderHandlers, Collection<String> eventClasses) {
         var lower = new HashMap<String, String>();
@@ -432,7 +470,7 @@ final class ContentCheck {
             lower.put(name.toLowerCase(Locale.ROOT), name);
         }
         var failures = new LinkedHashSet<String>();
-        var m = README_ITEM.matcher(readme);
+        var m = README_ITEM.matcher(eventsSection(readme));
         while (m.find()) {
             var handler = m.group(1);
             var anchor = m.group(2);
@@ -445,6 +483,20 @@ final class ContentCheck {
             }
         }
         return new ArrayList<>(failures);
+    }
+
+    /**
+     * The README's events list: from its {@code ## Events} heading to the next level-1 or level-2 heading with another
+     * title (a repeated {@code ## Events} does not end it), or the whole text when it has no such heading.
+     */
+    static String eventsSection(String readme) {
+        var heading = EVENTS_HEADING.matcher(readme);
+        if (!heading.find()) {
+            return readme;
+        }
+        var next = NEXT_SECTION.matcher(readme);
+        next.region(heading.end(), readme.length());
+        return next.find() ? readme.substring(heading.start(), next.start()) : readme.substring(heading.start());
     }
 
     /**

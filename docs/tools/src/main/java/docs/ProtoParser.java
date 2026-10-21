@@ -61,9 +61,18 @@ final class ProtoParser {
         return parse(source, protoFile.getFileName().toString());
     }
 
-    /** Parses proto source text; {@code origin} names it in error messages. */
+    /** Parses proto source text; {@code origin}, a file name or any label, names it in error messages and gives the file its stem. */
     static ProtoFile parse(String source, String origin) {
         return new ProtoParser(lex(source, origin), origin).file();
+    }
+
+    /** {@code webcast} for {@code API/src/main/proto/webcast.proto} or {@code webcast.proto}. */
+    static String stem(String origin) {
+        var name = origin.substring(Math.max(origin.lastIndexOf('/'), origin.lastIndexOf('\\')) + 1);
+        if (name.endsWith(".proto")) {
+            name = name.substring(0, name.length() - ".proto".length());
+        }
+        return name.toLowerCase(java.util.Locale.ROOT);
     }
 
     // --- Grammar ----------------------------------------------------------------------------
@@ -98,7 +107,7 @@ final class ProtoParser {
                 default -> throw error("unexpected '" + t + "' at top level");
             }
         }
-        return new ProtoFile(pkg, javaPackage, List.copyOf(messages), List.copyOf(enums));
+        return new ProtoFile(stem(origin), pkg, javaPackage, List.copyOf(messages), List.copyOf(enums));
     }
 
     private ProtoMessage message(String parent) {

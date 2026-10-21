@@ -34,9 +34,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -79,8 +81,12 @@ final class ExampleCompiler {
 
     private ExampleCompiler() {}
 
-    /** One source file handed to javac: which example it came from and how many wrapper lines precede its body. */
-    private record Unit(Example example, String key, Source source, int offset, int bodyLines) {}
+    /**
+     * One source file handed to javac: which example it came from, the package-qualified types it declares (no two
+     * files of one batch may share one), how many wrapper lines precede its body, and for a fragment the wrapper line
+     * of each hoisted {@code import} mapped to the body line it came from.
+     */
+    private record Unit(Example example, Set<String> keys, Source source, int offset, int bodyLines, Map<Integer, Integer> hoisted) {}
 
     private static final class Source extends SimpleJavaFileObject {
         private final String code;
@@ -214,7 +220,11 @@ final class ExampleCompiler {
         if (isFullUnit(code)) {
             var name = declaredType(code);
             var source = code.endsWith("\n") ? code : code + "\n";
-            return new Unit(example, packageOf(code) + "/" + name, new Source(dir + name + ".java", source), 0, (int) code.lines().count());
+            var keys = new HashSet<String>();
+            for (var declared : declaredTypes(code)) {
+                keys.add(packageOf(code) + "/" + declared);
+            }
+            return new Unit(example, keys, new Source(dir + name + ".java", source), 0, (int) code.lines().count(), Map.of());
         }
         var imports = new LinkedHashSet<String>();
         for (var pkg : packages) {
@@ -223,11 +233,13 @@ final class ExampleCompiler {
         for (var pkg : JDK_PACKAGES) {
             imports.add("import " + pkg + ".*;");
         }
+        var hoistedLines = new LinkedHashMap<String, Integer>();
         var body = new StringBuilder();
         var bodyLines = 0;
         for (var line : code.split("\n", -1)) {
             if (IMPORT.matcher(line).matches()) {
                 imports.add(line.strip());
+                hoistedLines.putIfAbsent(line.strip(), bodyLines + 1);
                 line = "";
             }
             body.append(line).append('\n');
@@ -235,14 +247,29 @@ final class ExampleCompiler {
         }
         var name = "Example" + index;
         var source = new StringBuilder();
-        for (var line : imports) {
+        var ordered = new ArrayList<>(imports);
+        for (var line : ordered) {
             source.append(line).append('\n');
         }
+        var hoisted = new HashMap<Integer, Integer>();
+        hoistedLines.forEach((statement, bodyLine) -> hoisted.put(ordered.indexOf(statement) + 1, bodyLine));
         source.append("public class ").append(name).append(" {\n");
         source.append("    void run() throws Exception {\n");
         source.append(body);
         source.append("    }\n}\n");
-        return new Unit(example, "/" + name, new Source(dir + name + ".java", source.toString()), imports.size() + 2, bodyLines);
+        return new Unit(example, Set.of("/" + name), new Source(dir + name + ".java", source.toString()), imports.size() + 2, bodyLines, hoisted);
+    }
+
+    /** Every top-level type a full unit declares, the public one and any package-private helpers. */
+    private static List<String> declaredTypes(String code) {
+        var names = new ArrayList<String>();
+        for (var line : code.split("\n")) {
+            var m = TYPE_DECLARATION.matcher(line);
+            if (m.find()) {
+                names.add(m.group(4));
+            }
+        }
+        return names;
     }
 
     /** The declared package of a full unit, or an empty string for the default package. */
@@ -273,13 +300,13 @@ final class ExampleCompiler {
         throw new IllegalArgumentException("no type declaration");
     }
 
-    /** Splits the units into batches in which no two files declare the same package-qualified type. */
+    /** Splits the units into batches in which no two files declare the same package-qualified type, helpers included. */
     private static List<List<Unit>> batches(List<Unit> units) {
         var batches = new ArrayList<List<Unit>>();
         var keys = new ArrayList<Set<String>>();
         for (var unit : units) {
             int i = 0;
-            while (i < batches.size() && keys.get(i).contains(unit.key())) {
+            while (i < batches.size() && !Collections.disjoint(keys.get(i), unit.keys())) {
                 i++;
             }
             if (i == batches.size()) {
@@ -287,7 +314,7 @@ final class ExampleCompiler {
                 keys.add(new HashSet<>());
             }
             batches.get(i).add(unit);
-            keys.get(i).add(unit.key());
+            keys.get(i).addAll(unit.keys());
         }
         return batches;
     }
@@ -303,7 +330,8 @@ final class ExampleCompiler {
         try (var fileManager = compiler.getStandardFileManager(diagnostics, Locale.ROOT, StandardCharsets.UTF_8)) {
             fileManager.setLocationFromPaths(StandardLocation.CLASS_PATH, classpath);
             fileManager.setLocationFromPaths(StandardLocation.CLASS_OUTPUT, List.of(outDir));
-            var options = List.of("--release", "17", "-proc:none", "-implicit:none", "-Xlint:none");
+            // -Xmaxerrs lifts javac's default cap of 100 errors, so a batch with many broken examples reports them all.
+            var options = List.of("--release", "17", "-proc:none", "-implicit:none", "-Xlint:none", "-Xmaxerrs", "10000");
             compiler.getTask(new StringWriter(), fileManager, diagnostics, options, null, sources).call();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -311,8 +339,15 @@ final class ExampleCompiler {
         return diagnostics.getDiagnostics();
     }
 
-    /** The diagnostic's line relative to the fence body, clamped into the body for errors reported on wrapper lines. */
+    /**
+     * The diagnostic's line relative to the fence body: a hoisted {@code import} maps back to the line it was written on,
+     * and an error on any other wrapper line is clamped into the body.
+     */
     private static long line(Diagnostic<?> d, Unit unit) {
+        var hoisted = unit.hoisted().get((int) d.getLineNumber());
+        if (hoisted != null) {
+            return hoisted;
+        }
         var line = d.getLineNumber() - unit.offset();
         return Math.max(1, Math.min(line, Math.max(1, unit.bodyLines())));
     }

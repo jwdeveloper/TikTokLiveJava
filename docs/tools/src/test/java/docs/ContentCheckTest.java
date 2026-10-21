@@ -148,6 +148,32 @@ class ContentCheckTest {
     }
 
     @Test
+    void readmeItemsOutsideTheEventsListAreIgnored() {
+        var readme = "# Intro\n\n- [onBogus](#onbogus-tiktokbogusevent) in the intro\n\n## Events\n\n\n## Events\n\n**Message**:\n\n"
+                + "- [onComment](#oncomment-tiktokcommentevent)\n\n# Examples\n\n- [onOther](#onother-tiktokotherevent)\n\n## Listeners\n\n- [onMore](#onmore-tiktokmoreevent)\n";
+        assertEquals(List.of(), ContentCheck.checkReadme(readme, Set.of("onComment"), Set.of("TikTokCommentEvent")));
+        assertEquals("## Events\n\n\n## Events\n\n**Message**:\n\n- [onComment](#oncomment-tiktokcommentevent)\n\n", ContentCheck.eventsSection(readme));
+        assertEquals("- [onX](#onx-tiktokxevent)\n", ContentCheck.eventsSection("- [onX](#onx-tiktokxevent)\n"), "no heading: the whole text");
+    }
+
+    @Test
+    void duplicateCatalogRowsFail(@TempDir Path site) throws IOException {
+        write(site, "events/index.md", "| `TikTokCommentEvent` | Message | A comment. |\n| `TikTokCommentEvent` | Message | Again. |\n");
+        write(site, "events/chat.md", "## TikTokCommentEvent\n");
+        assertEquals(List.of("Event catalog row duplicated: TikTokCommentEvent"),
+                ContentCheck.checkEvents(Map.of("TikTokCommentEvent", "Message"), ContentCheck.pages(site)));
+    }
+
+    @Test
+    void unclosedFenceIsReportedAndNotCompiled(@TempDir Path site) throws IOException {
+        write(site, "a.md", "Intro.\n\n```java\nint a = 1;\n```\n\nMore.\n\n```java\nint b = 2;\n\nThe page ends without a closing fence.\n");
+        write(site, "b.md", "```sh\necho ok\n```\n");
+        var pages = ContentCheck.pages(site);
+        assertEquals(List.of("a.md: the fence opened at line 9 is never closed"), ContentCheck.unclosedFences(pages));
+        assertEquals(1, ContentCheck.examples(pages).size(), "the unclosed fence is not an example");
+    }
+
+    @Test
     void readmeItemWithTrailingTextPasses() {
         var readme = "**Message**:\n\n- [onComment](#oncomment-tiktokcommentevent) · [docs](https://example.com/events/chat/#tiktokcommentevent)\n"
                 + "- [onWebsocketUnhandledMessage](#onwebsocketunhandledmessage-tiktokwebsocketunhandledmessageevent)\n";

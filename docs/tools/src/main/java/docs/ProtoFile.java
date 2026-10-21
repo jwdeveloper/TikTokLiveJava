@@ -27,9 +27,11 @@ import java.util.List;
 /**
  * One parsed {@code .proto} file.
  *
+ * @param name        the file's stem, lowercase: {@code webcast} for {@code webcast.proto}; it names the file's
+ *                    directory of schema pages
  * @param pkg         the {@code package} statement, or an empty string
  * @param javaPackage the {@code java_package} option, or an empty string
  * @param messages    top-level messages in declaration order
  * @param enums       top-level enums in declaration order
  */
-record ProtoFile(String pkg, String javaPackage, List<ProtoMessage> messages, List<ProtoEnum> enums) {}
+record ProtoFile(String name, String pkg, String javaPackage, List<ProtoMessage> messages, List<ProtoEnum> enums) {}
