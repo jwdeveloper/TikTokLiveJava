@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tiktoklivejava-docs",
+  "compatibility_date": "2026-10-20",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // The custom domain ttlj.docs.isaackogan.com is attached to the Worker once by a maintainer
+  // and survives deploys, so no routes are declared here and the CI token needs no zone permission.
+  "workers_dev": false
+}

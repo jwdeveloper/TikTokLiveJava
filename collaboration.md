@@ -201,3 +201,31 @@ need to also include it to interface `EventsBuilder`
 Finally we are good to go, our event has been included!
 
 ![image](https://github.com/jwdeveloper/TikTokLiveJava/assets/79764581/36ad6f1f-b38c-4cf7-93bd-b4cc0638cba0)
+
+
+### Documentation
+
+The documentation site at https://ttlj.docs.isaackogan.com/ is built from the `docs/` directory
+of this repository: a Starlight project whose reference pages (`api/`, `schema/`) are generated
+from the `API` and `Client` sources and the `.proto` files, and whose authored pages are Markdown
+under `docs/src/content/docs/`. It needs JDK 17 or newer, Maven, Node.js 24, and pnpm 10.34.2.
+From the repository root:
+
+```sh
+npx -y pnpm@10.34.2 --dir docs install --frozen-lockfile
+npx -y pnpm@10.34.2 --dir docs build
+```
+
+`build` builds the library modules, packages the tool under `docs/tools/`, runs the content
+check, generates the reference pages, and builds the site; `pnpm --dir docs dev` serves it
+locally after `pnpm --dir docs lib:build`, `pnpm --dir docs tools:build`, and
+`pnpm --dir docs generate`. The content check fails the build when an event,
+settings field, builder handler, exception, or extension is not named on a page, when a page
+links to Discord, when the README's events list and the `EventsBuilder` handlers disagree, or
+when a Java example does not compile. So when you add an event as described above, also add its
+catalog row on `docs/src/content/docs/events/index.md` and a section on the grouped event page.
+Never commit the generated `api/` and `schema/` directories; they are ignored by Git.
+
+The full rules are on the site's contributing page, https://ttlj.docs.isaackogan.com/contributing/,
+and `docs/README.md` lists the commands. The site is deployed to Cloudflare Workers by
+`.github/workflows/docs.yml`; see https://ttlj.docs.isaackogan.com/hosting/.

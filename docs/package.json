@@ -1,0 +1,31 @@
+{
+  "name": "tiktoklivejava-docs",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.2",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1",
+    "lib:build": "cd .. && mvn -q -pl API,Client,extension-recorder,extension-collector -am -DskipTests install dependency:build-classpath -Dmdep.outputFile=target/classpath.txt",
+    "tools:build": "mvn -q -f tools/pom.xml -DskipTests package",
+    "check": "java -jar tools/target/docs-tools.jar check ..",
+    "generate": "java -jar tools/target/docs-tools.jar generate ..",
+    "build": "pnpm run lib:build && pnpm run tools:build && pnpm run check && pnpm run generate && astro build",
+    "preview": "astro preview --host 127.0.0.1",
+    "deploy:cloudflare": "wrangler deploy",
+    "seo": "node scripts/verify-seo.mjs dist",
+    "test": "node --test \"scripts/**/*.test.mjs\""
+  },
+  "devDependencies": {
+    "@astrojs/markdown-remark": "7.3.3",
+    "@astrojs/starlight": "0.42.6",
+    "astro": "7.4.1",
+    "lucode-starlight": "1.0.0",
+    "starlight-links-validator": "0.27.0",
+    "typescript": "5.9.3",
+    "unist-util-visit": "5.0.0",
+    "wrangler": "4.151.2"
+  }
+}
