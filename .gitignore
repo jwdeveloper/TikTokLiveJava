@@ -247,3 +247,11 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 /python-app-backend/samconfig.toml
 /java-app-backend/BackendFunction/dependency-reduced-pom.xml
+
+# Starlight documentation site (docs/)
+docs/node_modules/
+docs/.astro/
+docs/dist/
+docs/src/content/docs/api/
+docs/src/content/docs/schema/
+docs/tools/target/
